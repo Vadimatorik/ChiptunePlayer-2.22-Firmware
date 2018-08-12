@@ -1,6 +1,6 @@
 #include "stm32f4xx_hal.h"
-//#include "ayplayer_mc_hardware.h"
-//#include "ayplayer_pcb_hardware.h"
+#include "ayplayer_mc_hardware.h"
+#include "ayplayer_pcb_hardware.h"
 #include "FreeRTOS.h"
 
 extern "C" {
@@ -21,7 +21,6 @@ void HardFault_Handler ( void ) {
 	);
 }
 
-/*
 void PVD_IRQHandler					( void ) {
 	pwr.irqHandler();
 	NVIC_SystemReset();
@@ -46,7 +45,7 @@ void DMA1_Stream4_IRQHandler		( void ) {
 
 void USART1_IRQHandler				( void ) {
 	usart.irqHandler();
-}*/
+}
 
 void CRYP_IRQHandler				( void ) {
 	NVIC_SystemReset();

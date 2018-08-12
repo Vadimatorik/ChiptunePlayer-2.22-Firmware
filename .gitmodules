@@ -1,3 +1,6 @@
 [submodule "bsp/submodule/module_shift_register"]
 	path = bsp/submodule/module_shift_register
 	url = git@github.com:Vadimatorik/module_shift_register.git
+[submodule "bsp/submodule/module_microsd_low_level_driver"]
+	path = bsp/submodule/module_microsd_low_level_driver
+	url = git@github.com:Vadimatorik/module_microsd_low_level_driver.git
