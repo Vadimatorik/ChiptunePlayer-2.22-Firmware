@@ -22,3 +22,9 @@
 [submodule "bsp/submodule/module_makise_gui"]
 	path = bsp/submodule/module_makise_gui
 	url = git@github.com:Vadimatorik/module_makise_gui.git
+[submodule "user/submodule/module_run_time_logger"]
+	path = user/submodule/module_run_time_logger
+	url = git@github.com:Vadimatorik/module_run_time_logger.git
+[submodule "bsp/submodule/module_makise_gui_elements_by_vadimatorik"]
+	path = bsp/submodule/module_makise_gui_elements_by_vadimatorik
+	url = git@github.com:Vadimatorik/module_makise_gui_elements_by_vadimatorik.git
