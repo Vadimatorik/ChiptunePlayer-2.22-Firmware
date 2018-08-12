@@ -15,8 +15,7 @@ extern ST7565					lcd;
 extern AD5204					soundDp;
 extern AyYmLowLavel				ayLow;
 
-extern ShiftRegisterPin			pwrAy1;
-extern ShiftRegisterPin			pwrAy2;
+extern ShiftRegisterPin			pwrAy[ 2 ];
 extern ShiftRegisterPin			ay1Res;
 extern ShiftRegisterPin			ay2Res;
 extern ShiftRegisterPin			bc1;

@@ -37,8 +37,11 @@ const ShiftRegisterPinCfg bdirCfg = {
 	.sr			=	&boardShiftRegisters
 };
 
-ShiftRegisterPin pwrAy1		( &pwrAy1Cfg );
-ShiftRegisterPin pwrAy2		( &pwrAy2Cfg );
+ShiftRegisterPin pwrAy[ 2 ] = {
+	ShiftRegisterPin( &pwrAy1Cfg ),
+	ShiftRegisterPin( &pwrAy2Cfg ),
+};
+
 ShiftRegisterPin ay1Res		( &ay1ResCfg );
 ShiftRegisterPin ay2Res		( &ay2ResCfg );
 ShiftRegisterPin bc1		( &bc1Cfg );

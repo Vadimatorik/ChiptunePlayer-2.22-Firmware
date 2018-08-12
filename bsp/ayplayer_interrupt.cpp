@@ -58,3 +58,8 @@ void FPU_IRQHandler					( void ) {
 
 }
 
+void assertFailed ( uint8_t* file, uint32_t line ) {
+	( void )file;
+	( void )line;
+	NVIC_SystemReset();
+}

@@ -1,6 +1,7 @@
 #include "ayplayer_fat.h"
 #include <string.h>
 #include <stdio.h>
+#include "FreeRTOSConfig.h"
 
 char* AyPlayerFat::getFullPath( const char* const path, const char* const fileName ) {
 	/// Получаем длину каждой строки без учета нуля терминатора.
