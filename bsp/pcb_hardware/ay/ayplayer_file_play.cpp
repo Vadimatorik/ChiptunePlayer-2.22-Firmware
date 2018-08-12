@@ -1,4 +1,4 @@
-#include "../ayplayer_pcb_hardware.h"
+#include "ayplayer_pcb_hardware.h"
 
 /*
 AyYmFilePlayCfg ayYmFilePlayCfg = {
