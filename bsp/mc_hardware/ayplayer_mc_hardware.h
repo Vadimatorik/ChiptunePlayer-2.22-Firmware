@@ -11,6 +11,7 @@
 #include "port.h"
 #include "timer.h"
 #include "adc_one_channel.h"
+#include "microsd_card_sdio.h"
 
 extern SpiMaster8Bit		boardSpi;
 extern Wdt					wdt;
@@ -22,6 +23,7 @@ extern SpiMaster8Bit		boardSpi;
 extern Rcc					rcc;
 extern Pwr					pwr;
 extern AdcOneChannel		adcBat;
+extern MicrosdSdio			sd;
 
 extern Pin					shStrob;
 extern PinMultifuncIt		buttonInc;

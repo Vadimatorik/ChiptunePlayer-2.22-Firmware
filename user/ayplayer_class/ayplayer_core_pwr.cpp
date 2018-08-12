@@ -18,5 +18,5 @@ void AyPlayer::powerOff (	CAUSE_SHUTDOWN	cause	) {
 	vTaskEndScheduler();
 
 	/// Отключаем питание.
-	this->cfg->mcu->gpio->pwr.all_pwr->reset();
+	this->cfg->mcu->gpio->pwr.allPwr->reset();
 }
