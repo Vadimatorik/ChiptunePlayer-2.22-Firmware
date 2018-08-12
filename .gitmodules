@@ -4,3 +4,6 @@
 [submodule "bsp/submodule/module_microsd_low_level_driver"]
 	path = bsp/submodule/module_microsd_low_level_driver
 	url = git@github.com:Vadimatorik/module_microsd_low_level_driver.git
+[submodule "bsp/submodule/module_lcd_driver"]
+	path = bsp/submodule/module_lcd_driver
+	url = git@github.com:Vadimatorik/module_lcd_driver.git
