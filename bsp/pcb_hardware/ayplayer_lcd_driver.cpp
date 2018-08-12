@@ -1,7 +1,7 @@
 #include "ayplayer_mc_hardware.h"
 #include "mono_lcd_lib_st7565.h"
 
-const ST7565Cfg st7565Cfg {
+const ST7565Cfg st7565Cfg = {
 	.a0		=	&lcdDc,
 	.res	=	&lcdRes,
 	.cs		=	&lcdCs,

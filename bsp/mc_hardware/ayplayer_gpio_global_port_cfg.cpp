@@ -1,7 +1,7 @@
 #include "pin.h"
 #include "port.h"
 
-extern const pinCfg		adc;
+extern const pinCfg		adcCfg;
 extern const pinCfg		buttonIncCfg;
 extern const pinCfg		buttonDecCfg;
 extern const pinCfg		lcdClkCfg;
@@ -34,11 +34,11 @@ extern const pinCfg		bc0Cfg;
 extern const pinCfg		bc1Cfg;
 extern const pinCfg		bc2Cfg;
 
-const pinCfg gpCfg[ 35 ] = {
+extern const pinCfg gpCfg[ 35 ] = {
 	buttonIncCfg,					buttonDecCfg,				/// Button.
 	br0Cfg,			br1Cfg,			br2Cfg,						/// KeyBoard.
 	bc0Cfg,			bc1Cfg,			bc2Cfg,
-	adc,														/// ADC.
+	adcCfg,														/// ADC.
 	lcdClkCfg,		lcdPwmCfg,		lcdResCfg,					/// LCD.
 	lcdDcCfg,		lcdDcCfg,		lcdCsCfg,
 	sd1SmdCfg,		sdIoAndClkCfg,	sdCheckerValueSetter,		/// MicroSd.

@@ -32,6 +32,7 @@ void SysTick_Handler				( void ) {
 }
 
 void TIM6_DAC_IRQHandler			( void ) {
+	interruptAy.clearInterruptFlag();
 	ayLow.timerInterruptHandler();
 }
 

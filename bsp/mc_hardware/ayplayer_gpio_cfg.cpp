@@ -2,7 +2,7 @@
 #include "port.h"
 
 /// ADC.
-const pinCfg adc = {
+extern const pinCfg adcCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_0 |					/// Bat		*	0.5.
@@ -13,7 +13,7 @@ const pinCfg adc = {
 };
 
 /// Качелька громкости.
-const pinCfg buttonIncCfg = {
+extern const pinCfg buttonIncCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_7,
@@ -21,7 +21,7 @@ const pinCfg buttonIncCfg = {
 	}
 };
 
-const pinCfg buttonDecCfg = {
+extern const pinCfg buttonDecCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_9,
@@ -30,7 +30,7 @@ const pinCfg buttonDecCfg = {
 };
 
 /// LCD.
-const pinCfg lcdClkCfg = {
+extern const pinCfg lcdClkCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_5 | GPIO_PIN_7,
@@ -41,7 +41,7 @@ const pinCfg lcdClkCfg = {
 	}
 };
 
-const pinCfg lcdPwmCfg = {
+extern const pinCfg lcdPwmCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_8,
@@ -52,7 +52,7 @@ const pinCfg lcdPwmCfg = {
 	}
 };
 
-const pinCfg lcdResCfg = {
+extern const pinCfg lcdResCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -60,7 +60,7 @@ const pinCfg lcdResCfg = {
 	}
 };
 
-const pinCfg lcdDcCfg = {
+extern const pinCfg lcdDcCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_0,
@@ -68,7 +68,7 @@ const pinCfg lcdDcCfg = {
 	}
 };
 
-const pinCfg lcdCsCfg = {
+extern const pinCfg lcdCsCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_1,
@@ -77,7 +77,7 @@ const pinCfg lcdCsCfg = {
 };
 
 /// SDIO.
-const pinCfg sd1SmdCfg = {
+extern const pinCfg sd1SmdCfg = {
 	.GPIOx			=	GPIOD,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -88,7 +88,7 @@ const pinCfg sd1SmdCfg = {
 	}
 };
 
-const pinCfg sdIoAndClkCfg = {
+extern const pinCfg sdIoAndClkCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12,
@@ -99,7 +99,7 @@ const pinCfg sdIoAndClkCfg = {
 	}
 };
 
-const pinCfg sdPushCfg = {
+extern const pinCfg sdPushCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_11,
@@ -107,7 +107,7 @@ const pinCfg sdPushCfg = {
 	}
 };
 
-const pinCfg sdCheckerValueSetter = {
+extern const pinCfg sdCheckerValueSetter = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_12,
@@ -116,7 +116,7 @@ const pinCfg sdCheckerValueSetter = {
 };
 
 /// USB.
-const pinCfg usbCfg = {
+extern const pinCfg usbCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12,
@@ -128,7 +128,7 @@ const pinCfg usbCfg = {
 };
 
 /// BOARD.
-const pinCfg spiBoardTxCfg = {
+extern const pinCfg spiBoardTxCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_3,
@@ -139,7 +139,7 @@ const pinCfg spiBoardTxCfg = {
 	}
 };
 
-const pinCfg spiBoardClkCfg = {
+extern const pinCfg spiBoardClkCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_10,
@@ -150,7 +150,7 @@ const pinCfg spiBoardClkCfg = {
 	}
 };
 
-const pinCfg boardGpio1 = {
+extern const pinCfg boardGpio1 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_0,
@@ -158,7 +158,7 @@ const pinCfg boardGpio1 = {
 	}
 };
 
-const pinCfg boardGpio2 = {
+extern const pinCfg boardGpio2 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_1,
@@ -166,7 +166,7 @@ const pinCfg boardGpio2 = {
 	}
 };
 
-const pinCfg boardGpio3 = {
+extern const pinCfg boardGpio3 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -174,7 +174,7 @@ const pinCfg boardGpio3 = {
 	}
 };
 
-const pinCfg boardGpio4 = {
+extern const pinCfg boardGpio4 = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_4,
@@ -183,7 +183,7 @@ const pinCfg boardGpio4 = {
 };
 
 /// JTAG.
-const pinCfg jtagPart1Cfg = {
+extern const pinCfg jtagPart1Cfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15,
@@ -194,7 +194,7 @@ const pinCfg jtagPart1Cfg = {
 	}
 };
 
-const pinCfg jtagPart2Cfg = {
+extern const pinCfg jtagPart2Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_3 | GPIO_PIN_4,
@@ -206,7 +206,7 @@ const pinCfg jtagPart2Cfg = {
 };
 
 /// PWR.
-const pinCfg pwr5vOnCfg = {
+extern const pinCfg pwr5vOnCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_3,
@@ -214,7 +214,7 @@ const pinCfg pwr5vOnCfg = {
 	}
 };
 
-const pinCfg pwrOnCfg = {								/// Подача напряжения на всю плату
+extern const pinCfg pwrOnCfg = {								/// Подача напряжения на всю плату
 	.GPIOx			=	GPIOB,							/// (может подаваться при нажатии на физическую
 	.init = {											/// клавишу включения).
 		.Pin		=	GPIO_PIN_5,
@@ -222,7 +222,7 @@ const pinCfg pwrOnCfg = {								/// Подача напряжения на вс
 	}
 };
 
-const pinCfg tpStCfg = {								/// Флаг окончания зарядки аккумулятора.
+extern const pinCfg tpStCfg = {								/// Флаг окончания зарядки аккумулятора.
 	.GPIOx			=	GPIOC,							/// Подтягивается к земле по окончании зарядки.
 	.init = {											/// В противном случае находится в
 		.Pin		=	GPIO_PIN_13,					/// высокоимпедансном состоянии.
@@ -230,7 +230,7 @@ const pinCfg tpStCfg = {								/// Флаг окончания зарядки �
 	}
 };
 
-const pinCfg tpChCfg = {								/// Флаг того, что аккумулятор заряжается.
+extern const pinCfg tpChCfg = {								/// Флаг того, что аккумулятор заряжается.
 	.GPIOx			=	GPIOB,							/// Подтягивается к земле на время зарядки.
 	.init = {											/// В противном случае находится в высокоимпедансном состоянии.
 		.Pin		=	GPIO_PIN_8,
@@ -239,7 +239,7 @@ const pinCfg tpChCfg = {								/// Флаг того, что аккумулят
 };
 
 /// DEBUG_UART
-const pinCfg uartDebugCfg = {
+extern const pinCfg uartDebugCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_6 | GPIO_PIN_7,
@@ -251,7 +251,7 @@ const pinCfg uartDebugCfg = {
 };
 
 /// Keyboard.
-const pinCfg br0Cfg = {
+extern const pinCfg br0Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_6,
@@ -259,7 +259,7 @@ const pinCfg br0Cfg = {
 	}
 };
 
-const pinCfg br1Cfg = {
+extern const pinCfg br1Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_15,
@@ -267,7 +267,7 @@ const pinCfg br1Cfg = {
 	}
 };
 
-const pinCfg br2Cfg = {
+extern const pinCfg br2Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_14,
@@ -275,7 +275,7 @@ const pinCfg br2Cfg = {
 	}
 };
 
-const pinCfg bc0Cfg = {
+extern const pinCfg bc0Cfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_6,
@@ -283,7 +283,7 @@ const pinCfg bc0Cfg = {
 	}
 };
 
-const pinCfg bc1Cfg = {
+extern const pinCfg bc1Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_4,
@@ -291,7 +291,7 @@ const pinCfg bc1Cfg = {
 	}
 };
 
-const pinCfg bc2Cfg = {
+extern const pinCfg bc2Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_5,

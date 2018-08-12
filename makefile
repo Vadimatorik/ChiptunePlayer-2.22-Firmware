@@ -67,6 +67,7 @@ PROJ_S_FILE			=	$(STARTUPE_S_NAME)
 PROJ_DIR			:=	$(shell find -maxdepth 10 -type d -name "*" )
 
 PROJ_PATH			:=	$(addprefix -I, $(PROJ_DIR))
+
 PROJ_OBJ_FILE		:=	$(addprefix build/obj/, $(PROJ_CPP_FILE))
 PROJ_OBJ_FILE		+=	$(addprefix build/obj/, $(PROJ_C_FILE))
 PROJ_OBJ_FILE		+=	$(addprefix build/obj/, $(PROJ_S_FILE))
@@ -86,6 +87,7 @@ build/obj/%.o:	%.s
 	$(CODE_OPTIMIZATION)				\
 	$(PROJECT_PATH)						\
 	-c $< -o $@
+
 
 build/obj/%.o:	%.c	
 	@echo [CC] $<
@@ -116,7 +118,7 @@ $(PROJECT_NAME).siz:	build/$(PROJECT_NAME).elf
 	@arm-none-eabi-size --format=berkeley "build/$(PROJECT_NAME).elf"
 	@echo ' '
 
-all:	$(PROJECT_NAME).siz
+all: $(PROJECT_NAME).siz
 	
 clear_all:	
 	@rm -R ./build

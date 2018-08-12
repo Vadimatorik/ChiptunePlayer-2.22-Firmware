@@ -1,5 +1,5 @@
-#include "shift_register_8bit_port.h"
 #include "ayplayer_pcb_hardware.h"
+#include "shift_register_8bit_port.h"
 
 const ShiftRegisterPort8bitCfg chip1Port = {
 	.byte	=	0,

@@ -4,23 +4,7 @@
 extern "C" {
 #endif
 
-#define HAL_MODULE_ENABLED  
-#define HAL_ADC_MODULE_ENABLED
-#define HAL_DMA_MODULE_ENABLED
-#define HAL_FLASH_MODULE_ENABLED
-#define HAL_GPIO_MODULE_ENABLED
-#define HAL_IWDG_MODULE_ENABLED
-#define HAL_PWR_MODULE_ENABLED
-#define HAL_RCC_MODULE_ENABLED
-#define HAL_RTC_MODULE_ENABLED
-#define HAL_SD_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_USART_MODULE_ENABLED
-#define HAL_WWDG_MODULE_ENABLED
-#define HAL_CORTEX_MODULE_ENABLED
-#define HAL_MMC_MODULE_ENABLED
+#include "project_config.h"
 
 #define HSE_VALUE					16000000U	/*!< Value of the External oscillator in Hz */
 #define HSE_STARTUP_TIMEOUT			100U		/*!< Time out for HSE start up, in ms */

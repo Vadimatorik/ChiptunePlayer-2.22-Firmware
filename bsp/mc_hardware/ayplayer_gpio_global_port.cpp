@@ -1,6 +1,4 @@
-#include "port.h"
-#include "pin.h"
-#include "user_os.h"
+#include "ayplayer_mc_hardware.h"
 
 extern const pinCfg gpCfg[ 35 ];
 

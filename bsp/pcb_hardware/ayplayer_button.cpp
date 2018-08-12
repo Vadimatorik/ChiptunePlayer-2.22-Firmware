@@ -1,9 +1,10 @@
 #include "ayplayer_button.h"
 
+/*
 #include "buttons_through_shift_register_one_input_pin.h"
 #include "user_os.h"
 #include "ayplayer_os_object.h"
-#include "pin.h"
+#include "pin.h"*/
 
 //extern uint8_t							srOutBufButton[ 1 ];
 /*

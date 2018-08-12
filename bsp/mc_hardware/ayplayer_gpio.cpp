@@ -3,7 +3,7 @@
 extern const pinCfg		buttonIncCfg;
 extern const pinCfg		buttonDecCfg;
 PinMultifuncIt			buttonInc				( &buttonIncCfg, 1, GPIO_PIN_7 );
-PinMultifuncIt			buttonDec				( &buttonIncCfg, 1, GPIO_PIN_8 );
+PinMultifuncIt			buttonDec				( &buttonDecCfg, 1, GPIO_PIN_8 );
 
 extern const pinCfg		lcdResCfg;
 extern const pinCfg		lcdDcCfg;
