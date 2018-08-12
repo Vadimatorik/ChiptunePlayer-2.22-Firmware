@@ -11,10 +11,10 @@
 #include "ayplayer_os_object.h"
 
 struct AyPlayerCfg {
-	AyPlayerMcuCfg*					const mcu;
-	AyPlayerPcbStrcut*				const pcb;
-	FreeRtosObj*					const os;
-	AyPlayerGuiModuleStyleCfg*		const gui;
+	const AyPlayerMcuCfg*					const mcu;
+	const AyPlayerPcbStrcut*				const pcb;
+	FreeRtosObj*							const os;
+	const AyPlayerGuiModuleStyleCfg*		const gui;
 
 	RunTimeLogger*					const l;
 	AyYmFilePlay*					const ay;

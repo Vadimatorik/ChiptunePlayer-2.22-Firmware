@@ -5,7 +5,7 @@
 
 struct AyPlayerMcuCfg {
 	WdtBase*									const	wdt;
-	AyplayerGpio*								const	gpio;
+	const AyplayerGpio*							const	gpio;
 	GlobalPortBase*								const	gp;
 	UartBase*									const	debugUart;
 	RccBase*									const	rcc;

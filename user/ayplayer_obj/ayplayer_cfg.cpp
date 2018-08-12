@@ -1,4 +1,13 @@
 #include "ayplayer_struct_cfg.h"
+#include "ayplayer_ay_file_class.h"
+#include "run_time_logger.h"
+
+extern const AyPlayerGuiModuleStyleCfg	ayGuiCfg;
+extern const AyPlayerMcuCfg				ayMcuCfg;
+extern const AyPlayerPcbStrcut			ayPcbCfg;
+
+extern AyYmFilePlay				ayYmFilePlay;
+extern RunTimeLogger			ayLog;
 
 AyPlayerCfg ayCfg = {
 	.mcu								=	&ayMcuCfg,

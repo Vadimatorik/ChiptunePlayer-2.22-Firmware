@@ -1,6 +1,6 @@
 #include "ayplayer_struct_pcb_cfg.h"
 
-AyPlayerPcbStrcut ayPcbCfg = {
+extern const AyPlayerPcbStrcut ayPcbCfg = {
 	.dp					=	&soundDp,
 	.sd					=	&sd
 };

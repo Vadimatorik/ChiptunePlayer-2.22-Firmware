@@ -5,7 +5,7 @@ extern const MakiseFont F_minecraft_rus_regular_8;
 extern uint32_t	ayplayerGetStatePlay			( void );
 extern uint32_t	ayplayerGetPercentBattery		( void );
 
-AyPlayerGuiModuleStyleCfg ayGuiCfg = {
+extern const AyPlayerGuiModuleStyleCfg ayGuiCfg = {
 	.smw = {
 		.font							=	&F_minecraft_rus_regular_8,
 		.font_line_spacing				=	2,
@@ -74,7 +74,7 @@ AyPlayerGuiModuleStyleCfg ayGuiCfg = {
 		.bgColor						=	MC_White,
 		.borderColor					=	MC_Black
 	},
-	.statusBarCallbackCfg = {
+	.tatusBarCallbackCfg = {
 		.getStatePlay					=	ayplayerGetStatePlay,
 		.getPercentBattery				=	ayplayerGetPercentBattery
 	},

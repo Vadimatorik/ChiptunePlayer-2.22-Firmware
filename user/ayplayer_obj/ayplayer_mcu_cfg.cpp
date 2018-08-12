@@ -1,7 +1,9 @@
 #include "ayplayer_mc_hardware.h"
 #include "ayplayer_struct_mcu_cfg.h"
 
-AyPlayerMcuCfg ayMcuCfg = {
+extern const AyplayerGpio		gpio;
+
+extern const AyPlayerMcuCfg ayMcuCfg = {
 	.wdt								=	&wdt,
 	.gpio								=	&gpio,
 	.gp									=	&gp,

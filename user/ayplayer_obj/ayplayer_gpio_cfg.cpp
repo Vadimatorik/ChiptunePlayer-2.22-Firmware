@@ -2,7 +2,7 @@
 #include "ayplayer_mc_hardware.h"
 #include "ayplayer_pcb_hardware.h"
 
-AyplayerGpio gpio = {
+extern const AyplayerGpio gpio = {
 	.pwr = {
 		.pwr5v				= &pwr5vOn,
 		.allPwr			= &pwrOn,
