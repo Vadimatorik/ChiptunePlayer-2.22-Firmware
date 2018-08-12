@@ -1,0 +1,3 @@
+[submodule "bsp/submodule/module_shift_register"]
+	path = bsp/submodule/module_shift_register
+	url = git@github.com:Vadimatorik/module_shift_register.git
