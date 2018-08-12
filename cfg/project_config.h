@@ -1,6 +1,6 @@
 #pragma once
 
-//#define MODULE_AY_YM_FILE_PLAY_ENABLED
+#define MODULE_AY_YM_FILE_PLAY_ENABLED
 #define MODULE_AY_YM_LOW_LAVEL_ENABLED
 
 #define STM32F415xx

@@ -16,3 +16,9 @@
 [submodule "bsp/module_system_dummy"]
 	path = bsp/module_system_dummy
 	url = git@github.com:Vadimatorik/module_system_dummy.git
+[submodule "bsp/submodule/module_fatfs_by_chan"]
+	path = bsp/submodule/module_fatfs_by_chan
+	url = git@github.com:Vadimatorik/module_fatfs_by_chan.git
+[submodule "bsp/submodule/module_makise_gui"]
+	path = bsp/submodule/module_makise_gui
+	url = git@github.com:Vadimatorik/module_makise_gui.git
