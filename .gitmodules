@@ -28,3 +28,12 @@
 [submodule "bsp/submodule/module_makise_gui_elements_by_vadimatorik"]
 	path = bsp/submodule/module_makise_gui_elements_by_vadimatorik
 	url = git@github.com:Vadimatorik/module_makise_gui_elements_by_vadimatorik.git
+[submodule "bsp/submodule/module_mc_hardware_interfaces"]
+	path = bsp/submodule/module_mc_hardware_interfaces
+	url = git@github.com:Vadimatorik/module_mc_hardware_interfaces.git
+[submodule "bsp/submodule/module_freertos_for_stm32f4"]
+	path = bsp/submodule/module_freertos_for_stm32f4
+	url = git@github.com:Vadimatorik/module_freertos_for_stm32f4.git
+[submodule "bsp/submodule/module_stm32f4_low_level_by_st"]
+	path = bsp/submodule/module_stm32f4_low_level_by_st
+	url = git@github.com:Vadimatorik/module_stm32f4_low_level_by_st.git
