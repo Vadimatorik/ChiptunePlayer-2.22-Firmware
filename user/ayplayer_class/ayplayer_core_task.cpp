@@ -141,7 +141,7 @@ void AyPlayer::buttonClickHandlerTask (  void* obj  ) {
 					}
 				}
 
-				m_slider_set_value(	&o->g.sliders[ o->g.currentSlider ],
+				m_slider_set_value(	o->g.sliders[ o->g.currentSlider ],
 									value[ o->g.currentSlider ] );
 
 				o->setValueEqualizer();
@@ -164,7 +164,7 @@ void AyPlayer::buttonClickHandlerTask (  void* obj  ) {
 					}
 				}
 
-				m_slider_set_value(	&o->g.sliders[ o->g.currentSlider ],
+				m_slider_set_value(	o->g.sliders[ o->g.currentSlider ],
 									value[ o->g.currentSlider ] );
 
 				o->setValueEqualizer();
@@ -225,6 +225,26 @@ void AyPlayer::playTask (  void* obj  ) {
  */
 void AyPlayer::mainTask ( void* obj ) {
 	AyPlayer* o =( AyPlayer* ) obj;
+
+	if ( o->fsmStepFuncHardwareMcInit() != 0 )
+		NVIC_SystemReset();
+
+	if ( o->fsmStepFuncFreeRtosthisInit() != 0 )
+			NVIC_SystemReset();
+	if ( o->fsmStepFuncGuiInit() != 0 )
+			NVIC_SystemReset();
+	if ( o->fsmStepFuncMicroSdInit() != 0 )
+			NVIC_SystemReset();
+	if ( o->fsmStepFuncIndexingSupportedFiles() != 0 )
+			NVIC_SystemReset();
+
+	if ( o->fsmStepFuncSortingFileList() != 0 )
+				NVIC_SystemReset();
+
+	if ( o->fsmStepFuncInitMainWindow() != 0 )
+					NVIC_SystemReset();
+
+
 	/// Счетчики отсчета времени.
 	int32_t incStabilTime	= INC_AND_DEC_STABIL_TIME;
 	int32_t decStabilTime	= INC_AND_DEC_STABIL_TIME;

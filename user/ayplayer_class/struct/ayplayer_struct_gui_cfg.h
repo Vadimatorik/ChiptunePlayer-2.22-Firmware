@@ -13,7 +13,7 @@ struct AyPlayerGuiModuleStyleCfg {
 	const MakiseStyle_SList						ssl;
 	const MakiseStyle_SListItem					sslItem;
 	const MakiseStyle_SMPlayerStatusBar			statusBarCfg;
-	const MPlayerStatusBar_CallbackFunc			tatusBarCallbackCfg;
+	const MPlayerStatusBar_CallbackFunc			statusBarCallbackCfg;
 	const MakiseStyle_PlayBar					playBarStyle;
 	const MakiseStyle_SMSlimHorizontalList		horizontalListStyle;
 	const MakiseStyle							m;
@@ -22,10 +22,10 @@ struct AyPlayerGuiModuleStyleCfg {
 struct AyPlayerModuleGui {
 	MMessageWindow								mw;
 	MSList										sl;
-	MSList_Item									slItem[ 4 ];
+	MSList_Item*								slItem[ 4 ];
 	MPlayerStatusBar							sb;
 	MPlayBar									pb;
 	MSlimHorizontalList							shl;
-	MSlider										sliders[ 6 ];
+	MSlider*									sliders[ 6 ];
 	int32_t										currentSlider;
 };

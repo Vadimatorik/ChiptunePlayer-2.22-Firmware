@@ -1,6 +1,7 @@
 #include "ayplayer.h"
 
-/*
+#include "ayplayer_fat_error_string.h"
+
 #include "makise_gui.h"
 #include "makise.h"
 
@@ -13,22 +14,16 @@ extern MakiseDriver			makiseGuiDriver;
 }
 
 void AyPlayer::initGuiStatusBar( void ) {
-	this->g.sb	=	( MPlayerStatusBar* )pvPortMalloc( sizeof( MPlayerStatusBar ) );
-	assertParam( this->g.sb );
-
-	m_create_player_status_bar(	this->g.sb,
+	m_create_player_status_bar(	&this->g.sb,
 								&makiseHost.host,
 								mp_rel(	0,	0,
 										128, 12	),
-								&this->gui->statusBarCfg,
-								&this->gui->statusBarCallbackCfg	);
+								&this->cfg->gui->statusBarCfg,
+								&this->cfg->gui->statusBarCallbackCfg	);
 }
 
 void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
-	this->g.sl	=	( MSList* )pvPortMalloc( sizeof( MSList ) );
-	assertParam( this->g.sl );
-
-	m_create_slist(	this->g.sl,
+	m_create_slist(	&this->g.sl,
 					&makiseHost.host,
 					mp_rel( 0,	11,
 							128, 64 - 11 ),
@@ -36,8 +31,8 @@ void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 					nullptr,
 					nullptr,
 					MSList_List,
-					&this->gui->ssl,
-					&this->gui->sslItem );
+					&this->cfg->gui->ssl,
+					&this->cfg->gui->sslItem );
 
 	/// Привязка list-а к его элементам.
 	for ( int i = 0; i < 4; i++ ) {
@@ -45,16 +40,16 @@ void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 		assertParam( this->g.slItem[ i ] );
 
 		this->g.slItem[ i ]->text	=	nullptr;
-		m_slist_add( this->g.sl, this->g.slItem[ i ] );
+		m_slist_add( &this->g.sl, this->g.slItem[ i ] );
 	}
 }
 
 void AyPlayer::removeWindowIndexingSupportedFiles( void ) {
 	/// Отвязываем от контейнера.
-	makise_g_cont_rem( &this->g.sl->el );
+	makise_g_cont_rem( &this->g.sl.el );
 
 	/// Удаляем сам список.
-	vPortFree( this->g.sl );
+	vPortFree( &this->g.sl );
 
 	/// Удаляем элементы списка.
 	for ( int i = 0; i < 4; i++ ) {
@@ -63,63 +58,51 @@ void AyPlayer::removeWindowIndexingSupportedFiles( void ) {
 }
 
 void AyPlayer::initWindowSortingFileList ( void ) {
-	this->g.mw	=	( MMessageWindow* )pvPortMalloc( sizeof( MMessageWindow ) );
-	assertParam( this->g.sl );
-
-	m_create_message_window(	this->g.mw,
+	m_create_message_window(	&this->g.mw,
 								&makiseHost.host,
 								mp_rel( 0,	11,
 										128, 64 - 11 ),
 								"Sorting list file...",
-								&this->gui->smw );
+								&this->cfg->gui->smw );
 	this->guiUpdate();
 }
 
 void AyPlayer::removeWindowSortingFileList ( void) {
-	makise_g_cont_rem( &this->g.mw->el );
+	makise_g_cont_rem( &this->g.mw.el );
 
-	vPortFree( this->g.mw );
+	vPortFree( &this->g.mw );
 }
 
 void AyPlayer::initPlayWindow ( void ) {
-	this->g.pb	=	( MPlayBar* )pvPortMalloc( sizeof( MPlayBar ) );
-	assertParam( this->g.pb );
-
-	mCreatePlayBar(	this->g.pb,
+	mCreatePlayBar(	&this->g.pb,
 					&makiseHost.host,
 					mp_rel(	0,	57,
 							128, 7	),
 					1,
-					&this->gui->playBarStyle );
+					&this->cfg->gui->playBarStyle );
 
 	/// Время трека сразу в статус бар.
-	mPlayBarSetNewTrack( this->g.pb, this->fat.currentFileInfo.lenTick / 50 );
+	mPlayBarSetNewTrack( &this->g.pb, this->fat.currentFileInfo.lenTick / 50 );
 
-	this->g.shl	=	( MSlimHorizontalList* )pvPortMalloc( sizeof( MSlimHorizontalList ) );
-	assertParam( this->g.shl );
-
-	mCreateSlimHorizontalList(	this->g.shl,
+	mCreateSlimHorizontalList(	&this->g.shl,
 								&makiseHost.host,
 								mp_rel(	0,	11,
 										128, 12	),
-								&this->gui->horizontalListStyle	);
+								&this->cfg->gui->horizontalListStyle	);
 
-	 * Запускаем скролл строки трека в главном
-	 * окне и инициализируем все элементы.
+	// Запускаем скролл строки трека в главном
+	 // окне и инициализируем все элементы.
 	this->trackMainWindowInit();
 
 	/// Указываем колличество элементов в директории.
-	mSlimHorizontalSetItemCount( this->g.shl, this->countFileInCurrentDir );
+	mSlimHorizontalSetItemCount( &this->g.shl, this->countFileInCurrentDir );
 }
 
 void AyPlayer::removePlayWindow ( void ) {
 	USER_OS_STATIC_TIMER_STOP( this->timNameScroll );	/// Скролить строку теперь не нужно.
 
-	makise_g_cont_rem( &this->g.pb->el );
-	makise_g_cont_rem( &this->g.shl->el );
-
-	vPortFree( this->g.pb );
-	vPortFree( this->g.shl );
+	makise_g_cont_rem( &this->g.pb.el );
+	makise_g_cont_rem( &this->g.shl.el );
 }
 
 
@@ -132,14 +115,14 @@ void AyPlayer::initEqualizerWindow ( void ) {
 
 	for ( int i = 0; i < 6; i++ ) {
 		this->g.sliders[ i ]	=	( MSlider* )pvPortMalloc( sizeof( MSlider ) );
-		assertParam( this->g.sliders[ i ] );
+		assertParam( &this->g.sliders[ i ] );
 
 		m_create_slider(	this->g.sliders[ i ],
 							&makiseHost.host,
 							mp_rel(	x,	y,
 									w,	h	),
 							MSlider_Type_ReadWrite,
-							&this->gui->m	);
+							&this->cfg->gui->m	);
 
 		m_slider_set_range( this->g.sliders[ i ], 0, 255 );
 
@@ -198,7 +181,7 @@ void AyPlayer::errorMicroSdDraw ( const FRESULT r ) {
 
 		strcpy( &massage[ 4 ], s );
 		massage[ 3 ]	=	'\t';							/// В консоле удобнее через tab.
-		this->l->sendMessage( RTL_TYPE_M::INIT_ISSUE, massage );
+		this->cfg->l->sendMessage( RTL_TYPE_M::INIT_ISSUE, massage );
 
 		massage[ 3 ]	=	' ';							/// На экране однозначно на разных строках.
 
@@ -212,7 +195,7 @@ void AyPlayer::errorMicroSdDraw ( const FRESULT r ) {
 									mp_rel( 0,	11,
 											128, 64 - 11 ),
 									massage,
-									&this->gui->smw );
+									&this->cfg->gui->smw );
 		this->guiUpdate();
 
 		makise_g_cont_rem( &m->el );
@@ -248,10 +231,10 @@ extern ST7565		lcd;
 
 // Перерисовывает GUI и обновляет экран.
 void AyPlayer::guiUpdate ( void ) {
-	USER_OS_TAKE_MUTEX( this->os->mHost, portMAX_DELAY );
+	USER_OS_TAKE_MUTEX( this->cfg->os->mHost, portMAX_DELAY );
 	lcd.bufClear();
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_PREDRAW );
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_DRAW );
 	lcd.update();
-	USER_OS_GIVE_MUTEX( this->os->mHost );
-}*/
+	USER_OS_GIVE_MUTEX( this->cfg->os->mHost );
+}

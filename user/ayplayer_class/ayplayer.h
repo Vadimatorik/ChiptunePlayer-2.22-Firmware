@@ -253,6 +253,17 @@ private:
 	static void playTask ( void* obj );
 
 private:
+	int fsmStepFuncHardwareMcInit ( void );
+	int fsmStepFuncFreeRtosthisInit ( void );
+	int fsmStepFuncGuiInit ( void );
+	int fsmStepFuncMicroSdInit ( void );
+	int fsmStepFuncIndexingSupportedFiles ( void );
+	int fsmStepFuncSortingFileList ( void );
+	int fsmStepFuncCheckingChangeFatVolume ( void );
+	int fsmStepFuncCleanFlagChangeFatVolume ( void );
+	int fsmStepFuncInitMainWindow ( void );
+
+private:
 
 	/// В объекте fat для sd1 должена быть установлена актуальная директория с помощью f_chdir
 	/// Ну то есть мы указываем имя файла относительно текущей директории.

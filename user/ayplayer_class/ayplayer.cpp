@@ -1,7 +1,6 @@
 #include "ayplayer.h"
 #include "ayplayer_button.h"
 
-
 void AyPlayer::start ( void ) {
 	/*!
 	 * Основной поток проекта.

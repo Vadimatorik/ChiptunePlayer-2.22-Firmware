@@ -74,7 +74,7 @@ extern const AyPlayerGuiModuleStyleCfg ayGuiCfg = {
 		.bgColor						=	MC_White,
 		.borderColor					=	MC_Black
 	},
-	.tatusBarCallbackCfg = {
+	.statusBarCallbackCfg = {
 		.getStatePlay					=	ayplayerGetStatePlay,
 		.getPercentBattery				=	ayplayerGetPercentBattery
 	},
