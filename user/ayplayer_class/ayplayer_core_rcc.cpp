@@ -78,20 +78,7 @@ void AyPlayer::startBaseInterfaces ( void ) {
 }
 
 int AyPlayer::rccMaxFrequancyInit ( void ) {
-	RCC_RESULT	rccRes;
-
-	/// Пытаемся завестись в 120 МГц от внешнего кварца.
-	rccRes = this->setRccCfg( 0 );
-
-	if ( rccRes != RCC_RESULT::OK )
-		return -1;
-
-	/// Если упал именно внешний кварц.
-	if ( rccRes != RCC_RESULT::ERROR_OSC_INIT )
-		return -1;
-
-	this->rccIndex = RCC_SPEED_FREQ_VERY_HIGH;
-	if ( this->setRccCfg( this->rccIndex ) != RCC_RESULT::OK )
+	if ( this->setRccCfg( RCC_SPEED_FREQ_VERY_HIGH ) != RCC_RESULT::OK )
 		return -1;
 
 	return 0;

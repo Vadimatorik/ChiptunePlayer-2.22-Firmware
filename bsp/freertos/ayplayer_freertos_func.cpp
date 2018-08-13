@@ -3,9 +3,10 @@
 #include "stm32f4xx_hal.h"
 #include "timer.h"
 #include "FreeRTOS.h"
+#include "FreeRTOSConfig.h"
 
 extern "C" {
-static const uint8_t freeRTOSMemoryScheme = configUSE_HEAP_SCHEME;
+volatile uint8_t freeRTOSMemoryScheme = configUSE_HEAP_SCHEME;
 }
 
 #ifdef configGENERATE_RUN_TIME_STATS

@@ -44,6 +44,18 @@ void DMA1_Stream4_IRQHandler		( void ) {
 	boardSpi.irqHandler();
 }
 
+void DMA2_Stream3_IRQHandler		( void ) {
+	sd.dmaRxHandler();
+}
+
+void DMA2_Stream6_IRQHandler		( void ) {
+	sd.dmaTxHandler();
+}
+
+void SDIO_IRQHandler		( void ) {
+	sd.sdioHandler();
+}
+
 void USART1_IRQHandler				( void ) {
 	usart.irqHandler();
 }

@@ -40,3 +40,6 @@
 [submodule "bsp/submodule/module_system_dummy"]
 	path = bsp/submodule/module_system_dummy
 	url = git@github.com:Vadimatorik/module_system_dummy.git
+[submodule "openocd_configs"]
+	path = openocd_configs
+	url = git@github.com:Vadimatorik/openocd_configs.git

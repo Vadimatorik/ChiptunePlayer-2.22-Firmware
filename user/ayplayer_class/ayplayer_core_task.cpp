@@ -226,11 +226,7 @@ void AyPlayer::playTask (  void* obj  ) {
 void AyPlayer::mainTask ( void* obj ) {
 	AyPlayer* o =( AyPlayer* ) obj;
 
-	if ( o->fsmStepFuncHardwareMcInit() != 0 )
-		NVIC_SystemReset();
 
-	if ( o->fsmStepFuncFreeRtosthisInit() != 0 )
-			NVIC_SystemReset();
 	if ( o->fsmStepFuncGuiInit() != 0 )
 			NVIC_SystemReset();
 	if ( o->fsmStepFuncMicroSdInit() != 0 )

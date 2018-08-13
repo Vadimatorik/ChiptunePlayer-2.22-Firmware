@@ -1,6 +1,7 @@
 #include "timer.h"
 #include "user_os.h"
 #include "ayplayer_clock.h"
+#include "FreeRTOSConfig.h"
 
 /// TIM6 от APB1.
 /// Генерирует прерывания 50 раз в секунду.

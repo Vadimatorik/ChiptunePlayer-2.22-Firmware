@@ -252,9 +252,12 @@ private:
 	static void playTickHandlerTask ( void* obj );
 	static void playTask ( void* obj );
 
-private:
+public:
 	int fsmStepFuncHardwareMcInit ( void );
 	int fsmStepFuncFreeRtosthisInit ( void );
+
+private:
+
 	int fsmStepFuncGuiInit ( void );
 	int fsmStepFuncMicroSdInit ( void );
 	int fsmStepFuncIndexingSupportedFiles ( void );
