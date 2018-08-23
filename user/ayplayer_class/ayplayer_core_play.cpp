@@ -5,7 +5,7 @@
 /// 1 нет такого номера в списке.
 /// -1 проблема с microsd.
 int AyPlayer::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList ) {
-	FIL*	f;
+	FIL*	f = nullptr;
 
 	/*!
 	 * Выбираем, какой список открыть (список должен быть сформирован заранее).
@@ -102,7 +102,7 @@ int AyPlayer::startPlayFile ( void ) {
 	this->volumeSet(	this->volumeTable[ this->currentVolumeIndex ],
 						this->volumeTable[ this->currentVolumeIndex ]	);
 
-	int r;
+	int r = 0;
 	switch( static_cast< uint32_t >( this->fat.currentFileInfo.format ) ) {
 	case static_cast< uint32_t >( AyPlayFileFormat::psg ):
 		this->cfg->ay->setPlayFileName( this->fat.currentFileInfo.fileName );

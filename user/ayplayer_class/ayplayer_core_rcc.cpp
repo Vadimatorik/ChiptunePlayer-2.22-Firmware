@@ -1,16 +1,16 @@
 #include "ayplayer.h"
 #include "ayplayer_clock.h"
 
-RCC_RESULT AyPlayer::setRccCfg ( uint32_t numberCfg ) {
+RccResult AyPlayer::setRccCfg ( uint32_t numberCfg ) {
 	__disable_irq();
 
 	this->cfg->mcu->wdt->resetService();
 	this->offObjDependingRcc();
 
-	RCC_RESULT r;
+	RccResult r;
 	r = this->cfg->mcu->rcc->setCfg( numberCfg );
 
-	if ( r == RCC_RESULT::OK ) {
+	if ( r == RccResult::ok ) {
 		this->rccIndex = numberCfg;
 		reinitObjDependingRcc();
 		SysTick_Config( SystemCoreClock / 1000 );
@@ -78,7 +78,7 @@ void AyPlayer::startBaseInterfaces ( void ) {
 }
 
 int AyPlayer::rccMaxFrequancyInit ( void ) {
-	if ( this->setRccCfg( RCC_SPEED_FREQ_VERY_HIGH ) != RCC_RESULT::OK )
+	if ( this->setRccCfg( RCC_SPEED_FREQ_VERY_HIGH ) != RccResult::ok )
 		return -1;
 
 	return 0;
