@@ -1,6 +1,6 @@
 #include "pwr.h"
 
-pwrCfg pwrCfg = {
+PwrCfg pwrCfg = {
 	.cfg = {
 		/// Min: 2.65; Typ: 2.84; Max: 3.02
 		.PVDLevel		=	PWR_PVDLEVEL_5,

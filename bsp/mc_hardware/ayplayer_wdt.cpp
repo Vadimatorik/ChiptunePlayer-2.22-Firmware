@@ -1,6 +1,6 @@
 #include "wdt.h"
 
-const wdtCfg wdtCfg = {
+const WdtCfg wdtCfg = {
 	.taskPrio			= 1,
 	.runTimeMs			= 1000,
 	.startupTimeMs		= 5000,

@@ -1,40 +1,40 @@
 #include "pin.h"
 #include "port.h"
 
-extern const pinCfg		adcCfg;
-extern const pinCfg		buttonIncCfg;
-extern const pinCfg		buttonDecCfg;
-extern const pinCfg		lcdClkCfg;
-extern const pinCfg		lcdPwmCfg;
-extern const pinCfg		lcdResCfg;
-extern const pinCfg		lcdDcCfg;
-extern const pinCfg		lcdCsCfg;
-extern const pinCfg		sd1SmdCfg;
-extern const pinCfg		sdIoAndClkCfg;
-extern const pinCfg		sdPushCfg;
-extern const pinCfg		sdCheckerValueSetter;
-extern const pinCfg		usbCfg;
-extern const pinCfg		spiBoardTxCfg;
-extern const pinCfg		spiBoardClkCfg;
-extern const pinCfg		boardGpio1;
-extern const pinCfg		boardGpio2;
-extern const pinCfg		boardGpio3;
-extern const pinCfg		boardGpio4;
-extern const pinCfg		jtagPart1Cfg;
-extern const pinCfg		jtagPart1Cfg;
-extern const pinCfg		pwr5vOnCfg;
-extern const pinCfg		pwrOnCfg;
-extern const pinCfg		tpStCfg;
-extern const pinCfg		tpChCfg;
-extern const pinCfg		uartDebugCfg;
-extern const pinCfg		br0Cfg;
-extern const pinCfg		br1Cfg;
-extern const pinCfg		br2Cfg;
-extern const pinCfg		bc0Cfg;
-extern const pinCfg		bc1Cfg;
-extern const pinCfg		bc2Cfg;
+extern const PinCfg		adcCfg;
+extern const PinCfg		buttonIncCfg;
+extern const PinCfg		buttonDecCfg;
+extern const PinCfg		lcdClkCfg;
+extern const PinCfg		lcdPwmCfg;
+extern const PinCfg		lcdResCfg;
+extern const PinCfg		lcdDcCfg;
+extern const PinCfg		lcdCsCfg;
+extern const PinCfg		sd1SmdCfg;
+extern const PinCfg		sdIoAndClkCfg;
+extern const PinCfg		sdPushCfg;
+extern const PinCfg		sdCheckerValueSetter;
+extern const PinCfg		usbCfg;
+extern const PinCfg		spiBoardTxCfg;
+extern const PinCfg		spiBoardClkCfg;
+extern const PinCfg		boardGpio1;
+extern const PinCfg		boardGpio2;
+extern const PinCfg		boardGpio3;
+extern const PinCfg		boardGpio4;
+extern const PinCfg		jtagPart1Cfg;
+extern const PinCfg		jtagPart1Cfg;
+extern const PinCfg		pwr5vOnCfg;
+extern const PinCfg		pwrOnCfg;
+extern const PinCfg		tpStCfg;
+extern const PinCfg		tpChCfg;
+extern const PinCfg		uartDebugCfg;
+extern const PinCfg		br0Cfg;
+extern const PinCfg		br1Cfg;
+extern const PinCfg		br2Cfg;
+extern const PinCfg		bc0Cfg;
+extern const PinCfg		bc1Cfg;
+extern const PinCfg		bc2Cfg;
 
-extern const pinCfg gpCfg[ 35 ] = {
+extern const PinCfg gpCfg[ 35 ] = {
 	buttonIncCfg,					buttonDecCfg,				/// Button.
 	br0Cfg,			br1Cfg,			br2Cfg,						/// KeyBoard.
 	bc0Cfg,			bc1Cfg,			bc2Cfg,
