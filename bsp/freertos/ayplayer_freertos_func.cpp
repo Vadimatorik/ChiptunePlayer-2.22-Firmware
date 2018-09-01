@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal_conf.h"
 #include "stm32f4xx_hal.h"
-#include "timer.h"
+#include "timer_counter.h"
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 

@@ -7,9 +7,12 @@
 #include "wdt.h"
 #include "spi.h"
 #include "pin.h"
+#include "pin_multifunc_it.h"
 #include "uart.h"
 #include "port.h"
-#include "timer.h"
+#include "timer_counter.h"
+#include "timer_interrupt.h"
+#include "timer_pwm_one_channel.h"
 #include "adc_one_channel.h"
 #include "microsd_card_sdio.h"
 

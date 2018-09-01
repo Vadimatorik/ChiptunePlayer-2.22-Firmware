@@ -1,4 +1,6 @@
-#include "timer.h"
+#include "timer_counter.h"
+#include "timer_interrupt.h"
+#include "timer_pwm_one_channel.h"
 #include "user_os.h"
 #include "ayplayer_clock.h"
 #include "FreeRTOSConfig.h"
