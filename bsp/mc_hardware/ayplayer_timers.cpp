@@ -7,7 +7,7 @@
 
 /// TIM6 от APB1.
 /// Генерирует прерывания 50 раз в секунду.
-const clkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
+const ClkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				=	9000 - 1,
 		.prescaler			=	10 - 1,
@@ -27,7 +27,7 @@ const clkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-const timInterruptCfg timInterruptCfg = {
+const TimInterruptCfg timInterruptCfg = {
 	.tim			= TIM6,
 	.cfg			= timInterruptClkParam,
 	.countCfg		= AYPLAYER_RCC_CFG_COUNT,
@@ -37,7 +37,7 @@ TimInterrupt interruptAy( &timInterruptCfg );
 
 /// Подцветка дисплея.
 /// 1 кГц, ШИМ.
-const clkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
+const ClkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				= 	500 - 1,
 		.prescaler			=	1000 - 1,
@@ -57,7 +57,7 @@ const clkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-const timPwmOneChannelCfg lcdPwmCfg = {
+const TimPwmOneChannelCfg lcdPwmCfg = {
 	.tim			= TIM1,
 	.cfg			= lcdPwmClkParam,
 	.countCfg		= AYPLAYER_RCC_CFG_COUNT,
@@ -70,7 +70,7 @@ TimPwmOneChannel lcdPwm( &lcdPwmCfg );
 #ifdef configGENERATE_RUN_TIME_STATS
 
 /// Прерывания с частотый 20 кГц.
-const clkTimBaseCfg tim5BaseCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
+const ClkTimBaseCfg tim5BaseCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				=	0xFFFFFFFF,
 		.prescaler			=	225 - 1,

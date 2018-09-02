@@ -1,6 +1,6 @@
 #include "ayplayer_clock.h"
 
-const rccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
+const RccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.osc = {
 			OSC_HSE_CFG,

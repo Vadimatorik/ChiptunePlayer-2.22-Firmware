@@ -1,6 +1,6 @@
 #include "uart.h"
 
-const uartCfg usartCfg = {
+const UartCfg usartCfg = {
 	.uart				=	USART1,
 	.de					=	nullptr,
 	.baudrate			=	115200,
