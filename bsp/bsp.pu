@@ -1,5 +1,6 @@
 @startuml
 
+/'										Интерфейсы													'/
 package "MC_HARDWARE_INTERFACES\t" as mc_interfaces {
 
 package "I_ADC\t" as i_adc {
@@ -59,6 +60,7 @@ package "I_PORT\t" as i_port {
 
 }
 
+/'								Реализация интерфейсов под STM32										'/
 package "MC_INTERFACES_IMPLEMENTATION_FOR_STM32\t" as mc_implementation {
 
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/wdt.h
@@ -95,5 +97,12 @@ PinMultifunc 		.[hidden]right.> 	Pin
 }
 
 mc_interfaces .[hidden]up.>  mc_implementation
+
+/'										Сдвиговые регистры												'/
+package "ShiftRegister" {
+
+!include %dirpath%/submodule/module_shift_register/shift_register_8bit_port.h
+
+}
 
 @enduml

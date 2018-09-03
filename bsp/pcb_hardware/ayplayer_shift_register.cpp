@@ -5,7 +5,7 @@
 
 uint8_t boardShiftRegistersData[ 3 ];
 
-const ShiftRegisterStaticCfg boardShiftRegistersCfg = {
+const ShiftRegister::BaseStaticCfg boardShiftRegistersCfg = {
 	.st				=	&shStrob,
 	.dataArray		=	boardShiftRegistersData,
 	.arraySize		=	sizeof( boardShiftRegistersData ),
@@ -14,4 +14,4 @@ const ShiftRegisterStaticCfg boardShiftRegistersCfg = {
 	.mutex			=	&osData.mBoardSpi
 };
 
-ShiftRegister boardShiftRegisters( &boardShiftRegistersCfg );
+ShiftRegister::Base boardShiftRegisters( &boardShiftRegistersCfg );

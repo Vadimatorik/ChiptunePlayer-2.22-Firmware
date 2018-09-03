@@ -9,7 +9,7 @@
 #include "ay_ym_low_lavel.h"
 #include "ay_ym_file_play.h"
 
-extern ShiftRegister			boardShiftRegisters;
+extern ShiftRegister::Base		boardShiftRegisters;
 extern MicrosdSdio				sd;
 extern ST7565					lcd;
 extern AD5204					soundDp;
@@ -21,4 +21,4 @@ extern ShiftRegisterPin			ay2Res;
 extern ShiftRegisterPin			bc1;
 extern ShiftRegisterPin			bdir;
 
-extern ShiftRegisterPort8bit	ayPorts[ 2 ];
+extern ShiftRegister::Port8bit	ayPorts[ 2 ];
