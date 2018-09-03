@@ -99,10 +99,8 @@ PinMultifunc 		.[hidden]right.> 	Pin
 mc_interfaces .[hidden]up.>  mc_implementation
 
 /'										Сдвиговые регистры												'/
-package "ShiftRegister" {
-
+!include %dirpath%/submodule/module_shift_register/shift_register.h
+!include %dirpath%/submodule/module_shift_register/shift_register_pin.h
 !include %dirpath%/submodule/module_shift_register/shift_register_8bit_port.h
-
-}
 
 @enduml
