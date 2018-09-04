@@ -3,17 +3,17 @@
 #include "pin.h"
 
 struct GpioPwr {					/// Питание на плате.
-	PinBase*						const pwr5v;
-	PinBase*						const allPwr;
+	McHardwareInterfaces::Pin*						const pwr5v;
+	McHardwareInterfaces::Pin*						const allPwr;
 };
 
 struct GpioVolumeRocker {			/// Качелька громкости.
-	PinBase*						const inc;
-	PinBase*						const dec;
+	McHardwareInterfaces::Pin*						const inc;
+	McHardwareInterfaces::Pin*						const dec;
 };
 
 /// Все используемые программно выводы плеера.
 struct AyplayerGpio {
-	GpioPwr							pwr;
-	GpioVolumeRocker				vr;
+	GpioPwr												pwr;
+	GpioVolumeRocker									vr;
 };

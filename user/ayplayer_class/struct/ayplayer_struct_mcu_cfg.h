@@ -4,19 +4,19 @@
 #include "ayplayer_struct_gpio_cfg.h"
 
 struct AyPlayerMcuCfg {
-	WdtBase*									const	wdt;
-	const AyplayerGpio*							const	gpio;
-	GlobalPortBase*								const	gp;
-	UartBase*									const	debugUart;
-	RccBase*									const	rcc;
-	SpiMaster8BitBase*							const	spiLcd;
-	SpiMaster8BitBase*							const	spiBoard;
-	AdcOneChannelBase*							const	adcBat;
-	TimPwmOneChannelBase*						const	lcdPwmTim;
-	TimInterruptBase*							const	interruptAyTim;
-	Pwr*										const	pwr;
+	McHardwareInterfaces::Wdt*						const	wdt;
+	const AyplayerGpio*								const	gpio;
+	McHardwareInterfaces::GlobalPort*				const	gp;
+	McHardwareInterfaces::Uart*						const	debugUart;
+	McHardwareInterfaces::Rcc*						const	rcc;
+	McHardwareInterfaces::SpiMaster8Bit*			const	spiLcd;
+	McHardwareInterfaces::SpiMaster8Bit*			const	spiBoard;
+	McHardwareInterfaces::AdcOneChannel*			const	adcBat;
+	McHardwareInterfaces::TimPwmOneChannel*			const	lcdPwmTim;
+	McHardwareInterfaces::TimInterrupt*				const	interruptAyTim;
+	Pwr*											const	pwr;
 
 #ifdef configGENERATE_RUN_TIME_STATS
-	TimCounter*									const	timRunTimeStatus;
+	TimCounter*										const	timRunTimeStatus;
 #endif
 };

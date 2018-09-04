@@ -118,7 +118,7 @@ private:
 	 * Замечание: в случае, если не удалось настроить заданную конфигурацию - микроконтроллер переходит
 	 * в режим работы по умолчанию.
 */
-	RccResult		setRccCfg							( uint32_t numberCfg );
+	McHardwareInterfaces::RccResult		setRccCfg							( uint32_t numberCfg );
 
 
 	 // Отключает все объекты, зависящие

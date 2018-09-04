@@ -8,8 +8,8 @@
 #define AY_YM_FILE_PLAY_FLASH_BUFFER_SIZE_BYTE				1024 * 10
 
 struct AyYmFilePlayCfg {
-	AyYmLowLavel*		ayLow;
-	PinBase*			pwr;				/// Массив выводов управления питанием всех AY.
+	AyYmLowLavel*							ayLow;
+	McHardwareInterfaces::Pin*			pwr;				/// Массив выводов управления питанием всех AY.
 };
 
 class AyYmFilePlay : public AyYmFilePlayBase {
