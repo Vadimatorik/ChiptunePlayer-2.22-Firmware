@@ -7,7 +7,7 @@
 
 /// TIM6 от APB1.
 /// Генерирует прерывания 50 раз в секунду.
-const ClkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
+const McHardwareInterfacesImplementation::ClkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				=	9000 - 1,
 		.prescaler			=	10 - 1,
@@ -27,17 +27,17 @@ const ClkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-const TimInterruptCfg timInterruptCfg = {
+const McHardwareInterfacesImplementation::TimInterruptCfg timInterruptCfg = {
 	.tim			= TIM6,
 	.cfg			= timInterruptClkParam,
 	.countCfg		= AYPLAYER_RCC_CFG_COUNT,
 };
 
-TimInterrupt interruptAy( &timInterruptCfg );
+McHardwareInterfacesImplementation::TimInterrupt interruptAy( &timInterruptCfg );
 
 /// Подцветка дисплея.
 /// 1 кГц, ШИМ.
-const ClkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
+const McHardwareInterfacesImplementation::ClkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				= 	500 - 1,
 		.prescaler			=	1000 - 1,
@@ -57,7 +57,7 @@ const ClkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-const TimPwmOneChannelCfg lcdPwmCfg = {
+const McHardwareInterfacesImplementation::TimPwmOneChannelCfg lcdPwmCfg = {
 	.tim			= TIM1,
 	.cfg			= lcdPwmClkParam,
 	.countCfg		= AYPLAYER_RCC_CFG_COUNT,
@@ -65,12 +65,12 @@ const TimPwmOneChannelCfg lcdPwmCfg = {
 	.polarity		= TIM_OCPOLARITY_LOW
 };
 
-TimPwmOneChannel lcdPwm( &lcdPwmCfg );
+McHardwareInterfacesImplementation::TimPwmOneChannel lcdPwm( &lcdPwmCfg );
 
 #ifdef configGENERATE_RUN_TIME_STATS
 
 /// Прерывания с частотый 20 кГц.
-const ClkTimBaseCfg tim5BaseCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
+const McHardwareInterfacesImplementation::ClkTimBaseCfg tim5BaseCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.period				=	0xFFFFFFFF,
 		.prescaler			=	225 - 1,
@@ -90,12 +90,12 @@ const ClkTimBaseCfg tim5BaseCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-timCounterCfg timRunTimeStatsCfg = {
+McHardwareInterfacesImplementation::TimCounterCfg timRunTimeStatsCfg = {
 	.tim					= TIM5,
 	.cfg					= tim5BaseCfg,
 	.countCfg				= AYPLAYER_RCC_CFG_COUNT
 };
 
-TimCounter timRunTimeStats( &timRunTimeStatsCfg );
+McHardwareInterfacesImplementation::TimCounter timRunTimeStats( &timRunTimeStatsCfg );
 
 #endif

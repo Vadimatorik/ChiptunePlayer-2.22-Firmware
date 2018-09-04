@@ -1,6 +1,6 @@
 #include "ayplayer_clock.h"
 
-const RccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
+const McHardwareInterfacesImplementation::RccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
 		.osc = {
 			OSC_HSE_CFG,
@@ -59,4 +59,4 @@ const RccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	},
 };
 
-Rcc rcc( clockCfg, AYPLAYER_RCC_CFG_COUNT );
+McHardwareInterfacesImplementation::Rcc rcc( clockCfg, AYPLAYER_RCC_CFG_COUNT );

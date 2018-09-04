@@ -1,6 +1,6 @@
 #include "uart.h"
 
-const UartCfg usartCfg = {
+const McHardwareInterfacesImplementation::UartCfg usartCfg = {
 	.uart				=	USART1,
 	.de					=	nullptr,
 	.baudrate			=	115200,
@@ -9,4 +9,4 @@ const UartCfg usartCfg = {
 	.dmaTxCh			=	DMA_CHANNEL_4,
 };
 
-Uart usart( &usartCfg );
+McHardwareInterfacesImplementation::Uart usart( &usartCfg );

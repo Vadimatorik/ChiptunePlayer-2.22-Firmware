@@ -2,7 +2,7 @@
 #include "port.h"
 
 /// ADC.
-extern const PinCfg adcCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg adcCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_0 |					/// Bat		*	0.5.
@@ -13,7 +13,7 @@ extern const PinCfg adcCfg = {
 };
 
 /// Качелька громкости.
-extern const PinCfg buttonIncCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg buttonIncCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_7,
@@ -21,7 +21,7 @@ extern const PinCfg buttonIncCfg = {
 	}
 };
 
-extern const PinCfg buttonDecCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg buttonDecCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_9,
@@ -30,7 +30,7 @@ extern const PinCfg buttonDecCfg = {
 };
 
 /// LCD.
-extern const PinCfg lcdClkCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg lcdClkCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_5 | GPIO_PIN_7,
@@ -41,7 +41,7 @@ extern const PinCfg lcdClkCfg = {
 	}
 };
 
-extern const PinCfg lcdPwmCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg lcdPwmCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_8,
@@ -52,7 +52,7 @@ extern const PinCfg lcdPwmCfg = {
 	}
 };
 
-extern const PinCfg lcdResCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg lcdResCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -60,7 +60,7 @@ extern const PinCfg lcdResCfg = {
 	}
 };
 
-extern const PinCfg lcdDcCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg lcdDcCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_0,
@@ -68,7 +68,7 @@ extern const PinCfg lcdDcCfg = {
 	}
 };
 
-extern const PinCfg lcdCsCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg lcdCsCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_1,
@@ -77,7 +77,7 @@ extern const PinCfg lcdCsCfg = {
 };
 
 /// SDIO.
-extern const PinCfg sd1SmdCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg sd1SmdCfg = {
 	.GPIOx			=	GPIOD,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -88,7 +88,7 @@ extern const PinCfg sd1SmdCfg = {
 	}
 };
 
-extern const PinCfg sdIoAndClkCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg sdIoAndClkCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12,
@@ -99,7 +99,7 @@ extern const PinCfg sdIoAndClkCfg = {
 	}
 };
 
-extern const PinCfg sdPushCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg sdPushCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_11,
@@ -107,7 +107,7 @@ extern const PinCfg sdPushCfg = {
 	}
 };
 
-extern const PinCfg sdCheckerValueSetter = {
+extern const McHardwareInterfacesImplementation::PinCfg sdCheckerValueSetter = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_12,
@@ -116,7 +116,7 @@ extern const PinCfg sdCheckerValueSetter = {
 };
 
 /// USB.
-extern const PinCfg usbCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg usbCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12,
@@ -128,7 +128,7 @@ extern const PinCfg usbCfg = {
 };
 
 /// BOARD.
-extern const PinCfg spiBoardTxCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg spiBoardTxCfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_3,
@@ -139,7 +139,7 @@ extern const PinCfg spiBoardTxCfg = {
 	}
 };
 
-extern const PinCfg spiBoardClkCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg spiBoardClkCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_10,
@@ -150,7 +150,7 @@ extern const PinCfg spiBoardClkCfg = {
 	}
 };
 
-extern const PinCfg boardGpio1 = {
+extern const McHardwareInterfacesImplementation::PinCfg boardGpio1 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_0,
@@ -158,7 +158,7 @@ extern const PinCfg boardGpio1 = {
 	}
 };
 
-extern const PinCfg boardGpio2 = {
+extern const McHardwareInterfacesImplementation::PinCfg boardGpio2 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_1,
@@ -166,7 +166,7 @@ extern const PinCfg boardGpio2 = {
 	}
 };
 
-extern const PinCfg boardGpio3 = {
+extern const McHardwareInterfacesImplementation::PinCfg boardGpio3 = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_2,
@@ -174,7 +174,7 @@ extern const PinCfg boardGpio3 = {
 	}
 };
 
-extern const PinCfg boardGpio4 = {
+extern const McHardwareInterfacesImplementation::PinCfg boardGpio4 = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_4,
@@ -183,7 +183,7 @@ extern const PinCfg boardGpio4 = {
 };
 
 /// JTAG.
-extern const PinCfg jtagPart1Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg jtagPart1Cfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15,
@@ -194,7 +194,7 @@ extern const PinCfg jtagPart1Cfg = {
 	}
 };
 
-extern const PinCfg jtagPart2Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg jtagPart2Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_3 | GPIO_PIN_4,
@@ -206,7 +206,7 @@ extern const PinCfg jtagPart2Cfg = {
 };
 
 /// PWR.
-extern const PinCfg pwr5vOnCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg pwr5vOnCfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_3,
@@ -214,7 +214,7 @@ extern const PinCfg pwr5vOnCfg = {
 	}
 };
 
-extern const PinCfg pwrOnCfg = {								/// Подача напряжения на всю плату
+extern const McHardwareInterfacesImplementation::PinCfg pwrOnCfg = {								/// Подача напряжения на всю плату
 	.GPIOx			=	GPIOB,							/// (может подаваться при нажатии на физическую
 	.init = {											/// клавишу включения).
 		.Pin		=	GPIO_PIN_5,
@@ -222,7 +222,7 @@ extern const PinCfg pwrOnCfg = {								/// Подача напряжения н
 	}
 };
 
-extern const PinCfg tpStCfg = {								/// Флаг окончания зарядки аккумулятора.
+extern const McHardwareInterfacesImplementation::PinCfg tpStCfg = {								/// Флаг окончания зарядки аккумулятора.
 	.GPIOx			=	GPIOC,							/// Подтягивается к земле по окончании зарядки.
 	.init = {											/// В противном случае находится в
 		.Pin		=	GPIO_PIN_13,					/// высокоимпедансном состоянии.
@@ -230,16 +230,16 @@ extern const PinCfg tpStCfg = {								/// Флаг окончания заря�
 	}
 };
 
-extern const PinCfg tpChCfg = {								/// Флаг того, что аккумулятор заряжается.
-	.GPIOx			=	GPIOB,							/// Подтягивается к земле на время зарядки.
-	.init = {											/// В противном случае находится в высокоимпедансном состоянии.
+extern const McHardwareInterfacesImplementation::PinCfg tpChCfg = {		/// Флаг того, что аккумулятор заряжается.
+	.GPIOx			=	GPIOB,											/// Подтягивается к земле на время зарядки.
+	.init = {															/// В противном случае находится в высокоимпедансном состоянии.
 		.Pin		=	GPIO_PIN_8,
 		PINS_INPUT_MODE
 	}
 };
 
 /// DEBUG_UART
-extern const PinCfg uartDebugCfg = {
+extern const McHardwareInterfacesImplementation::PinCfg uartDebugCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_6 | GPIO_PIN_7,
@@ -251,7 +251,7 @@ extern const PinCfg uartDebugCfg = {
 };
 
 /// Keyboard.
-extern const PinCfg br0Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg br0Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_6,
@@ -259,7 +259,7 @@ extern const PinCfg br0Cfg = {
 	}
 };
 
-extern const PinCfg br1Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg br1Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_15,
@@ -267,7 +267,7 @@ extern const PinCfg br1Cfg = {
 	}
 };
 
-extern const PinCfg br2Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg br2Cfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_14,
@@ -275,7 +275,7 @@ extern const PinCfg br2Cfg = {
 	}
 };
 
-extern const PinCfg bc0Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg bc0Cfg = {
 	.GPIOx			=	GPIOA,
 	.init = {
 		.Pin		=	GPIO_PIN_6,
@@ -283,7 +283,7 @@ extern const PinCfg bc0Cfg = {
 	}
 };
 
-extern const PinCfg bc1Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg bc1Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_4,
@@ -291,7 +291,7 @@ extern const PinCfg bc1Cfg = {
 	}
 };
 
-extern const PinCfg bc2Cfg = {
+extern const McHardwareInterfacesImplementation::PinCfg bc2Cfg = {
 	.GPIOx			=	GPIOC,
 	.init = {
 		.Pin		=	GPIO_PIN_5,

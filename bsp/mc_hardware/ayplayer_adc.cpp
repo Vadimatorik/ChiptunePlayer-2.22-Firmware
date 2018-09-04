@@ -11,11 +11,11 @@
 			.samplingTime		=	ADC_SAMPLETIME_480CYCLES			\
 		}
 
-const AdcOneChannelCfg adcBatCfg[] = {
+const McHardwareInterfacesImplementation::AdcOneChannelCfg adcBatCfg[] = {
 	ADC_BAT_CHANNEL_CFG( ADC_CLOCK_SYNC_PCLK_DIV8 ),
 	ADC_BAT_CHANNEL_CFG( ADC_CLOCK_SYNC_PCLK_DIV8 ),
 	ADC_BAT_CHANNEL_CFG( ADC_CLOCK_SYNC_PCLK_DIV8 ),
 	ADC_BAT_CHANNEL_CFG( ADC_CLOCK_SYNC_PCLK_DIV8 )
 };
 
-AdcOneChannel	adcBat( adcBatCfg, AYPLAYER_RCC_CFG_COUNT );
+McHardwareInterfacesImplementation::AdcOneChannel	adcBat( adcBatCfg, AYPLAYER_RCC_CFG_COUNT );

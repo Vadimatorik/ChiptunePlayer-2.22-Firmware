@@ -14,9 +14,9 @@ struct AyPlayerMcuCfg {
 	McHardwareInterfaces::AdcOneChannel*			const	adcBat;
 	McHardwareInterfaces::TimPwmOneChannel*			const	lcdPwmTim;
 	McHardwareInterfaces::TimInterrupt*				const	interruptAyTim;
-	Pwr*											const	pwr;
+	McHardwareInterfacesImplementation::Pwr*		const	pwr;
 
 #ifdef configGENERATE_RUN_TIME_STATS
-	TimCounter*										const	timRunTimeStatus;
+	McHardwareInterfacesImplementation::TimCounter*	const	timRunTimeStatus;
 #endif
 };

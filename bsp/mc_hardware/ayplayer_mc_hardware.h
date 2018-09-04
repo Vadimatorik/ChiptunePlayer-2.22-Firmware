@@ -16,38 +16,38 @@
 #include "adc_one_channel.h"
 #include "microsd_card_sdio.h"
 
-extern SpiMaster8Bit		boardSpi;
-extern Wdt					wdt;
-extern Uart					usart;
-extern TimInterrupt			interruptAy;
-extern TimPwmOneChannel		lcdPwm;
-extern SpiMaster8Bit		lcdSpi;
-extern SpiMaster8Bit		boardSpi;
-extern Rcc					rcc;
-extern Pwr					pwr;
-extern AdcOneChannel		adcBat;
-extern MicrosdSdio			sd;
+extern McHardwareInterfacesImplementation::SpiMaster8Bit		boardSpi;
+extern McHardwareInterfacesImplementation::Wdt					wdt;
+extern McHardwareInterfacesImplementation::Uart					usart;
+extern McHardwareInterfacesImplementation::TimInterrupt			interruptAy;
+extern McHardwareInterfacesImplementation::TimPwmOneChannel		lcdPwm;
+extern McHardwareInterfacesImplementation::SpiMaster8Bit		lcdSpi;
+extern McHardwareInterfacesImplementation::SpiMaster8Bit		boardSpi;
+extern McHardwareInterfacesImplementation::Rcc					rcc;
+extern McHardwareInterfacesImplementation::Pwr					pwr;
+extern McHardwareInterfacesImplementation::AdcOneChannel		adcBat;
+extern MicrosdSdio												sd;
 
-extern Pin					shStrob;
-extern PinMultifuncIt		buttonInc;
-extern PinMultifuncIt		buttonDec;
-extern Pin 					lcdRes;
-extern Pin					lcdDc;
-extern Pin					lcdCs;
-extern Pin					sdSignal;
-extern PinMultifuncIt		sdIn;
-extern Pin					shStrob;
-extern Pin					ad5204Cs;
-extern Pin					ltcCs;
-extern Pin					pwr5vOn	;
-extern Pin					pwrOn;
-extern Pin					tpSt;
-extern Pin					tpCh;
-extern Pin					keyboardStrings[ 3 ];
-extern Pin					keyboardColumns[ 3 ];
+extern McHardwareInterfacesImplementation::Pin					shStrob;
+extern McHardwareInterfacesImplementation::PinMultifuncIt		buttonInc;
+extern McHardwareInterfacesImplementation::PinMultifuncIt		buttonDec;
+extern McHardwareInterfacesImplementation::Pin 					lcdRes;
+extern McHardwareInterfacesImplementation::Pin					lcdDc;
+extern McHardwareInterfacesImplementation::Pin					lcdCs;
+extern McHardwareInterfacesImplementation::Pin					sdSignal;
+extern McHardwareInterfacesImplementation::PinMultifuncIt		sdIn;
+extern McHardwareInterfacesImplementation::Pin					shStrob;
+extern McHardwareInterfacesImplementation::Pin					ad5204Cs;
+extern McHardwareInterfacesImplementation::Pin					ltcCs;
+extern McHardwareInterfacesImplementation::Pin					pwr5vOn	;
+extern McHardwareInterfacesImplementation::Pin					pwrOn;
+extern McHardwareInterfacesImplementation::Pin					tpSt;
+extern McHardwareInterfacesImplementation::Pin					tpCh;
+extern McHardwareInterfacesImplementation::Pin					keyboardStrings[ 3 ];
+extern McHardwareInterfacesImplementation::Pin					keyboardColumns[ 3 ];
 
-extern GlobalPort			gp;
+extern McHardwareInterfacesImplementation::GlobalPort			gp;
 
 #ifdef configGENERATE_RUN_TIME_STATS
-extern TimCounter			timRunTimeStats;
+extern McHardwareInterfacesImplementation::TimCounter			timRunTimeStats;
 #endif

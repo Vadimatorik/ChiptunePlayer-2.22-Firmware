@@ -10,7 +10,7 @@ volatile uint8_t freeRTOSMemoryScheme = configUSE_HEAP_SCHEME;
 }
 
 #ifdef configGENERATE_RUN_TIME_STATS
-extern TimCounter						timRunTimeStats;
+extern McHardwareInterfacesImplementation::TimCounter			timRunTimeStats;
 #endif
 
 extern "C" {

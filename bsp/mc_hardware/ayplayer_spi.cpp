@@ -9,7 +9,7 @@ uint32_t baudratePrescalerLcdSpiCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 };
 
 /// Конфигурация SPI для работы с LCD
-SpiMaster8BitCfg lcdSpiCfg = {
+McHardwareInterfacesImplementation::SpiMaster8BitCfg lcdSpiCfg = {
 	.SPIx						=	SPI1,
 
 	.pinCs						=	nullptr,
@@ -26,7 +26,7 @@ SpiMaster8BitCfg lcdSpiCfg = {
 	.dmaRxCh					=	0
 };
 
-SpiMaster8Bit lcdSpi( &lcdSpiCfg );
+McHardwareInterfacesImplementation::SpiMaster8Bit lcdSpi( &lcdSpiCfg );
 
 uint32_t baudratePrescalerBoardSpiCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	SPI_BAUDRATEPRESCALER_2,
@@ -36,7 +36,7 @@ uint32_t baudratePrescalerBoardSpiCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 };
 
 /// Board SPI.
-SpiMaster8BitCfg boardSpiCfg = {
+McHardwareInterfacesImplementation::SpiMaster8BitCfg boardSpiCfg = {
 	.SPIx						=	SPI2,
 
 	.pinCs						=	nullptr,
@@ -53,4 +53,4 @@ SpiMaster8BitCfg boardSpiCfg = {
 	.dmaRxCh					=	0
 };
 
-SpiMaster8Bit boardSpi( &boardSpiCfg );
+McHardwareInterfacesImplementation::SpiMaster8Bit boardSpi( &boardSpiCfg );

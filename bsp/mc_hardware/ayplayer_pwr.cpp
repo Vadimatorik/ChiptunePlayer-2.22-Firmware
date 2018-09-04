@@ -1,6 +1,6 @@
 #include "pwr.h"
 
-PwrCfg pwrCfg = {
+McHardwareInterfacesImplementation::PwrCfg pwrCfg = {
 	.cfg = {
 		/// Min: 2.65; Typ: 2.84; Max: 3.02
 		.PVDLevel		=	PWR_PVDLEVEL_5,
@@ -8,4 +8,4 @@ PwrCfg pwrCfg = {
 	}
 };
 
-Pwr	pwr( &pwrCfg );
+McHardwareInterfacesImplementation::Pwr	pwr( &pwrCfg );
