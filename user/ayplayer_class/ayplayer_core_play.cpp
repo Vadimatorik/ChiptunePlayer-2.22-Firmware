@@ -119,38 +119,38 @@ int AyPlayer::startPlayFile ( void ) {
 void AyPlayer::setValueEqualizer (	void	) {
 	switch( this->g.currentSlider ) {
 	case 0:							/// A1.
-		this->cfg->pcb->dp->valueSet( 0, 2, this->eq.A1 );
+		this->cfg->pcb->dp->setValue( 0, 2, this->eq.A1 );
 		break;
 	case 1:							/// B1.
-		this->cfg->pcb->dp->valueSet( 0, 0, this->eq.B1 );
+		this->cfg->pcb->dp->setValue( 0, 0, this->eq.B1 );
 		break;
 	case 2:							/// C1.
-		this->cfg->pcb->dp->valueSet( 0, 1, this->eq.C1 );
+		this->cfg->pcb->dp->setValue( 0, 1, this->eq.C1 );
 		break;
 	case 3:							/// A2.
-		this->cfg->pcb->dp->valueSet( 0, 3, this->eq.A2 );
+		this->cfg->pcb->dp->setValue( 0, 3, this->eq.A2 );
 		break;
 	case 4:							/// B2.
-		this->cfg->pcb->dp->valueSet( 1, 0, this->eq.B2 );
+		this->cfg->pcb->dp->setValue( 1, 0, this->eq.B2 );
 		break;
 	case 5:							/// C2.
-		this->cfg->pcb->dp->valueSet( 1, 1, this->eq.C2 );
+		this->cfg->pcb->dp->setValue( 1, 1, this->eq.C2 );
 		break;
 	}
 }
 
 void AyPlayer::initEqualizer (	void	) {
-	this->cfg->pcb->dp->valueSet( 0, 2, this->eq.A1 );
-	this->cfg->pcb->dp->valueSet( 0, 0, this->eq.B1 );
-	this->cfg->pcb->dp->valueSet( 0, 1, this->eq.C1 );
-	this->cfg->pcb->dp->valueSet( 0, 3, this->eq.A2 );
-	this->cfg->pcb->dp->valueSet( 1, 0, this->eq.B2 );
-	this->cfg->pcb->dp->valueSet( 1, 1, this->eq.C2 );
+	this->cfg->pcb->dp->setValue( 0, 2, this->eq.A1 );
+	this->cfg->pcb->dp->setValue( 0, 0, this->eq.B1 );
+	this->cfg->pcb->dp->setValue( 0, 1, this->eq.C1 );
+	this->cfg->pcb->dp->setValue( 0, 3, this->eq.A2 );
+	this->cfg->pcb->dp->setValue( 1, 0, this->eq.B2 );
+	this->cfg->pcb->dp->setValue( 1, 1, this->eq.C2 );
 }
 
 void AyPlayer::volumeSet ( const uint8_t left, const uint8_t right ) {
-	this->cfg->pcb->dp->valueSet( 1, 2, left );			// Левый наушник.
-	this->cfg->pcb->dp->valueSet( 1, 3, right );			// Правый.
+	this->cfg->pcb->dp->setValue( 1, 2, left );			// Левый наушник.
+	this->cfg->pcb->dp->setValue( 1, 3, right );			// Правый.
 }
 
 /// Метод вызывается только из main окна.
