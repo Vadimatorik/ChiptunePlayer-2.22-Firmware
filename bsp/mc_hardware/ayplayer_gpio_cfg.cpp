@@ -1,5 +1,5 @@
+#include "port_global.h"
 #include "pin.h"
-#include "port.h"
 
 /// ADC.
 extern const McHardwareInterfacesImplementation::PinCfg adcCfg = {

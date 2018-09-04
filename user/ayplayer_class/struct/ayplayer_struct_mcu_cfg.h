@@ -6,7 +6,7 @@
 struct AyPlayerMcuCfg {
 	McHardwareInterfaces::Wdt*						const	wdt;
 	const AyplayerGpio*								const	gpio;
-	McHardwareInterfaces::GlobalPort*				const	gp;
+	McHardwareInterfaces::PortGlobal*				const	gp;
 	McHardwareInterfaces::Uart*						const	debugUart;
 	McHardwareInterfaces::Rcc*						const	rcc;
 	McHardwareInterfaces::SpiMaster8Bit*			const	spiLcd;

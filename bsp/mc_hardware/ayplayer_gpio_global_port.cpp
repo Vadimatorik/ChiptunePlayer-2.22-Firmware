@@ -2,4 +2,4 @@
 
 extern const McHardwareInterfacesImplementation::PinCfg gpCfg[ 35 ];
 
-McHardwareInterfacesImplementation::GlobalPort gp( gpCfg, M_SIZE_ARRAY( gpCfg ) );
+McHardwareInterfacesImplementation::PortGlobal gp( gpCfg, M_SIZE_ARRAY( gpCfg ) );

@@ -1,15 +1,15 @@
 #pragma once
 
+#include "port_global.h"
+#include "spi_master_8bit.h"
 #include "user_os.h"
 
 #include "rcc.h"
 #include "pwr.h"
 #include "wdt.h"
-#include "spi.h"
 #include "pin.h"
 #include "pin_multifunc_it.h"
 #include "uart.h"
-#include "port.h"
 #include "timer_counter.h"
 #include "timer_interrupt.h"
 #include "timer_pwm_one_channel.h"
@@ -46,7 +46,7 @@ extern McHardwareInterfacesImplementation::Pin					tpCh;
 extern McHardwareInterfacesImplementation::Pin					keyboardStrings[ 3 ];
 extern McHardwareInterfacesImplementation::Pin					keyboardColumns[ 3 ];
 
-extern McHardwareInterfacesImplementation::GlobalPort			gp;
+extern McHardwareInterfacesImplementation::PortGlobal			gp;
 
 #ifdef configGENERATE_RUN_TIME_STATS
 extern McHardwareInterfacesImplementation::TimCounter			timRunTimeStats;

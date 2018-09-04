@@ -1,104 +1,77 @@
 @startuml
 
-/'										Интерфейсы													'/
-package "MC_HARDWARE_INTERFACES\t" as mc_interfaces {
+top to bottom direction
 
-package "I_ADC\t" as i_adc {
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_adc_multi_channel.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_adc_one_channel.h
-
-}
-
-package "I_GPIO\t" as i_gpio {
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pin_multifunc_it.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pin_multifunc.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_adc_multi_channel.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_dac.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_i2c.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pin.h
-
-PinMultifuncItBase		.[hidden]right.> 	PinMultifuncBase
-PinMultifuncBase 		.[hidden]right.> 	PinBase
-
-}
-
-package "I_TIMER\t" as i_timer {
-
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pin_multifunc.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pin_multifunc_it.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_port_8bit.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_port_global.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pwr.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_rcc.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_spi_master_8bit.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_timer_comp_one_channel.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_timer_counter.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_timer_interrupt.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_timer_pwm_one_channel.h
-
-TimCompOneChannelBase		.[hidden]right.> 	TimCounterBase
-TimCounterBase				.[hidden]right.> 	TimInterruptBase
-TimInterruptBase			.[hidden]right.> 	TimPwmOneChannelBase
-
-}
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_wdt.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_dac.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_uart.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_i2c.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_pwr.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_rcc.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_spi.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_wdt.h
 
-WdtBase			.[hidden]right.>		DacBase
-DacBase			.[hidden]right.>		UartBase
-UartBase		.[hidden]right.>		I2cMasterBase
-I2cMasterBase	.[hidden]right.>		PwrBase
-PwrBase			.[hidden]right.>		RccBase
-RccBase			.[hidden]right.>		SpiMaster8BitBase
+McHardwareInterfaces.AdcOneChannel				.[hidden]right.>			McHardwareInterfaces.AdcMultiChannel
+McHardwareInterfaces.AdcMultiChannel			.[hidden]right.>			McHardwareInterfaces.Dac
+McHardwareInterfaces.Dac						.[hidden]right.>			McHardwareInterfaces.I2cMaster
+McHardwareInterfaces.I2cMaster					.[hidden]right.>			McHardwareInterfaces.Pin
+McHardwareInterfaces.Pin						.[hidden]right.>			McHardwareInterfaces.PinMultifunc
+McHardwareInterfaces.PinMultifunc				.[hidden]right.>			McHardwareInterfaces.PinMultifuncIt
+McHardwareInterfaces.PinMultifuncIt				.[hidden]right.>			McHardwareInterfaces.Port8bit
+McHardwareInterfaces.Port8bit					.[hidden]right.>			McHardwareInterfaces.GlobalPort
+McHardwareInterfaces.GlobalPort					.[hidden]right.>			McHardwareInterfaces.Pwr
+McHardwareInterfaces.Pwr						.[hidden]right.>			McHardwareInterfaces.Rcc
+McHardwareInterfaces.Rcc						.[hidden]right.>			McHardwareInterfaces.SpiMaster8Bit
+McHardwareInterfaces.SpiMaster8Bit				.[hidden]right.>			McHardwareInterfaces.TimCompOneChannel
+McHardwareInterfaces.TimCompOneChannel			.[hidden]right.>			McHardwareInterfaces.TimCounter
+McHardwareInterfaces.TimCounter					.[hidden]right.>			McHardwareInterfaces.TimInterrupt
+McHardwareInterfaces.TimInterrupt				.[hidden]right.>			McHardwareInterfaces.TimPwmOneChannel
+McHardwareInterfaces.TimPwmOneChannel			.[hidden]right.>			McHardwareInterfaces.Uart
+McHardwareInterfaces.Uart						.[hidden]right.>			McHardwareInterfaces.Wdt
 
-package "I_PORT\t" as i_port {
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_port_8bit.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_port_global.h
-
-}
-
-
-
-}
-
-/'								Реализация интерфейсов под STM32										'/
-package "MC_INTERFACES_IMPLEMENTATION_FOR_STM32\t" as mc_implementation {
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/wdt.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/adc_one_channel.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/dac.h
-
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/port.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin_multifunc.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin_multifunc_it.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/port_global.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pwr.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/rcc.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/spi.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/uart.h
-
-package "TIMER\t" as timer {
-
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/spi_master_8bit.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/timer_comp_one_channel.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/timer_counter.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/timer_interrupt.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/timer_pwm_one_channel.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/uart.h
+!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/wdt.h
 
-}
+McHardwareInterfacesImplementation.AdcOneChannel				.[hidden]right.>			McHardwareInterfacesImplementation.Dac
+McHardwareInterfacesImplementation.Dac							.[hidden]right.>			McHardwareInterfacesImplementation.Pin
+McHardwareInterfacesImplementation.Pin							.[hidden]right.>			McHardwareInterfacesImplementation.PinMultifunc
+McHardwareInterfacesImplementation.PinMultifunc					.[hidden]right.>			McHardwareInterfacesImplementation.PinMultifuncIt
+McHardwareInterfacesImplementation.PinMultifuncIt				.[hidden]right.>			McHardwareInterfacesImplementation.GlobalPort
+McHardwareInterfacesImplementation.GlobalPort					.[hidden]right.>			McHardwareInterfacesImplementation.Pwr
+McHardwareInterfacesImplementation.Pwr							.[hidden]right.>			McHardwareInterfacesImplementation.Rcc
+McHardwareInterfacesImplementation.Rcc							.[hidden]right.>			McHardwareInterfacesImplementation.SpiMaster8Bit
+McHardwareInterfacesImplementation.SpiMaster8Bit				.[hidden]right.>			McHardwareInterfacesImplementation.TimCompOneChannel
+McHardwareInterfacesImplementation.TimCompOneChannel			.[hidden]right.>			McHardwareInterfacesImplementation.TimCounter
+McHardwareInterfacesImplementation.TimCounter					.[hidden]right.>			McHardwareInterfacesImplementation.TimInterrupt
+McHardwareInterfacesImplementation.TimInterrupt					.[hidden]right.>			McHardwareInterfacesImplementation.TimPwmOneChannel
+McHardwareInterfacesImplementation.TimPwmOneChannel				.[hidden]right.>			McHardwareInterfacesImplementation.Uart
 
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/adc_one_channel.h
 
-package "GPIO\t" as gpio {
+McHardwareInterfacesImplementation -[hidden]down-|> McHardwareInterfaces
 
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin_multifunc_it.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin_multifunc.h
-!include %dirpath%/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/pin.h
-
-PinMultifuncIt		.[hidden]right.> 	PinMultifunc
-PinMultifunc 		.[hidden]right.> 	Pin 
-
-}
-
-}
-
-mc_interfaces .[hidden]up.>  mc_implementation
-
-/'										Сдвиговые регистры												'/
 !include %dirpath%/submodule/module_shift_register/shift_register.h
 !include %dirpath%/submodule/module_shift_register/shift_register_pin.h
 !include %dirpath%/submodule/module_shift_register/shift_register_8bit_port.h
