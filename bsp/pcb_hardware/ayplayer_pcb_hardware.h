@@ -11,7 +11,7 @@
 
 extern ShiftRegister::Base		boardShiftRegisters;
 extern MicrosdSdio				sd;
-extern ST7565					lcd;
+extern MonoLcd::ST7565			lcd;
 extern AD5204					soundDp;
 extern AyYmLowLavel				ayLow;
 

@@ -66,15 +66,15 @@ void AyPlayer::reinitObjDependingRcc ( void ) {
 }
 
 void AyPlayer::startBaseInterfaces ( void ) {
-	BaseResult	r;
+	McHardwareInterfaces::BaseResult	r;
 	r = this->cfg->mcu->adcBat->startContinuousConversion();
-	assertParam( r == BaseResult::ok );
+	assertParam( r == McHardwareInterfaces::BaseResult::ok );
 	r = this->cfg->mcu->debugUart->on();
-	assertParam( r == BaseResult::ok );
+	assertParam( r == McHardwareInterfaces::BaseResult::ok );
 	r = this->cfg->mcu->spiBoard->on();
-	assertParam( r == BaseResult::ok );
+	assertParam( r == McHardwareInterfaces::BaseResult::ok );
 	r = this->cfg->mcu->spiLcd->on();
-	assertParam( r == BaseResult::ok );
+	assertParam( r == McHardwareInterfaces::BaseResult::ok );
 }
 
 int AyPlayer::rccMaxFrequancyInit ( void ) {

@@ -46,7 +46,7 @@ MInputData makiseGuiInpHandler ( MInputData d, MInputResultEnum res ) {
     return d;
 }
 
-extern ST7565		lcd;
+extern MonoLcd::ST7565		lcd;
 
 void makiseGuiUpdate ( __attribute__((unused)) MakiseGUI* gui ) {
 	lcd.update();

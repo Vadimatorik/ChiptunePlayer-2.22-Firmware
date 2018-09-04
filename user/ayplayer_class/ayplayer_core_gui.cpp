@@ -227,7 +227,7 @@ void AyPlayer::slItemClean ( uint32_t cout ) {
 }
 
 
-extern ST7565		lcd;
+extern MonoLcd::ST7565		lcd;
 
 // Перерисовывает GUI и обновляет экран.
 void AyPlayer::guiUpdate ( void ) {

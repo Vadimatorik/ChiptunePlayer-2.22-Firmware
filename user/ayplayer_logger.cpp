@@ -6,7 +6,7 @@
 #include "run_time_logger.h"
 
 
-BaseResult		uartSendMessage ( const char* string );
+McHardwareInterfaces::BaseResult		uartSendMessage ( const char* string );
 
 const runTimeLoggerCfg log_cfg = {
 	.color = {
@@ -22,6 +22,6 @@ const runTimeLoggerCfg log_cfg = {
 
 RunTimeLogger ayLog( &log_cfg );
 
-BaseResult uartSendMessage ( const char* string ) {
+McHardwareInterfaces::BaseResult uartSendMessage ( const char* string ) {
 	return usart.tx( (uint8_t*)string, strlen(string), 100 );
 }

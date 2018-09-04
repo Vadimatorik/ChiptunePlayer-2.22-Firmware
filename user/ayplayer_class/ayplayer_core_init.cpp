@@ -3,7 +3,7 @@
 #include "ayplayer_os_object.h"
 
 int AyPlayer::fsmStepFuncHardwareMcInit ( void ) {
-	BaseResult r;
+	McHardwareInterfaces::BaseResult r;
 
 	/*!
 	 * WDT init.
@@ -18,7 +18,7 @@ int AyPlayer::fsmStepFuncHardwareMcInit ( void ) {
 	 */
 	///
 	r = this->cfg->mcu->gp->reinitAllPorts();
-	assertParam( r == BaseResult::ok );
+	assertParam( r == McHardwareInterfaces::BaseResult::ok );
 
 	/// Фиксируем питание.
 	this->cfg->mcu->gpio->pwr.allPwr->reset();
@@ -93,7 +93,7 @@ void		makiseGuiUpdate				( MakiseGUI* gui );
 
 }
 
-extern ST7565		lcd;
+extern MonoLcd::ST7565		lcd;
 
 int AyPlayer::fsmStepFuncGuiInit ( void ) {
 	makise_gui_autoinit(	&makiseHost,
@@ -108,10 +108,10 @@ int AyPlayer::fsmStepFuncGuiInit ( void ) {
 	/// Статус бар всегда показывается.
 	this->initGuiStatusBar();
 
-	if ( lcd.reset()			!= BaseResult::ok ) return M_ERROR;
-	if ( lcd.setContrast( 8 )	!= BaseResult::ok ) return M_ERROR;
-	if ( lcd.clear()			!= BaseResult::ok ) return M_ERROR;
-	if ( lcd.on()				!= BaseResult::ok ) return M_ERROR;
+	if ( lcd.reset()			!= McHardwareInterfaces::BaseResult::ok ) return M_ERROR;
+	if ( lcd.setContrast( 8 )	!= McHardwareInterfaces::BaseResult::ok ) return M_ERROR;
+	if ( lcd.lcdClear()			!= McHardwareInterfaces::BaseResult::ok ) return M_ERROR;
+	if ( lcd.on()				!= McHardwareInterfaces::BaseResult::ok ) return M_ERROR;
 
 
 
