@@ -6,9 +6,9 @@
 #define AD5204_CHIP_COUNT				2
 
 static uint8_t									ad5204Buffer[ AD5204_BUF_SIZE( AD5204_CHIP_COUNT ) ];
-static DigitalPotiometer::AD5204chipData		ad5204StructBuffer[ AD5204_CHIP_COUNT ];
+static DigitalPotentiometer::AD5204chipData		ad5204StructBuffer[ AD5204_CHIP_COUNT ];
 
-const DigitalPotiometer::Ad5204StaticCfg soundDpCfg = {
+const DigitalPotentiometer::Ad5204StaticCfg soundDpCfg = {
 	.spi					=	&boardSpi,
 	.mutex					=	&osData.mBoardSpi,
 	.cs						=	&ad5204Cs,
@@ -19,4 +19,4 @@ const DigitalPotiometer::Ad5204StaticCfg soundDpCfg = {
 	.internalStructData		=	ad5204StructBuffer
 };
 
-DigitalPotiometer::AD5204 soundDp( &soundDpCfg );
+DigitalPotentiometer::AD5204 soundDp( &soundDpCfg );

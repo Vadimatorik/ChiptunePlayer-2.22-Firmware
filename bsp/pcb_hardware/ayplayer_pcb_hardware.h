@@ -12,7 +12,7 @@
 extern ShiftRegister::Base					boardShiftRegisters;
 extern MicrosdSdio							sd;
 extern MonoLcd::ST7565						lcd;
-extern DigitalPotiometer::AD5204			soundDp;
+extern DigitalPotentiometer::AD5204			soundDp;
 extern AyYmLowLavel							ayLow;
 
 extern ShiftRegister::Pin					pwrAy[ 2 ];
