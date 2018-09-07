@@ -1,6 +1,6 @@
 @startuml
 
-package Lavel_0 {
+package Level_0 {
 
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_adc_one_channel.h
 !include %dirpath%/submodule/module_mc_hardware_interfaces/mc_hardware_interfaces_adc_multi_channel.h
@@ -73,7 +73,6 @@ McHardwareInterfacesImplementation -[hidden]down-|> McHardwareInterfaces
 
 }
 
-package Lavel_1 {
 
 !include %dirpath%/submodule/module_shift_register/shift_register.h
 !include %dirpath%/submodule/module_shift_register/shift_register_pin.h
@@ -83,15 +82,14 @@ package Lavel_1 {
 !include %dirpath%/submodule/module_lcd_driver/st7565/mono_lcd_lib_st7565.h
 !include %dirpath%/submodule/module_digital_potentiometer/ad5204/module_digital_potentiometer_ad5204.h
 
+/'
 ShiftRegister			-[hidden]right-|>			MonoLcd
 MonoLcd					-[hidden]right-|>			DigitalPotentiometer
 
 McHardwareInterfaces 	-[hidden]down-|>			ShiftRegister
 McHardwareInterfaces 	-[hidden]down-|>			MonoLcd
 McHardwareInterfaces 	-[hidden]down-|>			DigitalPotentiometer
+'/
 
-}
-
-Lavel_1 .[hidden]down.|> Lavel_0
 
 @enduml
