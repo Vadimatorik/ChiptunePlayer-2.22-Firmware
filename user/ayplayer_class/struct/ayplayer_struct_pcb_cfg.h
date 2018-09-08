@@ -4,6 +4,7 @@
 #include "ayplayer_mc_hardware.h"
 
 struct AyPlayerPcbStrcut {
-	DigitalPotentiometer::AD5204*			const dp;
-	MicrosdBase* 						const sd;
+	DigitalPotentiometer::AD5204*		const	dp;
+	MicrosdBase* 						const	sd;
+	MonoLcd::ST7565*					const	lcd;
 };

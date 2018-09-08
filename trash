@@ -1,1 +1,3 @@
 this->cfg->mcu->gpio->pwr.allPwr->reset();
+
+this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "MakiseGui started." );

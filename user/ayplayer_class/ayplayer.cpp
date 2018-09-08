@@ -19,8 +19,6 @@ AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
 }
 
 void AyPlayer::start ( void ) {
-
-
 	this->hardwareMcInit();
 
 	/*

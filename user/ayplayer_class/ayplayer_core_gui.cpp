@@ -15,15 +15,6 @@ extern MakiseDriver			makiseGuiDriver;
 
 namespace AyPlayer {
 
-void AyPlayer::initGuiStatusBar( void ) {
-	m_create_player_status_bar(	&this->g.sb,
-								&makiseHost.host,
-								mp_rel(	0,	0,
-										128, 12	),
-								&this->cfg->gui->statusBarCfg,
-								&this->cfg->gui->statusBarCallbackCfg	);
-}
-
 void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 	m_create_slist(	&this->g.sl,
 					&makiseHost.host,

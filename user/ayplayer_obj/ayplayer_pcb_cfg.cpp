@@ -2,5 +2,6 @@
 
 extern const AyPlayerPcbStrcut ayPcbCfg = {
 	.dp					=	&soundDp,
-	.sd					=	&sd
+	.sd					=	&sd,
+	.lcd				=	&lcd
 };

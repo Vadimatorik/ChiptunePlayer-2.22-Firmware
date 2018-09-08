@@ -253,8 +253,6 @@ private:
 
 
 private:
-
-	int fsmStepFuncGuiInit ( void );
 	int fsmStepFuncMicroSdInit ( void );
 	int fsmStepFuncIndexingSupportedFiles ( void );
 	int fsmStepFuncSortingFileList ( void );

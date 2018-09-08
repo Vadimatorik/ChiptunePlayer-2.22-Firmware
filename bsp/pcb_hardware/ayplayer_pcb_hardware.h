@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../submodule/module_digital_potentiometer/ad5204/module_digital_potentiometer_ad5204.h"
+#include "module_digital_potentiometer_ad5204.h"
 #include "shift_register.h"
 #include "shift_register_8bit_port.h"
 #include "shift_register_pin.h"
