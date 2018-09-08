@@ -118,22 +118,11 @@ private:
 	 *				функционировать хотя бы в ограниченном режиме -
 	 *				производится перезагрузка процессора.
 	 */
-	void			hardwareMcInit				(	void	);
+	void			initHardwareMc				(	void	);
 
-	/*!
-	 *	\brief		Инициализирует RCC на режим с максимально
-	 *				возможной скоростью.
-	 *
-	 *	\return		0	-	если операция запуска RCC была произведена успешно.
-	 *				-1	-	в противном случае.
-	 */
-	int				rccMaxFrequancyInit			(	void	);
+	void			initTasks					(	void	);
 
 private:
-	/// Возвращает текущий режим работы RCC.
-
-	uint32_t		getRccMode					( void );
-
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
 

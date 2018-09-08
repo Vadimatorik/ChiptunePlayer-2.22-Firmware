@@ -13,17 +13,9 @@ AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
 	this->cfg->os->qAyButton		=	USER_OS_STATIC_QUEUE_CREATE( 1, sizeof( uint8_t ), this->cfg->os->qbAyButton, &this->cfg->os->qsAyButton );
 
 	this->cfg->os->sPlayTic			=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbPlayTic );
-	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );
+	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );}
 
-	this->cfg->os->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->cfg->os->mbHost );
-}
-
-void AyPlayer::start ( void ) {
-	this->hardwareMcInit();
-
-	/*
-	Основной поток проекта.
-
+void AyPlayer::initTasks ( void ) {
 	USER_OS_STATIC_TASK_CREATE(	AyPlayer::mainTask,
 								"main",
 								TB_MAIN_TASK_SIZE,
@@ -31,7 +23,17 @@ void AyPlayer::start ( void ) {
 								MAIN_TASK_PRIO,
 								this->tbMainTask,
 								&this->tsMainTask );
+}
 
+void AyPlayer::start ( void ) {
+	this->initHardwareMc();
+	this->initTasks();
+	vTaskStartScheduler();
+
+	/// Основной поток проекта.
+
+
+/*
 	Контроль подсветки экрана.
 
 	USER_OS_STATIC_TASK_CREATE(	AyPlayer::illuminationControlTask,
@@ -78,7 +80,7 @@ void AyPlayer::start ( void ) {
 
 	USER_OS_STATIC_TIMER_START( this->timNameScroll );
 
-	vTaskStartScheduler();*/
+	*/
 }
 
 void AyPlayer::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {

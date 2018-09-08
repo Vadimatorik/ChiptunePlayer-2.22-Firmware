@@ -2,7 +2,7 @@
 
 namespace AyPlayer {
 
-void AyPlayer::hardwareMcInit ( void ) {
+void AyPlayer::initHardwareMc ( void ) {
 	McHardwareInterfaces::BaseResult r;
 
 	r = this->cfg->mcu->wdt->reinit();

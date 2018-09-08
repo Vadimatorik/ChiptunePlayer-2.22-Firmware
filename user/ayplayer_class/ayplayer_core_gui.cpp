@@ -57,7 +57,7 @@ void AyPlayer::initWindowSortingFileList ( void ) {
 										128, 64 - 11 ),
 								"Sorting list file...",
 								&this->cfg->gui->smw );
-	this->guiUpdate();
+	////this->guiUpdate();
 }
 
 void AyPlayer::removeWindowSortingFileList ( void) {
@@ -189,7 +189,7 @@ void AyPlayer::errorMicroSdDraw ( const FRESULT r ) {
 											128, 64 - 11 ),
 									massage,
 									&this->cfg->gui->smw );
-		this->guiUpdate();
+		//this->guiUpdate();
 
 		makise_g_cont_rem( &m->el );
 		vPortFree( m );
@@ -220,17 +220,7 @@ void AyPlayer::slItemClean ( uint32_t cout ) {
 }
 
 
-extern MonoLcd::ST7565		lcd;
 
-// Перерисовывает GUI и обновляет экран.
-void AyPlayer::guiUpdate ( void ) {
-	USER_OS_TAKE_MUTEX( this->cfg->os->mHost, portMAX_DELAY );
-	lcd.bufClear();
-	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_PREDRAW );
-	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_DRAW );
-	lcd.update();
-	USER_OS_GIVE_MUTEX( this->cfg->os->mHost );
-}
 
 }
 

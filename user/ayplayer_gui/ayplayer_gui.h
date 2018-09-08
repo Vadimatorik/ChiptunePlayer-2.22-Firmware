@@ -14,6 +14,9 @@ public:
 public:
 	void	init				(	void	);
 
+	// Перерисовывает GUI и обновляет экран.
+	void	update				(	void	);
+
 private:
 	/*!
 	 *	\brief		Метод проверяет удачность выполнения
@@ -24,11 +27,13 @@ private:
 
 	void	addStatusBar			(	void	);
 
+
 private:
 	const AyPlayerPcbStrcut*				const pcbObj;
 	AyPlayerModuleGui						g;
 	const AyPlayerGuiModuleStyleCfg*		const cfg;
-
+	USER_OS_STATIC_MUTEX_BUFFER				mbHost;
+	USER_OS_STATIC_MUTEX					mHost;
 };
 
 }

@@ -19,6 +19,8 @@ namespace AyPlayer {
 Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 				const AyPlayerGuiModuleStyleCfg*		const cfg	) :
 						pcbObj( pcbObj ), cfg( cfg )	{
+	this->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->mbHost );
+
 }
 
 void Gui::init ( void ) {
@@ -52,6 +54,15 @@ void Gui::addStatusBar( void ) {
 										128, 12	),
 								&this->cfg->statusBarCfg,
 								&this->cfg->statusBarCallbackCfg	);
+}
+
+void Gui::update ( void ) {
+	USER_OS_TAKE_MUTEX( this->mHost, portMAX_DELAY );
+	this->pcbObj->lcd->bufClear();
+	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_PREDRAW );
+	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_DRAW );
+	this->pcbObj->lcd->update();
+	USER_OS_GIVE_MUTEX( this->mHost );
 }
 
 void Gui::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {

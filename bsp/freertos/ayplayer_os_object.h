@@ -22,11 +22,11 @@ struct FreeRtosObj {
 
 	/// Mutex.
 	USER_OS_STATIC_MUTEX					mBoardSpi;
-	USER_OS_STATIC_MUTEX					mHost;
+
 
 	/// Mutex buffer.
 	USER_OS_STATIC_MUTEX_BUFFER				mbBoardSpi;
-	USER_OS_STATIC_MUTEX_BUFFER				mbHost;
+
 
 	/// Semaphore.
 	USER_OS_STATIC_BIN_SEMAPHORE			sPlayTic;
