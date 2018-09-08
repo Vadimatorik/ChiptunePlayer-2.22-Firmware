@@ -2,9 +2,11 @@
 #include "ayplayer_button.h"
 
 void AyPlayer::start ( void ) {
-	/*!
-	 * Основной поток проекта.
-	 */
+
+
+	/*
+	Основной поток проекта.
+
 	USER_OS_STATIC_TASK_CREATE(	AyPlayer::mainTask,
 								"main",
 								TB_MAIN_TASK_SIZE,
@@ -13,9 +15,8 @@ void AyPlayer::start ( void ) {
 								this->tbMainTask,
 								&this->tsMainTask );
 
-	/*!
-	 * Контроль подсветки экрана.
-	 */
+	Контроль подсветки экрана.
+
 	USER_OS_STATIC_TASK_CREATE(	AyPlayer::illuminationControlTask,
 								"illuminationControl",
 								TB_ILLUMINATION_CONTROL_TASK_SIZE,
@@ -60,5 +61,5 @@ void AyPlayer::start ( void ) {
 
 	USER_OS_STATIC_TIMER_START( this->timNameScroll );
 
-	vTaskStartScheduler();
+	vTaskStartScheduler();*/
 }

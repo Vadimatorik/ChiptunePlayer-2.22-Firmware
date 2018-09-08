@@ -8,7 +8,6 @@ enum class AYPLAYER_WINDOW_NOW {
 	EQUALIZER			=	2
 };
 
-
 #define HANDLER_FSM_STEP(NAME_STEP)				static int NAME_STEP ( const fsmStep< AyPlayer >* previousStep, AyPlayer* obj )
 #define HANDLER_FSM_INPUT_DATA					__attribute__((unused)) const fsmStep< AyPlayer >* previousStep, AyPlayer* obj
 
@@ -92,9 +91,11 @@ public:
 	AyPlayer( const AyPlayerCfg* const cfg ) :
 		cfg( cfg ) {}
 
+public:
+
 	void			start						( void );
 
-
+private:
 	/// Возвращает текущий режим работы RCC.
 
 	uint32_t		getRccMode					( void );
