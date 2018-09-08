@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ayplayer_struct_cfg.h"
+#include "ayplayer_nvic.h"
+#include "ayplayer_rcc.h"
+
+namespace AyPlayer {
 
 enum class AYPLAYER_WINDOW_NOW {
 	INIT				=	0,
@@ -88,12 +92,42 @@ const ayplayerEqualizer ayplayerEqualizerDafault = {
 
 class AyPlayer {
 public:
-	AyPlayer( const AyPlayerCfg* const cfg ) :
-		cfg( cfg ) {}
+	AyPlayer( const AyPlayerCfg* const cfg ) : cfg( cfg ) {}
 
 public:
+	void			start						(	void	);
 
-	void			start						( void );
+private:
+	/*!
+	 *	\brief		Метод проверяет результат выполнения
+	 *				предыдущей операции и в случае, если
+	 *				он не McHardwareInterfaces::BaseResult::ok
+	 *				производит аварийную перезагрузку устройства.
+	 *
+	 *	\param[in]	resultValue	-	возвращенный предыдущим по ходу выполнения
+	 *								программы методом результат выполнения.
+	 */
+	void			checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
+
+private:
+	/*
+	 *	\brief		Метод производит инициализацию всей аппаратной
+	 *				периферии микроконтроллера.
+	 *				В случае, если что-то не удастся инициализировать
+	 *				таким образом, чтобы дальнейшее приложение могла
+	 *				функционировать хотя бы в ограниченном режиме -
+	 *				производится перезагрузка процессора.
+	 */
+	void			hardwareMcInit				(	void	);
+
+	/*!
+	 *	\brief		Инициализирует RCC на режим с максимально
+	 *				возможной скоростью.
+	 *
+	 *	\return		0	-	если операция запуска RCC была произведена успешно.
+	 *				-1	-	в противном случае.
+	 */
+	int				rccMaxFrequancyInit			(	void	);
 
 private:
 	/// Возвращает текущий режим работы RCC.
@@ -108,42 +142,6 @@ private:
 	static void scrollNameInMainWindow ( TimerHandle_t timer );
 
 	void			powerOff							(	CAUSE_SHUTDOWN	cause	);
-
-
-/*
-	 * Останавливает все аппаратные модули, зависящие от тактового сигнала,
-	 * пытается установить заданную тактовую частоту на шинах, после чего
-	 * конфигурирует заново все объекты, зависящие от частоты тактового сигнала
-	 * ( вызывается метод reinitObjDependingRcc ).
-	 *
-	 * Замечание: в случае, если не удалось настроить заданную конфигурацию - микроконтроллер переходит
-	 * в режим работы по умолчанию.
-*/
-	McHardwareInterfaces::RccResult		setRccCfg							( uint32_t numberCfg );
-
-
-	 // Отключает все объекты, зависящие
-	 // от частоты тактового сигнала.
-
-	void			offObjDependingRcc					( void );
-
-
-	 // Метод переконфигурирует все объекты, зависящие
-	 // от частоты тактового сигнала.
-
-	void			reinitObjDependingRcc				( void );
-
-
-	 // Запускает базовые интерфейсы:
-	 // SPI, UART, ADC (канал аккумулятора).
-
-	void			startBaseInterfaces					( void );
-
-
-	 // Инициализирует RCC с максимально возможной скоростью.
-
-	int			rccMaxFrequancyInit					( void );
-
 /*
 	 * Возвращает флаг наличия запрошенной microsd в слоте.
 	 * \param[in]	sd	-	проверяемая карта.
@@ -254,7 +252,6 @@ private:
 	static void playTask ( void* obj );
 
 public:
-	int fsmStepFuncHardwareMcInit ( void );
 	int fsmStepFuncFreeRtosthisInit ( void );
 
 private:
@@ -291,8 +288,6 @@ private:
 	int		ayFileCallWritePacket						(	const uint8_t	reg,
 															const uint8_t	data	);
 
-	/// Текущий режим работы RCC.
-	uint32_t											rccIndex = 0;
 
 	const AyPlayerCfg* const cfg;
 
@@ -328,4 +323,13 @@ private:
 	ayplayerEqualizer									eq;
 
 	AyPlayerFatFs										fat;
+
+	/*!
+	 *	\brief		Через данный объект производится взаимодействие
+	 *				с аппаратным модулем NVIC.
+	 */
+	Nvic												nvic;
+	Rcc*												rcc;
+};
+
 };

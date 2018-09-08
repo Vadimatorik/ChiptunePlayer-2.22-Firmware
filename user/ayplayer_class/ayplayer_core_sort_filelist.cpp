@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <vector>
 
+namespace AyPlayer {
+
 ItemFileInFat* AyPlayer::structureItemFileListFilling ( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format ) {
 	/// Выделяем память под элемент
 	/// (его удалит после записи writeItemFileListAndRemoveItem).
@@ -307,5 +309,7 @@ FRESULT AyPlayer::findingFileListAndSort ( char* path ) {
 	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
 
 	return r;
+}
+
 }
 

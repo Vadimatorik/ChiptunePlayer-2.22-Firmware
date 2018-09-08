@@ -1,6 +1,8 @@
 #include "ayplayer.h"
 #include "ayplayer_button.h"
 
+namespace AyPlayer {
+
 /// Вызывается только когда активно основное окно.
 void AyPlayer::scrollNameInMainWindow ( TimerHandle_t timer ) {
 	AyPlayer* o = ( AyPlayer* )pvTimerGetTimerID( timer );
@@ -17,4 +19,6 @@ void AyPlayer::scrollNameInMainWindow ( TimerHandle_t timer ) {
 	}
 
 	o->guiUpdate();
+}
+
 }

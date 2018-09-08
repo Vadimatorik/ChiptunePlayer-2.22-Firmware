@@ -1,7 +1,7 @@
 #include "ayplayer.h"
 
 extern const AyPlayerCfg ayCfg;
-AyPlayer ay( &ayCfg );
+AyPlayer::AyPlayer ay( &ayCfg );
 
 extern "C" {
 

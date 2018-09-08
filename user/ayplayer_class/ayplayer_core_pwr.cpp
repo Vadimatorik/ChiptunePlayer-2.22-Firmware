@@ -1,6 +1,8 @@
 #include "ayplayer.h"
 #include "ayplayer_button.h"
 
+namespace AyPlayer {
+
 void AyPlayer::powerOff (	CAUSE_SHUTDOWN	cause	) {
 	if ( cause == CAUSE_SHUTDOWN::TIMEOUT ) {
 
@@ -19,4 +21,6 @@ void AyPlayer::powerOff (	CAUSE_SHUTDOWN	cause	) {
 
 	/// Отключаем питание.
 	this->cfg->mcu->gpio->pwr.allPwr->reset();
+}
+
 }

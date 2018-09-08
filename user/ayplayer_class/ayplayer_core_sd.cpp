@@ -6,6 +6,8 @@ extern MHost				makiseHost;
 
 }
 
+namespace AyPlayer {
+
 bool AyPlayer::checkSd ( void ) {
 	/// Если тип карты определен, значит она есть в слоте.
 	if ( this->cfg->pcb->sd->getStatus() != EC_SD_STATUS::NOINIT )
@@ -83,5 +85,7 @@ void AyPlayer::waitSdCardDisconnect ( void ) {
 	char	massage[] = "SD was been disconnect.";
 
 	this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, massage );
+
+}
 
 }

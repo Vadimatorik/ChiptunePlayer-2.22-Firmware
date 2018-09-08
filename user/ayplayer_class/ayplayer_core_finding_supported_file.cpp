@@ -1,6 +1,8 @@
 #include "ayplayer.h"
 #include "ayplayer_fat.h"
 
+namespace AyPlayer {
+
 int	AyPlayer::scanDir ( char* path ) {
 	int					r	=	0;
 
@@ -178,6 +180,8 @@ FRESULT AyPlayer::indexingSupportedFiles( char* path ) {
 	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
 
 	return r;
+}
+
 }
 
 

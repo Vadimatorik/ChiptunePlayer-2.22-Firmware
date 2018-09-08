@@ -7,6 +7,8 @@ extern MHost				makiseHost;
 
 }
 
+namespace AyPlayer {
+
 void AyPlayer::illuminationControlTask (  void* obj  ) {
 	AyPlayer* o =( AyPlayer* ) obj;
 	o->cfg->mcu->lcdPwmTim->setDuty( o->illuminationDuty );
@@ -312,4 +314,6 @@ void AyPlayer::mainTask ( void* obj ) {
 
 
 	}
+}
+
 }

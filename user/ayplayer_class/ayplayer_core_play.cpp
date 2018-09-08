@@ -1,6 +1,8 @@
 #include "ayplayer.h"
 #include "ayplayer_fat.h"
 
+namespace AyPlayer {
+
 /// 0 данные получены.
 /// 1 нет такого номера в списке.
 /// -1 проблема с microsd.
@@ -199,6 +201,6 @@ void AyPlayer::startPlayTrack ( void ) {
 	USER_OS_GIVE_BIN_SEMAPHORE( this->cfg->os->sStartPlay );
 }
 
-
+}
 
 

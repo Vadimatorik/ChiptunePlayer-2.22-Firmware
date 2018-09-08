@@ -2,69 +2,7 @@
 #include "core_cm4.h"
 #include "ayplayer_os_object.h"
 
-int AyPlayer::fsmStepFuncHardwareMcInit ( void ) {
-	McHardwareInterfaces::BaseResult r;
-
-	/*!
-	 * WDT init.
-	 */
-	//r = this->cfg->mcu->wdt->reinit( 0 );
-	//assertParam( r == BASE_RESULT::OK );
-
-	this->cfg->mcu->pwr->reinit( 0 );
-
-	/*!
-	 * GPIO init.
-	 */
-	///
-	r = this->cfg->mcu->gp->reinitAllPorts();
-	assertParam( r == McHardwareInterfaces::BaseResult::ok );
-
-	/// Фиксируем питание.
-	this->cfg->mcu->gpio->pwr.allPwr->reset();
-
-	/*!
-	 * RCC и все объекты, зависящие от него.
-	 */
-	this->rccMaxFrequancyInit();
-
-	/*!
-	 * NVIC.
-	 */
-	NVIC_SetPriority( DMA2_Stream5_IRQn, 10 );
-	NVIC_SetPriority( DMA1_Stream4_IRQn, 10 );
-
-	NVIC_SetPriority( DMA2_Stream3_IRQn, 10 );
-	NVIC_SetPriority( DMA2_Stream6_IRQn, 10 );
-	NVIC_SetPriority( SDIO_IRQn, 10 );
-
-	NVIC_SetPriority( USART1_IRQn, 10 );
-
-	NVIC_SetPriority( PVD_IRQn, 10 );
-
-	/// Выдача семафора задаче обновления AY регистров.
-	NVIC_SetPriority( TIM6_DAC_IRQn, 5 );
-
-	NVIC_EnableIRQ( DMA1_Stream4_IRQn );
-	NVIC_EnableIRQ( DMA2_Stream5_IRQn );
-
-	NVIC_EnableIRQ( DMA2_Stream3_IRQn );
-	NVIC_EnableIRQ( DMA2_Stream6_IRQn );
-	NVIC_EnableIRQ( SDIO_IRQn );
-
-	NVIC_EnableIRQ( USART1_IRQn );
-
-	NVIC_EnableIRQ( PVD_IRQn );
-
-	NVIC_EnableIRQ( TIM6_DAC_IRQn );
-
-	/*!
-	 * После инициализации запускаем все модули,
-	 * которые должны всегда находиться в работе.
-	 */
-	this->startBaseInterfaces();
-	return 0;
-}
+namespace AyPlayer {
 
 int AyPlayer::fsmStepFuncFreeRtosthisInit ( void ) {
 	this->cfg->os->qAyLow[0]		=	USER_OS_STATIC_QUEUE_CREATE( QB_AY_LOW_SIZE, sizeof( ayLowOutDataStruct ), &this->cfg->os->qbAyLow[0][0], &this->cfg->os->qsAyLow[0] );
@@ -120,3 +58,4 @@ int AyPlayer::fsmStepFuncGuiInit ( void ) {
 	return 0;
 }
 
+}

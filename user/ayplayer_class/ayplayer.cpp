@@ -1,8 +1,12 @@
 #include "ayplayer.h"
 #include "ayplayer_button.h"
 
-void AyPlayer::start ( void ) {
+namespace AyPlayer {
 
+void AyPlayer::start ( void ) {
+	this->rcc	=	new Rcc( this->cfg->mcu );
+
+	this->hardwareMcInit();
 
 	/*
 	Основной поток проекта.
@@ -63,3 +67,12 @@ void AyPlayer::start ( void ) {
 
 	vTaskStartScheduler();*/
 }
+
+void AyPlayer::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
+	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
+		this->nvic.reboot();
+	}
+}
+
+}
+

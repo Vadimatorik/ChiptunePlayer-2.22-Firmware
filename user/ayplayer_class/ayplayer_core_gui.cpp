@@ -13,6 +13,8 @@ extern MakiseDriver			makiseGuiDriver;
 
 }
 
+namespace AyPlayer {
+
 void AyPlayer::initGuiStatusBar( void ) {
 	m_create_player_status_bar(	&this->g.sb,
 								&makiseHost.host,
@@ -238,3 +240,6 @@ void AyPlayer::guiUpdate ( void ) {
 	lcd.update();
 	USER_OS_GIVE_MUTEX( this->cfg->os->mHost );
 }
+
+}
+

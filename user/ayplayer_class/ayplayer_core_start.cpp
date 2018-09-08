@@ -2,6 +2,8 @@
 #include "core_cm4.h"
 #include "ayplayer_os_object.h"
 
+namespace AyPlayer {
+
 int AyPlayer::fsmStepFuncMicroSdInit ( void ) {
 	/*!
 	 * Ждем валидную карту.
@@ -107,4 +109,6 @@ int AyPlayer::fsmStepFuncInitMainWindow ( void ) {
 
 	this->guiUpdate();
 	return 0;
+}
+
 }
