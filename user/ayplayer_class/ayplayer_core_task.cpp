@@ -310,11 +310,12 @@ void AyPlayer::mainTask ( void* obj ) {
 	o->gui->init();
 	o->gui->setMaxIlluminationDuty( 0.8 );
 	o->gui->setMinIlluminationDuty( 0.3 );
-	o->gui->setMaxIlluminationTime( 10 );
-	o->gui->setMinIlluminationTime( 5 );
+	o->gui->setMaxIlluminationTime( 5 );
+	o->gui->setMinIlluminationTime( 2 );
 
 	while( 1 ) {
 		o->gui->update();
+		vTaskDelay( 10000 );
 	}
 }
 

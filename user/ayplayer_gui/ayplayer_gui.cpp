@@ -21,15 +21,36 @@ Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 				McHardwareInterfaces::TimPwmOneChannel*	ledPwm	) :
 						pcbObj( pcbObj ), cfg( cfg ), ledPwm( ledPwm )	{
 	this->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->mbHost );
-
+	this->sUpdateLcd	=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->sbUpdateLcd );
 }
 
 void Gui::illuminationControlTask ( void*	obj ) {
 	Gui* o =( Gui* ) obj;
 	o->ledPwm->setDuty( o->maxIlluminationDuty );
 	o->ledPwm->on();
+
+	uint32_t	downCounterTime	=	o->maxIlluminationTimeS;
+	bool		flagMode		=	true;
+
 	while( true ) {
-		vTaskDelay( 100 );
+		if ( USER_OS_TAKE_BIN_SEMAPHORE ( o->sUpdateLcd, 1000 ) == pdTRUE ) {
+			downCounterTime =	o->maxIlluminationTimeS;
+			o->ledPwm->setDuty( o->maxIlluminationDuty );
+			o->ledPwm->on();
+			flagMode		=	true;
+		} else {
+			downCounterTime--;
+			if ( downCounterTime == 0 ) {
+				if ( flagMode ) {
+					flagMode	=	0;
+					downCounterTime =	o->minIlluminationTimeS;
+					o->ledPwm->setDuty( o->minIlluminationDuty );
+				} else {
+					o->ledPwm->setDuty( 0 );
+					o->ledPwm->off();
+				}
+			}
+		}
 	}
 }
 
@@ -88,6 +109,8 @@ void Gui::update ( void ) {
 	r = this->pcbObj->lcd->update();
 	this->checkAndExit( r );
 
+	USER_OS_GIVE_BIN_SEMAPHORE( this->sUpdateLcd );
+
 	USER_OS_GIVE_MUTEX( this->mHost );
 }
 
@@ -117,12 +140,12 @@ void Gui::setMinIlluminationDuty ( float	minIlluminationDuty ) {
 	}
 }
 
-void Gui::setMaxIlluminationTime ( uint32_t		maxIlluminationTimeDs ) {
-	this->maxIlluminationTimeDs	=	maxIlluminationTimeDs;
+void Gui::setMaxIlluminationTime ( uint32_t		maxIlluminationTimeS ) {
+	this->maxIlluminationTimeS	=	maxIlluminationTimeS;
 }
 
-void Gui::setMinIlluminationTime ( uint32_t		minIlluminationTimeDs ) {
-	this->minIlluminationTimeDs	=	minIlluminationTimeDs;
+void Gui::setMinIlluminationTime ( uint32_t		minIlluminationTimeS ) {
+	this->minIlluminationTimeS	=	minIlluminationTimeS;
 }
 
 }

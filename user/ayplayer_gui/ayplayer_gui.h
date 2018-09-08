@@ -17,10 +17,10 @@ public:
 public:
 	void	init						(	void	);
 
-	void	setMaxIlluminationDuty		(	float	maxIlluminationDuty	);
-	void	setMinIlluminationDuty		(	float	minIlluminationDuty	);
-	void	setMaxIlluminationTime		(	uint32_t		maxIlluminationTimeDs	);
-	void	setMinIlluminationTime		(	uint32_t		minIlluminationTimeDs	);
+	void	setMaxIlluminationDuty		(	float			maxIlluminationDuty	);
+	void	setMinIlluminationDuty		(	float			minIlluminationDuty	);
+	void	setMaxIlluminationTime		(	uint32_t		maxIlluminationTimeS	);
+	void	setMinIlluminationTime		(	uint32_t		minIlluminationTimeS	);
 
 	// Перерисовывает GUI и обновляет экран.
 	void	update				(	void	);
@@ -47,10 +47,12 @@ private:
 	USER_OS_STATIC_MUTEX					mHost;
 	USER_OS_STATIC_STACK_TYPE				tbIlluminationControlTask[ TB_ILLUMINATION_CONTROL_TASK_SIZE ];
 	USER_OS_STATIC_TASK_STRUCT_TYPE			tsIlluminationControlTask;
+	USER_OS_STATIC_BIN_SEMAPHORE			sUpdateLcd;
+	USER_OS_STATIC_BIN_SEMAPHORE_BUFFER		sbUpdateLcd;
 	float									maxIlluminationDuty;
 	float									minIlluminationDuty;
-	uint32_t								maxIlluminationTimeDs;
-	uint32_t								minIlluminationTimeDs;
+	uint32_t								maxIlluminationTimeS;
+	uint32_t								minIlluminationTimeS;
 
 private:
 	const uint32_t	tbIlluminationControlTaskSize			=	TB_ILLUMINATION_CONTROL_TASK_SIZE;
