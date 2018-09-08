@@ -3,6 +3,7 @@
 #include "ayplayer_struct_cfg.h"
 #include "ayplayer_nvic.h"
 #include "ayplayer_rcc.h"
+#include "ayplayer_gui.h"
 
 namespace AyPlayer {
 
@@ -147,7 +148,7 @@ private:
 	void			waitSdCardInsert					( void );
 
 
-	 /// Перерисовывает экран и обновляет буфер в экране..
+
 
 	void			guiUpdate							( void );
 
@@ -315,6 +316,7 @@ private:
 	 */
 	Nvic												nvic;
 	Rcc*												rcc;
+	Gui*												gui;
 };
 
 };

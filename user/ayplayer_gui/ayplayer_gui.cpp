@@ -57,11 +57,18 @@ void Gui::addStatusBar( void ) {
 }
 
 void Gui::update ( void ) {
+	McHardwareInterfaces::BaseResult	r;
+
 	USER_OS_TAKE_MUTEX( this->mHost, portMAX_DELAY );
+
 	this->pcbObj->lcd->bufClear();
+
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_PREDRAW );
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_DRAW );
-	this->pcbObj->lcd->update();
+
+	r = this->pcbObj->lcd->update();
+	this->checkAndExit( r );
+
 	USER_OS_GIVE_MUTEX( this->mHost );
 }
 

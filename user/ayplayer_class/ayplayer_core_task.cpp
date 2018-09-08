@@ -315,8 +315,10 @@ void AyPlayer::mainTask ( void* obj ) {
 
 	}*/
 
-	while( 1 ) {
+	o->gui->init();
 
+	while( 1 ) {
+		o->gui->update();
 	}
 }
 
