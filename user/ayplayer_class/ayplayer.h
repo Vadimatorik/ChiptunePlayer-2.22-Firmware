@@ -92,7 +92,7 @@ const ayplayerEqualizer ayplayerEqualizerDafault = {
 
 class AyPlayer {
 public:
-	AyPlayer( const AyPlayerCfg* const cfg ) : cfg( cfg ) {}
+	AyPlayer( const AyPlayerCfg* const cfg );
 
 public:
 	void			start						(	void	);
@@ -251,8 +251,6 @@ private:
 	static void playTickHandlerTask ( void* obj );
 	static void playTask ( void* obj );
 
-public:
-	int fsmStepFuncFreeRtosthisInit ( void );
 
 private:
 

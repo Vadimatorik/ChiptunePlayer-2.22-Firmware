@@ -3,8 +3,23 @@
 
 namespace AyPlayer {
 
+
+
+AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
+	this->rcc						=	new Rcc( this->cfg->mcu );
+
+	this->cfg->os->qAyLow[0]		=	USER_OS_STATIC_QUEUE_CREATE( QB_AY_LOW_SIZE, sizeof( ayLowOutDataStruct ), &this->cfg->os->qbAyLow[0][0], &this->cfg->os->qsAyLow[0] );
+	this->cfg->os->qAyLow[1]		=	USER_OS_STATIC_QUEUE_CREATE( QB_AY_LOW_SIZE, sizeof( ayLowOutDataStruct ), &this->cfg->os->qbAyLow[1][0], &this->cfg->os->qsAyLow[1] );
+	this->cfg->os->qAyButton		=	USER_OS_STATIC_QUEUE_CREATE( 1, sizeof( uint8_t ), this->cfg->os->qbAyButton, &this->cfg->os->qsAyButton );
+
+	this->cfg->os->sPlayTic			=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbPlayTic );
+	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );
+
+	this->cfg->os->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->cfg->os->mbHost );
+}
+
 void AyPlayer::start ( void ) {
-	this->rcc	=	new Rcc( this->cfg->mcu );
+
 
 	this->hardwareMcInit();
 
