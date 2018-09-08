@@ -1,0 +1,1 @@
+this->cfg->mcu->gpio->pwr.allPwr->reset();
