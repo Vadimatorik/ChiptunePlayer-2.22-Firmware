@@ -17,13 +17,12 @@ enum class AYPLAYER_WINDOW_NOW {
 #define HANDLER_FSM_INPUT_DATA					__attribute__((unused)) const fsmStep< AyPlayer >* previousStep, AyPlayer* obj
 
 #define	TB_MAIN_TASK_SIZE						800
-#define	TB_ILLUMINATION_CONTROL_TASK_SIZE		200
+
 #define	TB_BUTTON_CLICK_HANDLER_TASK_SIZE		400
 #define	TB_PLAY_TASK_SIZE						800
 #define	TB_PLAY_TICK_TASK_SIZE					200
 
 #define	MAIN_TASK_PRIO							3
-#define	ILLUMINATION_CONTROL_TASK_PRIO			1
 #define	BUTTON_CLICK_HANDLER_TASK_PRIO			1
 #define	PLAY_TASK_PRIO							1
 #define	PLAY_TICK_TASK_PRIO						1
@@ -236,7 +235,6 @@ private:
 
 
 private:
-	static void illuminationControlTask ( void* obj );
 	static void buttonClickHandlerTask ( void* obj );
 	static void playTickHandlerTask ( void* obj );
 	static void playTask ( void* obj );
@@ -279,8 +277,7 @@ private:
 
 	USER_OS_STATIC_STACK_TYPE							tbMainTask[ TB_MAIN_TASK_SIZE ];
 	USER_OS_STATIC_TASK_STRUCT_TYPE						tsMainTask;
-	USER_OS_STATIC_STACK_TYPE							tbIlluminationControlTask[ TB_ILLUMINATION_CONTROL_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE						tsIlluminationControlTask;
+
 	USER_OS_STATIC_STACK_TYPE							tbButtonClickHandlerTask[ TB_BUTTON_CLICK_HANDLER_TASK_SIZE ];
 	USER_OS_STATIC_TASK_STRUCT_TYPE						tsButtonClickHandlerTask;
 	USER_OS_STATIC_STACK_TYPE							tbPlayTask[ TB_PLAY_TASK_SIZE ];
@@ -293,8 +290,7 @@ private:
 
 	AyPlayerModuleGui g;
 
-	/// Яркость подсветки.
-	float												illuminationDuty = 1;
+
 
 	AYPLAYER_STATUS										playState;
 	FILE_LIST_TYPE										lType;

@@ -17,11 +17,22 @@ void		makiseGuiUpdate				( MakiseGUI* gui );
 namespace AyPlayer {
 
 Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
-				const AyPlayerGuiModuleStyleCfg*		const cfg	) :
-						pcbObj( pcbObj ), cfg( cfg )	{
+				const AyPlayerGuiModuleStyleCfg*		const cfg,
+				McHardwareInterfaces::TimPwmOneChannel*	ledPwm	) :
+						pcbObj( pcbObj ), cfg( cfg ), ledPwm( ledPwm )	{
 	this->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->mbHost );
 
 }
+
+void Gui::illuminationControlTask ( void*	obj ) {
+	Gui* o =( Gui* ) obj;
+	o->ledPwm->setDuty( o->maxIlluminationDuty );
+	o->ledPwm->on();
+	while( true ) {
+		vTaskDelay( 100 );
+	}
+}
+
 
 void Gui::init ( void ) {
 	makise_gui_autoinit(	&makiseHost,
@@ -45,6 +56,14 @@ void Gui::init ( void ) {
 	this->checkAndExit( r );
 	r = this->pcbObj->lcd->on();
 	this->checkAndExit( r );
+
+	USER_OS_STATIC_TASK_CREATE(	illuminationControlTask,
+								"illuminationControl",
+								this->tbIlluminationControlTaskSize,
+								( void* )this,
+								this->illuminationControlTaskPrio,
+								this->tbIlluminationControlTask,
+								&this->tsIlluminationControlTask	);
 }
 
 void Gui::addStatusBar( void ) {
@@ -76,6 +95,34 @@ void Gui::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
 	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
 		AyPlayer::Nvic::reboot();
 	}
+}
+
+void Gui::setMaxIlluminationDuty ( float	maxIlluminationDuty ) {
+	if ( maxIlluminationDuty > 1 ) {
+		this->maxIlluminationDuty	=	1;
+	} else if ( maxIlluminationDuty < 0 ) {
+		this->maxIlluminationDuty	=	0;
+	} else {
+		this->maxIlluminationDuty	=	maxIlluminationDuty;
+	}
+}
+
+void Gui::setMinIlluminationDuty ( float	minIlluminationDuty ) {
+	if ( minIlluminationDuty > 1 ) {
+		this->minIlluminationDuty	=	1;
+	} else if ( minIlluminationDuty < 0 ) {
+		this->minIlluminationDuty	=	0;
+	} else {
+		this->minIlluminationDuty	=	minIlluminationDuty;
+	}
+}
+
+void Gui::setMaxIlluminationTime ( uint32_t		maxIlluminationTimeDs ) {
+	this->maxIlluminationTimeDs	=	maxIlluminationTimeDs;
+}
+
+void Gui::setMinIlluminationTime ( uint32_t		minIlluminationTimeDs ) {
+	this->minIlluminationTimeDs	=	minIlluminationTimeDs;
 }
 
 }

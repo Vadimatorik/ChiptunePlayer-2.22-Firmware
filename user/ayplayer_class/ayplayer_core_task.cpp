@@ -9,14 +9,6 @@ extern MHost				makiseHost;
 
 namespace AyPlayer {
 
-void AyPlayer::illuminationControlTask (  void* obj  ) {
-	AyPlayer* o =( AyPlayer* ) obj;
-	o->cfg->mcu->lcdPwmTim->setDuty( o->illuminationDuty );
-	while( true ) {
-		o->cfg->mcu->lcdPwmTim->on();
-		vTaskDelay( 1000 );
-	}
-}
 
 void AyPlayer::buttonClickHandlerTask (  void* obj  ) {
 	EC_BUTTON_NAME		b;
@@ -316,6 +308,10 @@ void AyPlayer::mainTask ( void* obj ) {
 	}*/
 
 	o->gui->init();
+	o->gui->setMaxIlluminationDuty( 0.8 );
+	o->gui->setMinIlluminationDuty( 0.3 );
+	o->gui->setMaxIlluminationTime( 10 );
+	o->gui->setMinIlluminationTime( 5 );
 
 	while( 1 ) {
 		o->gui->update();

@@ -7,7 +7,7 @@ namespace AyPlayer {
 
 AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
 	this->rcc						=	new Rcc( this->cfg->mcu );
-	this->gui						=	new Gui( this->cfg->pcb, this->cfg->gui );
+	this->gui						=	new Gui( this->cfg->pcb, this->cfg->gui, this->cfg->mcu->lcdPwmTim );
 
 	this->cfg->os->qAyLow[0]		=	USER_OS_STATIC_QUEUE_CREATE( QB_AY_LOW_SIZE, sizeof( ayLowOutDataStruct ), &this->cfg->os->qbAyLow[0][0], &this->cfg->os->qsAyLow[0] );
 	this->cfg->os->qAyLow[1]		=	USER_OS_STATIC_QUEUE_CREATE( QB_AY_LOW_SIZE, sizeof( ayLowOutDataStruct ), &this->cfg->os->qbAyLow[1][0], &this->cfg->os->qsAyLow[1] );
@@ -37,13 +37,7 @@ void AyPlayer::start ( void ) {
 /*
 	Контроль подсветки экрана.
 
-	USER_OS_STATIC_TASK_CREATE(	AyPlayer::illuminationControlTask,
-								"illuminationControl",
-								TB_ILLUMINATION_CONTROL_TASK_SIZE,
-								( void* )this,
-								ILLUMINATION_CONTROL_TASK_PRIO,
-								this->tbIlluminationControlTask,
-								&this->tsIlluminationControlTask	);
+
 
 	/// Обработка нажатой клавиши.
 	USER_OS_STATIC_TASK_CREATE(	AyPlayer::buttonClickHandlerTask,

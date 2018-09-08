@@ -39,20 +39,20 @@ McHardwareInterfacesImplementation::TimInterrupt interruptAy( &timInterruptCfg )
 /// 1 кГц, ШИМ.
 const McHardwareInterfacesImplementation::ClkTimBaseCfg lcdPwmClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
-		.period				= 	500 - 1,
-		.prescaler			=	1000 - 1,
+		.period				= 	9 - 1,
+		.prescaler			=	500 - 1,
 		.pulse				=	0,
 	}, {
-		.period				=	18000 - 1,
+		.period				=	18 - 1,
 		.prescaler			=	1000 - 1,
 		.pulse				=	0
 	}, {
-		.period				=	36000 - 1,
+		.period				=	36 - 1,
 		.prescaler			=	1000 - 1,
 		.pulse				=	0
 	}, {
-		.period				=	8400,
-		.prescaler			=	10000 - 1,
+		.period				=	168 - 1,
+		.prescaler			=	1000 - 1,
 		.pulse				=	0
 	},
 };
