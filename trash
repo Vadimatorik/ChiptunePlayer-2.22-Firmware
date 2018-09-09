@@ -1,3 +1,4 @@
 this->cfg->mcu->gpio->pwr.allPwr->reset();
 
 this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "MakiseGui started." );
+this->cfg->pcb->sd->getStatus() != EC_SD_STATUS::NOINIT )

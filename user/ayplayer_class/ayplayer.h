@@ -132,23 +132,6 @@ private:
 	static void scrollNameInMainWindow ( TimerHandle_t timer );
 
 	void			powerOff							(	CAUSE_SHUTDOWN	cause	);
-/*
-	 * Возвращает флаг наличия запрошенной microsd в слоте.
-	 * \param[in]	sd	-	проверяемая карта.
-	 * \return		{	true	-	карта обнаружена..
-	 * 					false	-	в противном случае.}
-	 * 					*/
-
-	bool			checkSd								( void );
-
-
-	 /// Ожидает, пока будут вставлены обе microsd карты.
-	/// Выводит на экран и в лог соответвующие выводы.
-
-	void			waitSdCardInsert					( void );
-
-
-
 
 	void			guiUpdate							( void );
 
