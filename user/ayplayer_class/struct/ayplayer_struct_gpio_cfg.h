@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pin.h"
+#include "mc_hardware_interfaces_pin_multifunc_it.h"
 
 struct GpioPwr {					/// Питание на плате.
 	McHardwareInterfaces::Pin*						const pwr5v;
@@ -12,8 +13,15 @@ struct GpioVolumeRocker {			/// Качелька громкости.
 	McHardwareInterfaces::Pin*						const dec;
 };
 
+struct GpioSdControl {
+	McHardwareInterfaces::Pin*						const read;
+	McHardwareInterfaces::PinMultifuncIt*			const it;
+	McHardwareInterfaces::Pin*						const set;
+};
+
 /// Все используемые программно выводы плеера.
 struct AyplayerGpio {
-	GpioPwr												pwr;
-	GpioVolumeRocker									vr;
+	GpioPwr											pwr;
+	GpioVolumeRocker								vr;
+	GpioSdControl									sd;
 };

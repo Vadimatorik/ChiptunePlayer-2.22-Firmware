@@ -305,6 +305,8 @@ void AyPlayer::mainTask ( void* obj ) {
 
 	}*/
 
+	o->sd->init();
+
 	o->gui->init();
 	o->gui->setMaxIlluminationDuty( 0.8 );
 	o->gui->setMinIlluminationDuty( 0.3 );
@@ -312,8 +314,10 @@ void AyPlayer::mainTask ( void* obj ) {
 	o->gui->setMinIlluminationTime( 2 );
 
 	while( 1 ) {
-		o->gui->update();
-		vTaskDelay( 10000 );
+		if ( o->sd->getState() ) {
+			o->gui->update();
+		} else {
+		}
 	}
 }
 

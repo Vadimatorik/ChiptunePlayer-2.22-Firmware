@@ -11,8 +11,8 @@ extern const McHardwareInterfacesImplementation::PinCfg		lcdDcCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		lcdCsCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		sd1SmdCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		sdIoAndClkCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdPushCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdCheckerValueSetter;
+extern const McHardwareInterfacesImplementation::PinCfg		sdSetCfg;
+extern const McHardwareInterfacesImplementation::PinCfg		sdReadCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		usbCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		spiBoardTxCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		spiBoardClkCfg;
@@ -41,8 +41,8 @@ extern const McHardwareInterfacesImplementation::PinCfg gpCfg[ 35 ] = {
 	adcCfg,														/// ADC.
 	lcdClkCfg,		lcdPwmCfg,		lcdResCfg,					/// LCD.
 	lcdDcCfg,		lcdDcCfg,		lcdCsCfg,
-	sd1SmdCfg,		sdIoAndClkCfg,	sdCheckerValueSetter,		/// MicroSd.
-	sdPushCfg,		sdPushCfg,
+	sd1SmdCfg,		sdIoAndClkCfg,								/// MicroSd.
+	sdSetCfg,		sdReadCfg,
 	usbCfg,														/// USB.
 	pwr5vOnCfg,		pwrOnCfg,		tpStCfg,					/// PWR.
 	tpChCfg,

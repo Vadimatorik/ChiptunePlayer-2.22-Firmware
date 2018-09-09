@@ -4,11 +4,16 @@
 
 extern const AyplayerGpio gpio = {
 	.pwr = {
-		.pwr5v				= &pwr5vOn,
-		.allPwr			= &pwrOn,
+		.pwr5v				=	&pwr5vOn,
+		.allPwr				=	&pwrOn,
 	},
 	.vr = {
-		.inc				= &buttonInc,
-		.dec				= &buttonDec
+		.inc				=	&buttonInc,
+		.dec				=	&buttonDec
+	},
+	.sd = {
+		.read				=	&sdRead,
+		.it					=	&sdRead,
+		.set				=	&sdSet
 	}
 };

@@ -12,10 +12,10 @@ McHardwareInterfacesImplementation::Pin 					lcdRes					( &lcdResCfg );
 McHardwareInterfacesImplementation::Pin						lcdDc					( &lcdDcCfg );						/// Данные/команда.
 McHardwareInterfacesImplementation::Pin						lcdCs					( &lcdCsCfg );
 
-extern const McHardwareInterfacesImplementation::PinCfg		sdPushCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdCheckerValueSetter;
-McHardwareInterfacesImplementation::Pin						sdSignal				( &sdCheckerValueSetter );
-McHardwareInterfacesImplementation::PinMultifuncIt			sdIn					( &sdPushCfg, 1, GPIO_PIN_11 );
+extern const McHardwareInterfacesImplementation::PinCfg		sdSetCfg;
+extern const McHardwareInterfacesImplementation::PinCfg		sdReadCfg;
+McHardwareInterfacesImplementation::Pin						sdSet					( &sdSetCfg );
+McHardwareInterfacesImplementation::PinMultifuncIt			sdRead					( &sdReadCfg, 1, GPIO_PIN_11 );
 
 extern const McHardwareInterfacesImplementation::PinCfg		boardGpio2;
 extern const McHardwareInterfacesImplementation::PinCfg		boardGpio3;

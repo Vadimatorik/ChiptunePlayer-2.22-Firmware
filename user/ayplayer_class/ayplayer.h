@@ -4,6 +4,7 @@
 #include "ayplayer_nvic.h"
 #include "ayplayer_rcc.h"
 #include "ayplayer_gui.h"
+#include "ayplayer_sd_control.h"
 
 namespace AyPlayer {
 
@@ -311,8 +312,10 @@ private:
 	 *				с аппаратным модулем NVIC.
 	 */
 	Nvic												nvic;
+
 	Rcc*												rcc;
 	Gui*												gui;
+	SdControl*											sd;
 };
 
 };

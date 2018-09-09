@@ -99,19 +99,19 @@ extern const McHardwareInterfacesImplementation::PinCfg sdIoAndClkCfg = {
 	}
 };
 
-extern const McHardwareInterfacesImplementation::PinCfg sdPushCfg = {
-	.GPIOx			=	GPIOB,
-	.init = {
-		.Pin		=	GPIO_PIN_11,
-		PINS_EXTI_MODE
-	}
-};
-
-extern const McHardwareInterfacesImplementation::PinCfg sdCheckerValueSetter = {
+extern const McHardwareInterfacesImplementation::PinCfg sdSetCfg = {
 	.GPIOx			=	GPIOB,
 	.init = {
 		.Pin		=	GPIO_PIN_12,
 		PINS_OUTPUT_PP_MODE
+	}
+};
+
+extern const McHardwareInterfacesImplementation::PinCfg sdReadCfg = {
+	.GPIOx			=	GPIOB,
+	.init = {
+		.Pin		=	GPIO_PIN_13,
+		PINS_EXTI_MODE
 	}
 };
 
