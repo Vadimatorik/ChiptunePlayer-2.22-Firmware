@@ -146,11 +146,6 @@ private:
 	void			errorMicroSdDraw					( const FRESULT r );
 
 
-	 /// Ждем, пока отсоединят флешку.
-
-	void			waitSdCardDisconnect				( void );
-
-
 	/// Проходится по всем каталогам и составляет список поддерживаемых файлов.
 
 	FRESULT			indexingSupportedFiles				( char* path );

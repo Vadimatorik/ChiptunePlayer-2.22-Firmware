@@ -212,6 +212,7 @@ void AyPlayer::playTask (  void* obj  ) {
 #define OFF_WAIT_TIME             				   	3000
 #define PERIOD_DETECT_PRESS_BUTTON_INC_DEC			10
 
+
 /*!
  * Основная задача в начале производит
  * инициализацию устройства по деревьям, после чего
@@ -228,6 +229,9 @@ void AyPlayer::mainTask ( void* obj ) {
 	o->gui->setMaxIlluminationTime( 5 );
 	o->gui->setMinIlluminationTime( 2 );
 
+	/*!
+	 * Подключение карты.
+	 */
 	do {
 		if ( !o->sd->getState() ) {
 			const char SD_NOT_PRESENT[]	=	"SD not present!";
@@ -266,11 +270,14 @@ void AyPlayer::mainTask ( void* obj ) {
 		}
 	} while( false );
 
+	/*!
+	 * Анализ файлов на карте.
+	 */
+
+
+
+
 /*
-	if ( o->fsmStepFuncMicroSdInit() != 0 )
-			NVIC_SystemReset();
-	if ( o->fsmStepFuncIndexingSupportedFiles() != 0 )
-			NVIC_SystemReset();
 
 	if ( o->fsmStepFuncSortingFileList() != 0 )
 				NVIC_SystemReset();
