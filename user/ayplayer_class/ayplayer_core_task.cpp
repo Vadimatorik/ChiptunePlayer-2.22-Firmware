@@ -221,8 +221,6 @@ void AyPlayer::mainTask ( void* obj ) {
 	AyPlayer* o =( AyPlayer* ) obj;
 	( void )o;
 /*
-	if ( o->fsmStepFuncGuiInit() != 0 )
-			NVIC_SystemReset();
 	if ( o->fsmStepFuncMicroSdInit() != 0 )
 			NVIC_SystemReset();
 	if ( o->fsmStepFuncIndexingSupportedFiles() != 0 )
