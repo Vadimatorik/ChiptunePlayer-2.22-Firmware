@@ -22,8 +22,12 @@ public:
 	void	setMaxIlluminationTime		(	uint32_t		maxIlluminationTimeS	);
 	void	setMinIlluminationTime		(	uint32_t		minIlluminationTimeS	);
 
-	// Перерисовывает GUI и обновляет экран.
+	/// Перерисовывает GUI и обновляет экран.
 	void	update				(	void	);
+
+	///
+	void	addMessage					(	const char* const message	);
+	void	removeMessage				(	void	);
 
 private:
 	/*!

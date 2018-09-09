@@ -4,14 +4,6 @@
 
 namespace AyPlayer {
 
-int AyPlayer::fsmStepFuncMicroSdInit ( void ) {
-	/*!
-	 * Ждем валидную карту.
-	 */
-	this->waitSdCardInsert();
-	return 0;
-}
-
 int AyPlayer::fsmStepFuncIndexingSupportedFiles ( void ) {
 	/// Путь до актуального каталога.
 	char*			path		=	( char* )pvPortMalloc( 1024 );

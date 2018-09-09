@@ -219,7 +219,31 @@ void AyPlayer::playTask (  void* obj  ) {
  */
 void AyPlayer::mainTask ( void* obj ) {
 	AyPlayer* o =( AyPlayer* ) obj;
-	( void )o;
+
+	o->sd->init();
+	o->gui->init();
+
+	o->gui->setMaxIlluminationDuty( 0.8 );
+	o->gui->setMinIlluminationDuty( 0.3 );
+	o->gui->setMaxIlluminationTime( 5 );
+	o->gui->setMinIlluminationTime( 2 );
+
+	if ( !o->sd->getState() ) {
+		const char SD1_NOT_PRESENT[]	=	"SD not present!";
+		o->gui->addMessage( SD1_NOT_PRESENT );
+		o->gui->update();
+
+		while( !o->sd->getState() ) {
+			o->cfg->l->sendMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "SD not present!" );
+			USER_OS_DELAY_MS( 100 );
+		}
+
+		o->gui->removeMessage();
+		o->gui->update();
+	}
+
+	o->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD is detected!" );
+
 /*
 	if ( o->fsmStepFuncMicroSdInit() != 0 )
 			NVIC_SystemReset();
@@ -305,19 +329,13 @@ void AyPlayer::mainTask ( void* obj ) {
 
 	}*/
 
-	o->sd->init();
 
-	o->gui->init();
-	o->gui->setMaxIlluminationDuty( 0.8 );
-	o->gui->setMinIlluminationDuty( 0.3 );
-	o->gui->setMaxIlluminationTime( 5 );
-	o->gui->setMinIlluminationTime( 2 );
+
+
+
 
 	while( 1 ) {
-		if ( o->sd->getState() ) {
-			o->gui->update();
-		} else {
-		}
+
 	}
 }
 

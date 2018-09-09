@@ -3,7 +3,7 @@
 #define MODULE_AY_YM_FILE_PLAY_ENABLED
 #define MODULE_AY_YM_LOW_LAVEL_ENABLED
 
-#define STM32F415xx
+#define STM32F405xx
 #define STM32F4
 #define STM32
 

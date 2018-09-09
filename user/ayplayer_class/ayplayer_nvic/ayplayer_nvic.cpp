@@ -8,9 +8,9 @@ void Nvic::setPriorityCallsInterruptVectors (	void	) {
 
 	NVIC_SetPriority( DMA2_Stream3_IRQn,		this->DMA2_Stream3_IRQn_priority );
 	NVIC_SetPriority( DMA2_Stream6_IRQn,		this->DMA2_Stream6_IRQn_priority );
-	NVIC_SetPriority( SDIO_IRQn,				this->SDIO_IRQn_priority );
 
 	NVIC_SetPriority( USART1_IRQn,				this->USART1_IRQn_priority );
+	NVIC_SetPriority( DMA2_Stream7_IRQn,		this->DMA2_Stream7_IRQn_priority );
 
 	NVIC_SetPriority( PVD_IRQn,					this->PVD_IRQn_priority );
 
@@ -23,9 +23,9 @@ void Nvic::enableAllIrq ( void ) {
 
 	NVIC_EnableIRQ( DMA2_Stream3_IRQn );
 	NVIC_EnableIRQ( DMA2_Stream6_IRQn );
-	NVIC_EnableIRQ( SDIO_IRQn );
 
 	NVIC_EnableIRQ( USART1_IRQn );
+	NVIC_EnableIRQ( DMA2_Stream7_IRQn );
 
 	NVIC_EnableIRQ( PVD_IRQn );
 

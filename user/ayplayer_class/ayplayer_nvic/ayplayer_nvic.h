@@ -68,8 +68,8 @@ private:
 	const uint32_t DMA2_Stream3_IRQn_priority			=	10;
 	const uint32_t DMA2_Stream5_IRQn_priority			=	10;
 	const uint32_t DMA2_Stream6_IRQn_priority			=	10;
+	const uint32_t DMA2_Stream7_IRQn_priority			=	10;
 
-	const uint32_t SDIO_IRQn_priority					=	10;
 	const uint32_t USART1_IRQn_priority					=	10;
 	const uint32_t PVD_IRQn_priority					=	10;
 	const uint32_t TIM6_DAC_IRQn_priority				=	10;

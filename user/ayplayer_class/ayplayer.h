@@ -242,7 +242,6 @@ private:
 
 
 private:
-	int fsmStepFuncMicroSdInit ( void );
 	int fsmStepFuncIndexingSupportedFiles ( void );
 	int fsmStepFuncSortingFileList ( void );
 	int fsmStepFuncCheckingChangeFatVolume ( void );

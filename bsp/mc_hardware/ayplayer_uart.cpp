@@ -7,6 +7,7 @@ const McHardwareInterfacesImplementation::UartCfg usartCfg = {
 	.mode				=	UART_MODE_TX_RX,
 	.dmaTx				=	DMA2_Stream7,
 	.dmaTxCh			=	DMA_CHANNEL_4,
+	.dmaTxPrio			=	10
 };
 
 McHardwareInterfacesImplementation::Uart usart( &usartCfg );

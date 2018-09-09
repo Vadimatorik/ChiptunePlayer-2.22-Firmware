@@ -83,7 +83,6 @@ extern "C" {
 	void __attribute__( ( weak ) ) OTG_FS_IRQHandler				( void ) { while( true ); }
 	void __attribute__( ( weak ) ) DMA2_Stream5_IRQHandler			( void ) { while( true ); }
 	void __attribute__( ( weak ) ) DMA2_Stream6_IRQHandler			( void ) { while( true ); }
-	void __attribute__( ( weak ) ) DMA2_Stream7_IRQHandler			( void ) { while( true ); }
 	void __attribute__( ( weak ) ) USART6_IRQHandler				( void ) { while( true ); }
 	void __attribute__( ( weak ) ) I2C3_EV_IRQHandler				( void ) { while( true ); }
 	void __attribute__( ( weak ) ) I2C3_ER_IRQHandler				( void ) { while( true ); }

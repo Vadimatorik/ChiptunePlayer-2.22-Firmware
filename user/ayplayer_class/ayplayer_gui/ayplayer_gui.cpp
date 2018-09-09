@@ -148,4 +148,17 @@ void Gui::setMinIlluminationTime ( uint32_t		minIlluminationTimeS ) {
 	this->minIlluminationTimeS	=	minIlluminationTimeS;
 }
 
+void Gui::addMessage ( const char*	const message ) {
+	m_create_message_window(	&this->g.mw,
+								&makiseHost.host,
+								mp_rel( 0,	11,
+										128, 64 - 11 ),
+								( char* )message,
+								( MakiseStyle_SMessageWindow* )&this->cfg->smw );
+}
+
+void Gui::removeMessage (	void	) {
+	makise_g_cont_rem( &this->g.mw.el );
+}
+
 }

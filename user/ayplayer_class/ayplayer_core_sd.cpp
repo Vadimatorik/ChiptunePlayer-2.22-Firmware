@@ -21,31 +21,6 @@ bool AyPlayer::checkSd ( void ) {
 }
 
 void AyPlayer::waitSdCardInsert ( void ) {
-	if ( this->checkSd() ) {
-		this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD1 is detected!" );
-		return;
-	}
-
-	this->cfg->l->sendMessage( RTL_TYPE_M::INIT_ISSUE, "SD1 missing!" );
-	const char SD1_NOT_PRESENT[]	=	"SD1 not present!";
-
-	/// Создаем временный граф. объект.
-	MMessageWindow*			m;
-	m	=	( MMessageWindow* )pvPortMalloc( sizeof( MMessageWindow ) );
-	assertParam( m );
-
-	m_create_message_window(	m,
-								&makiseHost.host,
-								mp_rel( 0,	11,
-										128, 64 - 11 ),
-								( char* )SD1_NOT_PRESENT,
-								( MakiseStyle_SMessageWindow* )&this->cfg->gui->smw );
-	this->guiUpdate();
-
-	makise_g_cont_rem( &m->el );
-	vPortFree( m );
-
-
 	while( true ) {
 		vTaskDelay( 100 );
 

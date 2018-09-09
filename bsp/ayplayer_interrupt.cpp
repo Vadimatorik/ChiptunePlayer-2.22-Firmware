@@ -52,11 +52,11 @@ void DMA2_Stream6_IRQHandler		( void ) {
 	sd.dmaTxHandler();
 }
 
-void SDIO_IRQHandler		( void ) {
-	sd.sdioHandler();
+void USART1_IRQHandler				( void ) {
+	usart.irqHandler();
 }
 
-void USART1_IRQHandler				( void ) {
+void DMA2_Stream7_IRQHandler		( void ) {
 	usart.irqHandler();
 }
 
