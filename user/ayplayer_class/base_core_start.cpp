@@ -1,10 +1,9 @@
-#include "ayplayer.h"
-#include "core_cm4.h"
 #include "ayplayer_os_object.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-int AyPlayer::fsmStepFuncIndexingSupportedFiles ( void ) {
+int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
 	/// Путь до актуального каталога.
 	char*			path		=	( char* )pvPortMalloc( 1024 );
 	assertParam( path );
@@ -35,7 +34,7 @@ int AyPlayer::fsmStepFuncIndexingSupportedFiles ( void ) {
 	}
 }
 
-int AyPlayer::fsmStepFuncSortingFileList ( void ) {
+int Base::fsmStepFuncSortingFileList ( void ) {
 	char*			path		=	( char* )pvPortMalloc( 1024 );
 	int				r;
 
@@ -57,17 +56,17 @@ int AyPlayer::fsmStepFuncSortingFileList ( void ) {
 	return 0;
 }
 
-int AyPlayer::fsmStepFuncCheckingChangeFatVolume ( void ) {
+int Base::fsmStepFuncCheckingChangeFatVolume ( void ) {
 	//return this->checkingSystemFileInRootDir( "0:" );
 	return 0;
 }
 
-int AyPlayer::fsmStepFuncCleanFlagChangeFatVolume ( void ) {
+int Base::fsmStepFuncCleanFlagChangeFatVolume ( void ) {
 	//this->removeSystemFileInRootDir( "0:");
 	return 0;
 }
 
-int AyPlayer::fsmStepFuncInitMainWindow ( void ) {
+int Base::fsmStepFuncInitMainWindow ( void ) {
 	/// Вместо считывания с карты памяти (системной).
 	/// Заполняем стандартные параметры.
 	this->lType			=	FILE_LIST_TYPE::NAME_SORT;

@@ -1,11 +1,11 @@
-#include "ayplayer.h"
 #include "ayplayer_fat.h"
 #include <algorithm>
 #include <vector>
+#include "base.h"
 
 namespace AyPlayer {
 
-ItemFileInFat* AyPlayer::structureItemFileListFilling ( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format ) {
+ItemFileInFat* Base::structureItemFileListFilling ( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format ) {
 	/// Выделяем память под элемент
 	/// (его удалит после записи writeItemFileListAndRemoveItem).
 	ItemFileInFat* i	=	( ItemFileInFat* )pvPortMalloc( sizeof( ItemFileInFat ) );
@@ -19,7 +19,7 @@ ItemFileInFat* AyPlayer::structureItemFileListFilling ( const char* const nameTr
 	return i;
 }
 
-int	AyPlayer::sortFileListCreateFile ( const char* const path, FIL** fNoSort, FIL** fNameSort, FIL** fLenSort ) {
+int	Base::sortFileListCreateFile ( const char* const path, FIL** fNoSort, FIL** fNameSort, FIL** fLenSort ) {
 	int r = 0;
 
 	do {
@@ -66,7 +66,7 @@ int	AyPlayer::sortFileListCreateFile ( const char* const path, FIL** fNoSort, FI
 	return r;
 }
 
-int	AyPlayer::sortFileListCloseFile ( const char* const path, DIR* d, FILINFO* fi, FIL* fNoSort, FIL* fNameSort, FIL* fLenSort ) {
+int	Base::sortFileListCloseFile ( const char* const path, DIR* d, FILINFO* fi, FIL* fNoSort, FIL* fNameSort, FIL* fLenSort ) {
 	int r = 0;
 	if ( fi )										vPortFree( fi );
 	r	=	( AyPlayerFat::closeDir( d )			!= 0 ) ? -1 : r;
@@ -83,7 +83,7 @@ int	AyPlayer::sortFileListCloseFile ( const char* const path, DIR* d, FILINFO* f
 	return r;
 }
 
-int AyPlayer::writeSortFile ( FIL* output, FIL* input, uint16_t* sortArray, uint32_t count ) {
+int Base::writeSortFile ( FIL* output, FIL* input, uint16_t* sortArray, uint32_t count ) {
 	int funResult;
 
 	/// Пишем все структуры.
@@ -101,14 +101,14 @@ int AyPlayer::writeSortFile ( FIL* output, FIL* input, uint16_t* sortArray, uint
 	return funResult;
 }
 
-void AyPlayer::initPointArrayToSort ( uint16_t* array, uint32_t count ) {
+void Base::initPointArrayToSort ( uint16_t* array, uint32_t count ) {
 	/// Изначально все строкутры в своем порядке 0..countFileInDir-1.
 	for ( uint32_t i = 0; i < count; i++ )
 		array[ i ] = i;
 }
 
 
-int AyPlayer::sortForNameFileList ( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fNameSort ) {
+int Base::sortForNameFileList ( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fNameSort ) {
 	int	sortResult	=	0;
 	/// Начинаем быструю сортировку по имени.
 	std::sort( fl, &fl[ countFileInDir ], [ this, path, &sortResult, fi, d, fNoSort, fNameSort ]( int a, int b ) {
@@ -153,7 +153,7 @@ int AyPlayer::sortForNameFileList ( const char* const path, uint16_t* fl, uint32
 	return sortResult;
 }
 
-int AyPlayer::sortForLenFileList ( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fLenSort ) {
+int Base::sortForLenFileList ( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fLenSort ) {
 	int	sortResult	=	0;
 
 	/// Начинаем быструю сортировку по имени.
@@ -190,7 +190,7 @@ int AyPlayer::sortForLenFileList ( const char* const path, uint16_t* fl, uint32_
 	return sortResult;
 }
 
-int	AyPlayer::sortFileList ( char* path ) {
+int	Base::sortFileList ( char* path ) {
 	int					r	=	0;
 
 	FILINFO*			fi			=	nullptr;
@@ -254,7 +254,7 @@ int	AyPlayer::sortFileList ( char* path ) {
 	return r;
 }
 
-FRESULT AyPlayer::findingFileListAndSort ( char* path ) {
+FRESULT Base::findingFileListAndSort ( char* path ) {
 	FRESULT					r;
 	static FILINFO			f;
 

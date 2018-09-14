@@ -1,5 +1,5 @@
-#include "ayplayer.h"
 #include "ayplayer_button.h"
+#include "base.h"
 
 extern "C" {
 
@@ -10,11 +10,11 @@ extern MHost				makiseHost;
 namespace AyPlayer {
 
 
-void AyPlayer::buttonClickHandlerTask (  void* obj  ) {
+void Base::buttonClickHandlerTask (  void* obj  ) {
 	EC_BUTTON_NAME		b;
 	uint8_t				qData;
 	int					r;
-	AyPlayer* o =( AyPlayer* ) obj;
+	Base* o =( Base* ) obj;
 	( void )r;
 	while( true ) {
 		USER_OS_QUEUE_RESET( o->cfg->os->qAyButton );  // Старые команды нас не интересуют.
@@ -170,8 +170,8 @@ void AyPlayer::buttonClickHandlerTask (  void* obj  ) {
 	}
 }
 
-void AyPlayer::playTickHandlerTask ( void* obj  ) {
-	AyPlayer* o =( AyPlayer* ) obj;
+void Base::playTickHandlerTask ( void* obj  ) {
+	Base* o =( Base* ) obj;
 	while ( true ) {
 		USER_OS_TAKE_BIN_SEMAPHORE( o->cfg->os->sPlayTic, portMAX_DELAY );
 
@@ -182,8 +182,8 @@ void AyPlayer::playTickHandlerTask ( void* obj  ) {
 	}
 }
 
-void AyPlayer::playTask (  void* obj  ) {
-	AyPlayer* o =( AyPlayer* ) obj;
+void Base::playTask (  void* obj  ) {
+	Base* o =( Base* ) obj;
 	int  r;
 	while ( true ) {
 		USER_OS_TAKE_BIN_SEMAPHORE( o->cfg->os->sStartPlay, portMAX_DELAY );
@@ -218,8 +218,8 @@ void AyPlayer::playTask (  void* obj  ) {
  * инициализацию устройства по деревьям, после чего
  * ждет разряда аккумулятора или выключения кнопками.
  */
-void AyPlayer::mainTask ( void* obj ) {
-	AyPlayer* o =( AyPlayer* ) obj;
+void Base::mainTask ( void* obj ) {
+	Base* o =( Base* ) obj;
 
 	o->sd->init();
 	o->gui->init();

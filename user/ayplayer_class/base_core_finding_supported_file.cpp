@@ -1,9 +1,9 @@
-#include "ayplayer.h"
 #include "ayplayer_fat.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-int	AyPlayer::scanDir ( char* path ) {
+int	Base::scanDir ( char* path ) {
 	int					r	=	0;
 
 	FILINFO*			fi	=	nullptr;
@@ -119,7 +119,7 @@ int	AyPlayer::scanDir ( char* path ) {
 	return r;
 }
 
-FRESULT AyPlayer::indexingSupportedFiles( char* path ) {
+FRESULT Base::indexingSupportedFiles( char* path ) {
 	FRESULT					r;
 	static FILINFO			f;
 

@@ -1,11 +1,12 @@
-#include "ayplayer.h"
+#include "base.h"
+
 #include "ayplayer_button.h"
 
 namespace AyPlayer {
 
 
 
-AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
+Base::Base ( const BaseCfg* const cfg ) : cfg( cfg ) {
 	this->rcc						=	new Rcc( this->cfg->mcu );
 	this->gui						=	new Gui( this->cfg->pcb, this->cfg->gui, this->cfg->mcu->lcdPwmTim );
 	this->sd						=	new SdControl( this->cfg->mcu->gpio->sd.it, this->cfg->mcu->gpio->sd.read, this->cfg->mcu->gpio->sd.set );
@@ -17,8 +18,8 @@ AyPlayer::AyPlayer ( const AyPlayerCfg* const cfg ) : cfg( cfg ) {
 	this->cfg->os->sPlayTic			=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbPlayTic );
 	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );}
 
-void AyPlayer::initTasks ( void ) {
-	USER_OS_STATIC_TASK_CREATE(	AyPlayer::mainTask,
+void Base::initTasks ( void ) {
+	USER_OS_STATIC_TASK_CREATE(	Base::mainTask,
 								"main",
 								TB_MAIN_TASK_SIZE,
 								( void* )this,
@@ -27,7 +28,7 @@ void AyPlayer::initTasks ( void ) {
 								&this->tsMainTask );
 }
 
-void AyPlayer::start ( void ) {
+void Base::start ( void ) {
 	this->initHardwareMc();
 	this->initTasks();
 	vTaskStartScheduler();
@@ -79,7 +80,7 @@ void AyPlayer::start ( void ) {
 	*/
 }
 
-void AyPlayer::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
+void Base::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
 	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
 		this->nvic.reboot();
 	}

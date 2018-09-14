@@ -1,4 +1,5 @@
 ﻿PROJECT_NAME		:=	ChiptunePlayer
+
 # MCU param.
 MK_FLAGS			:=	-mcpu=cortex-m4
 MK_FLAGS			+=	-mthumb
@@ -31,6 +32,8 @@ STARTUPE_S_NAME		:=	bsp/submodule/module_stm32f4_low_level_by_st/startupe/startu
 LDFLAGS				:=	$(MK_FLAGS) $(LD_FILES) -fno-exceptions
 LDFLAGS				+=	-Wl,--undefined=uxTopUsedPriority			
 LDFLAGS				+=	-ffunction-sections -Wl,--gc-sections
+
+DEFINE_PROJ			=	-D__VFP_FP__	-D__SOFTFP__
 
 #**********************************************************************
 # Toolchain param.

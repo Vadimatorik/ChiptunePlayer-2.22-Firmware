@@ -1,12 +1,12 @@
-#include "ayplayer.h"
 #include "ayplayer_fat.h"
+#include "base.h"
 
 namespace AyPlayer {
 
 /// 0 данные получены.
 /// 1 нет такого номера в списке.
 /// -1 проблема с microsd.
-int AyPlayer::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList ) {
+int Base::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList ) {
 	FIL*	f = nullptr;
 
 	/*!
@@ -64,7 +64,7 @@ int AyPlayer::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numb
 
 /// 0 данные получены.
 /// -1 проблема с microsd.
-int AyPlayer::getFileCountInCurDir ( FILE_LIST_TYPE listType, uint32_t& returnCount ) {
+int Base::getFileCountInCurDir ( FILE_LIST_TYPE listType, uint32_t& returnCount ) {
 	FIL*	f;
 
 	/*!
@@ -94,7 +94,7 @@ int AyPlayer::getFileCountInCurDir ( FILE_LIST_TYPE listType, uint32_t& returnCo
 }
 
 
-int AyPlayer::startPlayFile ( void ) {
+int Base::startPlayFile ( void ) {
 	this->cfg->pcb->dp->connectOn();
 
 
@@ -118,7 +118,7 @@ int AyPlayer::startPlayFile ( void ) {
 /*!
  * Устанавливает в значение из текущего столбца выбранного эквалайзера в потенциометр.
  */
-void AyPlayer::setValueEqualizer (	void	) {
+void Base::setValueEqualizer (	void	) {
 	switch( this->g.currentSlider ) {
 	case 0:							/// A1.
 		this->cfg->pcb->dp->setValue( 0, 2, this->eq.A1 );
@@ -141,7 +141,7 @@ void AyPlayer::setValueEqualizer (	void	) {
 	}
 }
 
-void AyPlayer::initEqualizer (	void	) {
+void Base::initEqualizer (	void	) {
 	this->cfg->pcb->dp->setValue( 0, 2, this->eq.A1 );
 	this->cfg->pcb->dp->setValue( 0, 0, this->eq.B1 );
 	this->cfg->pcb->dp->setValue( 0, 1, this->eq.C1 );
@@ -150,20 +150,20 @@ void AyPlayer::initEqualizer (	void	) {
 	this->cfg->pcb->dp->setValue( 1, 1, this->eq.C2 );
 }
 
-void AyPlayer::volumeSet ( const uint8_t left, const uint8_t right ) {
+void Base::volumeSet ( const uint8_t left, const uint8_t right ) {
 	this->cfg->pcb->dp->setValue( 1, 2, left );			// Левый наушник.
 	this->cfg->pcb->dp->setValue( 1, 3, right );			// Правый.
 }
 
 /// Метод вызывается только из main окна.
-void AyPlayer::stopPlayFile ( void ) {
+void Base::stopPlayFile ( void ) {
 	this->cfg->ay->stop();
 	this->playState		=	AYPLAYER_STATUS::STOP;
 	mPlayBarResetTrack( &this->g.pb );
 }
 
 /// Метод вызывается только из main окна.
-void AyPlayer::playPauseSet( bool state ) {
+void Base::playPauseSet( bool state ) {
 	this->cfg->ay->setPause( state );
 
 	if ( state ) {
@@ -173,7 +173,7 @@ void AyPlayer::playPauseSet( bool state ) {
 	}
 }
 
-void AyPlayer::trackMainWindowInit ( void ) {
+void Base::trackMainWindowInit ( void ) {
 	USER_OS_STATIC_TIMER_STOP( this->timNameScroll );
 	USER_OS_STATIC_TIMER_RESET( this->timNameScroll );
 	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timNameScroll, SCROLL_STRING_NAME_LOW );
@@ -188,7 +188,7 @@ void AyPlayer::trackMainWindowInit ( void ) {
 	USER_OS_STATIC_TIMER_START( this->timNameScroll );
 }
 
-void AyPlayer::startPlayTrack ( void ) {
+void Base::startPlayTrack ( void ) {
 	int r;
 	r = this->getFileInfoFromListCurDir( this->lType, this->currentFile );
 	if ( r != 0 )

@@ -10,7 +10,9 @@
 #include "run_time_logger.h"
 #include "ayplayer_os_object.h"
 
-struct AyPlayerCfg {
+namespace AyPlayer {
+
+struct BaseCfg {
 	const AyPlayerMcuCfg*					const mcu;
 	const AyPlayerPcbStrcut*				const pcb;
 	FreeRtosObj*							const os;
@@ -19,3 +21,5 @@ struct AyPlayerCfg {
 	RunTimeLogger*							const l;
 	AyYmFilePlay*							const ay;
 };
+
+}

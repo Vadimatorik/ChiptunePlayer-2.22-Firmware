@@ -1,8 +1,8 @@
-#include "ayplayer.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-void AyPlayer::printMessageAndArg ( RTL_TYPE_M type, const char* const message, const char* const arg ) {
+void Base::printMessageAndArg ( RTL_TYPE_M type, const char* const message, const char* const arg ) {
 	const uint32_t lenPath				=	strlen( arg ) + 1;
 	const uint32_t infoStringLen		=	strlen( message ) + 1;
 	const uint32_t mallocByteGetValue	=	lenPath + infoStringLen;

@@ -1,8 +1,8 @@
-#include "ayplayer.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-void AyPlayer::initHardwareMc ( void ) {
+void Base::initHardwareMc ( void ) {
 	McHardwareInterfaces::BaseResult r;
 
 	r = this->cfg->mcu->wdt->reinit();

@@ -1,6 +1,5 @@
-#include "ayplayer.h"
-
 #include "ayplayer_fat_error_string.h"
+#include "base.h"
 
 #include "makise_gui.h"
 #include "makise.h"
@@ -15,7 +14,7 @@ extern MakiseDriver			makiseGuiDriver;
 
 namespace AyPlayer {
 
-void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
+void Base::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 	m_create_slist(	&this->g.sl,
 					&makiseHost.host,
 					mp_rel( 0,	11,
@@ -37,7 +36,7 @@ void AyPlayer::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 	}
 }
 
-void AyPlayer::removeWindowIndexingSupportedFiles( void ) {
+void Base::removeWindowIndexingSupportedFiles( void ) {
 	/// Отвязываем от контейнера.
 	makise_g_cont_rem( &this->g.sl.el );
 
@@ -50,7 +49,7 @@ void AyPlayer::removeWindowIndexingSupportedFiles( void ) {
 	}
 }
 
-void AyPlayer::initWindowSortingFileList ( void ) {
+void Base::initWindowSortingFileList ( void ) {
 	m_create_message_window(	&this->g.mw,
 								&makiseHost.host,
 								mp_rel( 0,	11,
@@ -60,13 +59,13 @@ void AyPlayer::initWindowSortingFileList ( void ) {
 	////this->guiUpdate();
 }
 
-void AyPlayer::removeWindowSortingFileList ( void) {
+void Base::removeWindowSortingFileList ( void) {
 	makise_g_cont_rem( &this->g.mw.el );
 
 	vPortFree( &this->g.mw );
 }
 
-void AyPlayer::initPlayWindow ( void ) {
+void Base::initPlayWindow ( void ) {
 	mCreatePlayBar(	&this->g.pb,
 					&makiseHost.host,
 					mp_rel(	0,	57,
@@ -91,7 +90,7 @@ void AyPlayer::initPlayWindow ( void ) {
 	mSlimHorizontalSetItemCount( &this->g.shl, this->countFileInCurrentDir );
 }
 
-void AyPlayer::removePlayWindow ( void ) {
+void Base::removePlayWindow ( void ) {
 	USER_OS_STATIC_TIMER_STOP( this->timNameScroll );	/// Скролить строку теперь не нужно.
 
 	makise_g_cont_rem( &this->g.pb.el );
@@ -99,7 +98,7 @@ void AyPlayer::removePlayWindow ( void ) {
 }
 
 
-void AyPlayer::initEqualizerWindow ( void ) {
+void Base::initEqualizerWindow ( void ) {
 	uint32_t	x		=	5 ;							/// 5 отступ с каждой стороны.
 	uint32_t	w		=	18;							/// Ширина 18  на каждый слайдер.
 	uint32_t	step	=	2;							/// 2 между.
@@ -129,14 +128,14 @@ void AyPlayer::initEqualizerWindow ( void ) {
 	this->g.currentSlider	=	0;
 }
 
-void AyPlayer::removeEqualizerWindow ( void ) {
+void Base::removeEqualizerWindow ( void ) {
 	for ( int i = 0; i < 6; i++ ) {
 		makise_g_cont_rem( &this->g.sliders[ i ]->el );
 		vPortFree( this->g.sliders[ i ] );
 	}
 }
 
-void AyPlayer::errorMicroSdDraw ( const FRESULT r ) {
+void Base::errorMicroSdDraw ( const FRESULT r ) {
 	char	massage[ 100 ];
 
 	massage[ 0 ] = 'S';
@@ -196,7 +195,7 @@ void AyPlayer::errorMicroSdDraw ( const FRESULT r ) {
 }
 
 // Метод сдвигает вниз все строки (1 удаляется) и добавляет вверх новую.
-void AyPlayer::slItemShiftDown ( uint32_t cout, char* newSt ) {
+void Base::slItemShiftDown ( uint32_t cout, char* newSt ) {
 	/// Если раньше там была не пустая строка.
 	if ( this->g.slItem[ cout - 1 ]->text != nullptr ) {
 		vPortFree( this->g.slItem[ cout - 1 ]->text );
@@ -211,7 +210,7 @@ void AyPlayer::slItemShiftDown ( uint32_t cout, char* newSt ) {
 	strcpy( this->g.slItem[ 0 ]->text, newSt );
 }
 
-void AyPlayer::slItemClean ( uint32_t cout ) {
+void Base::slItemClean ( uint32_t cout ) {
 	for ( uint32_t l = 0; l < cout ; l++ ) {
 		if ( this->g.slItem[ l ]->text ) {
 			vPortFree( this->g.slItem[ l ]->text );

@@ -1,11 +1,11 @@
-#include "ayplayer.h"
 #include "ayplayer_button.h"
+#include "base.h"
 
 namespace AyPlayer {
 
 /// Вызывается только когда активно основное окно.
-void AyPlayer::scrollNameInMainWindow ( TimerHandle_t timer ) {
-	AyPlayer* o = ( AyPlayer* )pvTimerGetTimerID( timer );
+void Base::scrollNameInMainWindow ( TimerHandle_t timer ) {
+	Base* o = ( Base* )pvTimerGetTimerID( timer );
 
 	int r;
 	r = mSlimHorizontalListScrollString( &o->g.shl );

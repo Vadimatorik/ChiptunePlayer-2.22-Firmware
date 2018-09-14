@@ -1,9 +1,9 @@
-#include "ayplayer.h"
 #include "ayplayer_button.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-void AyPlayer::powerOff (	CAUSE_SHUTDOWN	cause	) {
+void Base::powerOff (	CAUSE_SHUTDOWN	cause	) {
 	if ( cause == CAUSE_SHUTDOWN::TIMEOUT ) {
 
 	}

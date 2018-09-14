@@ -9,7 +9,7 @@ extern const AyPlayerPcbStrcut			ayPcbCfg;
 extern AyYmFilePlay				ayYmFilePlay;
 extern RunTimeLogger			ayLog;
 
-extern const AyPlayerCfg ayCfg = {
+extern const AyPlayer::BaseCfg ayCfg = {
 	.mcu								=	&ayMcuCfg,
 	.pcb								=	&ayPcbCfg,
 	.os									=	&osData,

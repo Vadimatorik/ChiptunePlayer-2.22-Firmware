@@ -91,9 +91,9 @@ const ayplayerEqualizer ayplayerEqualizerDafault = {
 
 #include "ayplayer_struct_cfg.h"
 
-class AyPlayer {
+class Base {
 public:
-	AyPlayer( const AyPlayerCfg* const cfg );
+	Base( const BaseCfg* const cfg );
 
 public:
 	void			start						(	void	);
@@ -251,7 +251,7 @@ private:
 															const uint8_t	data	);
 
 
-	const AyPlayerCfg* const cfg;
+	const BaseCfg* const cfg;
 
 	USER_OS_STATIC_STACK_TYPE							tbMainTask[ TB_MAIN_TASK_SIZE ];
 	USER_OS_STATIC_TASK_STRUCT_TYPE						tsMainTask;
