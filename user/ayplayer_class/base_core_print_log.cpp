@@ -7,20 +7,20 @@ void Base::printMessage ( RTL_TYPE_M type, const char* const message ) {
 }
 
 void Base::printMessageAndArg ( RTL_TYPE_M type, const char* const message, const char* const arg ) {
-	const uint32_t lenPath				=	strlen( arg ) + 1;
-	const uint32_t infoStringLen		=	strlen( message ) + 1;
-	const uint32_t mallocByteGetValue	=	lenPath + infoStringLen;
+	const uint32_t argLen				=	strlen( arg );
+	const uint32_t messageLen			=	strlen( message );
+	const uint32_t stringLen			=	argLen + messageLen + 2;
 
-	/// Открываем корень.
-	char*		outputMessage;
-	outputMessage = ( char* )pvPortMalloc( mallocByteGetValue );
-	assertParam( outputMessage );
+	char* outputMessage = new char[ stringLen ];
 
-	sprintf( outputMessage, "%s\t%s", message, arg );
+	memcpy( &outputMessage[ 0 ], message, messageLen );
+	outputMessage[ messageLen ] = '\t';
+	memcpy( &outputMessage[ messageLen + 1 ], arg, argLen );
+	outputMessage[ stringLen - 1 ] = 0;
 
-	this->cfg->l->sendMessage( type, outputMessage );
+	this->printMessage( type, outputMessage );
 
-	vPortFree( outputMessage );
+	delete[] outputMessage;
 }
 
 }
