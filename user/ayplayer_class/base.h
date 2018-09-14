@@ -6,6 +6,13 @@
 #include "ayplayer_gui.h"
 #include "ayplayer_sd_control.h"
 
+#include <memory>
+#include <string>
+
+#if !defined( EOK )
+#  define EOK 0         /* no error */
+#endif
+
 namespace AyPlayer {
 
 enum class AYPLAYER_WINDOW_NOW {
@@ -132,7 +139,7 @@ private:
 private:
 	static	void	mainTask						( void* obj );
 	static void scrollNameInMainWindow ( TimerHandle_t timer );
-
+	int initFileList ( void );
 	void			powerOff							(	CAUSE_SHUTDOWN	cause	);
 
 	void			guiUpdate							( void );

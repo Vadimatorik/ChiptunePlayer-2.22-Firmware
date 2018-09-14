@@ -229,8 +229,11 @@ void Base::mainTask ( void* obj ) {
 	o->gui->setMaxIlluminationTime( 5 );
 	o->gui->setMinIlluminationTime( 2 );
 
-	o->waitToInsertCorrectSdCard();
+	do {
+		o->waitToInsertCorrectSdCard();
+		if ( o->initFileList() != EOK )				continue;
 
+	} while( false );
 	/*!
 	 * Анализ файлов на карте.
 	 */

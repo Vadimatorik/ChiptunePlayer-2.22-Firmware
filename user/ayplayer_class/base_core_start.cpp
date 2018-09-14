@@ -4,9 +4,7 @@
 namespace AyPlayer {
 
 int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
-	/// Путь до актуального каталога.
-	char*			path		=	( char* )pvPortMalloc( 1024 );
-	assertParam( path );
+	/*
 	strcpy( path, "0:");
 
 	/// Лог: начат анализ.
@@ -31,7 +29,8 @@ int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
 	} else {
 		this->errorMicroSdDraw( r );
 		return 1;
-	}
+	}*/
+	return 0;
 }
 
 int Base::fsmStepFuncSortingFileList ( void ) {
