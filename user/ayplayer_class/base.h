@@ -9,6 +9,11 @@
 #include "rcc.h"
 #include "sd_control.h"
 
+#define	fatFsCheckAndReturn( fr )				\
+			if ( fr != FRESULT::FR_OK ) {		\
+				return -1;						\
+			}
+
 #if !defined( EOK )
 #  define EOK 0         /* no error */
 #endif
@@ -144,12 +149,6 @@ private:
 
 	void			guiUpdate							( void );
 
-
-	/// Попытка инициализировать FatFS для выбранной карты.
-
-	FRESULT			fatFsReinit							( void );
-
-
 	 /// Рисует сообщение об ошибке microsd.
 
 	void			errorMicroSdDraw					( const FRESULT r );
@@ -236,30 +235,6 @@ private:
 	int fsmStepFuncInitMainWindow ( void );
 
 private:
-
-	/// В объекте fat для sd1 должена быть установлена актуальная директория с помощью f_chdir
-	/// Ну то есть мы указываем имя файла относительно текущей директории.
-	int		startPlayFile							(	void	);
-	void	startPlayTrack ( void );
-
-
-	void	initAyCfgCall								(	void	);
-	void	initEqualizerWindow							( void );
-	void	removeEqualizerWindow						(	void	);
-
-	int		ayFileCallOpenFile							(	void	);
-	int		ayFileCallCloseFile							(	void	);
-	int		ayFileCallGetFileLen						(	uint32_t&		returnFileLenByte	);
-	int		ayFileCallSetOffsetByteInFile				(	const uint32_t 	offsetByte	);
-	int		ayFileCallReadInArray						(	uint8_t*		returnDataBuffer,
-															const uint32_t	countByteRead	);
-	int		ayFileCallSetPwrChip						(	bool			state	);
-	int		ayFileCallInitChip							(	void	);
-	int		ayFileCallSleepChip							(	const uint32_t	countTick	);
-	int		ayFileCallWritePacket						(	const uint8_t	reg,
-															const uint8_t	data	);
-
-
 	const BaseCfg* const cfg;
 
 	USER_OS_STATIC_STACK_TYPE							tbMainTask[ TB_MAIN_TASK_SIZE ];

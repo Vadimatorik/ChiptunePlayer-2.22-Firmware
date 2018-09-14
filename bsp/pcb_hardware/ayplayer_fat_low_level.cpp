@@ -26,7 +26,11 @@ DWORD get_fattime ( void ) {
 }
 
 DSTATUS disk_initialize ( __attribute__((unused))	BYTE pdrv ) {
-	return ( sd.initialize() != EC_MICRO_SD_TYPE::ERROR ) ? 0 : STA_NOINIT;
+	if ( sd.initialize() != EC_MICRO_SD_TYPE::ERROR ) {
+		return 0;
+	} else {
+		return STA_NOINIT;
+	}
 }
 
 DSTATUS disk_status ( __attribute__((unused)) BYTE pdrv ) {

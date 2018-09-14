@@ -7,7 +7,11 @@ int Base::initFileLists ( void ) {
 
 	strcpy( fatFspath.get(), "0:" );
 
-	this->cfg->l->sendMessage( RTL_TYPE_M::RUN_MESSAGE_OK, "Init file lists!" );
+	this->printMessage( RTL_TYPE_M::RUN_MESSAGE_OK, "Init file lists!" );
+
+	FRESULT	fr;
+	fr = f_mount( &this->fat.f, fatFspath.get(), 1 );
+	fatFsCheckAndReturn( fr );
 
 	return EOK;
 }

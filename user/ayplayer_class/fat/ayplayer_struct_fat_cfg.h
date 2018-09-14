@@ -19,8 +19,8 @@ struct AyPlayerFatFs {
 	FATFS						f;
 
 	/// Информация о файле, который в данный момент воспроизводится.
-	ItemFileInFat				currentFileInfo;
+	//ItemFileInFat				currentFileInfo;
 
 	/// Директория, в которой находится файловый менеджер.
-	DIR							playDir;
+	//DIR							playDir;
 };
