@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "FreeRTOSConfig.h"
 
+namespace AyPlayer {
+
 char* AyPlayerFat::getFullPath( const char* const path, const char* const fileName ) {
 	/// Получаем длину каждой строки без учета нуля терминатора.
 	const uint32_t pathLen		=	strlen( path );
@@ -403,3 +405,6 @@ int AyPlayerFat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 
 	return r;
 }
+
+}
+

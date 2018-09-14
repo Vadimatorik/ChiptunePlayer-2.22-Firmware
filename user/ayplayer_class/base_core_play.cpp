@@ -3,15 +3,16 @@
 
 namespace AyPlayer {
 
+/*
 /// 0 данные получены.
 /// 1 нет такого номера в списке.
 /// -1 проблема с microsd.
 int Base::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList ) {
 	FIL*	f = nullptr;
 
-	/*!
+
 	 * Выбираем, какой список открыть (список должен быть сформирован заранее).
-	 */
+
 	switch( static_cast< uint32_t >( listType ) ) {
 	case static_cast< uint32_t >( FILE_LIST_TYPE::NO_SORT ):
 		f	=	AyPlayerFat::openFileInCurrentDir( LIST_NO_SORT_FAT_NAME );
@@ -26,9 +27,9 @@ int Base::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFi
 
 	if ( f == nullptr )	return -1;
 
-	/*!
+
 	 * Смотрим, есть ли запрашиваемый номер файла в списке.
-	 */
+
 	uint32_t sizeFileList	=	f_size( f );
 	uint32_t countItem	=	sizeFileList / sizeof( ItemFileInFat );
 	if ( countItem <= numberFileInList ) {
@@ -38,9 +39,9 @@ int Base::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFi
 
 	FRESULT fRes;
 
-	/*!
+
 	 * Переходим к этому файлу.
-	 */
+
 	uint32_t lseek = sizeof( ItemFileInFat ) * numberFileInList;
 	fRes = f_lseek( f, lseek );
 	if ( fRes != FR_OK ) {
@@ -67,9 +68,9 @@ int Base::getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFi
 int Base::getFileCountInCurDir ( FILE_LIST_TYPE listType, uint32_t& returnCount ) {
 	FIL*	f;
 
-	/*!
+
 	 * Выбираем, какой список открыть (список должен быть сформирован заранее).
-	 */
+
 	switch( static_cast< uint32_t >( listType ) ) {
 	case static_cast< uint32_t >( FILE_LIST_TYPE::NO_SORT ):
 		f	=	AyPlayerFat::openFileInCurrentDir( LIST_NO_SORT_FAT_NAME );
@@ -84,9 +85,9 @@ int Base::getFileCountInCurDir ( FILE_LIST_TYPE listType, uint32_t& returnCount 
 
 	if ( f == nullptr )	return -1;
 
-	/*!
+
 	 * Смотрим, есть ли запрашиваемый номер файла в списке.
-	 */
+
 	uint32_t sizeFileList	=	f_size( f );
 	returnCount	=	sizeFileList / sizeof( ItemFileInFat );
 
@@ -115,9 +116,9 @@ int Base::startPlayFile ( void ) {
  	return r;
 }
 
-/*!
+
  * Устанавливает в значение из текущего столбца выбранного эквалайзера в потенциометр.
- */
+
 void Base::setValueEqualizer (	void	) {
 	switch( this->g.currentSlider ) {
 	case 0:							/// A1.
@@ -200,6 +201,8 @@ void Base::startPlayTrack ( void ) {
 
 	USER_OS_GIVE_BIN_SEMAPHORE( this->cfg->os->sStartPlay );
 }
+
+*/
 
 }
 

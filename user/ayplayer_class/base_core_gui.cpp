@@ -14,6 +14,7 @@ extern MakiseDriver			makiseGuiDriver;
 
 namespace AyPlayer {
 
+/*
 void Base::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 	m_create_slist(	&this->g.sl,
 					&makiseHost.host,
@@ -216,7 +217,7 @@ void Base::slItemClean ( uint32_t cout ) {
 			vPortFree( this->g.slItem[ l ]->text );
 		}
 	}
-}
+}*/
 
 
 

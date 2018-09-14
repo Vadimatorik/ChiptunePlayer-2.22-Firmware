@@ -34,12 +34,12 @@ int	Base::scanDir ( char* path ) {
 
 
 		/// Проверяем правильность файла.
-		uint32_t fileLen;
+		uint32_t fileLen = 0;
 
-		this->cfg->ay->setPlayFileName( fi->fname );
+		//this->cfg->ay->setPlayFileName( fi->fname );
 
-		int rPsgGet;
-		rPsgGet = this->cfg->ay->psgFileGetLong( fileLen );
+		int rPsgGet = 0;
+		///rPsgGet = this->cfg->ay->psgFileGetLong( fileLen );
 
 		/// Если файл прошел проверку.
 		if ( rPsgGet == 0 ) {

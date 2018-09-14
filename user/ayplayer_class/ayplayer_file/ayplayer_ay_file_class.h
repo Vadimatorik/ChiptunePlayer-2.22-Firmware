@@ -7,6 +7,7 @@
 
 #define AY_YM_FILE_PLAY_FLASH_BUFFER_SIZE_BYTE				1024 * 10
 
+/*
 struct AyYmFilePlayCfg {
 	AyYmLowLavel*							ayLow;
 	McHardwareInterfaces::Pin*			pwr;				/// Массив выводов управления питанием всех AY.
@@ -58,4 +59,4 @@ private:
 	/// Смещение, с которого будет считан следующий байт/последовательность
 	/// байт (относительно буффера).
 	uint32_t				pointInBuffer;
-};
+};*/

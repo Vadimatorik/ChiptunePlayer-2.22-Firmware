@@ -5,10 +5,8 @@ namespace AyPlayer {
 
 int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
 	/*
-	strcpy( path, "0:");
-
 	/// Лог: начат анализ.
-	this->cfg->l->sendMessage( RTL_TYPE_M::RUN_MESSAGE_OK, "Indexing files start." );
+
 
 	/// Готовим окно list-а c файлами..
 	this->initWindowIndexingSupportedFiles();

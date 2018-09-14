@@ -1,5 +1,6 @@
 #include "ayplayer_ay_file_class.h"
 
+/*
 void AyYmFilePlay::setUsingChip ( uint32_t chipNumber ) {
 	this->usingChip = chipNumber;
 }
@@ -29,7 +30,7 @@ void AyYmFilePlay::stop ( void ) {
 int AyYmFilePlay::openFile ( void ) {
 	/// Сброс флагов.
 	this->flagStop		=	false;
-	this->f = AyPlayerFat::openFileInCurrentDir( this->fileName );
+	//this->f = fat->openFileInCurrentDir( this->fileName );
 
 	/// Если открыть файл не удалось - выход.
 	if ( this->f == nullptr )
@@ -37,10 +38,10 @@ int AyYmFilePlay::openFile ( void ) {
 
 	/// Узнаем длину трека.
 	uint32_t counByteInTreck;
-	if ( AyPlayerFat::getSizeFromOpenTreck( this->f, counByteInTreck ) != 0 ) {
-		AyPlayerFat::closeFile( this->f );
-		return -1;
-	}
+	//if ( fat->getSizeFromOpenTreck( this->f, counByteInTreck ) != 0 ) {
+		///fat->closeFile( this->f );
+	//	return -1;
+	//}
 
 	/// Решаем, сколько скопировать в буффер.
 	UINT getCountByte;
@@ -51,10 +52,10 @@ int AyYmFilePlay::openFile ( void ) {
 	}
 
 	/// Забираем в буффер данные.
-	if ( AyPlayerFat::readFromOpenFile( this->f, this->flashBuffer, getCountByte ) != 0 ) {
-		AyPlayerFat::closeFile( this->f );
-		return -1;
-	}
+//	if ( fat->readFromOpenFile( this->f, this->flashBuffer, getCountByte ) != 0 ) {
+		//fat->closeFile( this->f );
+//		return -1;
+//	}
 
 	/// Ставим указатель на данные в начало.
 	this->pointStartSeekBuffer		=	0;
@@ -73,12 +74,13 @@ int AyYmFilePlay::closeFile ( void ) {
 	this->setPwrChip( false );									/// Питание чипа.
 	this->ayLow->queueClear();									/// Чистим очередь.
 
-	return AyPlayerFat::closeFile( this->f );
+	///return fat->closeFile( this->f );
+	return 0;
 }
 
 int AyYmFilePlay::getFileLen ( uint32_t& returnFileLenByte ) {
 	int	r;
-	r = AyPlayerFat::getSizeFromOpenTreck( this->f, returnFileLenByte );
+	//r = fat->getSizeFromOpenTreck( this->f, returnFileLenByte );
 	CHECK_ERROR( r );
 	return 0;
 }
@@ -88,7 +90,7 @@ int AyYmFilePlay::setOffsetByteInFile ( const uint32_t offsetByte ) {
 
 	/// Узнаем длину трека.
 	uint32_t counByteInTreck;
-	r = AyPlayerFat::getSizeFromOpenTreck( this->f, counByteInTreck );
+	///r = fat->getSizeFromOpenTreck( this->f, counByteInTreck );
 	CHECK_ERROR( r );
 
 	/// Если смещаемся дальше размера трека.
@@ -123,11 +125,11 @@ int AyYmFilePlay::setOffsetByteInFile ( const uint32_t offsetByte ) {
 	}
 
 	/// Смещаемся к нужному месту.
-	r = AyPlayerFat::setOffsetByteInOpenFile( this->f, offsetByte );
+	//r = fat->setOffsetByteInOpenFile( this->f, offsetByte );
 	CHECK_ERROR( r );
 
 	/// Забираем в буффер данные.
-	r =  AyPlayerFat::readFromOpenFile( this->f, this->flashBuffer, getCountByte );
+	//r =  fat->readFromOpenFile( this->f, this->flashBuffer, getCountByte );
 	CHECK_ERROR( r );
 
 	this->pointInBuffer = 0;
@@ -164,10 +166,10 @@ int AyYmFilePlay::readInArray (	uint8_t*		returnDataBuffer,
 
 	/// Узнаем длину трека.
 	uint32_t counByteInTreck;
-	if ( AyPlayerFat::getSizeFromOpenTreck( this->f, counByteInTreck ) != 0 ) {
-		AyPlayerFat::closeFile( this->f );
-		return -1;
-	}
+	//if ( fat->getSizeFromOpenTreck( this->f, counByteInTreck ) != 0 ) {
+	//	fat->closeFile( this->f );
+	//	return -1;
+//	}
 
 	/// Решаем, сколько скопировать в буффер.
 	UINT getCountByte;
@@ -179,8 +181,8 @@ int AyYmFilePlay::readInArray (	uint8_t*		returnDataBuffer,
 	}
 
 	/// Забираем в буффер данные.
-	r = AyPlayerFat::readFromOpenFile( this->f, this->flashBuffer, getCountByte );
-	CHECK_ERROR( r );
+	//r = fat->readFromOpenFile( this->f, this->flashBuffer, getCountByte );
+	//CHECK_ERROR( r );
 
 	/// Забираем оставшуюся часть.
 	memcpy( nextPart, &this->flashBuffer[ this->pointInBuffer ], countByteRead - fromBufferByte );
@@ -232,7 +234,7 @@ void AyYmFilePlay::abort ( void ) {
 	this->ayLow->playStateSet( 0 );				/// Отключаем аппаратку.
 	this->setPwrChip( false );					/// Питание чипа.
 	this->ayLow->queueClear();					/// Чистим очередь.
-	AyPlayerFat::closeFile( this->f );			///	Хотя бы удаляем FIL-структуру.
-}
+	///fat->closeFile( this->f );			///	Хотя бы удаляем FIL-структуру.
+}*/
 
 

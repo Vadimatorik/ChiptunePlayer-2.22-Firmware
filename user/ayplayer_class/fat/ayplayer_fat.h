@@ -2,6 +2,11 @@
 
 #include "ayplayer_struct_fat_cfg.h"
 
+#include <memory>
+#include <string>
+
+namespace AyPlayer {
+
 class AyPlayerFat {
 public:
 	/*!
@@ -155,3 +160,6 @@ public:
 
 	static	int			removeDirRecurisve				( char* path, FRESULT& fatReturn );
 };
+
+}
+

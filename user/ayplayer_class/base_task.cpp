@@ -11,6 +11,8 @@ namespace AyPlayer {
 
 
 void Base::buttonClickHandlerTask (  void* obj  ) {
+	(void)obj;
+	/*
 	EC_BUTTON_NAME		b;
 	uint8_t				qData;
 	int					r;
@@ -22,9 +24,9 @@ void Base::buttonClickHandlerTask (  void* obj  ) {
 
 		b	=	static_cast< EC_BUTTON_NAME >( qData );
 
-		/*!
+
 		 * Основное окно.
-		 */
+
 		if ( o->wNow == AYPLAYER_WINDOW_NOW::MAIN ) {
 			if ( b == EC_BUTTON_NAME::ENTER_CLICK ) {
 				switch( static_cast< uint32_t >( o->playState ) ) {
@@ -84,9 +86,9 @@ void Base::buttonClickHandlerTask (  void* obj  ) {
 			}
 		}
 
-		/*!
+
 		 * Окно эквалайзера.
-		 */
+
 		if ( o->wNow == AYPLAYER_WINDOW_NOW::EQUALIZER ) {
 			if ( ( b == EC_BUTTON_NAME::BACK_LONG_CLICK ) ||
 				 ( b == EC_BUTTON_NAME::BACK_CLICK ) ) {
@@ -168,9 +170,12 @@ void Base::buttonClickHandlerTask (  void* obj  ) {
 			}
 		}
 	}
+	*/
 }
 
 void Base::playTickHandlerTask ( void* obj  ) {
+	(void)obj;
+	/*
 	Base* o =( Base* ) obj;
 	while ( true ) {
 		USER_OS_TAKE_BIN_SEMAPHORE( o->cfg->os->sPlayTic, portMAX_DELAY );
@@ -179,10 +184,12 @@ void Base::playTickHandlerTask ( void* obj  ) {
 		if ( o->wNow == AYPLAYER_WINDOW_NOW::MAIN ) {
 			mPlayBarIncSec( &o->g.pb );
 		}
-	}
+	}*/
 }
 
 void Base::playTask (  void* obj  ) {
+	(void)obj;
+	/*
 	Base* o =( Base* ) obj;
 	int  r;
 	while ( true ) {
@@ -204,7 +211,7 @@ void Base::playTask (  void* obj  ) {
 			o->currentFile	=	0;
 		}
 		o->startPlayTrack();
-	}
+	}*/
 }
 
 /// Для отслеживания клавиш качельки громкости.
@@ -231,7 +238,7 @@ void Base::mainTask ( void* obj ) {
 
 	do {
 		o->waitToInsertCorrectSdCard();
-		if ( o->initFileList() != EOK )				continue;
+		if ( o->initFileLists() != EOK )				continue;
 
 	} while( false );
 	/*!

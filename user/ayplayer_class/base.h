@@ -139,7 +139,7 @@ private:
 private:
 	static	void	mainTask						( void* obj );
 	static void scrollNameInMainWindow ( TimerHandle_t timer );
-	int initFileList ( void );
+	int initFileLists ( void );
 	void			powerOff							(	CAUSE_SHUTDOWN	cause	);
 
 	void			guiUpdate							( void );
