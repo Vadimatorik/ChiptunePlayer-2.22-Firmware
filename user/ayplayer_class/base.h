@@ -123,6 +123,8 @@ private:
 
 	void			initTasks					(	void	);
 
+	void			waitToInsertCorrectSdCard	(	void	);
+
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );

@@ -229,46 +229,7 @@ void Base::mainTask ( void* obj ) {
 	o->gui->setMaxIlluminationTime( 5 );
 	o->gui->setMinIlluminationTime( 2 );
 
-	/*!
-	 * Подключение карты.
-	 */
-	do {
-		if ( !o->sd->getState() ) {
-			const char SD_NOT_PRESENT[]	=	"SD not present!";
-			o->gui->addMessage( SD_NOT_PRESENT );
-			o->gui->update();
-
-			while( !o->sd->getState() ) {
-				o->cfg->l->sendMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "SD not present!" );
-				USER_OS_DELAY_MS( 100 );
-			}
-
-			o->gui->removeMessage();
-			o->gui->update();
-		}
-
-		o->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD is detected!" );
-
-		EC_MICRO_SD_TYPE	sdInitResult;
-		sdInitResult = o->cfg->pcb->sd->initialize();
-
-		if ( sdInitResult == EC_MICRO_SD_TYPE::ERROR ) {
-			o->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD was not been initialized!" );
-
-			const char SD_NOT_INITIALIZED[]	=	"SD was not been initialized!\nRemove SD!";
-			o->gui->addMessage( SD_NOT_INITIALIZED );
-
-			o->gui->update();
-
-			while( o->sd->getState() ) {
-				USER_OS_DELAY_MS( 100 );
-			}
-
-			o->gui->removeMessage();
-
-			continue;
-		}
-	} while( false );
+	o->waitToInsertCorrectSdCard();
 
 	/*!
 	 * Анализ файлов на карте.
