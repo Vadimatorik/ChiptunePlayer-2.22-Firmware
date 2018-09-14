@@ -1,7 +1,8 @@
 #include <stdint.h>
+
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
 #include "stm32f4xx_hal_conf.h"
 #include "stm32f4xx_hal.h"
-#include "timer_counter.h"
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 

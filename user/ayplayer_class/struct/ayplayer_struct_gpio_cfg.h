@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pin.h"
+#include "../../../bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin.h"
 #include "mc_hardware_interfaces_pin_multifunc_it.h"
 
 struct GpioPwr {					/// Питание на плате.

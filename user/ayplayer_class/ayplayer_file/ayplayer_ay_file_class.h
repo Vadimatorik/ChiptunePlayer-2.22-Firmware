@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../../../bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin.h"
 #include "../fat/fat.h"
 #include "ay_ym_file_play.h"
 #include "ay_ym_low_lavel.h"
-#include "pin.h"
 
 #define AY_YM_FILE_PLAY_FLASH_BUFFER_SIZE_BYTE				1024 * 10
 

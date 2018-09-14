@@ -4,10 +4,10 @@
 #include <memory>
 #include <string>
 
-#include "gui/gui.h"
-#include "nvic/ayplayer_nvic.h"
-#include "rcc/rcc.h"
-#include "sd_control/sd_control.h"
+#include "gui.h"
+#include "nvic.h"
+#include "rcc.h"
+#include "sd_control.h"
 
 #if !defined( EOK )
 #  define EOK 0         /* no error */
@@ -299,9 +299,9 @@ private:
 	 */
 	Nvic												nvic;
 
-	Rcc*												rcc;
-	Gui*												gui;
-	SdControl*											sd;
+	AyPlayer::Rcc*										rcc;
+	AyPlayer::Gui*										gui;
+	AyPlayer::SdControl*								sd;
 };
 
 };

@@ -1,19 +1,19 @@
 #pragma once
 
-#include "port_global.h"
-#include "spi_master_8bit.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_adc_one_channel.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin_multifunc_it.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_port_global.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pwr.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_rcc.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_spi_master_8bit.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_interrupt.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_pwm_one_channel.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_uart.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_wdt.h"
 #include "user_os.h"
 
-#include "rcc.h"
-#include "pwr.h"
-#include "wdt.h"
-#include "pin.h"
-#include "pin_multifunc_it.h"
-#include "uart.h"
-#include "timer_counter.h"
-#include "timer_interrupt.h"
-#include "timer_pwm_one_channel.h"
-#include "adc_one_channel.h"
 #include "microsd_card_sdio.h"
 
 extern McHardwareInterfacesImplementation::SpiMaster8Bit		boardSpi;

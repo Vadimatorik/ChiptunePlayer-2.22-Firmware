@@ -1,4 +1,4 @@
-#include "pwr.h"
+#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pwr.h"
 
 McHardwareInterfacesImplementation::PwrCfg pwrCfg = {
 	.cfg = {
