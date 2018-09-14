@@ -7,7 +7,7 @@
 
 namespace AyPlayer {
 
-class AyPlayerFat {
+class Fat {
 public:
 	/*!
 	 * Выделяет память в куче под строку с полным путем до файла с расширением.

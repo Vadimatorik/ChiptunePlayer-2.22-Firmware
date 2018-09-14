@@ -5,6 +5,7 @@
 
 namespace AyPlayer {
 
+/*
 ItemFileInFat* Base::structureItemFileListFilling ( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format ) {
 	/// Выделяем память под элемент
 	/// (его удалит после записи writeItemFileListAndRemoveItem).
@@ -112,10 +113,10 @@ int Base::sortForNameFileList ( const char* const path, uint16_t* fl, uint32_t c
 	int	sortResult	=	0;
 	/// Начинаем быструю сортировку по имени.
 	std::sort( fl, &fl[ countFileInDir ], [ this, path, &sortResult, fi, d, fNoSort, fNameSort ]( int a, int b ) {
-		/*!
+
 	 	 * Если в процессе сортировки упадет флешка - то выдаем одно значение для быстроты сортировки и выходим.
 	 	 * Так массив быстро отсортируется и выйдя мы поймем, что упали.
-	 	 */
+
 		if ( sortResult < 0 ) {
 			return true;
 		}
@@ -158,10 +159,10 @@ int Base::sortForLenFileList ( const char* const path, uint16_t* fl, uint32_t co
 
 	/// Начинаем быструю сортировку по имени.
 	std::sort( fl, &fl[ countFileInDir ], [ this, path, &sortResult, fi, d, fNoSort, fLenSort ]( int a, int b ) {
-		/*!
+
 	 	 * Если в процессе сортировки упадет флешка - то выдаем одно значение для быстроты сортировки и выходим.
 	 	 * Так массив быстро отсортируется и выйдя мы поймем, что упали.
-	 	 */
+
 		if ( sortResult < 0 ) {
 			return true;
 		}
@@ -219,9 +220,9 @@ int	Base::sortFileList ( char* path ) {
 	/// Получаем колличество файлов в директории.
 	const uint32_t	countFileInDir	=	fi->fsize	/	sizeof( ItemFileInFat );
 
-	/*!
+
 	 * Для каждой структуры выделим свой номер, так как они расположены в исходном файле.
-	 */
+
 	uint16_t* fl	=	( uint16_t* )pvPortMalloc( sizeof( uint16_t ) * countFileInDir );
 
 	/// Сортировка по имени.
@@ -309,7 +310,7 @@ FRESULT Base::findingFileListAndSort ( char* path ) {
 	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
 
 	return r;
-}
+}*/
 
 }
 

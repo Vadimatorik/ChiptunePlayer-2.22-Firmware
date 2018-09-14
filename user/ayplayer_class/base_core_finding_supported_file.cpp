@@ -11,7 +11,7 @@ int	Base::scanDir ( char* path ) {
 	FIL*				f	=	nullptr;
 
 	/// Ищем первый файл по маске.
-	r	=	AyPlayerFat::startFindingFileInDir( &d, &fi, path, "*.psg" );
+	r	=	Fat::startFindingFileInDir( &d, &fi, path, "*.psg" );
 
 	/// Путь до файла со списком прошедших проверку файлов.
 	bool	flagFileListCreate	=	false;
@@ -23,7 +23,7 @@ int	Base::scanDir ( char* path ) {
 
 	while ( !r ) {
 		/// Собираем строчку с полным путем.
-		char*	fullPathToFile	=	AyPlayerFat::getFullPath( path, fi->fname );
+		char*	fullPathToFile	=	Fat::getFullPath( path, fi->fname );
 
 		/// Лог: найден файл под маску.
 		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File found:", fullPathToFile );						/// Лог.
@@ -48,7 +48,7 @@ int	Base::scanDir ( char* path ) {
 				flagFileListCreate = true;
 
 				/// Пытаемся создать файл.
-				f	=	AyPlayerFat::openFileListWithRewrite( path, LIST_NO_SORT_FAT_NAME );
+				f	=	Fat::openFileListWithRewrite( path, LIST_NO_SORT_FAT_NAME );
 
 				/// Если не удалось - чистим память и выходим.
 				if ( f == nullptr ) {
@@ -68,7 +68,7 @@ int	Base::scanDir ( char* path ) {
 			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File len tick:", lenString );
 
 			ItemFileInFat*	fileListItem	=	this->structureItemFileListFilling( fi->fname, fileLen, AyPlayFileFormat::psg );
-			r	=	AyPlayerFat::writeItemFileListAndRemoveItem( f, fileListItem );
+			r	=	Fat::writeItemFileListAndRemoveItem( f, fileListItem );
 
 			if ( r != 0 ) {
 				this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Write item file in <<" LIST_NO_SORT_FAT_NAME ">> was not carried out successfully. Name item file: ", fi->fname );
@@ -88,7 +88,7 @@ int	Base::scanDir ( char* path ) {
 		vPortFree( fullPathToFile );
 
 		/// Ищем следующий элемент.
-		r = AyPlayerFat::findingFileInDir( d, fi );
+		r = Fat::findingFileInDir( d, fi );
 
 		/// Элементов больше нет.
 		if ( r == 1 ) {
@@ -106,10 +106,10 @@ int	Base::scanDir ( char* path ) {
 		/// Храним в себе только -1 или 0.
 		/// Если была хоть раз -1, то не перезаписываем.
 		if ( fi )			vPortFree( fi );
-		r	=	( AyPlayerFat::closeDir( d ) != 0 ) ? -1 : r;
+		r	=	( Fat::closeDir( d ) != 0 ) ? -1 : r;
 	}
 
-	r	=	( AyPlayerFat::closeFile( f ) != 0 ) ? -1 : r;
+	r	=	( Fat::closeFile( f ) != 0 ) ? -1 : r;
 	if ( r == 0 ) {
 		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_NO_SORT_FAT_NAME ">> was close successfully. Dir:" , path );
 	} else {
@@ -129,7 +129,7 @@ FRESULT Base::indexingSupportedFiles( char* path ) {
 	bool				scanDir	=	false;
 
 	/// Открываем директорию. Все игры с памятью внутри.
-	DIR*	d	=	AyPlayerFat::openDir( path );
+	DIR*	d	=	Fat::openDir( path );
 
 	if ( d == nullptr )
 		return FRESULT::FR_DISK_ERR;
@@ -177,7 +177,7 @@ FRESULT Base::indexingSupportedFiles( char* path ) {
 	}
 
 	/// Фиксируем FRESULT::FR_DISK_ERR как приоритет над всем.
-	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
+	r = ( Fat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
 
 	return r;
 }

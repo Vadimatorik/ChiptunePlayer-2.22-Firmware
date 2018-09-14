@@ -5,7 +5,7 @@
 
 namespace AyPlayer {
 
-char* AyPlayerFat::getFullPath( const char* const path, const char* const fileName ) {
+char* Fat::getFullPath( const char* const path, const char* const fileName ) {
 	/// Получаем длину каждой строки без учета нуля терминатора.
 	const uint32_t pathLen		=	strlen( path );
 	const uint32_t nameFileLen	=	strlen( fileName );
@@ -24,7 +24,7 @@ char* AyPlayerFat::getFullPath( const char* const path, const char* const fileNa
 	return allPathToFile;
 }
 
-DIR* AyPlayerFat::openDir( char* path ) {
+DIR* Fat::openDir( char* path ) {
 	FRESULT			r;
 	DIR*			d;
 
@@ -43,7 +43,7 @@ DIR* AyPlayerFat::openDir( char* path ) {
 	return d;
 }
 
-int AyPlayerFat::closeDir( DIR* d ) {
+int Fat::closeDir( DIR* d ) {
 	if ( d == nullptr )		return 0;
 
 	FRESULT			r;
@@ -56,7 +56,7 @@ int AyPlayerFat::closeDir( DIR* d ) {
 	return ( r == FRESULT::FR_OK ) ? 0 : -1;
 }
 
-FIL* AyPlayerFat::openFileListWithRewrite ( const char* const path, const char* const name ) {
+FIL* Fat::openFileListWithRewrite ( const char* const path, const char* const name ) {
 	FRESULT				r;
 	FIL*				f;
 
@@ -65,7 +65,7 @@ FIL* AyPlayerFat::openFileListWithRewrite ( const char* const path, const char* 
 	assertParam( f );
 
 
-	char* fullPath	=	AyPlayerFat::getFullPath( path, name );
+	char* fullPath	=	Fat::getFullPath( path, name );
 	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
     r = f_open( f, fullPath, FA_CREATE_ALWAYS | FA_READ | FA_WRITE );
     vPortFree( fullPath );
@@ -78,7 +78,7 @@ FIL* AyPlayerFat::openFileListWithRewrite ( const char* const path, const char* 
     return f;
 }
 
-FIL* AyPlayerFat::openFile ( const char* const path, const char* const name ) {
+FIL* Fat::openFile ( const char* const path, const char* const name ) {
 	FRESULT				r;
 	FIL*				f;
 
@@ -87,7 +87,7 @@ FIL* AyPlayerFat::openFile ( const char* const path, const char* const name ) {
 	assertParam( f );
 
 
-	char* fullPath	=	AyPlayerFat::getFullPath( path, name );
+	char* fullPath	=	Fat::getFullPath( path, name );
 	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
     r = f_open( f, fullPath, FA_READ );
     vPortFree( fullPath );
@@ -100,7 +100,7 @@ FIL* AyPlayerFat::openFile ( const char* const path, const char* const name ) {
     return f;
 }
 
-FIL* AyPlayerFat::openFileInCurrentDir ( const char* const name ) {
+FIL* Fat::openFileInCurrentDir ( const char* const name ) {
 	FRESULT				r;
 	FIL*				f;
 
@@ -128,7 +128,7 @@ FIL* AyPlayerFat::openFileInCurrentDir ( const char* const name ) {
     return f;
 }
 
-int AyPlayerFat::closeFile ( FIL* f ) {
+int Fat::closeFile ( FIL* f ) {
 	if ( f == nullptr )		return 0;
 
 	FRESULT				r;
@@ -140,7 +140,7 @@ int AyPlayerFat::closeFile ( FIL* f ) {
     return ( r == FRESULT::FR_OK ) ? 0 : -1;
 }
 
-int	AyPlayerFat::writeItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item ) {
+int	Fat::writeItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item ) {
 	FRESULT				r;
 
 	/// Пробуем записать.
@@ -154,7 +154,7 @@ int	AyPlayerFat::writeItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item ) 
     return ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) ? 0 : -1;
 }
 
-int AyPlayerFat::startFindingFileInDir ( DIR** dir, FILINFO** fInfo, const char* const pathDir, const char* const maskFind ) {
+int Fat::startFindingFileInDir ( DIR** dir, FILINFO** fInfo, const char* const pathDir, const char* const maskFind ) {
 	FRESULT				r;
 
 	/// Выделяем память под объект директории, в которой будем искать файл,
@@ -189,7 +189,7 @@ int AyPlayerFat::startFindingFileInDir ( DIR** dir, FILINFO** fInfo, const char*
 	return 1;
 }
 
-int AyPlayerFat::findingFileInDir ( DIR* d, FILINFO* fInfo ) {
+int Fat::findingFileInDir ( DIR* d, FILINFO* fInfo ) {
 	FRESULT				r;
 
 	/// Ищем следующий файл по маске.
@@ -213,7 +213,7 @@ int AyPlayerFat::findingFileInDir ( DIR* d, FILINFO* fInfo ) {
 	return 1;
 }
 
-char* AyPlayerFat::getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack ) {
+char* Fat::getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack ) {
 	FRESULT				r;
 
 	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * nubmerTrack;
@@ -234,7 +234,7 @@ char* AyPlayerFat::getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack ) {
 	}
 }
 
-uint32_t AyPlayerFat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
+uint32_t Fat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
 	FRESULT				r;
 
 	const uint32_t	lseek	=	( sizeof( ItemFileInFat ) * nubmerTrack ) + FF_MAX_LFN + 1 + sizeof( AyPlayFileFormat );
@@ -251,7 +251,7 @@ uint32_t AyPlayerFat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
 }
 
 
-int AyPlayerFat::setOffsetByteInOpenFile ( FIL* f, uint32_t offset ) {
+int Fat::setOffsetByteInOpenFile ( FIL* f, uint32_t offset ) {
 	if ( f_lseek( f, offset ) == FR_OK ) {
 		return 0;
 	} else {
@@ -259,7 +259,7 @@ int AyPlayerFat::setOffsetByteInOpenFile ( FIL* f, uint32_t offset ) {
 	}
 }
 
-int AyPlayerFat::readFromOpenFile ( FIL* f, uint8_t* returnData, const uint32_t countByte ) {
+int Fat::readFromOpenFile ( FIL* f, uint8_t* returnData, const uint32_t countByte ) {
 	UINT		l;
 	FRESULT		r;
 
@@ -274,12 +274,12 @@ int AyPlayerFat::readFromOpenFile ( FIL* f, uint8_t* returnData, const uint32_t 
 	return 0;
 }
 
-int AyPlayerFat::getSizeFromOpenTreck ( FIL* f, uint32_t& returnSizeByte ) {
+int Fat::getSizeFromOpenTreck ( FIL* f, uint32_t& returnSizeByte ) {
 	returnSizeByte = f_size( f );
 	return 0;
 }
 
-int AyPlayerFat::readItemFileListAndRemoveItem ( FIL* f, ItemFileInFat* item, uint32_t numberTrack ) {
+int Fat::readItemFileListAndRemoveItem ( FIL* f, ItemFileInFat* item, uint32_t numberTrack ) {
 	FRESULT				r;
 
 	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * numberTrack;
@@ -294,11 +294,11 @@ int AyPlayerFat::readItemFileListAndRemoveItem ( FIL* f, ItemFileInFat* item, ui
 	return ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) ? 0 : -1;
 }
 
-int AyPlayerFat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
+int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
 	FRESULT		r;
 
 	char* fullPath;
-	fullPath = AyPlayerFat::getFullPath( path, nameFile );
+	fullPath = Fat::getFullPath( path, nameFile );
 	r = f_stat( fullPath, fi );
 	vPortFree( fullPath );
 
@@ -312,11 +312,11 @@ int AyPlayerFat::checkingFileOrDir ( const char* path, const char* nameFile, FIL
 }
 
 /// 0 - ок, 1 - нет файла, -1 флешка проблемная.
-int AyPlayerFat::removeFile ( const char* path, const char* nameFile, FRESULT& fatReturn ) {
+int Fat::removeFile ( const char* path, const char* nameFile, FRESULT& fatReturn ) {
 	FRESULT		r;
 
 	char* fullPath;
-	fullPath = AyPlayerFat::getFullPath( path, nameFile );
+	fullPath = Fat::getFullPath( path, nameFile );
 
 	do {
 		r = f_chmod( fullPath, 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
@@ -335,7 +335,7 @@ int AyPlayerFat::removeFile ( const char* path, const char* nameFile, FRESULT& f
 	}
 }
 
-int AyPlayerFat::removeDir ( const char* path, FRESULT& fatReturn ) {
+int Fat::removeDir ( const char* path, FRESULT& fatReturn ) {
 	FRESULT		r;
 	do {
 		r = f_chmod( path, 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
@@ -352,11 +352,11 @@ int AyPlayerFat::removeDir ( const char* path, FRESULT& fatReturn ) {
 	}
 }
 
-int AyPlayerFat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
+int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 	static FILINFO			f;
 	static int				r = 0;
 
-	DIR*	d	=	AyPlayerFat::openDir( fullPath );
+	DIR*	d	=	Fat::openDir( fullPath );
 
 	/// Что-то не так с драйверами или директории не существует.
 	if ( d == nullptr )
@@ -381,7 +381,7 @@ int AyPlayerFat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 			uint32_t i = strlen( fullPath );
 			sprintf( &fullPath[ i ], "/%s", f.fname );
 
-			r	=	AyPlayerFat::removeDirRecurisve( fullPath, fatReturn );
+			r	=	Fat::removeDirRecurisve( fullPath, fatReturn );
 
 			if ( fatReturn != FRESULT::FR_OK ) {								/// Аварийная ситуация.
 				r = -1;
@@ -390,18 +390,18 @@ int AyPlayerFat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 
 			fullPath[ i ] = 0;
 		} else {
-			r = AyPlayerFat::removeFile( fullPath, f.fname, fatReturn );
+			r = Fat::removeFile( fullPath, f.fname, fatReturn );
 			if ( r != 0 )
 				break;
 		}
 	}
 
 	/// Фиксируем FRESULT::FR_DISK_ERR как приоритет над всем.
-	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? -1 : r;
+	r = ( Fat::closeDir( d ) == -1 ) ? -1 : r;
 
 	/// Удалили все в директории можно и ее саму.
 	if ( r == 0 )
-		r = AyPlayerFat::removeDir( fullPath, fatReturn );
+		r = Fat::removeDir( fullPath, fatReturn );
 
 	return r;
 }
