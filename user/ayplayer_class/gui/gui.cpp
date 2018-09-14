@@ -1,4 +1,4 @@
-#include "ayplayer_gui.h"
+#include "gui.h"
 
 extern "C" {
 

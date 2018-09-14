@@ -1,13 +1,13 @@
 #pragma once
 
 #include "ayplayer_struct_cfg.h"
-#include "ayplayer_nvic.h"
-#include "ayplayer_rcc.h"
-#include "ayplayer_gui.h"
-#include "ayplayer_sd_control.h"
-
 #include <memory>
 #include <string>
+
+#include "gui/gui.h"
+#include "nvic/ayplayer_nvic.h"
+#include "rcc/rcc.h"
+#include "sd_control/sd_control.h"
 
 #if !defined( EOK )
 #  define EOK 0         /* no error */

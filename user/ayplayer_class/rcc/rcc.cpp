@@ -1,5 +1,6 @@
-#include "ayplayer_rcc.h"
-#include "ayplayer_nvic.h"
+#include "rcc.h"
+
+#include "../nvic/nvic.h"
 
 namespace AyPlayer {
 

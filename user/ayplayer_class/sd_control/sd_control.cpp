@@ -1,4 +1,4 @@
-#include "ayplayer_sd_control.h"
+#include "../sd_control/sd_control.h"
 
 namespace AyPlayer {
 
