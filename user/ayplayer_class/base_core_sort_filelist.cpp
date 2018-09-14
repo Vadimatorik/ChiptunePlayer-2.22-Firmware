@@ -1,7 +1,7 @@
-#include "ayplayer_fat.h"
 #include <algorithm>
 #include <vector>
 #include "base.h"
+#include "fat/fat.h"
 
 namespace AyPlayer {
 

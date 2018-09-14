@@ -10,7 +10,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 			this->gui->update();
 
 			while( !this->sd->getState() ) {
-				this->cfg->l->sendMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "SD not present!" );
+				this->printMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "SD not present!" );
 				USER_OS_DELAY_MS( 100 );
 			}
 				this->gui->removeMessage();
@@ -23,7 +23,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 		sdInitResult = this->cfg->pcb->sd->initialize();
 
 		if ( sdInitResult == EC_MICRO_SD_TYPE::ERROR ) {
-			this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD was not been initialized!" );
+			this->printMessage( RTL_TYPE_M::INIT_OK, "SD was not been initialized!" );
 
 			const char SD_NOT_INITIALIZED[]	=	"SD was not been initialized!\nRemove SD!";
 			this->gui->addMessage( SD_NOT_INITIALIZED );

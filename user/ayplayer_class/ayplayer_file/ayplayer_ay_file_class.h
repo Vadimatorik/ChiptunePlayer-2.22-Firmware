@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../fat/fat.h"
 #include "ay_ym_file_play.h"
 #include "ay_ym_low_lavel.h"
-#include "ayplayer_fat.h"
 #include "pin.h"
 
 #define AY_YM_FILE_PLAY_FLASH_BUFFER_SIZE_BYTE				1024 * 10

@@ -213,7 +213,7 @@ private:
 	/// данными из файла-списка на флешке.
 	int			getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList );
 	void		trackMainWindowInit					(	void	);
-
+	void printMessage ( RTL_TYPE_M type, const char* const message );
 
 
 	void initEqualizer (	void	);
