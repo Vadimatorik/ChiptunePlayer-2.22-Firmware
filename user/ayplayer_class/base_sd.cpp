@@ -17,7 +17,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 				this->gui->update();
 		}
 
-		this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "SD is detected!" );
+		this->printMessage( RTL_TYPE_M::INIT_OK, "SD is detected!" );
 
 		EC_MICRO_SD_TYPE	sdInitResult;
 		sdInitResult = this->cfg->pcb->sd->initialize();
