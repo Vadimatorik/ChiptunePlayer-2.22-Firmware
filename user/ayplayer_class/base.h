@@ -121,11 +121,8 @@ private:
 	 *								программы методом результат выполнения.
 	 *
 	 */
-	void			checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
+	void	checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
 
-	/*!
-	 *	\brief		Методы прослойки для работы с logger-ом.
-	 */
 private:
 	/*!
 	 *	\brief		Метод производит запись в log сообщания (строки).
@@ -206,58 +203,6 @@ private:
 	void			slItemShiftDown							( uint32_t cout, char* newSt );
 
 	int				scanDir								( char* path );
-
-	/// 0 - успех. -1 провал
-	int				writeItemFileList					( FIL* f, const uint32_t* const len, const AyPlayFileFormat format );
-
-	void			slItemClean							( uint32_t cout );
-	ItemFileInFat*	structureItemFileListFilling		( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format );
-	int				sortFileList						( char* path );
-	FRESULT			findingFileListAndSort				( char* path );
-	int				sortFileListCreateFile				( const char* const path, FIL** fNoSort, FIL** fNameSort, FIL** fLenSort );
-	int				sortFileListCloseFile				( const char* const path, DIR* d, FILINFO* fi, FIL* fNoSort, FIL* fNameSort, FIL* fLenSort );
-	int				writeSortFile						( FIL* output, FIL* input, uint16_t* sortArray, uint32_t count );
-	void			initWindowSortingFileList			( void );
-	void			removeWindowSortingFileList			( void );
-	void			initPointArrayToSort				( uint16_t* array, uint32_t count );
-	int				sortForNameFileList					( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fNameSort );
-	int				sortForLenFileList					( const char* const path, uint16_t* fl, uint32_t countFileInDir, FILINFO* fi, DIR* d, FIL* fNoSort, FIL* fLenSort );
-	int				removeSystemFileInRootDir			( const char* fatValome );
-	int				getFileCountInCurDir				( FILE_LIST_TYPE listType, uint32_t& returnCount );
-	void			playPauseSet( bool state );
-	/// Проверяем наличие файла в директории 0 - нет, 1 есть, -1 флешке плохо.
-	int checkingFileOrDir( const char* path, const char* nameFile, FILINFO* fi  );
-	void stopPlayFile ( void );
-
-	int removeFile( const  char* path, const char* nameFile );
-
-	int removeDirRecurisve( const char* path, const char* nameDir );
-	void volumeSet				( const uint8_t left, const uint8_t right);
-	/// Рабочие окна приложения (отрисовки).
-	/// Статусы дерева переходов ставятся через переменные состояния ниже.
-	/// Окно воспроизведения трека
-	void initPlayWindow ( void );
-	void removePlayWindow ( void );
-
-/*
-	 * Находим системные файлы в директории.
-	 * Например, карзина или индексер.
-	 * Причем от разныех ОС.
-*/
-	int			checkingSystemFileInRootDir				( const char* fatValome );
-
-	/// Заполняет внутренную переменную currentFileInfo
-	/// данными из файла-списка на флешке.
-	int			getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList );
-	void		trackMainWindowInit					(	void	);
-
-
-
-	void initEqualizer (	void	);
-
-
-	void setValueEqualizer (	void	);
-
 
 private:
 	static void buttonClickHandlerTask ( void* obj );
