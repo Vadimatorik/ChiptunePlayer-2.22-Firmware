@@ -16,7 +16,7 @@ struct ItemFileInFat {
 };
 
 struct AyPlayerFatFs {
-	FATFS						f;
+
 
 	/// Информация о файле, который в данный момент воспроизводится.
 	//ItemFileInFat				currentFileInfo;

@@ -3,83 +3,265 @@
 
 #include "fat.h"
 #include "FreeRTOSConfig.h"
+#include "base.h"
 
 namespace AyPlayer {
 
-char* Fat::getFullPath( const char* const path, const char* const fileName ) {
-	/// Получаем длину каждой строки без учета нуля терминатора.
-	const uint32_t pathLen		=	strlen( path );
-	const uint32_t nameFileLen	=	strlen( fileName );
+int Fat::initFatFs ( std::shared_ptr< char >	fatStartDir ) {
+	FRESULT	fr;
+	fr = f_mount( &this->f, fatStartDir.get(), 1 );
 
-	/// Получаем длину полной строки с учетом символа "/" и нуля терминатора.
-	const uint32_t allLen = pathLen + nameFileLen + 2;
-
-	/// Выделяем память под строку.
-	char* allPathToFile	=	( char* )pvPortMalloc( allLen );
-	assertParam( allPathToFile );
-
-	/// Собираем единую строку.
-	sprintf( allPathToFile, "%s/%s", path, fileName );
-
-	/// Возвращаем указатель на полную строку.
-	return allPathToFile;
+	if ( fr == FRESULT::FR_OK ) {
+		return EOK;
+	} else {
+		return EIO;
+	}
 }
 
-DIR* Fat::openDir( char* path ) {
-	FRESULT			r;
-	DIR*			d;
+std::shared_ptr< DIR > Fat::openDir (	std::shared_ptr< char >		path,
+										int&						returnResult	) {
+	FRESULT					r;
+	std::shared_ptr< DIR >	d( new DIR );
 
-	d	=	( DIR* )pvPortMalloc( sizeof( DIR ) );
-	assertParam( d );
+	if ( d.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return d;
+	}
 
 	/// Открываем директорию.
-	r = f_opendir( d, path );
+	r = f_opendir( d.get(), path.get() );
 
-	/// Если открыть директорию не удалось - высвобождаем память.
 	if ( r != FRESULT::FR_OK ) {
-		vPortFree( d );
-		d	=	nullptr;
+		returnResult	=	EIO;
+		return std::shared_ptr< DIR >( nullptr );
+	} else {
+		returnResult	=	EOK;
+		return d;
+	}
+}
+
+std::shared_ptr< FILINFO > Fat::readDir (	std::shared_ptr< DIR >		dir,
+											int&						returnResult	) {
+	FRESULT						r;
+	std::shared_ptr< FILINFO >	f( new FILINFO );
+
+	if ( f.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return f;
+	}
+
+	r = f_readdir( dir.get(), f.get() );
+
+	if ( r != FRESULT::FR_OK ) {
+		returnResult	=	EIO;
+		return std::shared_ptr< FILINFO >( nullptr );
+	}
+
+	returnResult	=	EOK;
+
+	if ( f->fname[ 0 ] == 0 ) {
+		return std::shared_ptr< FILINFO >( nullptr );
+	}
+
+	return f;
+}
+
+bool Fat::checkFileIsDir ( std::shared_ptr< FILINFO >	fileInfo ) {
+	if ( fileInfo->fattrib & AM_DIR ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+int Fat::closeDir(	std::shared_ptr< DIR >		dir	) {
+	FRESULT			r;
+
+	r = f_closedir( dir.get() );
+
+	if ( r == FRESULT::FR_OK ) {
+		return EOK;
+	} else {
+		return EIO;
+	}
+}
+
+
+std::shared_ptr< DIR >	Fat::openDirAndFindFirstFile	(	std::shared_ptr< char >		path,
+															std::shared_ptr< FILINFO >	returnFileInfo,
+															std::shared_ptr< char >		maskFind,
+															int&						returnResult	) {
+	FRESULT				r;
+	std::shared_ptr< DIR >	d( new DIR );
+	if ( d.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return d;
+	}
+
+	/// Открываем директорию и ищем в ней файл по маске.
+	r = f_findfirst( d.get(), returnFileInfo.get(), path.get(), maskFind.get() );
+
+	/// Этим мы указываем на то, что с самой Fat и картой все нормально.
+	if ( r == FR_OK ) {
+		returnResult	=	EOK;
+	} else {
+		returnResult	=	EIO;
+		return std::shared_ptr< DIR >( nullptr );
+	}
+
+	/// Нет такого файла.
+	if ( returnFileInfo->fname[ 0 ] == 0 ) {
+		return std::shared_ptr< DIR >( nullptr );
 	}
 
 	return d;
 }
 
-int Fat::closeDir( DIR* d ) {
-	if ( d == nullptr )		return 0;
+std::shared_ptr< FILINFO >	Fat::findNextFileInDir (	std::shared_ptr< DIR >		dir,
+														int&						returnResult	) {
+	FRESULT						r;
+	std::shared_ptr< FILINFO >	f( new FILINFO );
+	if ( f.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return f;
+	}
 
-	FRESULT			r;
+	r = f_findnext( dir.get(), f.get() );
 
-	/// Закрываем директорию.
-	r = f_closedir( d );
-	vPortFree( d );
+	/// Этим мы указываем на то, что с самой Fat и картой все нормально.
+	if ( r == FR_OK ) {
+		returnResult	=	EOK;
+	} else {
+		returnResult	=	EIO;
+		return std::shared_ptr< FILINFO >( nullptr );
+	}
 
-	/// Возвращаем успешность операции.
-	return ( r == FRESULT::FR_OK ) ? 0 : -1;
+	if ( f->fname[ 0 ] == 0 ) {
+		return std::shared_ptr< FILINFO >( nullptr );
+	}
+
+	return f;
 }
 
-FIL* Fat::openFileListWithRewrite ( const char* const path, const char* const name ) {
+std::shared_ptr< char > Fat::getFullPath(	std::shared_ptr< char >		path,
+											const char*					const fileName,
+											int&						returnResult	) {
+	std::shared_ptr< char > fatFsPath( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
+
+	if ( fatFsPath.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return fatFsPath;
+	} else {
+		returnResult	=	EOK;
+	}
+
+	snprintf( fatFsPath.get(), MAX_PATH_FATFS_STRING_LEN, "%s/%s", path.get(), fileName );
+
+	return fatFsPath;
+}
+
+std::shared_ptr< FIL > Fat::openFileListWithRewrite (	std::shared_ptr< char >		fullPath,
+														int&						returnResult	) {
 	FRESULT				r;
-	FIL*				f;
+	std::shared_ptr< FIL > f( new FIL );
 
-	/// Выделяем память под объект файла FatFS.
-	f	=	( FIL* )pvPortMalloc( sizeof( FIL ) );
-	assertParam( f );
+	if ( f.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return f;
+	} else {
+		returnResult	=	EOK;
+	}
 
-
-	char* fullPath	=	Fat::getFullPath( path, name );
-	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
-    r = f_open( f, fullPath, FA_CREATE_ALWAYS | FA_READ | FA_WRITE );
-    vPortFree( fullPath );
+    r = f_open( f.get(), fullPath.get(), FA_CREATE_ALWAYS | FA_READ | FA_WRITE );
 
     if ( r != FR_OK ) {
-    	vPortFree( f );
-    	f = nullptr;
+    	returnResult	=	EIO;
+    	return std::shared_ptr< FIL >( nullptr );
     }
 
     return f;
 }
 
+std::shared_ptr< ItemFileInFat > Fat::createtructureItemFileListFilling (	const char*			const nameTrack,
+																			uint32_t			lenTickTrack,
+																			AyPlayFileFormat	format,
+																			int&				returnResult	) {
+	std::shared_ptr< ItemFileInFat >	s( new ItemFileInFat );
+
+	if ( s.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return s;
+	} else {
+		returnResult	=	EOK;
+	}
+
+	/// Заполняем.
+	strcpy( s->fileName, nameTrack );
+	s->format		=	format;
+	s->lenTick		=	lenTickTrack;
+
+	return s;
+}
+
+int	Fat::writeFileListItem (	std::shared_ptr< FIL >				file,
+								std::shared_ptr< ItemFileInFat >	item	) {
+	FRESULT	r;
+
+	/// Пробуем записать.
+	UINT	l;
+	r = f_write( file.get(), item.get(), sizeof( ItemFileInFat ), &l );
+
+    /// Если записалось целиком все успешно, то возвратим 0.
+    if ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) {
+    	return EOK;
+    } else {
+    	return EIO;
+    }
+}
+
+int Fat::closeFile (	std::shared_ptr< FIL >				file	) {
+	FRESULT				r;
+
+    r = f_close( file.get() );
+
+    if ( r == FRESULT::FR_OK ) 	{
+    	return EOK;
+	} else {
+		return EIO;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
 FIL* Fat::openFile ( const char* const path, const char* const name ) {
+
 	FRESULT				r;
 	FIL*				f;
 
@@ -102,6 +284,7 @@ FIL* Fat::openFile ( const char* const path, const char* const name ) {
 }
 
 FIL* Fat::openFileInCurrentDir ( const char* const name ) {
+
 	FRESULT				r;
 	FIL*				f;
 
@@ -129,90 +312,14 @@ FIL* Fat::openFileInCurrentDir ( const char* const name ) {
     return f;
 }
 
-int Fat::closeFile ( FIL* f ) {
-	if ( f == nullptr )		return 0;
 
-	FRESULT				r;
 
-	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
-    r = f_close( f );
-    vPortFree( f );
 
-    return ( r == FRESULT::FR_OK ) ? 0 : -1;
-}
 
-int	Fat::writeItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item ) {
-	FRESULT				r;
 
-	/// Пробуем записать.
-	UINT				l;
-	r = f_write( f, item, sizeof( ItemFileInFat ), &l );
 
-	/// После записи нам уже не нужна структура.
-	vPortFree( item );
 
-    /// Если записалось целиком все успешно, то возвратим 0.
-    return ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) ? 0 : -1;
-}
 
-int Fat::startFindingFileInDir ( DIR** dir, FILINFO** fInfo, const char* const pathDir, const char* const maskFind ) {
-	FRESULT				r;
-
-	/// Выделяем память под объект директории, в которой будем искать файл,
-	DIR*		d						=	( DIR* )pvPortMalloc( sizeof( DIR ) );
-	assertParam( d );
-
-	/// Выделяем память под объект директории, в которой будем искать файл,
-	FILINFO*	fi						=	( FILINFO* )pvPortMalloc( sizeof( FILINFO ) );
-	assertParam( fi );
-
-	/// Открываем директорию и ищем в ней файл по маске.
-	r = f_findfirst( d, fi, pathDir, maskFind );
-
-	/// Файл найден.
-	if ( r == FR_OK && fi->fname[0] ) {
-		*dir	=	d;
-		*fInfo	=	fi;		/// Отдаем указатель на структуру информации о файле FatFS.
-
-		return 0;
-	}
-
-	/// Пошли проблемы, объекты директории и информации о файле теперь не нужны.
-	vPortFree( d );
-	vPortFree( fi );
-
-	/// Проблемы на уровне флешки.
-	if ( r != FR_OK ) {
-		return -1;
-	}
-
-	/// Просто нет такого файла.
-	return 1;
-}
-
-int Fat::findingFileInDir ( DIR* d, FILINFO* fInfo ) {
-	FRESULT				r;
-
-	/// Ищем следующий файл по маске.
-	r = f_findnext( d, fInfo );
-
-	/// Файл найден.
-	if ( r == FR_OK && fInfo->fname[0] ) {
-		return 0;
-	}
-
-	/// Пошли проблемы, объекты директории и информации о файле теперь не нужны.
-	vPortFree( d );
-	vPortFree( fInfo );
-
-	/// Проблемы на уровне флешки.
-	if ( r != FR_OK ) {
-		return -1;
-	}
-
-	/// Просто нет такого файла.
-	return 1;
-}
 
 char* Fat::getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack ) {
 	FRESULT				r;
@@ -354,6 +461,8 @@ int Fat::removeDir ( const char* path, FRESULT& fatReturn ) {
 }
 
 int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
+	( void )fullPath;
+	( void )fatReturn;
 	static FILINFO			f;
 	static int				r = 0;
 
@@ -405,7 +514,8 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 		r = Fat::removeDir( fullPath, fatReturn );
 
 	return r;
-}
+	return 0;
+}*/
 
 }
 

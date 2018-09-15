@@ -3,38 +3,42 @@
 
 namespace AyPlayer {
 
-int	Base::scanDir ( char* path ) {
-	int					r	=	0;
 
-	FILINFO*			fi	=	nullptr;
-	DIR*				d	=	nullptr;
-	FIL*				f	=	nullptr;
 
-	/// Ищем первый файл по маске.
-	r	=	Fat::startFindingFileInDir( &d, &fi, path, "*.psg" );
+int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
+	int	r;
+	std::shared_ptr< FILINFO >		fi( new FILINFO );
+	std::shared_ptr< char >			findMsk( new char[ 10 ], std::default_delete< char[] >() );
+	strcpy( findMsk.get(), "*.psg" );
 
-	/// Путь до файла со списком прошедших проверку файлов.
-	bool	flagFileListCreate	=	false;
+	std::shared_ptr< DIR >		d( this->fat.openDirAndFindFirstFile( path, fi, findMsk, r ) );
+	errnoCheckAndReturn( r );
 
-	/// Устанавливаем текущую директорию.
-	if ( ( !r ) && ( f_chdir( path ) != FR_OK ) ) {
-		r = -1;
-	}
+	std::shared_ptr< FIL >		fileList( nullptr );
 
-	while ( !r ) {
+	while ( true ) {
+		/// Ищем следующий элемент.
+		fi = this->fat.findNextFileInDir( d, r );
+		errnoCheckAndReturn( r );
+
+		/// Просмотрены все файлы.
+		if ( fi.get() == nullptr )
+			break;
+
 		/// Собираем строчку с полным путем.
-		char*	fullPathToFile	=	Fat::getFullPath( path, fi->fname );
+		std::shared_ptr< char > fullPath ( this->fat.getFullPath( path, fi->fname, r ) );
+
 
 		/// Лог: найден файл под маску.
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File found:", fullPathToFile );						/// Лог.
+		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File found:", fullPath.get() );				/// Лог.
 
 		/// Экран: начат анализ файла.
-		m_slist_set_text_string( &this->g.sl, "File analysis..." );											/// Экран.
-		this->guiUpdate();
+		//m_slist_set_text_string( &this->g.sl, "File analysis..." );											/// Экран.
+		//this->guiUpdate();
 
 
 		/// Проверяем правильность файла.
-		uint32_t fileLen = 0;
+		uint32_t fileLen = 23;			/// 23 - это для теста.
 
 		//this->cfg->ay->setPlayFileName( fi->fname );
 
@@ -44,142 +48,112 @@ int	Base::scanDir ( char* path ) {
 		/// Если файл прошел проверку.
 		if ( rPsgGet == 0 ) {
 			/// Если в этой директории еще не создавали файл со списком прошедших проверку файлов.
-			if ( flagFileListCreate == false ) {
-				flagFileListCreate = true;
-
-				/// Пытаемся создать файл.
-				f	=	Fat::openFileListWithRewrite( path, LIST_NO_SORT_FAT_NAME );
+			if ( fileList.get() == nullptr ) {
+				fileList =  this->fat.openFileListWithRewrite( fullPath, r );
+				errnoCheckAndReturn( r );
 
 				/// Если не удалось - чистим память и выходим.
-				if ( f == nullptr ) {
-					this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "<<" LIST_NO_SORT_FAT_NAME ">> not created in dir:", path );
-					vPortFree( fullPathToFile );
-					r = -1;
-					break;
+				if ( r == EOK ) {
+					this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "<<" LIST_NO_SORT_FAT_NAME ">> created in dir:", path.get() );
 				} else {
-					this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "<<" LIST_NO_SORT_FAT_NAME ">> created in dir:", path );
+					this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "<<" LIST_NO_SORT_FAT_NAME ">> not created in dir:", path.get() );
+					return r;
 				}
 			}
 
 			/// Лог: данный об проанализированном файле.
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Analysis was carried out successfully:", fullPathToFile );
-			char lenString[50];
-			sprintf( lenString, "%lu", fileLen );
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Analysis was carried out successfully:", fullPath.get() );
+			char lenString[ 31 ];
+			snprintf( lenString, 30, "%lu", fileLen );
 			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File len tick:", lenString );
 
-			ItemFileInFat*	fileListItem	=	this->structureItemFileListFilling( fi->fname, fileLen, AyPlayFileFormat::psg );
-			r	=	Fat::writeItemFileListAndRemoveItem( f, fileListItem );
+			std::shared_ptr< ItemFileInFat > item( this->fat.createtructureItemFileListFilling( fi->fname, fileLen, AyPlayFileFormat::psg, r ) );
+			errnoCheckAndReturn( r );
 
-			if ( r != 0 ) {
+			r	=	this->fat.writeFileListItem( fileList, item );
+
+			if ( r == 0 ) {
+				this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Write item file in <<" LIST_NO_SORT_FAT_NAME ">> was been carried out successfully. Name item file: ", fi->fname );
+			} else {
 				this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Write item file in <<" LIST_NO_SORT_FAT_NAME ">> was not carried out successfully. Name item file: ", fi->fname );
-				break;
+				return EIO;
 			}
 
 			/// В списке новый файл, сдвигаем.
-			this->slItemShiftDown( 4, fi->fname );
+			///this->slItemShiftDown( 4, fi->fname );
 
 			/// На экран.
-			this->guiUpdate();
+			//this->guiUpdate();
 		} else {
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Analysis was not carried out successfully:", fullPathToFile );
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Analysis was not carried out successfully:", fullPath.get() );
 		}
 
 		/// Полный путь теперь не актуален.
-		vPortFree( fullPathToFile );
-
-		/// Ищем следующий элемент.
-		r = Fat::findingFileInDir( d, fi );
-
-		/// Элементов больше нет.
-		if ( r == 1 ) {
-			break;
+		//vPortFree( fullPathToFile );
 		}
-	}
 
-	/// 1 == последний файл, а это штатно.
-	if ( r == 1 ) {
-		r = 0;					/// d и fi почистила findingFileInDir,
-	} else {
-		/// Очищаем память.
-		/// Даже если что-то не так пойдет на нижнем уровне - эти методы должны выполниться чтобы
-		/// очистить память.
-		/// Храним в себе только -1 или 0.
-		/// Если была хоть раз -1, то не перезаписываем.
-		if ( fi )			vPortFree( fi );
-		r	=	( Fat::closeDir( d ) != 0 ) ? -1 : r;
-	}
-
-	r	=	( Fat::closeFile( f ) != 0 ) ? -1 : r;
-	if ( r == 0 ) {
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_NO_SORT_FAT_NAME ">> was close successfully. Dir:" , path );
-	} else {
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "File <<" LIST_NO_SORT_FAT_NAME ">> was not close successfully. Dir:" , path );
+	if ( fileList.get() != nullptr ) {
+		if ( this->fat.closeFile( fileList ) == EOK ) {
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_NO_SORT_FAT_NAME ">> was close successfully. Dir:" , path.get() );
+		} else {
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "File <<" LIST_NO_SORT_FAT_NAME ">> was not close successfully. Dir:" , path.get() );
+		}
 	}
 
 	return r;
 }
 
-FRESULT Base::indexingSupportedFiles( char* path ) {
-	FRESULT					r;
-	static FILINFO			f;
+int Base::createFileListsInSdCard ( std::shared_ptr< char >		path ) {
+	int					r;
 
 	/// Флаг выставляется, когда мы обнаружили в
-	/// директории хоть один файл и просканировали ее на все по шаблону.
+	/// директории хоть один файл и просканировали ее на всё по шаблону.
 	/// Чтобы не нраваться на многократное повторное сканирование.
 	bool				scanDir	=	false;
 
-	/// Открываем директорию. Все игры с памятью внутри.
-	DIR*	d	=	Fat::openDir( path );
+	/// Открываем директорию.
+	std::shared_ptr< DIR >			d( this->fat.openDir( path, r ) );
+	errnoCheckAndReturn( r );
 
-	if ( d == nullptr )
-		return FRESULT::FR_DISK_ERR;
-
-	this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Open  dir:", path );
+	this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Open dir:", path.get() );
 
 	/// Рекурсивно обходим все папки.
 	while( 1 ) {
 		/// Gui: мы снова начали поиск нужного файла.
-		m_slist_set_text_string( &this->g.sl, "Find supported files..." );
-		this->guiUpdate();
+		/// m_slist_set_text_string( &this->g.sl, "Find supported files..." );
+		/// this->guiUpdate();
 
-		r = f_readdir( d, &f );
-
-		/// Если проблемы на нижнем уравне.
-		if ( r != FR_OK )
-			break;
+		std::shared_ptr< FILINFO >		f( this->fat.readDir( d, r ) );
+		errnoCheckAndReturn( r );
 
 		/// Закончились элементы в текущей директории.
-		if ( f.fname[ 0 ] == 0 ) {
-			/// Лог: директория закончилась.
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Close dir:", path );
-
+		if ( f.get() == nullptr ) {
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Close dir:", path.get() );
 			break;
 		}
 
 		/// Найдена новая директория.
-		if ( f.fattrib & AM_DIR ) {
-			uint32_t i = strlen(path);
-			sprintf( &path[ i ], "/%s", f.fname );
+		if ( this->fat.checkFileIsDir( f ) ) {
+			uint32_t	len	=	strlen( path.get() );
 
-			r	=	this->indexingSupportedFiles( path );
+			snprintf( path.get(), MAX_PATH_FATFS_STRING_LEN, "%s/%s", path.get(), f->fname );
 
-			if ( r != FRESULT::FR_OK )								/// Аварийная ситуация.
-				break;
+			r	=	this->createFileListsInSdCard( path );
+			errnoCheckAndReturn( r );
 
-			path[ i ] = 0;
+			/// Обрезаем строку, чтобы выйти из вложенного каталога.
+			path.get()[ len ] = 0;
+
 		} else {
-			if ( scanDir == true ) continue;						/// Сканируем директорию лишь единожды.
+			if ( scanDir == true ) continue;		/// Сканируем директорию лишь единожды.
 			scanDir = true;
-			if ( this->scanDir( path ) != 0 ) {
+			if ( this->createFileListInSdCard( path ) != 0 ) {
 				break;
 			}
 		}
 	}
 
-	/// Фиксируем FRESULT::FR_DISK_ERR как приоритет над всем.
-	r = ( Fat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
-
-	return r;
+	return this->fat.closeDir( d );
 }
 
 }

@@ -48,10 +48,6 @@ void DMA2_Stream3_IRQHandler		( void ) {
 	sd.dmaRxHandler();
 }
 
-void DMA2_Stream6_IRQHandler		( void ) {
-	sd.dmaTxHandler();
-}
-
 void USART1_IRQHandler				( void ) {
 	usart.irqHandler();
 }

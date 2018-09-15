@@ -46,8 +46,10 @@ DRESULT disk_read (	__attribute__((unused))	BYTE pdrv,
 
 	do {
 		funcR = ( DRESULT )sd.readSector( sector, buff, count, 1000 );
-		l--;
-		USER_OS_DELAY_MS(1);
+		if ( funcR != RES_OK ) {
+			l--;
+			USER_OS_DELAY_MS(1);
+		}
 	} while ( ( funcR != RES_OK ) && ( l != 0 ) );
 
 	return funcR;
@@ -62,8 +64,10 @@ DRESULT disk_write ( __attribute__((unused))	BYTE pdrv,
 
 	do {
 		funcR = ( DRESULT )sd.writeSector( buff, sector, count, 1000 );
-		l--;
-		USER_OS_DELAY_MS(1);
+		if ( funcR != RES_OK ) {
+			l--;
+			USER_OS_DELAY_MS(1);
+		}
 	} while ( ( funcR != RES_OK ) && ( l != 0 ) );
 
 	return funcR;

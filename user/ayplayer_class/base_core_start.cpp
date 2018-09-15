@@ -30,7 +30,7 @@ int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
 	}*/
 	return 0;
 }
-
+/*
 int Base::fsmStepFuncSortingFileList ( void ) {
 	char*			path		=	( char* )pvPortMalloc( 1024 );
 	int				r;
@@ -97,6 +97,6 @@ int Base::fsmStepFuncInitMainWindow ( void ) {
 
 	this->guiUpdate();
 	return 0;
-}
+}*/
 
 }

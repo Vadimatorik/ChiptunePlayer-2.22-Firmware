@@ -9,13 +9,14 @@
 #include "rcc.h"
 #include "sd_control.h"
 
-#define	fatFsCheckAndReturn( fr )				\
-			if ( fr != FRESULT::FR_OK ) {		\
-				return -1;						\
+#define	errnoCheckAndReturn( r )				\
+			if ( r != EOK ) {					\
+				return r;						\
 			}
 
+
 #if !defined( EOK )
-#  define EOK 0         /* no error */
+#define	EOK						0        		/// No error.
 #endif
 
 namespace AyPlayer {
@@ -46,6 +47,13 @@ enum class AYPLAYER_WINDOW_NOW {
 #define LIST_NO_SORT_FAT_NAME					".fileList.list"
 #define LIST_SORT_NAME_FAT_NAME					".fileListNameSort.list"
 #define LIST_SORT_LEN_FAT_NAME					".fileListLenSort.list"
+
+/*!
+ *	\brief		Максимальная длинна строки-пути в fatfs.
+ *				Важно: при выделении памяти следует выделять на 1 байт больше.
+ */
+#define MAX_PATH_FATFS_STRING_LEN				1024
+
 
 enum class AYPLAYER_STATUS {
 	STOP				=	0,
@@ -159,6 +167,34 @@ private:
 													const char*		const arg		);
 
 private:
+	/*!
+	 *	\brief		Метод проходится по всем вложенным каталогам
+	 *				начиная с заданного пути и для каждого каталога
+	 *				вызывает метод createFileListInSdCard.
+	 *
+	 *	\param[in]	path		-	Директория, с которой начинается анализ всех
+	 *								файлов рекурсивно вниз по дереву.
+	 *
+	 *	\return		EOK			-	Успешность операции.
+	 *								В противном случае код из errno.h.
+	 */
+	int		createFileListsInSdCard				(	std::shared_ptr< char >		path	);
+
+	/*!
+	 *	\brief		Метод производит анализ заданной директории и в случае,
+	 *				если в ней есть подходящие по маске файлы - вызывает
+	 *				методы их проверки на валидность и в случае успешности
+	 *				последней создает файл списка и добавляет имя последнего
+	 *				прошедшего файла в список.
+	 *
+	 *	\param[in]	path		-	Директория, в которой производится анализ файлов.
+	 *
+	 *	\return		EOK			-	Успешность операции.
+	 *								В противном случае код из errno.h.
+	 */
+	int		createFileListInSdCard				(	std::shared_ptr< char >		path	);
+
+private:
 	/*
 	 *	\brief		Метод производит инициализацию всей аппаратной
 	 *				периферии микроконтроллера.
@@ -166,12 +202,19 @@ private:
 	 *				таким образом, чтобы дальнейшее приложение могла
 	 *				функционировать хотя бы в ограниченном режиме -
 	 *				производится перезагрузка процессора.
+	 *
+	 *
 	 */
 	void			initHardwareMc				(	void	);
 
 	void			initTasks					(	void	);
 
 	void			waitToInsertCorrectSdCard	(	void	);
+
+	std::shared_ptr< ItemFileInFat > createtructureItemFileListFilling (	const char*			const nameTrack,
+																				uint32_t			lenTickTrack,
+																				AyPlayFileFormat	format,
+																				int&				returnResult	);
 
 private:
 	uint32_t		getStatePlay				( void );
@@ -192,7 +235,6 @@ private:
 
 	/// Проходится по всем каталогам и составляет список поддерживаемых файлов.
 
-	FRESULT			indexingSupportedFiles				( char* path );
 
 
 	void			initWindowIndexingSupportedFiles	( char* stateIndexing = nullptr );
@@ -202,7 +244,7 @@ private:
 	void			initGuiStatusBar					( void );
 	void			slItemShiftDown							( uint32_t cout, char* newSt );
 
-	int				scanDir								( char* path );
+
 
 private:
 	static void buttonClickHandlerTask ( void* obj );
@@ -249,14 +291,10 @@ private:
 
 	ayplayerEqualizer									eq;
 
-	AyPlayerFatFs										fat;
+	//AyPlayerFatFs										fat;
 
-	/*!
-	 *	\brief		Через данный объект производится взаимодействие
-	 *				с аппаратным модулем NVIC.
-	 */
-	Nvic												nvic;
-
+	AyPlayer::Fat										fat;
+	AyPlayer::Nvic										nvic;
 	AyPlayer::Rcc*										rcc;
 	AyPlayer::Gui*										gui;
 	AyPlayer::SdControl*								sd;

@@ -6,19 +6,7 @@
 namespace AyPlayer {
 
 /*
-ItemFileInFat* Base::structureItemFileListFilling ( const char* const nameTrack, const uint32_t lenTickTrack, const AyPlayFileFormat format ) {
-	/// Выделяем память под элемент
-	/// (его удалит после записи writeItemFileListAndRemoveItem).
-	ItemFileInFat* i	=	( ItemFileInFat* )pvPortMalloc( sizeof( ItemFileInFat ) );
-	assertParam( i );
 
-	/// Заполняем.
-	strcpy( i->fileName, nameTrack );
-	i->format		=	format;
-	i->lenTick		=	lenTickTrack;
-
-	return i;
-}
 
 int	Base::sortFileListCreateFile ( const char* const path, FIL** fNoSort, FIL** fNameSort, FIL** fLenSort ) {
 	int r = 0;

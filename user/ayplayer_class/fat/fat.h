@@ -5,9 +5,160 @@
 #include <memory>
 #include <string>
 
+#if !defined( EOK )
+#define	EOK						0        		/// No error.
+#endif
+
+
 namespace AyPlayer {
 
 class Fat {
+public:
+	/*!
+	 *	\brief		Метод производит инициализацию FatFS
+	 *				объекта на основе данных с физической
+	 *				карты памяти.
+	 *
+	 *	\param[in]	fatStartDir		-	путь до директории, в которой будет находится браузер файлов
+	 *									после инициализации. Путь должен быть полным содержать в себе
+	 *									указание на карту, которая будет инициализирована.
+	 *									После вызова метода строку можно удалять.
+	 *
+	 *	\return		Результат операции.
+	 *				EOK	-	в случае успеха.
+	 *				Иначе код ошибки из errno.h
+	 */
+	int							initFatFs						(	std::shared_ptr< char >			fatStartDir	);
+
+	/*!
+	 *	\brief		Открывает директорию по заданному пути
+	 *				с последующим созданием ее объекта FatFS.
+	 *	\param[in]		path			-	путь до требуемого каталога.
+	 * 										Примечание:	путь должен быть полным,
+	 * 													включая карту.
+	 *	\param[out]		returnResult	-	Результат операции.
+	 *										EOK	-	в случае успеха.
+	 *										Иначе код ошибки из errno.h
+	 *
+	 *	\return			Объект директории FatFs.
+	 *					В случае, если не удастся выделить память
+	 *					или карта не ответила,
+	 *					то будет возвращен объект, указывающий на
+	 *					nullptr.
+	 */
+	std::shared_ptr< DIR >		openDir							(	std::shared_ptr< char >		path,
+																	int&						returnResult	);
+
+	/*!
+	 *	\brief		Открывает директорию с возможностью последующего
+	 *				анализа находящихся внутри нее файлов по маске.
+	 *
+	 *	\param[in]		path			-	путь до требуемого каталога.
+	 * 										Примечание:	путь должен быть полным,
+	 * 	\param[out]		returnFileInfo	-	объект информации о файле, данные в котором
+	 * 										будут актуализированы в случае успеха.
+	 * 	\param[in]		maskFind		-	строка-маска, по которой будет
+	 * 										производиться поиск.
+	 *	\param[out]		returnResult	-	Результат операции.
+	 *										EOK	-	в случае успеха.
+	 *										Иначе код ошибки из errno.h
+	 *
+	 *	\return			Объект директории FatFs.
+	 *					В случае, если не удастся выделить память,
+	 *					карта не ответила или файл не был найден,
+	 *					то будет возвращен объект, указывающий на
+	 *					nullptr.
+	 */
+	std::shared_ptr< DIR >		openDirAndFindFirstFile			(	std::shared_ptr< char >		path,
+																	std::shared_ptr< FILINFO >	returnFileInfo,
+																	std::shared_ptr< char >		maskFind,
+																	int&						returnResult	);
+
+	std::shared_ptr< FILINFO >	findNextFileInDir				(	std::shared_ptr< DIR >		dir,
+																	int&						returnResult	);
+
+	/*!
+	 *	\brief		Метод считывает данные о файле из внутреннего
+	 *				списка файлов в каталоге.
+	 *
+	 *	\param[in]		dir				-	объект ранее открытой методом openDir директории.
+	 *										Важно: проверки, что объект не был создан - не производится.
+	 *										Об этом должен заботиться пользователь.
+	 *	\param[out]		returnResult	-	Результат операции.
+	 *										EOK	-	в случае успеха.
+	 *										Иначе код ошибки из errno.h
+	 *
+	 *	\return			Объект с информацией о файле.
+	 *					В случае, если не удастся выделить память
+	 *					или карта не ответила,
+	 *					то будет возвращен объект, указывающий на
+	 *					nullptr.
+	 *					Важно: в случае, если файлы в директории закончились
+	 *					- так же будет возвращен объект указывающий на nullptr.
+	 *					При этом returnResult будет EOK.
+	 */
+	std::shared_ptr< FILINFO >	readDir							(	std::shared_ptr< DIR >		dir,
+																	int&						returnResult	);
+
+	/*!
+	 *	\brief		Метод проверяет, является ли считанный
+	 *				файл директорией или нет.
+	 *
+	 *	\param[in]		fileInfo		-	объект информации о файле, полученный ранее с
+	 *										помощью метода readDir.
+	 *										Важно: проверки, что объект не был создан -
+	 *										не производится.
+	 *										Об этом должен заботиться пользователь.
+	 *
+	 *	\return			true	-	если файл является директорией.
+	 */
+	bool						checkFileIsDir					(	std::shared_ptr< FILINFO >	fileInfo	);
+
+	/*!
+	 *	\brief		Метод закрывает ранее открытую с помощью
+	 *				метода openDir директорию.
+	 *
+	 *	\param[in]		dir				-	объект ранее открытой методом openDir директории.
+	 *										Важно: проверки, что объект не был создан - не производится.
+	 *										Об этом должен заботиться пользователь.
+	 *
+	 *	\return		Результат операции.
+	 *				EOK	-	в случае успеха.
+	 *				Иначе код ошибки из errno.h
+	 */
+	int							closeDir						(	std::shared_ptr< DIR >		dir	);
+
+	/*!
+	 *	\brief		Метод возвращает строку с полным путем,
+	 *				состоящим из пути + имя файла.
+	 *
+	 *	\param[in]		path			-	путь до директории.
+	 *	\param[in]		fileName		-	имя файла с расширением.
+	 *	\param[out]		returnResult	-	Результат операции.
+	 *										EOK	-	в случае успеха.
+	 *										Иначе код ошибки из errno.h
+	 *
+	 *	\return			Строка, содержащая полный путь до файла.
+	 */
+	std::shared_ptr< char >		getFullPath						(	std::shared_ptr< char >		path,
+																	const char*					const fileName,
+																	int&						returnResult	);
+
+	/*!
+	 *	\brief		Открывает файл по заданному пути или создает его заново.
+	 *				Если файл по данному пути существовал ранее - заменяет его.
+	 *	\param[in]		fullPath		-	путь до файла, который будет открыт
+	 * 										(полный, включая расширение и карту).
+	 *	\param[out]		returnResult	-	Результат операции.
+	 *										EOK	-	в случае успеха.
+	 *										Иначе код ошибки из errno.h
+	 *
+	 *	\return			FatFS объект файла.
+	 *
+	 */
+	std::shared_ptr< FIL > openFileListWithRewrite (	std::shared_ptr< char >		fullPath,
+															int&						returnResult	);
+
 public:
 	/*!
 	 * Выделяет память в куче под строку с полным путем до файла с расширением.
@@ -19,37 +170,12 @@ public:
 	 */
 	static	char*		getFullPath						( const char* const path, const char* const fileName );
 
-	/*!
-	 * Открывает директорию по заданному пути с созданием ее объекта FatFS.
-	 * \param[in]		path		-	путь до требуемого каталога.
-	 * 									(полный, включая карту).
-	 *
-	 * \return			{	Указатель на объект директории FatFs
-	 * 						или nullptr, если открыть не удалось.	}
-	 */
-	static	DIR*		openDir							( char* path );
 
-	/*!
-	 * Закрывает ранее открытую директорию и удаляет ее объект FatFS.
-	 * \param[in]		d			-	объект директории FatFS.
-	 *
-	 * \return			{	0	-	директория успешно закрыта, объект
-	 * 								директории FatFS удален.
-	 * 						-1	-	директория закрыта с ошибкой, объект
-	 * 								директории FatFS удален.	}
-	 */
-	static	int			closeDir						( DIR* d );
 
-	/*!
-	 * Открывает файл по заданному пути или создает его заново.
-	 * Если файл по данному пути существовал ранее - заменяет его.
-	 * \param[in]		path		-	путь до файла, который будет открыт
-	 * 									(полный, включая расширение и карту).
-	 *
-	 * \return			{	Указатель на объект файла FatFS
-	 * 						или nullptr, если открыть не удалось.	}
-	 */
-	static	FIL*		openFileListWithRewrite			( const char* const path, const char* const name );
+
+
+
+
 
 	/*!
 	 * Открывает файл по заданному пути/
@@ -73,22 +199,20 @@ public:
 	 * 						-1	-	файл закрыт с ошибкой, объект
 	 * 								файла FatFS удален.	}
 	 */
-	static	int			closeFile					( FIL* f );
+	int closeFile (	std::shared_ptr< FIL >				file	);
 
 	/*!
 	 * Записывает структуру элемента в <<.fileList>> (информацию о треке).
 	 * Вне зависимости от результата записи структура удаляется.
 	 * \param[in]		f			-	объект файла FatFS.
-	 * \param[in]		item		-	структура записываемого элемента.
-	 *
-	 * \return			{	0	-	элемент успешно записан, структура
-	 * 								элемента удалена.
-	 * 						-1	-	элемент записан с ошибкой, структура
-	 * 								элемента удалена.	}
-	 *
+	 * \param[in]		item		-	структура записываемого элемента.	 *
 	 */
-	static	int			writeItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item );
-
+	int	writeFileListItem	(	std::shared_ptr< FIL >				file,
+												std::shared_ptr< ItemFileInFat >	item	);
+	std::shared_ptr< ItemFileInFat > createtructureItemFileListFilling (	const char*			const nameTrack,
+																				uint32_t			lenTickTrack,
+																				AyPlayFileFormat	format,
+																				int&				returnResult	);
 	static	int			readItemFileListAndRemoveItem	( FIL* f, ItemFileInFat* item, uint32_t numberTrack );
 
 	/*!
@@ -159,6 +283,10 @@ public:
 	static	int			removeDir						( const char* path, FRESULT& fatReturn );
 
 	static	int			removeDirRecurisve				( char* path, FRESULT& fatReturn );
+
+private:
+	FATFS				f;
+
 };
 
 }

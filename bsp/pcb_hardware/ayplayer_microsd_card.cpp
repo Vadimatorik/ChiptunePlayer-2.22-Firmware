@@ -6,10 +6,7 @@ const MicrosdSdioCfg sdCfg = {
 	.div						= 0,
 	.dmaRx						= DMA2_Stream3,
 	.dmaRxCh					= DMA_CHANNEL_4,
-	.dmaRxIrqPrio				= 6,
-	.dmaTx						= DMA2_Stream6,
-	.dmaTxCh					= DMA_CHANNEL_4,
-	.dmaTxIrqPrio				= 6
+	.dmaRxIrqPrio				= 6
 };
 
 MicrosdSdio sd( &sdCfg );
