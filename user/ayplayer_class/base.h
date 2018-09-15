@@ -122,6 +122,37 @@ private:
 	 */
 	void			checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
 
+	/*!
+	 *	\brief		Методы прослойки для работы с logger-ом.
+	 */
+private:
+	/*!
+	 *	\brief		Метод производит запись в log сообщания (строки).
+	 *
+	 *	\param[in]	type		-	тип записываемого в log сообщения.
+	 *	\param[in]	message		-	строка с тестом записываемого сообщения.
+	 *								Примечание:	после вызова метода
+	 *											может быть удалена.
+	 */
+	void	printMessage						(	RTL_TYPE_M		type,
+													const char*		const message	);
+
+	/*!
+	 *	\brief		Метод производит запись в log строки
+	 *				с следующим за ним параметром.
+	 *
+	 *	\param[in]	type		-	тип записываемого в log сообщения.
+	 *	\param[in]	message		-	строка с тестом записываемого сообщения.
+	 *								Примечание:	после вызова метода
+	 *											может быть удалена.
+	 *	\param[in]	arg			-	аргумент (строка) следующий за сообщением.
+	 *								Примечание:	после вызова метода
+	 *											может быть удалена.
+	 */
+	void	printMessageAndArg					(	RTL_TYPE_M		type,
+													const char*		const message,
+													const char*		const arg		);
+
 private:
 	/*
 	 *	\brief		Метод производит инициализацию всей аппаратной
@@ -158,7 +189,6 @@ private:
 
 	FRESULT			indexingSupportedFiles				( char* path );
 
-	void			printMessageAndArg					( RTL_TYPE_M type, const char* const message, const char* const arg );
 
 	void			initWindowIndexingSupportedFiles	( char* stateIndexing = nullptr );
 	void			removeWindowIndexingSupportedFiles	( void );
@@ -212,7 +242,7 @@ private:
 	/// данными из файла-списка на флешке.
 	int			getFileInfoFromListCurDir ( FILE_LIST_TYPE listType, uint32_t numberFileInList );
 	void		trackMainWindowInit					(	void	);
-	void printMessage ( RTL_TYPE_M type, const char* const message );
+
 
 
 	void initEqualizer (	void	);
