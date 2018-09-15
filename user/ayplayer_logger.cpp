@@ -8,7 +8,7 @@
 
 McHardwareInterfaces::BaseResult		uartSendMessage ( const char* string );
 
-const runTimeLoggerCfg log_cfg = {
+const RunTimeLoggerCfg log_cfg = {
 	.color = {
 		.initOkColorString			= ANSI_RESET,
 		.initIssueColorString		= ANSI_YEL,

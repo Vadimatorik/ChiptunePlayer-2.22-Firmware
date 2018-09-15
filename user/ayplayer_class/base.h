@@ -119,6 +119,7 @@ private:
 	 *
 	 *	\param[in]	resultValue	-	возвращенный предыдущим по ходу выполнения
 	 *								программы методом результат выполнения.
+	 *
 	 */
 	void			checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
 
@@ -130,11 +131,15 @@ private:
 	 *	\brief		Метод производит запись в log сообщания (строки).
 	 *
 	 *	\param[in]	type		-	тип записываемого в log сообщения.
-	 *	\param[in]	message		-	строка с тестом записываемого сообщения.
+	 *	\param[in]	message		-	строка с текстом записываемого сообщения.
 	 *								Примечание:	после вызова метода
 	 *											может быть удалена.
+	 *
+	 *	\return		EOK			-	Успешность операции.
+	 *								В противном случае код из errno.h.
+	 *
 	 */
-	void	printMessage						(	RTL_TYPE_M		type,
+	int		printMessage						(	RTL_TYPE_M		type,
 													const char*		const message	);
 
 	/*!
@@ -142,14 +147,17 @@ private:
 	 *				с следующим за ним параметром.
 	 *
 	 *	\param[in]	type		-	тип записываемого в log сообщения.
-	 *	\param[in]	message		-	строка с тестом записываемого сообщения.
+	 *	\param[in]	message		-	строка с текстом записываемого сообщения.
 	 *								Примечание:	после вызова метода
 	 *											может быть удалена.
 	 *	\param[in]	arg			-	аргумент (строка) следующий за сообщением.
 	 *								Примечание:	после вызова метода
 	 *											может быть удалена.
+	 *
+	 *	\return		EOK			-	Успешность операции.
+	 *								В противном случае код из errno.h.
 	 */
-	void	printMessageAndArg					(	RTL_TYPE_M		type,
+	int		printMessageAndArg					(	RTL_TYPE_M		type,
 													const char*		const message,
 													const char*		const arg		);
 
