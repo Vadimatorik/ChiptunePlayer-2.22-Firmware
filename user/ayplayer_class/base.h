@@ -9,10 +9,7 @@
 #include "rcc.h"
 #include "sd_control.h"
 
-#define	errnoCheckAndReturn( r )				\
-			if ( r != EOK ) {					\
-				return r;						\
-			}
+
 
 
 #if !defined( EOK )

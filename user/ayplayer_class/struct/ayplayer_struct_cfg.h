@@ -19,7 +19,7 @@ struct BaseCfg {
 	const AyPlayerGuiModuleStyleCfg*		const gui;
 
 	RunTimeLogger*							const l;
-	//AyYmFilePlay*							const ay;
+	AyYmFilePlay*							const ay;
 };
 
 }

@@ -9,7 +9,10 @@ namespace AyPlayer {
 
 int Fat::initFatFs ( std::shared_ptr< char >	fatStartDir ) {
 	FRESULT	fr;
-	fr = f_mount( &this->f, fatStartDir.get(), 1 );
+
+	static FATFS				f;
+
+	fr = f_mount( &f, fatStartDir.get(), 1 );
 
 	if ( fr == FRESULT::FR_OK ) {
 		return EOK;
@@ -162,8 +165,8 @@ std::shared_ptr< char > Fat::getFullPath(	std::shared_ptr< char >		path,
 
 std::shared_ptr< FIL > Fat::openFileListWithRewrite (	std::shared_ptr< char >		fullPath,
 														int&						returnResult	) {
-	FRESULT				r;
-	std::shared_ptr< FIL > f( new FIL );
+	FRESULT					r;
+	std::shared_ptr< FIL >	f( new FIL );
 
 	if ( f.get() == nullptr ) {
 		returnResult	=	ENOMEM;
@@ -194,6 +197,8 @@ std::shared_ptr< ItemFileInFat > Fat::createtructureItemFileListFilling (	const 
 	} else {
 		returnResult	=	EOK;
 	}
+
+	memset( s->fileName, 0, FF_MAX_LFN + 1 );
 
 	/// Заполняем.
 	strcpy( s->fileName, nameTrack );
@@ -232,18 +237,104 @@ int Fat::closeFile (	std::shared_ptr< FIL >				file	) {
 }
 
 
+std::shared_ptr< FIL >	Fat::openFile							(	std::shared_ptr< char >		fullPath,
+																	int&						returnResult	) {
+	FRESULT					r;
+	std::shared_ptr< FIL >	f( new FIL );
+
+	if ( f.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return f;
+	} else {
+		returnResult	=	EOK;
+	}
+
+    r = f_open( f.get(), fullPath.get(), FA_READ );
+
+    if ( r != FR_OK ) {
+       	returnResult	=	EIO;
+       	return std::shared_ptr< FIL >( nullptr );
+    }
+
+    return f;
+}
+
+std::shared_ptr< FIL >	Fat::openFile							(	std::shared_ptr< char >		path,
+																	const char*					const name,
+																	int&						returnResult	) {
+	std::shared_ptr< char >	fullPath( this->getFullPath( path, name, returnResult ) );
+	if ( returnResult != EOK ) {
+		returnResult = ENOMEM;
+		return std::shared_ptr< FIL >( nullptr );
+	}
+
+	return this->openFile( fullPath, returnResult );
+}
+
+uint32_t Fat::getFileSize ( std::shared_ptr< FIL >	file ) {
+	return f_size( file );
+}
+
+int Fat::readFromFile (	std::shared_ptr< FIL >		file,
+						uint8_t*					returnDataArray,
+						uint32_t					countReadByte ) {
+	UINT		l;
+	FRESULT		r;
+
+	r = f_read( file.get(), returnDataArray, static_cast< UINT >( countReadByte ), &l );
+
+	if ( r != FRESULT::FR_OK ) {
+		return EIO;
+	}
+
+	if ( l != countReadByte ) {
+		return EINVAL;
+	}
+
+	return EOK;
+}
 
 
+int Fat::setOffsetByteInFile (	std::shared_ptr< FIL >		file,
+								uint32_t					offset	) {
+	if ( f_lseek( file.get(), offset ) == FR_OK ) {
+		return EOK;
+	} else {
+		return EIO;
+	}
+}
 
 
+std::shared_ptr< char > Fat::getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
+																uint32_t					nubmerTrack,
+																int&						returnResult	) {
+	FRESULT				r;
 
+	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * nubmerTrack;
+	r	=	f_lseek( listFile.get(), lseek );
 
+	if ( r != FR_OK ) {
+		returnResult	=	EIO;
+		return std::shared_ptr< char >( nullptr );
+	}
 
+	std::shared_ptr< char > name( new char[ FF_MAX_LFN + 1 ], std::default_delete< char[] >() );
 
+	if ( name.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return name;
+	}
 
-
-
-
+	UINT		l;
+	r	=	f_read( listFile.get(), name.get(), FF_MAX_LFN + 1, &l );
+	if ( ( r == FR_OK ) && ( l == FF_MAX_LFN + 1 ) ) {
+		returnResult	=	EOK;
+		return name;
+	} else {
+		returnResult	=	EIO;
+		return std::shared_ptr< char >( nullptr );
+	}
+}
 
 
 
@@ -260,57 +351,6 @@ int Fat::closeFile (	std::shared_ptr< FIL >				file	) {
 
 
 
-FIL* Fat::openFile ( const char* const path, const char* const name ) {
-
-	FRESULT				r;
-	FIL*				f;
-
-	/// Выделяем память под объект файла FatFS.
-	f	=	( FIL* )pvPortMalloc( sizeof( FIL ) );
-	assertParam( f );
-
-
-	char* fullPath	=	Fat::getFullPath( path, name );
-	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
-    r = f_open( f, fullPath, FA_READ );
-    vPortFree( fullPath );
-
-    if ( r != FR_OK ) {
-    	vPortFree( f );
-    	f = nullptr;
-    }
-
-    return f;
-}
-
-FIL* Fat::openFileInCurrentDir ( const char* const name ) {
-
-	FRESULT				r;
-	FIL*				f;
-
-	/// Выделяем память под объект файла FatFS.
-	f	=	( FIL* )pvPortMalloc( sizeof( FIL ) );
-	assertParam( f );
-
-	uint32_t len = strlen( name ) + 2 + 1;
-	char* fullName;
-	fullName	=	( char* )pvPortMalloc( len );
-
-	fullName[ 0 ]	=	'0';
-	fullName[1] = ':';
-	strcpy( &fullName[2], name );
-
-	/// Пытаемся открыть файл с перезаписью, если таковой ранее существовал.
-    r = f_open( f, fullName, FA_READ );
-    vPortFree( fullName );
-
-    if ( r != FR_OK ) {
-    	vPortFree( f );
-    	f = nullptr;
-    }
-
-    return f;
-}
 
 
 
@@ -321,26 +361,6 @@ FIL* Fat::openFileInCurrentDir ( const char* const name ) {
 
 
 
-char* Fat::getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack ) {
-	FRESULT				r;
-
-	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * nubmerTrack;
-	r	=	f_lseek( f, lseek );
-
-	if ( r != FR_OK ) {
-		return nullptr;
-	}
-
-	char*	name			=	( char* )pvPortMalloc( FF_MAX_LFN + 1 );
-	UINT		l;
-	r	=	f_read( f, name, FF_MAX_LFN + 1, &l );
-	if ( ( r == FR_OK ) && ( l == FF_MAX_LFN + 1 ) ) {
-		return name;
-	} else {
-		vPortFree( name );
-		return nullptr;
-	}
-}
 
 uint32_t Fat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
 	FRESULT				r;
@@ -359,33 +379,9 @@ uint32_t Fat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
 }
 
 
-int Fat::setOffsetByteInOpenFile ( FIL* f, uint32_t offset ) {
-	if ( f_lseek( f, offset ) == FR_OK ) {
-		return 0;
-	} else {
-		return -1;
-	}
-}
 
-int Fat::readFromOpenFile ( FIL* f, uint8_t* returnData, const uint32_t countByte ) {
-	UINT		l;
-	FRESULT		r;
 
-	r = f_read( f, returnData, static_cast< UINT >( countByte ), &l );
 
-	if ( r != FR_OK )
-		return -1;
-
-	if ( l != countByte )
-		return -2;
-
-	return 0;
-}
-
-int Fat::getSizeFromOpenTreck ( FIL* f, uint32_t& returnSizeByte ) {
-	returnSizeByte = f_size( f );
-	return 0;
-}
 
 int Fat::readItemFileListAndRemoveItem ( FIL* f, ItemFileInFat* item, uint32_t numberTrack ) {
 	FRESULT				r;

@@ -245,6 +245,16 @@ void Base::mainTask ( void* obj ) {
 		if ( o->initFileLists() != EOK )				continue;
 
 	} while( false );
+
+	/*
+
+	std::shared_ptr< char > fatFsPath( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
+	if ( fatFsPath.get() == nullptr )	return ENOMEM;
+	strcpy( fatFsPath.get(), "0:.fileList.list" );
+
+	this->fat.openFile( fatFsPath );
+	getNameTrackFromFile*/
+
 	/*!
 	 * Анализ файлов на карте.
 	 */

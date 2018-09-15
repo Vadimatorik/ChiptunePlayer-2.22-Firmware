@@ -5,19 +5,6 @@ namespace AyPlayer {
 
 int Base::fsmStepFuncIndexingSupportedFiles ( void ) {
 	/*
-	/// Лог: начат анализ.
-
-
-	/// Готовим окно list-а c файлами..
-	this->initWindowIndexingSupportedFiles();
-
-	/// Составляем список.
-	FRESULT r;
-	r = this->indexingSupportedFiles( path );
-
-	/// Закрываем окно поиска.
-	this->removeWindowIndexingSupportedFiles();
-
 	/// Чистим память.
 	vPortFree( path );
 	this->slItemClean( 4 );

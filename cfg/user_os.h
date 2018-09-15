@@ -138,3 +138,8 @@
 
 // Служит для записи таблицы векторов прерываний.
 #define M_ISR_TO_CONST_P_VOID(POINT)	((void*)(POINT))
+
+#define	errnoCheckAndReturn( r )				\
+			if ( r != EOK ) {					\
+				return r;						\
+			}

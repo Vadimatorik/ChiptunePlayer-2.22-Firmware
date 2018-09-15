@@ -17,10 +17,6 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 	std::shared_ptr< FIL >		fileList( nullptr );
 
 	while ( true ) {
-		/// Ищем следующий элемент.
-		fi = this->fat.findNextFileInDir( d, r );
-		errnoCheckAndReturn( r );
-
 		/// Просмотрены все файлы.
 		if ( fi.get() == nullptr )
 			break;
@@ -49,7 +45,10 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 		if ( rPsgGet == 0 ) {
 			/// Если в этой директории еще не создавали файл со списком прошедших проверку файлов.
 			if ( fileList.get() == nullptr ) {
-				fileList =  this->fat.openFileListWithRewrite( fullPath, r );
+				std::shared_ptr< char > fullPathFileList ( this->fat.getFullPath( path, LIST_NO_SORT_FAT_NAME, r ) );
+				errnoCheckAndReturn( r );
+
+				fileList =  this->fat.openFileListWithRewrite( fullPathFileList, r );
 				errnoCheckAndReturn( r );
 
 				/// Если не удалось - чистим память и выходим.
@@ -88,9 +87,10 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Analysis was not carried out successfully:", fullPath.get() );
 		}
 
-		/// Полный путь теперь не актуален.
-		//vPortFree( fullPathToFile );
-		}
+		/// Ищем следующий элемент.
+		fi = this->fat.findNextFileInDir( d, r );
+		errnoCheckAndReturn( r );
+	}
 
 	if ( fileList.get() != nullptr ) {
 		if ( this->fat.closeFile( fileList ) == EOK ) {

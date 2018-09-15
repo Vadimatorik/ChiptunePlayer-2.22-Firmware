@@ -1,33 +1,37 @@
 #pragma once
 
-#include "../../../bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin.h"
-#include "../fat/fat.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_pin.h"
+#include "fat.h"
 #include "ay_ym_file_play.h"
 #include "ay_ym_low_lavel.h"
+#include <memory>
+#include "user_os.h"
 
 #define AY_YM_FILE_PLAY_FLASH_BUFFER_SIZE_BYTE				1024 * 10
 
-/*
 struct AyYmFilePlayCfg {
 	AyYmLowLavel*							ayLow;
-	McHardwareInterfaces::Pin*			pwr;				/// Массив выводов управления питанием всех AY.
+	McHardwareInterfaces::Pin*				pwr;				/// Массив выводов управления питанием всех AY.
 };
 
 class AyYmFilePlay : public AyYmFilePlayBase {
 public:
-	AyYmFilePlay( const AyYmFilePlayCfg* const cfg ) :
-		cfg( cfg ) {}
+	AyYmFilePlay( const AyYmFilePlayCfg* const cfg );
 
-	void	setUsingChip				(	uint32_t	chipNumber	);
-	void	setPlayFileName				(	const char* fileName	);
+
+
+	///void	setUsingChip				(	uint32_t	chipNumber	);
+
 
 	void	setPause					(	bool	state	);
 	void	stop						(	void	);
 
 private:
-	int	openFile						(	void	);
-	int	closeFile						(	void	);
 	int	getFileLen						(	uint32_t&		returnFileLenByte	);
+	void	resetFlags					(	void	);
+	int	openFile						(	std::shared_ptr< char >		fullFilePath	);
+	int	closeFile						(	void	);
+
 	int	setOffsetByteInFile				(	const uint32_t	offsetByte	);
 	int	readInArray						(	uint8_t*		returnDataBuffer,
 											const uint32_t	countByteRead	);
@@ -43,8 +47,10 @@ private:
 	const AyYmFilePlayCfg* const cfg;
 
 	AyYmLowLavel*			ayLow;
-	const char*				fileName			=	nullptr;
-	FIL*					f					=	nullptr;
+
+	std::shared_ptr< FIL >				file;
+	AyPlayer::Fat						fat;
+
 	uint32_t				usingChip;
 	bool					flagStop;
 
@@ -59,4 +65,6 @@ private:
 	/// Смещение, с которого будет считан следующий байт/последовательность
 	/// байт (относительно буффера).
 	uint32_t				pointInBuffer;
-};*/
+};
+
+

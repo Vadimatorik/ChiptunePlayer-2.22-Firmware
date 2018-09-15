@@ -145,6 +145,23 @@ public:
 																	int&						returnResult	);
 
 	/*!
+		 * Открывает файл по заданному пути/
+		 * Файл должен существовать.
+		 * Если файл по данному пути существовал ранее - заменяет его.
+		 * \param[in]		path		-	путь до файла, который будет открыт
+		 * 									(полный, включая расширение и карту).
+		 *
+		 * \return			{	Указатель на объект файла FatFS
+		 * 						или nullptr, если открыть не удалось.	}
+		 */
+	std::shared_ptr< FIL >	openFile							(	std::shared_ptr< char >		path,
+																	const char*					const name,
+																	int&						returnResult	);
+
+	std::shared_ptr< FIL >	openFile							(	std::shared_ptr< char >		fullPath,
+																	int&						returnResult	) ;
+
+	/*!
 	 *	\brief		Открывает файл по заданному пути или создает его заново.
 	 *				Если файл по данному пути существовал ранее - заменяет его.
 	 *	\param[in]		fullPath		-	путь до файла, который будет открыт
@@ -156,19 +173,37 @@ public:
 	 *	\return			FatFS объект файла.
 	 *
 	 */
-	std::shared_ptr< FIL > openFileListWithRewrite (	std::shared_ptr< char >		fullPath,
-															int&						returnResult	);
+	std::shared_ptr< FIL > openFileListWithRewrite 				(	std::shared_ptr< char >		fullPath,
+																	int&						returnResult	);
 
+
+	/*!
+	 * Возвращает размер файла.
+	 * \param[in]		f				-	открытый файл, размер которого необходимо получить.
+	 * \param[in]		returnSizeByte	-	переменная, в которую будет положен размер трека.
+	 *
+	 * \return			{	Длина трека или 0xFFFFFFFF	}
+	 */
+	uint32_t getFileSize ( std::shared_ptr< FIL >	file );
+
+
+	int readFromFile (	std::shared_ptr< FIL >		file,
+							uint8_t*					returnDataArray,
+							uint32_t					countReadByte );
+
+
+
+	int setOffsetByteInFile (	std::shared_ptr< FIL >		file,
+									uint32_t					offset	);
+
+
+	std::shared_ptr< char > getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
+																	uint32_t					nubmerTrack	);
+
+	std::shared_ptr< char > getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
+																	uint32_t					nubmerTrack,
+																	int&						returnResult	);
 public:
-	/*!
-	 * Выделяет память в куче под строку с полным путем до файла с расширением.
-	 * В случае, если не хватит памяти - упадет в assertParam.
-	 * \param[in]		path		-	путь до текущего каталога.
-	 * \param[in]		fileName	-	имя файла.
-	 *
-	 * \return			{	Строка с полным путем.	}
-	 */
-	static	char*		getFullPath						( const char* const path, const char* const fileName );
 
 
 
@@ -176,18 +211,6 @@ public:
 
 
 
-
-	/*!
-	 * Открывает файл по заданному пути/
-	 * Файл должен существовать.
-	 * Если файл по данному пути существовал ранее - заменяет его.
-	 * \param[in]		path		-	путь до файла, который будет открыт
-	 * 									(полный, включая расширение и карту).
-	 *
-	 * \return			{	Указатель на объект файла FatFS
-	 * 						или nullptr, если открыть не удалось.	}
-	 */
-	static	FIL*		openFile					( const char* const path, const char* const name );
 
 	static	FIL*		openFileInCurrentDir		( const char* const name );
 	/*!
@@ -259,16 +282,8 @@ public:
 
 	static	int	setOffsetByteInOpenFile			( FIL* f, uint32_t offset );
 
-	static	int	readFromOpenFile			( FIL* f, uint8_t* returnData, const uint32_t countByte );
 
-	/*!
-	 * Возвращает размер файла.
-	 * \param[in]		f				-	открытый файл, размер которого необходимо получить.
-	 * \param[in]		returnSizeByte	-	переменная, в которую будет положен размер трека.
-	 *
-	 * \return			{	Длина трека или 0xFFFFFFFF	}
-	 */
-	static	int			getSizeFromOpenTreck				( FIL* f, uint32_t& returnSizeByte );
+
 
 
 
@@ -283,9 +298,6 @@ public:
 	static	int			removeDir						( const char* path, FRESULT& fatReturn );
 
 	static	int			removeDirRecurisve				( char* path, FRESULT& fatReturn );
-
-private:
-	FATFS				f;
 
 };
 
