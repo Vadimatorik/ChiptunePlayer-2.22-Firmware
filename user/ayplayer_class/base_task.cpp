@@ -228,6 +228,10 @@ void Base::playTask (  void* obj  ) {
 void Base::mainTask ( void* obj ) {
 	Base* o =( Base* ) obj;
 
+	if ( o->printMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "System was been reboot!" ) != EOK ) {
+		abort();
+	}
+
 	o->sd->init();
 	o->gui->init();
 
