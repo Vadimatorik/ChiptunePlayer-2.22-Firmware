@@ -16,7 +16,10 @@ Base::Base ( const BaseCfg* const cfg ) : cfg( cfg ) {
 	this->cfg->os->qAyButton		=	USER_OS_STATIC_QUEUE_CREATE( 1, sizeof( uint8_t ), this->cfg->os->qbAyButton, &this->cfg->os->qsAyButton );
 
 	this->cfg->os->sPlayTic			=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbPlayTic );
-	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );}
+	this->cfg->os->sStartPlay		=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->cfg->os->sbStartPlay );
+
+	this->cfg->os->mBoardSpi		=	USER_OS_STATIC_MUTEX_CREATE( &this->cfg->os->mbBoardSpi );
+}
 
 void Base::initTasks ( void ) {
 	USER_OS_STATIC_TASK_CREATE(	Base::mainTask,

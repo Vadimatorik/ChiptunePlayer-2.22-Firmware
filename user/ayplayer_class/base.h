@@ -8,13 +8,11 @@
 #include "nvic.h"
 #include "rcc.h"
 #include "sd_control.h"
+#include "usar_os.h"
 
 
 
 
-#if !defined( EOK )
-#define	EOK						0        		/// No error.
-#endif
 
 namespace AyPlayer {
 

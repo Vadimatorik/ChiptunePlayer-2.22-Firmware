@@ -1,5 +1,6 @@
 #include "ayplayer_button.h"
 #include "base.h"
+#include "user_os.h"
 
 extern "C" {
 
@@ -246,18 +247,25 @@ void Base::mainTask ( void* obj ) {
 
 	} while( false );
 
-	/*
 
 	std::shared_ptr< char > fatFsPath( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
-	if ( fatFsPath.get() == nullptr )	return ENOMEM;
+	if ( fatFsPath.get() == nullptr )	{
+		while(1);
+	}
+
+	int r;
+
+
 	strcpy( fatFsPath.get(), "0:.fileList.list" );
+	std::shared_ptr< FIL > playFile = o->fat.openFile( fatFsPath, r );
 
-	this->fat.openFile( fatFsPath );
-	getNameTrackFromFile*/
 
-	/*!
-	 * Анализ файлов на карте.
-	 */
+	std::shared_ptr< char > fileName( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
+	fileName = o->fat.getNameTrackFromFile( playFile, 0, r );
+	if ( r != EOK ) {
+		while(1);
+	}
+
 
 
 

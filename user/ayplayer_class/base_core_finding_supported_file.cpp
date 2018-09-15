@@ -14,6 +14,9 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 	std::shared_ptr< DIR >		d( this->fat.openDirAndFindFirstFile( path, fi, findMsk, r ) );
 	errnoCheckAndReturn( r );
 
+	if ( d.get() == nullptr )
+		return EOK;
+
 	std::shared_ptr< FIL >		fileList( nullptr );
 
 	while ( true ) {
@@ -36,13 +39,11 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 		/// Проверяем правильность файла.
 		uint32_t fileLen = 23;			/// 23 - это для теста.
 
-		//this->cfg->ay->setPlayFileName( fi->fname );
-
 		int rPsgGet = 0;
-		///rPsgGet = this->cfg->ay->psgFileGetLong( fileLen );
+		rPsgGet = this->cfg->ay->psgFileGetLong( fullPath, fileLen );
 
 		/// Если файл прошел проверку.
-		if ( rPsgGet == 0 ) {
+		if ( rPsgGet == EOK ) {
 			/// Если в этой директории еще не создавали файл со списком прошедших проверку файлов.
 			if ( fileList.get() == nullptr ) {
 				std::shared_ptr< char > fullPathFileList ( this->fat.getFullPath( path, LIST_NO_SORT_FAT_NAME, r ) );

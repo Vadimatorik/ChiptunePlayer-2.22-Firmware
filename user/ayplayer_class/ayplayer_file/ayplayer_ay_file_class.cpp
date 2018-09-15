@@ -11,7 +11,7 @@ void AyYmFilePlay::setUsingChip ( uint32_t chipNumber ) {
 
 
 void AyYmFilePlay::setPause ( bool state ) {
-	this->ayLow->playStateSet( state );
+	this->cfg->ayLow->playStateSet( state );
 }
 
 void AyYmFilePlay::stop ( void ) {
@@ -62,13 +62,13 @@ int AyYmFilePlay::openFile (	std::shared_ptr< char >		fullFilePath	) {
 }
 
 int AyYmFilePlay::closeFile ( void ) {
-	while( this->ayLow->queueEmptyCheck() != true ) {			/// Ждем, пока AY освободится.
+	while( this->cfg->ayLow->queueEmptyCheck() != true ) {			/// Ждем, пока AY освободится.
 		USER_OS_DELAY_MS(20);
 	}
 
-	this->ayLow->playStateSet( 0 );								/// Отключаем аппаратку.
+	this->cfg->ayLow->playStateSet( 0 );								/// Отключаем аппаратку.
 	this->setPwrChip( false );									/// Питание чипа.
-	this->ayLow->queueClear();									/// Чистим очередь.
+	this->cfg->ayLow->queueClear();									/// Чистим очередь.
 
 	return this->fat.closeFile( this->file );
 }
@@ -179,9 +179,9 @@ int AyYmFilePlay::setPwrChip ( bool state ) {
 }
 
 int AyYmFilePlay::initChip ( void ) {
-	this->ayLow->queueClear();
-	this->ayLow->hardwareClear();
-	this->ayLow->playStateSet( 1 );
+	this->cfg->ayLow->queueClear();
+	this->cfg->ayLow->hardwareClear();
+	this->cfg->ayLow->playStateSet( 1 );
 	return 0;
 }
 
@@ -203,7 +203,7 @@ int AyYmFilePlay::writePacket (	const uint8_t	reg,
 	s.numberChip	=	static_cast< uint8_t >( this->usingChip );
 
 	while( 1 ) {
-		if ( this->ayLow->queueAddElement( &s ) == 0 )
+		if ( this->cfg->ayLow->queueAddElement( &s ) == 0 )
 			return 0;		/// Место в очереди есть, все хорошо.
 
 		/// Если нет, снова смотрим флаги и ждем.
@@ -211,9 +211,9 @@ int AyYmFilePlay::writePacket (	const uint8_t	reg,
 }
 
 void AyYmFilePlay::abort ( void ) {
-	this->ayLow->playStateSet( 0 );				/// Отключаем аппаратку.
+	this->cfg->ayLow->playStateSet( 0 );				/// Отключаем аппаратку.
 	this->setPwrChip( false );					/// Питание чипа.
-	this->ayLow->queueClear();					/// Чистим очередь.
+	this->cfg->ayLow->queueClear();					/// Чистим очередь.
 	this->fat.closeFile( this->file );			///	Хотя бы удаляем FIL-структуру.
 }
 

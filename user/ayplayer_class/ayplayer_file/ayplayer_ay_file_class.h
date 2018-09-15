@@ -45,13 +45,10 @@ private:
 
 private:
 	const AyYmFilePlayCfg* const cfg;
-
-	AyYmLowLavel*			ayLow;
-
 	std::shared_ptr< FIL >				file;
 	AyPlayer::Fat						fat;
 
-	uint32_t				usingChip;
+	uint32_t				usingChip		=	0;
 	bool					flagStop;
 
 	/// Т.к. методы зачастую читают по 1 байту, то чтобы ускорить этот процесс

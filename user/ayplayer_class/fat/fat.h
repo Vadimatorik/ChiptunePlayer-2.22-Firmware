@@ -197,8 +197,6 @@ public:
 									uint32_t					offset	);
 
 
-	std::shared_ptr< char > getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
-																	uint32_t					nubmerTrack	);
 
 	std::shared_ptr< char > getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
 																	uint32_t					nubmerTrack,
@@ -267,7 +265,6 @@ public:
 	 *
 	 * \return			{	Строка с именем или nullptr.	}
 	 */
-	static	char*		getNameTrackFromFile			( FIL* f, uint32_t nubmerTrack );
 
 	/*!
 	 * Достает из ранее открытого файла-списка размер трека с заданным номером.
