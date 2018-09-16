@@ -173,7 +173,8 @@ private:
 	 *	\return		EOK			-	Успешность операции.
 	 *								В противном случае код из errno.h.
 	 */
-	int		createFileListsInSdCard				(	std::shared_ptr< char >		path	);
+	int		createFileListsInSdCard				(	std::shared_ptr< char >		path,
+													WindowIndexingSupportedFiles*	w	);
 
 	/*!
 	 *	\brief		Метод производит анализ заданной директории и в случае,
@@ -187,7 +188,8 @@ private:
 	 *	\return		EOK			-	Успешность операции.
 	 *								В противном случае код из errno.h.
 	 */
-	int		createFileListInSdCard				(	std::shared_ptr< char >		path	);
+	int		createFileListInSdCard				(	std::shared_ptr< char >		path,
+													WindowIndexingSupportedFiles*	w	);
 
 private:
 	/*
@@ -234,9 +236,6 @@ private:
 
 	/// Проходится по всем каталогам и составляет список поддерживаемых файлов.
 
-
-
-	void			initWindowIndexingSupportedFiles	( char* stateIndexing = nullptr );
 	void			removeWindowIndexingSupportedFiles	( void );
 
 

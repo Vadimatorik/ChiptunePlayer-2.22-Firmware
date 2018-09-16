@@ -21,10 +21,6 @@ struct AyPlayerGuiModuleStyleCfg {
 
 /*
 struct AyPlayerModuleGui {
-
-	MSList										sl;
-	MSList_Item*								slItem[ 4 ];
-	MPlayerStatusBar							sb;
 	MPlayBar									pb;
 	MSlimHorizontalList							shl;
 	MSlider*									sliders[ 6 ];

@@ -24,8 +24,7 @@ void Base::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 					nullptr,
 					nullptr,
 					MSList_List,
-					&this->cfg->gui->ssl,
-					&this->cfg->gui->sslItem );
+					 );
 
 	/// Привязка list-а к его элементам.
 	for ( int i = 0; i < 4; i++ ) {
@@ -34,19 +33,6 @@ void Base::initWindowIndexingSupportedFiles( char* stateIndexing ) {
 
 		this->g.slItem[ i ]->text	=	nullptr;
 		m_slist_add( &this->g.sl, this->g.slItem[ i ] );
-	}
-}
-
-void Base::removeWindowIndexingSupportedFiles( void ) {
-	/// Отвязываем от контейнера.
-	makise_g_cont_rem( &this->g.sl.el );
-
-	/// Удаляем сам список.
-	vPortFree( &this->g.sl );
-
-	/// Удаляем элементы списка.
-	for ( int i = 0; i < 4; i++ ) {
-		vPortFree( this->g.slItem[ i ] );
 	}
 }
 
@@ -193,22 +179,6 @@ void Base::errorMicroSdDraw ( const FRESULT r ) {
 
 		makise_g_cont_rem( &m->el );
 		vPortFree( m );
-}
-
-// Метод сдвигает вниз все строки (1 удаляется) и добавляет вверх новую.
-void Base::slItemShiftDown ( uint32_t cout, char* newSt ) {
-	/// Если раньше там была не пустая строка.
-	if ( this->g.slItem[ cout - 1 ]->text != nullptr ) {
-		vPortFree( this->g.slItem[ cout - 1 ]->text );
-	}
-
-	for ( uint32_t l = cout - 1; l > 0 ; l-- ) {
-		this->g.slItem[ l ]->text = this->g.slItem[ l - 1 ]->text;
-	}
-
-	uint32_t lenString = strlen( newSt ) + 1;
-	this->g.slItem[ 0 ]->text = ( char* )pvPortMalloc( lenString );
-	strcpy( this->g.slItem[ 0 ]->text, newSt );
 }
 
 void Base::slItemClean ( uint32_t cout ) {

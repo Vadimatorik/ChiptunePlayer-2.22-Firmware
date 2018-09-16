@@ -5,7 +5,8 @@ namespace AyPlayer {
 
 
 
-int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
+int	Base::createFileListInSdCard ( std::shared_ptr< char >	path,
+									WindowIndexingSupportedFiles*	w	) {
 	int	r;
 	std::shared_ptr< FILINFO >		fi( new FILINFO );
 	std::shared_ptr< char >			findMsk( new char[ 10 ], std::default_delete< char[] >() );
@@ -32,9 +33,9 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File found:", fullPath.get() );				/// Лог.
 
 		/// Экран: начат анализ файла.
-		//m_slist_set_text_string( &this->g.sl, "File analysis..." );											/// Экран.
-		//this->guiUpdate();
-
+		static const char state[] = "File analysis...";
+		w->setActualState( state );
+		this->gui->update();
 
 		/// Проверяем правильность файла.
 		uint32_t fileLen = 23;			/// 23 - это для теста.
@@ -80,10 +81,8 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 			}
 
 			/// В списке новый файл, сдвигаем.
-			///this->slItemShiftDown( 4, fi->fname );
-
-			/// На экран.
-			//this->guiUpdate();
+			w->addItem( fi->fname );
+			this->gui->update();
 		} else {
 			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "Analysis was not carried out successfully:", fullPath.get() );
 		}
@@ -104,7 +103,8 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path ) {
 	return r;
 }
 
-int Base::createFileListsInSdCard ( std::shared_ptr< char >		path ) {
+int Base::createFileListsInSdCard ( std::shared_ptr< char >		path,
+									WindowIndexingSupportedFiles* w) {
 	int					r;
 
 	/// Флаг выставляется, когда мы обнаружили в
@@ -120,9 +120,9 @@ int Base::createFileListsInSdCard ( std::shared_ptr< char >		path ) {
 
 	/// Рекурсивно обходим все папки.
 	while( 1 ) {
-		/// Gui: мы снова начали поиск нужного файла.
-		/// m_slist_set_text_string( &this->g.sl, "Find supported files..." );
-		/// this->guiUpdate();
+		static const char state[] = "Find supported files...";
+		w->setActualState( state );
+		this->gui->update();
 
 		std::shared_ptr< FILINFO >		f( this->fat.readDir( d, r ) );
 		errnoCheckAndReturn( r );
@@ -139,7 +139,7 @@ int Base::createFileListsInSdCard ( std::shared_ptr< char >		path ) {
 
 			snprintf( path.get(), MAX_PATH_FATFS_STRING_LEN, "%s/%s", path.get(), f->fname );
 
-			r	=	this->createFileListsInSdCard( path );
+			r	=	this->createFileListsInSdCard( path, w );
 			errnoCheckAndReturn( r );
 
 			/// Обрезаем строку, чтобы выйти из вложенного каталога.
@@ -148,7 +148,7 @@ int Base::createFileListsInSdCard ( std::shared_ptr< char >		path ) {
 		} else {
 			if ( scanDir == true ) continue;		/// Сканируем директорию лишь единожды.
 			scanDir = true;
-			if ( this->createFileListInSdCard( path ) != 0 ) {
+			if ( this->createFileListInSdCard( path, w ) != 0 ) {
 				break;
 			}
 		}

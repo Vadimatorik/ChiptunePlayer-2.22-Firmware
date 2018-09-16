@@ -22,7 +22,13 @@ int Base::initFileLists ( void ) {
 	/// открыта где-то во вне (не были созданы временные файлы ОС), то пересоздавать не надо. А пока пусть так.
 
 	/// Составляем список файлов.
-	this->createFileListsInSdCard( fatFsPath );
+
+	WindowIndexingSupportedFiles*	w;
+	w = this->gui->addWindowIndexingSupportedFiles();
+
+	this->createFileListsInSdCard( fatFsPath, w );
+
+	delete w;
 
 	return EOK;
 }
