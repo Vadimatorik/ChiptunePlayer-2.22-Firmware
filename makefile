@@ -33,8 +33,6 @@ LDFLAGS				:=	$(MK_FLAGS) $(LD_FILES) -fno-exceptions
 LDFLAGS				+=	-Wl,--undefined=uxTopUsedPriority			
 LDFLAGS				+=	-ffunction-sections -Wl,--gc-sections
 
-DEFINE_PROJ			=	-D__VFP_FP__	-D__SOFTFP__
-
 #**********************************************************************
 # Toolchain param.
 #**********************************************************************

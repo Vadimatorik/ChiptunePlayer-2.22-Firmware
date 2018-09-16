@@ -174,7 +174,7 @@ int AyYmFilePlay::readInArray (	uint8_t*		returnDataBuffer,
 }
 
 int AyYmFilePlay::setPwrChip ( bool state ) {
-	this->cfg->pwr[ this->usingChip ].set( state );
+	this->cfg->setPwr( this->usingChip, state );
 	return 0;
 }
 

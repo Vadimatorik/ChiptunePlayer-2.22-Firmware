@@ -1,6 +1,6 @@
-#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
-#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_interrupt.h"
-#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_timer_pwm_one_channel.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_timer_interrupt.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_timer_pwm_one_channel.h"
 #include "user_os.h"
 #include "ayplayer_clock.h"
 #include "FreeRTOSConfig.h"
@@ -9,20 +9,20 @@
 /// Генерирует прерывания 50 раз в секунду.
 const McHardwareInterfacesImplementation::ClkTimBaseCfg timInterruptClkParam[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{
-		.period				=	9000 - 1,
-		.prescaler			=	10 - 1,
+		.period				=	500 - 1,
+		.prescaler			=	360 - 1,
 		.pulse				=	0
 	}, {
-		.period				=	36000 - 1,
-		.prescaler			=	10 - 1,
+		.period				=	200 - 1,
+		.prescaler			=	3600 - 1,
 		.pulse				=	0
 	}, {
-		.period				=	7200 - 1,
-		.prescaler			=	100,
+		.period				=	400 - 1,
+		.prescaler			=	3600 - 1,
 		.pulse				=	0
 	}, {
-		.period				=	100,
-		.prescaler			=	8400 - 1,
+		.period				=	400 - 1,
+		.prescaler			=	4200 - 1,
 		.pulse				=	0
 	},
 };

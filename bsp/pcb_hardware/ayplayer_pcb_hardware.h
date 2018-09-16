@@ -8,6 +8,7 @@
 #include "mono_lcd_lib_st7565.h"
 #include "ay_ym_low_lavel.h"
 #include "ay_ym_file_play.h"
+#include "ltc6903.h"
 
 extern ShiftRegister::Base					boardShiftRegisters;
 extern MicrosdSdio							sd;
@@ -20,5 +21,8 @@ extern ShiftRegister::Pin					ay1Res;
 extern ShiftRegister::Pin					ay2Res;
 extern ShiftRegister::Pin					bc1;
 extern ShiftRegister::Pin					bdir;
+extern ShiftRegister::Pin					shdn;
 
-extern ShiftRegister::Port8bit	ayPorts[ 2 ];
+extern ShiftRegister::Port8bit*	ayPorts[ 2 ];
+
+extern WaveGenerators::LTC6903				ltc;

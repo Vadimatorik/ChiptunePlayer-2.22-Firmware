@@ -266,7 +266,7 @@ void Base::mainTask ( void* obj ) {
 		while(1);
 	}
 
-
+	o->cfg->ay->psgFilePlay( fileName );
 
 
 

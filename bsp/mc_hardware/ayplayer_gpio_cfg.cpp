@@ -135,7 +135,7 @@ extern const McHardwareInterfacesImplementation::PinCfg spiBoardTxCfg = {
 		.Mode		=	GPIO_MODE_AF_PP,
 		.Pull		=	GPIO_NOPULL,
 		.Speed		=	GPIO_SPEED_FREQ_MEDIUM,
-		.Alternate	=	GPIO_AF6_SPI3
+		.Alternate	=	GPIO_AF5_SPI2
 	}
 };
 
@@ -146,7 +146,7 @@ extern const McHardwareInterfacesImplementation::PinCfg spiBoardClkCfg = {
 		.Mode		=	GPIO_MODE_AF_PP,
 		.Pull		=	GPIO_NOPULL,
 		.Speed		=	GPIO_SPEED_FREQ_MEDIUM,
-		.Alternate	=	GPIO_AF6_SPI3
+		.Alternate	=	GPIO_AF5_SPI2
 	}
 };
 

@@ -11,7 +11,8 @@
 
 struct AyYmFilePlayCfg {
 	AyYmLowLavel*							ayLow;
-	McHardwareInterfaces::Pin*				pwr;				/// Массив выводов управления питанием всех AY.
+	void	( *setPwr )						(	uint32_t			chipNumber,
+												bool				state	);
 };
 
 class AyYmFilePlay : public AyYmFilePlayBase {
