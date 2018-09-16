@@ -18,6 +18,9 @@ int Base::initFileLists ( void ) {
 
 	this->printMessage( RTL_TYPE_M::RUN_MESSAGE_OK, "FatFs in Micro SD card successfully finded!" );
 
+	/// Тут добавить условие, что если флешка не была
+	/// открыта где-то во вне (не были созданы временные файлы ОС), то пересоздавать не надо. А пока пусть так.
+
 	/// Составляем список файлов.
 	this->createFileListsInSdCard( fatFsPath );
 

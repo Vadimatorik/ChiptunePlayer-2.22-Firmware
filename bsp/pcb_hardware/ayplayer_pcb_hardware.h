@@ -23,6 +23,6 @@ extern ShiftRegister::Pin					bc1;
 extern ShiftRegister::Pin					bdir;
 extern ShiftRegister::Pin					shdn;
 
-extern ShiftRegister::Port8bit*	ayPorts[ 2 ];
+extern McHardwareInterfaces::Port8bit* ayPorts[ 2 ];
 
 extern WaveGenerators::LTC6903				ltc;

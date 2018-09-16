@@ -211,6 +211,10 @@ private:
 																				AyPlayFileFormat	format,
 																				int&				returnResult	);
 
+
+	/// Устанавливает параметры из флешки.
+	void			setSysCfgParams				(	void	);
+
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
@@ -269,10 +273,6 @@ private:
 
 	USER_OS_TIMER										timNameScroll;
 	USER_OS_TIMER_STATIC_STRUCT							timStNameScroll;
-
-	AyPlayerModuleGui g;
-
-
 
 	AYPLAYER_STATUS										playState;
 	FILE_LIST_TYPE										lType;

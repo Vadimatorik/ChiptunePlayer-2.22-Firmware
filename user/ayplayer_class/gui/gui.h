@@ -1,12 +1,31 @@
 #pragma once
 
-#include "../nvic/nvic.h"
+#include "nvic.h"
 #include "ayplayer_struct_gui_cfg.h"
 #include "ayplayer_struct_pcb_cfg.h"
+
+#include <memory>
 
 #define TB_ILLUMINATION_CONTROL_TASK_SIZE			200
 
 namespace AyPlayer {
+
+class WindowMessage {
+public:
+	WindowMessage (	const char*						const message,
+			const MakiseStyle_SMessageWindow*		style,
+			MContainer*						c,
+			int32_t							x,
+			int32_t							y,
+			uint32_t						w,
+			uint32_t						h			);
+
+	~WindowMessage();
+
+private:
+	MMessageWindow			mw;
+	char*					str;
+};
 
 class Gui {
 public:
@@ -25,9 +44,9 @@ public:
 	/// Перерисовывает GUI и обновляет экран.
 	void	update				(	void	);
 
-	///
-	void	addMessage					(	const char* const message	);
-	void	removeMessage				(	void	);
+	/// Создает окно поверх остальных с каким-то уведомлением.
+	/// Когда удалится объект - удалится и уведомление.
+	WindowMessage* addMessage					(	const char* const message	);
 
 private:
 	/*!
@@ -44,7 +63,6 @@ private:
 
 private:
 	const AyPlayerPcbStrcut*				const pcbObj;
-	AyPlayerModuleGui						g;
 	const AyPlayerGuiModuleStyleCfg*		const cfg;
 	McHardwareInterfaces::TimPwmOneChannel*	ledPwm;
 	USER_OS_STATIC_MUTEX_BUFFER				mbHost;

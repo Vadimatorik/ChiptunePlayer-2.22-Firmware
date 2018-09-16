@@ -16,6 +16,31 @@ void		makiseGuiUpdate				( MakiseGUI* gui );
 
 namespace AyPlayer {
 
+WindowMessage::WindowMessage(	const char*						const message,
+								const MakiseStyle_SMessageWindow*		style,
+								MContainer*						c,
+								int32_t							x,
+								int32_t							y,
+								uint32_t						w,
+								uint32_t						h				) {
+	uint32_t		l	=	strlen( message );
+	this->str			=	new char[ l + 1 ];
+	this->str[ l ]		=	0;
+
+	strcpy( this->str, message );
+
+	m_create_message_window(	&this->mw,
+								c,
+								mp_rel( x, y, w, h ),
+								this->str,
+								style );
+}
+
+WindowMessage::~WindowMessage() {
+	delete this->str;
+	makise_g_cont_rem( &this->mw.el );
+}
+
 Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 				const AyPlayerGuiModuleStyleCfg*		const cfg,
 				McHardwareInterfaces::TimPwmOneChannel*	ledPwm	) :
@@ -88,12 +113,12 @@ void Gui::init ( void ) {
 }
 
 void Gui::addStatusBar( void ) {
-	m_create_player_status_bar(	&this->g.sb,
+	/*m_create_player_status_bar(	&this->g.sb,
 								&makiseHost.host,
 								mp_rel(	0,	0,
 										128, 12	),
 								&this->cfg->statusBarCfg,
-								&this->cfg->statusBarCallbackCfg	);
+								&this->cfg->statusBarCallbackCfg	);*/
 }
 
 void Gui::update ( void ) {
@@ -148,17 +173,10 @@ void Gui::setMinIlluminationTime ( uint32_t		minIlluminationTimeS ) {
 	this->minIlluminationTimeS	=	minIlluminationTimeS;
 }
 
-void Gui::addMessage ( const char*	const message ) {
-	m_create_message_window(	&this->g.mw,
-								&makiseHost.host,
-								mp_rel( 0,	11,
-										128, 64 - 11 ),
-								( char* )message,
-								( MakiseStyle_SMessageWindow* )&this->cfg->smw );
+WindowMessage* Gui::addMessage ( const char*	const message ) {
+	return new WindowMessage( message, &this->cfg->smw, &makiseHost.host, 0,	11, 128, 64 - 11 );
 }
 
-void Gui::removeMessage (	void	) {
-	makise_g_cont_rem( &this->g.mw.el );
-}
+
 
 }

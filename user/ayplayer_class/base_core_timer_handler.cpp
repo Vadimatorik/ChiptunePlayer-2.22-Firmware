@@ -5,7 +5,9 @@ namespace AyPlayer {
 
 /// Вызывается только когда активно основное окно.
 void Base::scrollNameInMainWindow ( TimerHandle_t timer ) {
-	Base* o = ( Base* )pvTimerGetTimerID( timer );
+	( void )timer;
+}
+/*	Base* o = ( Base* )pvTimerGetTimerID( timer );
 
 	int r;
 	r = mSlimHorizontalListScrollString( &o->g.shl );
@@ -19,6 +21,6 @@ void Base::scrollNameInMainWindow ( TimerHandle_t timer ) {
 	}
 
 	o->guiUpdate();
-}
+}*/
 
 }

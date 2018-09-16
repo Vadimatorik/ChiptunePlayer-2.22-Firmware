@@ -19,8 +19,9 @@ struct AyPlayerGuiModuleStyleCfg {
 	const MakiseStyle							m;
 };
 
+/*
 struct AyPlayerModuleGui {
-	MMessageWindow								mw;
+
 	MSList										sl;
 	MSList_Item*								slItem[ 4 ];
 	MPlayerStatusBar							sb;
@@ -29,3 +30,4 @@ struct AyPlayerModuleGui {
 	MSlider*									sliders[ 6 ];
 	int32_t										currentSlider;
 };
+*/

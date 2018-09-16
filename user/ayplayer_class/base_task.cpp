@@ -236,15 +236,11 @@ void Base::mainTask ( void* obj ) {
 	o->sd->init();
 	o->gui->init();
 
-	o->gui->setMaxIlluminationDuty( 0.8 );
-	o->gui->setMinIlluminationDuty( 0.3 );
-	o->gui->setMaxIlluminationTime( 5 );
-	o->gui->setMinIlluminationTime( 2 );
+	o->setSysCfgParams();
 
 	do {
 		o->waitToInsertCorrectSdCard();
 		if ( o->initFileLists() != EOK )				continue;
-
 	} while( false );
 
 
