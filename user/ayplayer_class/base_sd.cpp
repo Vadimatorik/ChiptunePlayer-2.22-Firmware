@@ -6,7 +6,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 	do {
 		if ( !this->sd->getState() ) {
 			const char SD_NOT_PRESENT[]	=	"SD not present!";
-			WindowMessage*	w = this->gui->addMessage( SD_NOT_PRESENT );
+			WindowMessage*	w = this->gui->addWindowMessage( SD_NOT_PRESENT );
 			this->gui->update();
 
 			while( !this->sd->getState() ) {
@@ -27,7 +27,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 			this->printMessage( RTL_TYPE_M::INIT_OK, "SD was not been initialized!" );
 
 			const char SD_NOT_INITIALIZED[]	=	"SD was not been initialized!\nRemove SD!";
-			WindowMessage*	w	=	this->gui->addMessage( SD_NOT_INITIALIZED );
+			WindowMessage*	w	=	this->gui->addWindowMessage( SD_NOT_INITIALIZED );
 
 			this->gui->update();
 

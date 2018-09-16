@@ -12,19 +12,36 @@ namespace AyPlayer {
 
 class WindowMessage {
 public:
-	WindowMessage (	const char*						const message,
-			const MakiseStyle_SMessageWindow*		style,
-			MContainer*						c,
-			int32_t							x,
-			int32_t							y,
-			uint32_t						w,
-			uint32_t						h			);
+	WindowMessage (	const char*								const message,
+					const MakiseStyle_SMessageWindow*		style,
+					MContainer*								c,
+					int32_t									x,
+					int32_t									y,
+					uint32_t								w,
+					uint32_t								h			);
 
 	~WindowMessage();
 
 private:
 	MMessageWindow			mw;
 	char*					str;
+};
+
+class StatusBar {
+public:
+	StatusBar	(	const MakiseStyle_SMPlayerStatusBar*	style,
+					const MPlayerStatusBar_CallbackFunc* 	callbacks,
+					MContainer*								c,
+					int32_t									x,
+					int32_t									y,
+					uint32_t								w,
+					uint32_t								h			);
+
+	~StatusBar();
+
+private:
+	MPlayerStatusBar		sb;
+
 };
 
 class Gui {
@@ -46,7 +63,9 @@ public:
 
 	/// Создает окно поверх остальных с каким-то уведомлением.
 	/// Когда удалится объект - удалится и уведомление.
-	WindowMessage* addMessage					(	const char* const message	);
+	WindowMessage*	addWindowMessage					(	const char* const message	);
+
+	StatusBar*		addStatusBar						(	void	);
 
 private:
 	/*!
@@ -55,8 +74,6 @@ private:
 	 *				перезагружает контроллер.
 	 */
 	void	checkAndExit			(	McHardwareInterfaces::BaseResult	resultValue	);
-
-	void	addStatusBar			(	void	);
 
 private:
 	static	void	illuminationControlTask		(	void*	obj	);
@@ -75,6 +92,7 @@ private:
 	float									minIlluminationDuty;
 	uint32_t								maxIlluminationTimeS;
 	uint32_t								minIlluminationTimeS;
+	StatusBar*								statusBar;
 
 private:
 	const uint32_t	tbIlluminationControlTaskSize			=	TB_ILLUMINATION_CONTROL_TASK_SIZE;
