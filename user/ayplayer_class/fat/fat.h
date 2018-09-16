@@ -201,6 +201,9 @@ public:
 	std::shared_ptr< char > getNameTrackFromFile			(	std::shared_ptr< FIL >		listFile,
 																	uint32_t					nubmerTrack,
 																	int&						returnResult	);
+
+
+	uint32_t getNumberTrackInList			(	std::shared_ptr< FIL >		listFile	);
 public:
 
 

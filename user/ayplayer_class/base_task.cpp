@@ -255,14 +255,17 @@ void Base::mainTask ( void* obj ) {
 	strcpy( fatFsPath.get(), "0:.fileList.list" );
 	std::shared_ptr< FIL > playFile = o->fat.openFile( fatFsPath, r );
 
+	uint32_t numberTracks = o->fat.getNumberTrackInList( playFile );
 
-	std::shared_ptr< char > fileName( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
-	fileName = o->fat.getNameTrackFromFile( playFile, 0, r );
-	if ( r != EOK ) {
-		while(1);
+	for ( uint32_t i = 0; i < numberTracks; i++ ) {
+		std::shared_ptr< char > fileName( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
+		fileName = o->fat.getNameTrackFromFile( playFile, i, r );
+		if ( r != EOK ) {
+			while(1);
+		}
+
+		o->cfg->ay->psgFilePlay( fileName );
 	}
-
-	o->cfg->ay->psgFilePlay( fileName );
 
 
 

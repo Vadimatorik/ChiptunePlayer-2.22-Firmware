@@ -336,7 +336,11 @@ std::shared_ptr< char > Fat::getNameTrackFromFile			(	std::shared_ptr< FIL >		li
 	}
 }
 
-
+uint32_t Fat::getNumberTrackInList			(	std::shared_ptr< FIL >		listFile	) {
+	uint32_t size = this->getFileSize( listFile );
+	uint32_t numberTracks	=	size / sizeof( ItemFileInFat );
+	return numberTracks;
+}
 
 
 
