@@ -1,58 +1,51 @@
 #include <algorithm>
 #include <vector>
 #include "base.h"
-#include "fat/fat.h"
+#include "fat.h"
 
 namespace AyPlayer {
 
-/*
 
-
-int	Base::sortFileListCreateFile ( const char* const path, FIL** fNoSort, FIL** fNameSort, FIL** fLenSort ) {
-	int r = 0;
+int	Base::sortFileListCreateFile (	std::shared_ptr< char >		path,
+									std::shared_ptr< FIL >&		fNoSort,
+									std::shared_ptr< FIL >&		fNameSort,
+									std::shared_ptr< FIL >&		fLenSort	) {
+	int r = EOK;
 
 	do {
 		/// Открываем файл со списком.
-		*fNoSort	=	AyPlayerFat::openFile( path, LIST_NO_SORT_FAT_NAME );
-		if ( fNoSort == nullptr ) {
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_NO_SORT_FAT_NAME ">> not been open in dir:", path );
-			r = -1;
+		static char listNoSort[] = LIST_NO_SORT_FAT_NAME;
+		fNoSort	=	this->fat.openFile( path, listNoSort, r );
+		errnoCheckAndReturn( r );
+
+		if ( fNoSort.get() != nullptr ) {
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_NO_SORT_FAT_NAME ">> opened successfully in dir:", path.get() );
+		} else {
+			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_NO_SORT_FAT_NAME ">> not been open in dir:", path.get() );
+			r = EINVAL;
 			break;
 		}
-
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_NO_SORT_FAT_NAME ">> opened successfully in dir:", path );
 
 		/// Отсортированные по именам.
-		*fNameSort	=	AyPlayerFat::openFileListWithRewrite( path, LIST_SORT_NAME_FAT_NAME );
-		if ( fNameSort == nullptr ) {
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_SORT_NAME_FAT_NAME ">> not been open in dir:", path );
-			r = -1;
-			break;
-		}
+		static char listNameSort[] = LIST_SORT_NAME_FAT_NAME;
+		fNameSort	=	this->fat.openFileListWithRewrite( path, listNameSort, r );
+		errnoCheckAndReturn( r );
+		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_SORT_NAME_FAT_NAME ">> opened successfully in dir:", path.get() );
 
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_SORT_NAME_FAT_NAME ">> opened successfully in dir:", path );
-
-		/// Отсортированные по длительности.
-		*fLenSort	=	AyPlayerFat::openFileListWithRewrite( path, LIST_SORT_LEN_FAT_NAME );
-		if ( fLenSort == nullptr ) {
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_SORT_LEN_FAT_NAME ">> not been open in dir:", path );
-			r = -1;
-			break;
-		}
-
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_SORT_LEN_FAT_NAME ">> opened successfully in dir:", path );
+		/// По длине.
+		static char listLenSort[] = LIST_SORT_LEN_FAT_NAME;
+		fLenSort	=	this->fat.openFileListWithRewrite( path, listLenSort, r );
+		errnoCheckAndReturn( r );
+		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "File <<" LIST_SORT_NAME_FAT_NAME ">> opened successfully in dir:", path.get() );
 
 	}  while( false );
 
-	if ( r != 0 )	{
-		AyPlayerFat::closeFile( *fNoSort );
-		AyPlayerFat::closeFile( *fNameSort );
-		AyPlayerFat::closeFile( *fLenSort );
-		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_NO_SORT_FAT_NAME ">>, <<" LIST_SORT_NAME_FAT_NAME ">> and <<" LIST_SORT_LEN_FAT_NAME ">> are closed in an emergency! Dir:", path );
+	if ( r != EOK )	{
+		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_ERROR, "File <<" LIST_NO_SORT_FAT_NAME ">>, <<" LIST_SORT_NAME_FAT_NAME ">> and <<" LIST_SORT_LEN_FAT_NAME ">> are closed in an emergency! Dir:", path.get() );
 		return r;
 	}
 
-	return r;
+	return EOK;
 }
 
 int	Base::sortFileListCloseFile ( const char* const path, DIR* d, FILINFO* fi, FIL* fNoSort, FIL* fNameSort, FIL* fLenSort ) {
@@ -179,39 +172,35 @@ int Base::sortForLenFileList ( const char* const path, uint16_t* fl, uint32_t co
 	return sortResult;
 }
 
-int	Base::sortFileList ( char* path ) {
-	int					r	=	0;
+int	Base::sortFileList ( std::shared_ptr< char >		path ) {
+	int					r;
 
-	FILINFO*			fi			=	nullptr;
-	DIR*				d			=	nullptr;
-	FIL*				fNoSort		=	nullptr;
-	FIL*				fNameSort	=	nullptr;
-	FIL*				fLenSort	=	nullptr;
+	std::shared_ptr< FILINFO >		fi( new FILINFO );
+
+	std::shared_ptr< FIL >	fNoSort		( new FIL );
+	std::shared_ptr< FIL >	fNameSort	( new FIL );
+	std::shared_ptr< FIL >	fLenSort	( new FIL );
 
 	/// Ищем файл в директории.
-	r	=	AyPlayerFat::startFindingFileInDir( &d, &fi, path, LIST_NO_SORT_FAT_NAME );
-	if ( r != 0 )
-		return r;			/// Папка без поддерживаемых файлов.
+	std::shared_ptr< char >	msk( new char[ strlen( LIST_NO_SORT_FAT_NAME ) + 1 ], std::default_delete< char[] >() );
+	strcpy( msk.get(), LIST_NO_SORT_FAT_NAME );
+	std::shared_ptr< DIR >	d( this->fat.openDirAndFindFirstFile( path, fi, msk, r );
+	errnoCheckAndReturn( r );
 
-	if ( sortFileListCreateFile( path, &fNoSort, &fNameSort, &fLenSort ) != 0 ) {
-		AyPlayerFat::closeDir( d );
-		return -1;
+	if ( sortFileListCreateFile( path, fNoSort, fNameSort, fLenSort ) != EOK ) {
+		return this->fat.closeDir( d );
 	}
 
-	/// Мы нашли наш файл.
-	char*	fullPathToFile	=	AyPlayerFat::getFullPath( path, fi->fname );
-
-	/// Лог: найден файл под маску.
-	this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Start sorting file:", fullPathToFile );					/// Лог.
-	vPortFree( fullPathToFile );
+	std::shared_ptr< char > fullPath = this->fat.getFullPath( path, fi->fname, r );
+	errnoCheckAndReturn( r );
+	this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Start sorting file:", fullPath.get() );
 
 	/// Получаем колличество файлов в директории.
-	const uint32_t	countFileInDir	=	fi->fsize	/	sizeof( ItemFileInFat );
+	const uint32_t	countFileInDir	=	this->fat.getFileSize( fNoSort );
 
 
-	 * Для каждой структуры выделим свой номер, так как они расположены в исходном файле.
-
-	uint16_t* fl	=	( uint16_t* )pvPortMalloc( sizeof( uint16_t ) * countFileInDir );
+	/// Для каждой структуры выделим свой номер, так как они расположены в исходном файле.
+	uint16_t* fl	=	new uint16_t[ countFileInDir ];
 
 	/// Сортировка по имени.
 	this->initPointArrayToSort( fl, countFileInDir );
@@ -243,62 +232,58 @@ int	Base::sortFileList ( char* path ) {
 	return r;
 }
 
-FRESULT Base::findingFileListAndSort ( char* path ) {
-	FRESULT					r;
-	static FILINFO			f;
+int Base::findingFileListAndSort ( std::shared_ptr< char >		path ) {
+		int					r;
 
-	/// Открываем директорию. Все игры с памятью внутри.
-	DIR*	d	=	AyPlayerFat::openDir( path );
+		/// Флаг выставляется, когда мы обнаружили в
+		/// директории хоть один файл и просканировали ее на всё по шаблону.
+		/// Чтобы не нраваться на многократное повторное сканирование.
+		bool				scanDir	=	false;
 
-	if ( d == nullptr )
-		return FRESULT::FR_DISK_ERR;
+		/// Открываем директорию.
+		std::shared_ptr< DIR >			d( this->fat.openDir( path, r ) );
+		errnoCheckAndReturn( r );
 
-	this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Open  dir:", path );
+		this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Open dir:", path.get() );
 
-	/// Флаг единоразового файла в директории.
-	bool				scanDir	=	false;
+		/// Рекурсивно обходим все папки.
+		while( 1 ) {
+			static const char state[] = "Find supported files...";
+			w->setActualState( state );
+			this->gui->update();
 
-	/// Рекурсивно обходим все папки.
-	while( 1 ) {
-		r = f_readdir( d, &f );
+			std::shared_ptr< FILINFO >		f( this->fat.readDir( d, r ) );
+			errnoCheckAndReturn( r );
 
-		/// Если проблемы на нижнем уравне.
-		if ( r != FR_OK )
-			break;
-
-		/// В данной директории нет файла с описанием.
-		if ( f.fname[ 0 ] == 0 ) {
-			/// Лог: директория закончилась.
-			this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Close dir:", path );
-
-			break;
-		}
-
-		/// Найдена новая директория.
-		if ( f.fattrib & AM_DIR ) {
-			uint32_t i = strlen(path);
-			sprintf( &path[ i ], "/%s", f.fname );
-
-			r	=	this->findingFileListAndSort( path );
-
-			if ( r != FRESULT::FR_OK )								/// Аварийная ситуация.
-				break;
-
-			path[ i ] = 0;
-		} else {
-			if ( scanDir == true ) continue;						/// Сканируем директорию лишь единожды.
-			scanDir = true;
-			if ( this->sortFileList( path ) != 0 ) {				/// Сортируем файл, если он там есть.
+			/// Закончились элементы в текущей директории.
+			if ( f.get() == nullptr ) {
+				this->printMessageAndArg( RTL_TYPE_M::RUN_MESSAGE_OK, "Close dir:", path.get() );
 				break;
 			}
+
+			/// Найдена новая директория.
+			if ( this->fat.checkFileIsDir( f ) ) {
+				uint32_t	len	=	strlen( path.get() );
+
+				snprintf( path.get(), MAX_PATH_FATFS_STRING_LEN, "%s/%s", path.get(), f->fname );
+
+				r	=	this->findingFileListAndSort( path );
+				errnoCheckAndReturn( r );
+
+				/// Обрезаем строку, чтобы выйти из вложенного каталога.
+				path.get()[ len ] = 0;
+
+			} else {
+				if ( scanDir == true ) continue;		/// Сканируем директорию лишь единожды.
+				scanDir = true;
+				if ( this->sortFileList( path ) != 0 ) {
+					break;
+				}
+			}
 		}
-	}
 
-	/// Фиксируем FRESULT::FR_DISK_ERR как приоритет над всем.
-	r = ( AyPlayerFat::closeDir( d ) == -1 ) ? FRESULT::FR_DISK_ERR : r;
-
-	return r;
-}*/
+		return this->fat.closeDir( d );
+}
 
 }
 

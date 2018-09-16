@@ -176,6 +176,10 @@ public:
 	std::shared_ptr< FIL > openFileListWithRewrite 				(	std::shared_ptr< char >		fullPath,
 																	int&						returnResult	);
 
+	std::shared_ptr< FIL > openFileListWithRewrite (	std::shared_ptr< char >		path,
+															const char*					const fileName,
+															int&						returnResult	);
+
 
 	/*!
 	 * Возвращает размер файла.
@@ -252,7 +256,6 @@ public:
 	 * 						-1	-	произошла ошибка на уровне FatFS, память была высвобождена.
 	 * 						1	-	закончились файлы по маске в директории, память была высвобождена.	}
 	 */
-	static	int			startFindingFileInDir			( DIR** dir, FILINFO** fInfo, const char* const pathDir, const char* const maskFind );
 
 	/*!
 	 * Продолжает поиск файла по заданной методом startFindingFileInDir маске.

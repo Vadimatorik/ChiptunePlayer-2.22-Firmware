@@ -9,7 +9,7 @@
 #include "rcc.h"
 #include "sd_control.h"
 #include "user_os.h"
-
+#include <errno.h>
 
 
 
@@ -209,14 +209,21 @@ private:
 	void			waitToInsertCorrectSdCard	(	void	);
 
 	std::shared_ptr< ItemFileInFat > createtructureItemFileListFilling (	const char*			const nameTrack,
-																				uint32_t			lenTickTrack,
-																				AyPlayFileFormat	format,
-																				int&				returnResult	);
+																			uint32_t			lenTickTrack,
+																			AyPlayFileFormat	format,
+																			int&				returnResult	);
 
 
 	/// Устанавливает параметры из флешки.
 	void			setSysCfgParams				(	void	);
 
+	int	findingFileListAndSort (	std::shared_ptr< char >		path	);
+	int	sortFileList ( std::shared_ptr< char >		path );
+	int	sortFileListCreateFile (	std::shared_ptr< char >		path,
+										std::shared_ptr< FIL >&		fNoSort,
+										std::shared_ptr< FIL >&		fNameSort,
+										std::shared_ptr< FIL >&		fLenSort	);
+	void initPointArrayToSort ( uint16_t* array, uint32_t count );
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );

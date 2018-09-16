@@ -163,6 +163,18 @@ std::shared_ptr< char > Fat::getFullPath(	std::shared_ptr< char >		path,
 	return fatFsPath;
 }
 
+std::shared_ptr< FIL > Fat::openFileListWithRewrite (	std::shared_ptr< char >		path,
+														const char*					const fileName,
+														int&						returnResult	) {
+	std::shared_ptr< char >	fullPath( this->getFullPath( path, fileName, returnResult ) );
+	if ( returnResult != EOK ) {
+		returnResult = ENOMEM;
+		return std::shared_ptr< FIL >( nullptr );
+	}
+
+	return this->openFileListWithRewrite( fullPath, returnResult );
+}
+
 std::shared_ptr< FIL > Fat::openFileListWithRewrite (	std::shared_ptr< char >		fullPath,
 														int&						returnResult	) {
 	FRESULT					r;
