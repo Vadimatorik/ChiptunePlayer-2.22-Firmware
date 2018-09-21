@@ -5,6 +5,7 @@
 
 namespace AyPlayer {
 
+/*
 
 int	Base::sortFileListCreateFile (	std::shared_ptr< char >		path,
 									std::shared_ptr< FIL >&		fNoSort,
@@ -283,7 +284,7 @@ int Base::findingFileListAndSort ( std::shared_ptr< char >		path ) {
 		}
 
 		return this->fat.closeDir( d );
-}
+}*/
 
 }
 

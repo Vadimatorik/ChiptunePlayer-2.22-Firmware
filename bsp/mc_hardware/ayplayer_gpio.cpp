@@ -46,8 +46,11 @@ McHardwareInterfacesImplementation::Pin						keyboardStrings[ 3 ] = {
 	McHardwareInterfacesImplementation::Pin( &br1Cfg ),
 	McHardwareInterfacesImplementation::Pin( &br2Cfg )
 };
+
 McHardwareInterfacesImplementation::Pin						keyboardColumns[ 3 ] = {
 	McHardwareInterfacesImplementation::Pin( &bc0Cfg ),
 	McHardwareInterfacesImplementation::Pin( &bc1Cfg ),
 	McHardwareInterfacesImplementation::Pin( &bc2Cfg )
 };
+
+
