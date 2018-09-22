@@ -3,7 +3,7 @@
 #include "ayplayer_struct_cfg.h"
 #include <memory>
 #include <string>
-
+#include <vector>
 #include "gui.h"
 #include "nvic.h"
 #include "rcc.h"
@@ -191,6 +191,9 @@ private:
 	int		createFileListInSdCard				(	std::shared_ptr< char >		path,
 													WindowIndexingSupportedFiles*	w	);
 
+	int enterInDirWitchFindingFileListAndSort (	std::shared_ptr< char >		path,
+														std::shared_ptr< FILINFO >		f,
+														WindowIndexingSupportedFiles*	w);
 private:
 	/*
 	 *	\brief		Метод производит инициализацию всей аппаратной
@@ -213,17 +216,32 @@ private:
 																			AyPlayFileFormat	format,
 																			int&				returnResult	);
 
+	int sortForNameFileList				(	std::shared_ptr< char >		path,
+													std::shared_ptr< FIL >		fNoSort,
+													std::shared_ptr< FIL >		fSortFile,
+													std::vector< uint16_t >		fl			);
+
+	int sortForLenFileList				(	std::shared_ptr< char >		path,
+													std::shared_ptr< FIL >		fNoSort,
+													std::shared_ptr< FIL >		fSortFile,
+													std::vector< uint16_t >		fl			) ;
+
+	int writeSortFile (	std::shared_ptr< FIL >		fNoSort,
+								std::shared_ptr< FIL >		fSort,
+								std::vector< uint16_t >		fl	);
 
 	/// Устанавливает параметры из флешки.
 	void			setSysCfgParams				(	void	);
 
-	int	findingFileListAndSort (	std::shared_ptr< char >		path	);
+	int	findingFileListAndSort (	std::shared_ptr< char >		path,
+			WindowIndexingSupportedFiles*	w);
 	int	sortFileList ( std::shared_ptr< char >		path );
-	int	sortFileListCreateFile (	std::shared_ptr< char >		path,
+	int	sortFileListCreateFiles (	std::shared_ptr< char >		path,
 										std::shared_ptr< FIL >&		fNoSort,
 										std::shared_ptr< FIL >&		fNameSort,
 										std::shared_ptr< FIL >&		fLenSort	);
-	void initPointArrayToSort ( uint16_t* array, uint32_t count );
+	std::vector< uint16_t > initPointArrayToSort ( uint32_t count );
+
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );

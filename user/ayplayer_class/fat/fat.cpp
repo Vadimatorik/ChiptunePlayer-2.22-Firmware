@@ -354,65 +354,68 @@ uint32_t Fat::getNumberTrackInList			(	std::shared_ptr< FIL >		listFile	) {
 	return numberTracks;
 }
 
+uint32_t Fat::getSizeTrackFromFile		(	std::shared_ptr< FIL >		listFile,
+											uint32_t					nubmerTrack,
+											int&						returnResult ) {
+	FRESULT				r;
 
+	const uint32_t	lseek	=	( sizeof( ItemFileInFat ) * nubmerTrack ) + FF_MAX_LFN + 1 + sizeof( AyPlayFileFormat );
+	r	=	f_lseek( listFile.get(), lseek );
 
+	if ( r != FR_OK ) {
+		returnResult = EIO;
+		return 0;
+	}
 
+	uint32_t	len;
+	UINT		l;
+	r	=	f_read( listFile.get(), &len, sizeof( uint32_t ), &l );
+
+	if ( !( ( r == FR_OK ) && ( l == sizeof( uint32_t ) ) ) ) {
+		returnResult = EIO;
+	}
+
+	return r;
+}
+
+std::shared_ptr< ItemFileInFat > Fat::readItemFileList (	std::shared_ptr< FIL >				f,
+															uint32_t numberTrack,
+															int&						returnResult	) {
+	FRESULT				r;
+
+	std::shared_ptr< ItemFileInFat >	item( new ItemFileInFat );
+	if ( item.get() == nullptr ) {
+			returnResult	=	ENOMEM;
+			return item;
+		} else {
+			returnResult	=	EOK;
+		}
+
+	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * numberTrack;
+	r	=	f_lseek( f.get(), lseek );
+
+	if ( r != FR_OK ) {
+		returnResult =  EIO;
+		std::shared_ptr< ItemFileInFat >	item( nullptr );
+	}
+
+	UINT		l;
+	r	=	f_read( f.get(), item.get(), sizeof( ItemFileInFat ), &l );
+
+	if ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) {
+		returnResult = EOK;
+		return item;
+	}
+
+	returnResult = EIO;
+	return std::shared_ptr< ItemFileInFat >( nullptr );
+}
 
 
 
 
 /*
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-uint32_t Fat::getSizeTrackFromFile		( FIL* f, uint32_t nubmerTrack ) {
-	FRESULT				r;
-
-	const uint32_t	lseek	=	( sizeof( ItemFileInFat ) * nubmerTrack ) + FF_MAX_LFN + 1 + sizeof( AyPlayFileFormat );
-	r	=	f_lseek( f, lseek );
-
-	if ( r != FR_OK )
-		return 0xFFFFFFFF;
-
-	uint32_t	len;
-	UINT		l;
-	r	=	f_read( f, &len, sizeof( uint32_t ), &l );
-
-	return ( ( r == FR_OK ) && ( l == sizeof( uint32_t ) ) ) ? len : 0xFFFFFFFF;
-}
-
-
-
-
-
-
-int Fat::readItemFileListAndRemoveItem ( FIL* f, ItemFileInFat* item, uint32_t numberTrack ) {
-	FRESULT				r;
-
-	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * numberTrack;
-	r	=	f_lseek( f, lseek );
-
-	if ( r != FR_OK ) {
-		return -1;
-	}
-
-	UINT		l;
-	r	=	f_read( f, item, sizeof( ItemFileInFat ), &l );
-	return ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) ? 0 : -1;
-}
 
 int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
 	FRESULT		r;

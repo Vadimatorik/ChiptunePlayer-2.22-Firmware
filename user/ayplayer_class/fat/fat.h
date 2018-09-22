@@ -208,6 +208,12 @@ public:
 
 
 	uint32_t getNumberTrackInList			(	std::shared_ptr< FIL >		listFile	);
+
+
+	std::shared_ptr< ItemFileInFat > readItemFileList (	std::shared_ptr< FIL >				f,
+																uint32_t numberTrack,
+																int&						returnResult	);
+
 public:
 
 
@@ -281,6 +287,10 @@ public:
 	 */
 	static	uint32_t	getSizeTrackFromFile				( FIL* f, uint32_t nubmerTrack );
 
+
+	uint32_t getSizeTrackFromFile		(	std::shared_ptr< FIL >		listFile,
+												uint32_t					nubmerTrack,
+												int&						returnResult );
 
 
 	static	int	setOffsetByteInOpenFile			( FIL* f, uint32_t offset );

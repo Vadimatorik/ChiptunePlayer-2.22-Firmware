@@ -21,14 +21,18 @@ int Base::initFileLists ( void ) {
 	/// Тут добавить условие, что если флешка не была
 	/// открыта где-то во вне (не были созданы временные файлы ОС), то пересоздавать не надо. А пока пусть так.
 
+
+	std::shared_ptr< WindowIndexingSupportedFiles > w( this->gui->addWindowIndexingSupportedFiles() );
+
+	int res;
+
 	/// Составляем список файлов.
+	res = this->createFileListsInSdCard( fatFsPath, w.get() );
+	if ( res != EOK ) return res;
 
-	WindowIndexingSupportedFiles*	w;
-	w = this->gui->addWindowIndexingSupportedFiles();
-
-	this->createFileListsInSdCard( fatFsPath, w );
-
-	delete w;
+	/// Составляем сортированные списки.
+	res = this->findingFileListAndSort( fatFsPath, w.get() );
+	if ( res != EOK ) return res;
 
 	return EOK;
 }
