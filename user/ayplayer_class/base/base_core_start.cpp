@@ -4,24 +4,7 @@
 namespace AyPlayer {
 
 /*
-int Base::fsmStepFuncCheckingChangeFatVolume ( void ) {
-	//return this->checkingSystemFileInRootDir( "0:" );
-	return 0;
-}
-
-int Base::fsmStepFuncCleanFlagChangeFatVolume ( void ) {
-	//this->removeSystemFileInRootDir( "0:");
-	return 0;
-}
-
 int Base::fsmStepFuncInitMainWindow ( void ) {
-	/// Вместо считывания с карты памяти (системной).
-	/// Заполняем стандартные параметры.
-	this->lType			=	FILE_LIST_TYPE::NAME_SORT;
-	this->playState		=	AYPLAYER_STATUS::STOP;
-	this->currentFile	=	0;
-	this->wNow			=	AYPLAYER_WINDOW_NOW::MAIN;
-
 	/// Таблица громкости по умолчанию.
 	memcpy( this->volumeTable, volumeTableDafault, sizeof( volumeTableDafault ) );
 	this->currentVolumeIndex	=	4;

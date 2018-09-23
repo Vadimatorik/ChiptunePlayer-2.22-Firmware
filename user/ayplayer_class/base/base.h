@@ -23,9 +23,6 @@ enum class AYPLAYER_WINDOW_NOW {
 	EQUALIZER			=	2
 };
 
-#define HANDLER_FSM_STEP(NAME_STEP)				static int NAME_STEP ( const fsmStep< AyPlayer >* previousStep, AyPlayer* obj )
-#define HANDLER_FSM_INPUT_DATA					__attribute__((unused)) const fsmStep< AyPlayer >* previousStep, AyPlayer* obj
-
 #define	TB_MAIN_TASK_SIZE						800
 
 #define	TB_BUTTON_CLICK_HANDLER_TASK_SIZE		400
@@ -69,40 +66,6 @@ enum class CAUSE_SHUTDOWN {
 	USER_OFF				=	0,
 	UNDERVOLTAGE			=	1,
 	TIMEOUT					=	2
-};
-
-
-/// Если на флешке нет актуальной таблицы
-/// "уровень громкости == значение потенциометра" - тогда
-/// используем стандартное.
-
-const uint8_t volumeTableDafault[16] = {
-	0x00, 0x10, 0x20, 0x30,
-	0x40, 0x50, 0x60, 0x70,
-	0x80, 0x90, 0xA0, 0xB0,
-	0xC0, 0xD0, 0xE0, 0xFF
-};
-
-
-/// Значения эквалайзера (цифровых потенциометров).
-/// 0..26 диапазон каждого поля.
-
-struct __attribute__((packed)) ayplayerEqualizer {
-	uint8_t			A1;
-	uint8_t			B1;
-	uint8_t			C1;
-	uint8_t			A2;
-	uint8_t			B2;
-	uint8_t			C2;
-};
-
-const ayplayerEqualizer ayplayerEqualizerDafault = {
-	.A1			=	230,
-	.B1			=	200,
-	.C1			=	230,
-	.A2			=	230,
-	.B2			=	200,
-	.C2			=	230,
 };
 
 #include "../structs/ayplayer_struct_cfg.h"
@@ -274,14 +237,6 @@ private:
 	static void playTickHandlerTask ( void* obj );
 	static void playTask ( void* obj );
 
-
-private:
-	int fsmStepFuncIndexingSupportedFiles ( void );
-	int fsmStepFuncSortingFileList ( void );
-	int fsmStepFuncCheckingChangeFatVolume ( void );
-	int fsmStepFuncCleanFlagChangeFatVolume ( void );
-	int fsmStepFuncInitMainWindow ( void );
-
 private:
 	const BaseCfg* const cfg;
 
@@ -304,13 +259,6 @@ private:
 	uint32_t											currentFile;
 	uint32_t											countFileInCurrentDir;
 
-	/// Громкость.
-	uint8_t												currentVolumeIndex;		/// Текущая громкость (значение потенциометра в таблице).
-	uint8_t												volumeTable[16];		/// Соотношение "уровень громкости == значению потенциометра".
-
-	ayplayerEqualizer									eq;
-
-	//AyPlayerFatFs										fat;
 
 	AyPlayer::Fat										fat;
 	AyPlayer::Nvic										nvic;

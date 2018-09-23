@@ -2,3 +2,45 @@ this->cfg->mcu->gpio->pwr.allPwr->reset();
 
 this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "MakiseGui started." );
 this->cfg->pcb->sd->getStatus() != EC_SD_STATUS::NOINIT )
+
+
+	/// Громкость.
+	///uint8_t												currentVolumeIndex;		/// Текущая громкость (значение потенциометра в таблице).
+	///uint8_t												volumeTable[16];		/// Соотношение "уровень громкости == значению потенциометра".
+
+	///ayplayerEqualizer									eq;
+
+	//AyPlayerFatFs										fat;
+	
+	/// Значения эквалайзера (цифровых потенциометров).
+/// 0..26 диапазон каждого поля.
+
+struct __attribute__((packed)) ayplayerEqualizer {
+	uint8_t			A1;
+	uint8_t			B1;
+	uint8_t			C1;
+	uint8_t			A2;
+	uint8_t			B2;
+	uint8_t			C2;
+};
+
+const ayplayerEqualizer ayplayerEqualizerDafault = {
+	.A1			=	230,
+	.B1			=	200,
+	.C1			=	230,
+	.A2			=	230,
+	.B2			=	200,
+	.C2			=	230,
+};
+
+
+/// Если на флешке нет актуальной таблицы
+/// "уровень громкости == значение потенциометра" - тогда
+/// используем стандартное.
+
+const uint8_t volumeTableDafault[16] = {
+	0x00, 0x10, 0x20, 0x30,
+	0x40, 0x50, 0x60, 0x70,
+	0x80, 0x90, 0xA0, 0xB0,
+	0xC0, 0xD0, 0xE0, 0xFF
+};
