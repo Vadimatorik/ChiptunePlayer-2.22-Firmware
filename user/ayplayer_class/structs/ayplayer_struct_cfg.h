@@ -1,10 +1,9 @@
 #pragma once
 
+#include "../structs/ayplayer_struct_gui_cfg.h"
+#include "../structs/ayplayer_struct_mcu_cfg.h"
+#include "../structs/ayplayer_struct_pcb_cfg.h"
 #include "ayplayer_struct_fat_cfg.h"
-#include "ayplayer_struct_gui_cfg.h"
-#include "ayplayer_struct_mcu_cfg.h"
-#include "ayplayer_struct_pcb_cfg.h"
-
 #include "ayplayer_ay_file_class.h"
 
 #include "run_time_logger.h"

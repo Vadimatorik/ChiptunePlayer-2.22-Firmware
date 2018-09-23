@@ -103,8 +103,8 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path,
 	return r;
 }
 
-int Base::createFileListsInSdCard ( std::shared_ptr< char >		path,
-									WindowIndexingSupportedFiles* w) {
+int Base::createFileListsInSdCard (	std::shared_ptr< char >			path,
+									WindowIndexingSupportedFiles*	w			) {
 	int					r;
 
 	/// Флаг выставляется, когда мы обнаружили в

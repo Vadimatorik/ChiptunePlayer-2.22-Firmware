@@ -1,10 +1,9 @@
 #pragma once
 
 #include "nvic.h"
-#include "ayplayer_struct_gui_cfg.h"
-#include "ayplayer_struct_pcb_cfg.h"
-
 #include <memory>
+#include "../structs/ayplayer_struct_gui_cfg.h"
+#include "../structs/ayplayer_struct_pcb_cfg.h"
 
 #define TB_ILLUMINATION_CONTROL_TASK_SIZE			200
 

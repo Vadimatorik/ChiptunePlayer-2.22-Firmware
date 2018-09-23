@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ayplayer_struct_cfg.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -11,7 +10,9 @@
 #include "user_os.h"
 #include <errno.h>
 
-
+#include "ayplayer_struct_cfg.h"
+#include "user_os.h"
+#include "ayplayer_button.h"
 
 
 namespace AyPlayer {
@@ -104,7 +105,7 @@ const ayplayerEqualizer ayplayerEqualizerDafault = {
 	.C2			=	230,
 };
 
-#include "ayplayer_struct_cfg.h"
+#include "../structs/ayplayer_struct_cfg.h"
 
 class Base {
 public:

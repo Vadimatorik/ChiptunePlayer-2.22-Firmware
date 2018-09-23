@@ -1,4 +1,4 @@
-#include "ayplayer_struct_cfg.h"
+#include "../ayplayer_class/structs/ayplayer_struct_cfg.h"
 #include "ayplayer_ay_file_class.h"
 #include "run_time_logger.h"
 

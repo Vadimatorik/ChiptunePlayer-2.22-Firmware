@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ayplayer_struct_mcu_cfg.h"
+#include "../structs/ayplayer_struct_mcu_cfg.h"
 #include "ayplayer_clock.h"
 
 namespace AyPlayer {

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../structs/ayplayer_struct_gpio_cfg.h"
 #include "ayplayer_mc_hardware.h"
-#include "ayplayer_struct_gpio_cfg.h"
 
 struct AyPlayerMcuCfg {
 	McHardwareInterfaces::Wdt*						const	wdt;
