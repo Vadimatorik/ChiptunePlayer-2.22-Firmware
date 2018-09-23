@@ -271,7 +271,6 @@ private:
 
 
 private:
-	static void buttonClickHandlerTask ( void* obj );
 	static void playTickHandlerTask ( void* obj );
 	static void playTask ( void* obj );
 
