@@ -207,6 +207,8 @@ private:
 										std::shared_ptr< FIL >&		fLenSort	);
 	std::vector< uint16_t > initPointArrayToSort ( uint32_t count );
 
+	int initMainWindow ( void );
+
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
@@ -260,7 +262,7 @@ private:
 	AYPLAYER_WINDOW_NOW									wNow;
 	uint32_t											currentFile;
 	uint32_t											countFileInCurrentDir;
-
+	std::shared_ptr< ItemFileInFat >					playItem;
 
 	AyPlayer::Fat										fat;
 	AyPlayer::Nvic										nvic;

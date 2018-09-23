@@ -165,6 +165,10 @@ public:
 	std::shared_ptr< FIL >	openFile							(	std::shared_ptr< char >		fullPath,
 																	int&						returnResult	) ;
 
+	std::shared_ptr< FIL >	openFile							(	const char*					const path,
+																		int&						returnResult	);
+
+
 	/*!
 	 *	\brief		Открывает файл по заданному пути или создает его заново.
 	 *				Если файл по данному пути существовал ранее - заменяет его.

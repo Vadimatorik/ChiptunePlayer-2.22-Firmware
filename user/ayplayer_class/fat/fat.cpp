@@ -284,6 +284,28 @@ std::shared_ptr< FIL >	Fat::openFile							(	std::shared_ptr< char >		fullPath,
     return f;
 }
 
+std::shared_ptr< FIL >	Fat::openFile							(	const char*					const path,
+																	int&						returnResult	) {
+	FRESULT					r;
+	std::shared_ptr< FIL >	f( new FIL );
+
+	if ( f.get() == nullptr ) {
+		returnResult	=	ENOMEM;
+		return f;
+	} else {
+		returnResult	=	EOK;
+	}
+
+    r = f_open( f.get(), path, FA_READ );
+
+    if ( r != FR_OK ) {
+       	returnResult	=	EIO;
+       	return std::shared_ptr< FIL >( nullptr );
+    }
+
+    return f;
+}
+
 std::shared_ptr< FIL >	Fat::openFile							(	std::shared_ptr< char >		path,
 																	const char*					const name,
 																	int&						returnResult	) {

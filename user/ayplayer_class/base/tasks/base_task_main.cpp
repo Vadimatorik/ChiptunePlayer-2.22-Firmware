@@ -58,10 +58,6 @@ void Base::mainTask ( void* obj ) {
 
 
 /*
-	if ( o->fsmStepFuncInitMainWindow() != 0 )
-					NVIC_SystemReset();
-
-
 	/// Счетчики отсчета времени.
 	int32_t incStabilTime	= INC_AND_DEC_STABIL_TIME;
 	int32_t decStabilTime	= INC_AND_DEC_STABIL_TIME;
