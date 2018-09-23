@@ -234,8 +234,9 @@ private:
 
 
 private:
-	static void playTickHandlerTask ( void* obj );
-	static void playTask ( void* obj );
+	static	void	playTickHandlerTask					(	void*		obj		);
+	static	void	buttonClickHandlerTask				( 	void*		obj 	);
+	static	void	playTask							(	void*		obj		);
 
 private:
 	const BaseCfg* const cfg;
