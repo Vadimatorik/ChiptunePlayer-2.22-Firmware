@@ -195,7 +195,8 @@ private:
 								std::vector< uint16_t >		fl	);
 
 	/// Устанавливает параметры из флешки.
-	void			setSysCfgParams				(	void	);
+	int			setSysCfgParams				(	void	);
+	int setSyscfgDefaultGuiParams ( void );
 
 	int	findingFileListAndSort (	std::shared_ptr< char >		path,
 			WindowIndexingSupportedFiles*	w);

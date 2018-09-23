@@ -5,16 +5,6 @@ namespace AyPlayer {
 
 /*
 int Base::fsmStepFuncInitMainWindow ( void ) {
-	/// Таблица громкости по умолчанию.
-	memcpy( this->volumeTable, volumeTableDafault, sizeof( volumeTableDafault ) );
-	this->currentVolumeIndex	=	4;
-
-	/// Забираем начальные значения потенциометров.
-	memcpy( &this->eq, &ayplayerEqualizerDafault, sizeof( ayplayerEqualizer ) );
-
-	/// Переносим каталог воспроизведения в центр.
-	FRESULT	fr;
-	fr	=	f_chdir("0:");
 	(void)fr;
 
 	int		r;

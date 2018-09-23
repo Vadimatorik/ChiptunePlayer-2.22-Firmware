@@ -16,21 +16,22 @@ namespace AyPlayer {
 void Base::mainTask ( void* obj ) {
 	Base* o =( Base* ) obj;
 
-	if ( o->printMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "System was been reboot!" ) != EOK ) {
-		abort();
-	}
+	if ( o->printMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "System was been reboot!" ) != EOK )		abort();
 
 	o->sd->init();
 	o->gui->init();
-
-	o->setSysCfgParams();
+	o->setSyscfgDefaultGuiParams();
 
 	do {
 		o->waitToInsertCorrectSdCard();
 		if ( o->initFileLists() != EOK )				continue;
+		if ( o->setSysCfgParams() != EOK )				continue;
 	} while( false );
 
 
+
+
+	/*
 	std::shared_ptr< char > fatFsPath( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
 	if ( fatFsPath.get() == nullptr )	{
 		while(1);
@@ -52,15 +53,11 @@ void Base::mainTask ( void* obj ) {
 		}
 
 		o->cfg->ay->psgFilePlay( fileName );
-	}
+	}*/
 
 
 
 /*
-
-	if ( o->fsmStepFuncSortingFileList() != 0 )
-				NVIC_SystemReset();
-
 	if ( o->fsmStepFuncInitMainWindow() != 0 )
 					NVIC_SystemReset();
 

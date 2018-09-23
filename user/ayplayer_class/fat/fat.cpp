@@ -43,6 +43,19 @@ std::shared_ptr< DIR > Fat::openDir (	std::shared_ptr< char >		path,
 	}
 }
 
+int Fat::setCurrentDir ( const char* const path ) {
+	FRESULT	r;
+	r	=	f_chdir( path );
+
+	if ( r != FRESULT::FR_OK ) {
+		return EOK;
+	} else {
+		return EIO;
+	}
+
+	return EIO;
+}
+
 std::shared_ptr< FILINFO > Fat::readDir (	std::shared_ptr< DIR >		dir,
 											int&						returnResult	) {
 	FRESULT						r;

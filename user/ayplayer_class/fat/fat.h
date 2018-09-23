@@ -49,6 +49,10 @@ public:
 	std::shared_ptr< DIR >		openDir							(	std::shared_ptr< char >		path,
 																	int&						returnResult	);
 
+
+	int							setCurrentDir					(	const char*					const path	);
+
+
 	/*!
 	 *	\brief		Открывает директорию с возможностью последующего
 	 *				анализа находящихся внутри нее файлов по маске.

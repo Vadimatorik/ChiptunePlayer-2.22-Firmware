@@ -44,3 +44,11 @@ const uint8_t volumeTableDafault[16] = {
 	0x80, 0x90, 0xA0, 0xB0,
 	0xC0, 0xD0, 0xE0, 0xFF
 };
+
+	/// Таблица громкости по умолчанию.
+	memcpy( this->volumeTable, volumeTableDafault, sizeof( volumeTableDafault ) );
+	this->currentVolumeIndex	=	4;
+
+	/// Забираем начальные значения потенциометров.
+	memcpy( &this->eq, &ayplayerEqualizerDafault, sizeof( ayplayerEqualizer ) );
+
