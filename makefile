@@ -36,7 +36,7 @@ LDFLAGS				+=	-ffunction-sections -Wl,--gc-sections
 #**********************************************************************
 # Toolchain param.
 #**********************************************************************
-TOOLCHAIN_PATH		=	arm-none-eabi
+TOOLCHAIN_PATH		=	/opt/arm/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi
 
 CC					=	$(TOOLCHAIN_PATH)-gcc
 CPP					=	$(TOOLCHAIN_PATH)-g++
@@ -116,7 +116,7 @@ build/$(PROJECT_NAME).elf:	$(PROJECT_OBJ_FILE)
 
 $(PROJECT_NAME).siz:	build/$(PROJECT_NAME).elf
 	@echo 'Print Size:'
-	@arm-none-eabi-size --format=berkeley "build/$(PROJECT_NAME).elf"
+	@$(SIZE) --format=berkeley "build/$(PROJECT_NAME).elf"
 	@echo ' '
 
 all: $(PROJECT_NAME).siz
