@@ -32,6 +32,7 @@ STARTUPE_S_NAME		:=	bsp/submodule/module_stm32f4_low_level_by_st/startupe/startu
 LDFLAGS				:=	$(MK_FLAGS) $(LD_FILES) -fno-exceptions
 LDFLAGS				+=	-Wl,--undefined=uxTopUsedPriority			
 LDFLAGS				+=	-ffunction-sections -Wl,--gc-sections
+#LDFLAGS				+=	-Wl,-Map="build/$(PROJECT_NAME).map"
 
 #**********************************************************************
 # Toolchain param.
