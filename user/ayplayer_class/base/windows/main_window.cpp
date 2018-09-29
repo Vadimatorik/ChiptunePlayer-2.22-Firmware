@@ -25,10 +25,13 @@ int Base::initMainWindow ( void ) {
 	this->playItem				= this->fat.readItemFileList( f, this->currentFile, r );
 	if ( r != EOK )		return r;
 
+	uint32_t countTrecks;
+	countTrecks = this->fat.getNumberTrackInList( f );
+
 	r = this->fat.closeFile( f );
 	if ( r != EOK )		return r;
 
-	this->gui->setWindowMain( this->playItem );
+	this->gui->setWindowMain( this->playItem, countTrecks );
 	this->gui->update();
 
 	return EOK;

@@ -24,17 +24,18 @@ Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 	this->sUpdateLcd	=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->sbUpdateLcd );
 }
 
+#define	TEST_POINT_AND_DELITE(POINT)			\
+			if ( POINT ) {						\
+				delete POINT;					\
+				POINT			=	nullptr;	\
+			}
 
 void Gui::removeOldWindow	( void ) {
-	if ( this->pb ) {
-		delete this->pb;
-		this->pb			=	nullptr;
-	}
+	USER_OS_STATIC_TIMER_STOP( this->timStringScroll );
 
-	if ( this->wisf ) {
-		delete this->wisf;
-		this->wisf			=	nullptr;
-	}
+	TEST_POINT_AND_DELITE( this->pb );
+	TEST_POINT_AND_DELITE( this->wisf );
+	TEST_POINT_AND_DELITE( this->shl );
 }
 
 void Gui::illuminationControlTask ( void*	obj ) {
@@ -78,6 +79,12 @@ void Gui::init ( void ) {
 							makiseGuiPredraw,
 							makiseGuiUpdate		);
 
+	this->timStringScroll	= USER_OS_STATIC_TIMER_CREATE(	"scrollStringCurrentNameTrack",
+																this->timerSpeedLow,
+																this,
+																Gui::timerHandler,
+																&this->timStStringScroll	);
+
 	McHardwareInterfaces::BaseResult	r;
 
 	r = this->pcbObj->lcd->reset();
@@ -101,7 +108,12 @@ void Gui::init ( void ) {
 }
 
 void Gui::update ( void ) {
-	McHardwareInterfaces::BaseResult	r;
+	this->updateWithoutLed();
+	USER_OS_GIVE_BIN_SEMAPHORE( this->sUpdateLcd );
+}
+
+void Gui::updateWithoutLed ( void ) {
+	McHardwareInterfaces::BaseResult r;
 
 	USER_OS_TAKE_MUTEX( this->mHost, portMAX_DELAY );
 
@@ -112,8 +124,6 @@ void Gui::update ( void ) {
 
 	r = this->pcbObj->lcd->update();
 	this->checkAndExit( r );
-
-	USER_OS_GIVE_BIN_SEMAPHORE( this->sUpdateLcd );
 
 	USER_OS_GIVE_MUTEX( this->mHost );
 }
@@ -191,10 +201,35 @@ void	Gui::setWindowIndexingSupportedFiles		(	WindowIndexingSupportedFiles**		ret
 	*returnWisfObj = this->wisf;
 }
 
-void Gui::setWindowMain	( std::shared_ptr< ItemFileInFat >	item ) {
+void Gui::setWindowMain	(	std::shared_ptr< ItemFileInFat >	item,
+							uint32_t							countItems	) {
 	this->removeOldWindow();
 	this->pb		=	this->addPlayBar();
 	this->pb->setLenInTick( item->lenTick );
+	this->shl		=	this->addHorizontalList();
+	this->shl->setItemCount( countItems );
+	this->shl->setStringCurrentItem( item->fileName );
+
+	USER_OS_STATIC_TIMER_STOP( this->timStringScroll );
+	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timStringScroll, this->timerSpeedLow );
+	USER_OS_STATIC_TIMER_START( this->timStringScroll );
+}
+
+void	Gui::timerHandler	(	TimerHandle_t		timer	) {
+	Gui* o = reinterpret_cast< Gui* >( pvTimerGetTimerID( timer ) );
+
+	int r;
+	r = o->shl->scroll();
+
+	if ( r != 1 ) {
+		if ( USER_OS_STATIC_TIMER_GET_PERIOD( o->timStringScroll ) == o->timerSpeedLow	) {
+			USER_OS_STATIC_TIMER_CHANGE_PERIOD( o->timStringScroll, o->timerSpeedFast );
+		}
+	} else {
+		USER_OS_STATIC_TIMER_CHANGE_PERIOD( o->timStringScroll, o->timerSpeedLow );
+	}
+
+	o->updateWithoutLed();
 }
 
 }

@@ -45,21 +45,6 @@ void Base::playPauseSet( bool state ) {
 	}
 }
 
-void Base::trackMainWindowInit ( void ) {
-	USER_OS_STATIC_TIMER_STOP( this->timNameScroll );
-	USER_OS_STATIC_TIMER_RESET( this->timNameScroll );
-	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timNameScroll, SCROLL_STRING_NAME_LOW );
-
-	/// Имя текущему элементу.
-	mSlimHorizontalListSetStringCurrentItem( &this->g.shl, this->fat.currentFileInfo.fileName );
-
-	/// Указываем колличество элементов в директории.
-
-	mPlayBarSetNewTrack( &this->g.pb, this->fat.currentFileInfo.lenTick / 50 );
-
-	USER_OS_STATIC_TIMER_START( this->timNameScroll );
-}
-
 void Base::startPlayTrack ( void ) {
 	int r;
 	r = this->getFileInfoFromListCurDir( this->lType, this->currentFile );

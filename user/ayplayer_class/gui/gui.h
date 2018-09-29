@@ -32,17 +32,21 @@ public:
 	void	setMinIlluminationTime		(	uint32_t		minIlluminationTimeS	);
 
 public:
-	void	setWindowMain						(	std::shared_ptr< ItemFileInFat >	item	);
+	void	setWindowMain				(	std::shared_ptr< ItemFileInFat >	item,
+											uint32_t							countItems	);
 	void	setWindowIndexingSupportedFiles		(	WindowIndexingSupportedFiles**		returnWisfObj	);
 
 public:
 	void	update				(	void	);
+	void	updateWithoutLed	(	void	);
 
 public:
 	/// Создает окно поверх остальных с каким-то уведомлением.
 	/// Когда удалится объект - удалится и уведомление.
 	WindowMessage*					addWindowMessage					(	const char* const message	);
 
+private:
+	static	void	timerHandler				(	TimerHandle_t		timer		);
 
 private:
 	HorizontalList* addHorizontalList ( void );
@@ -85,7 +89,15 @@ private:
 private:
 	StatusBar*							statusBar	=	nullptr;
 	PlayBar*							pb			=	nullptr;
+	HorizontalList*						shl			=	nullptr;
 	WindowIndexingSupportedFiles*		wisf		=	nullptr;
+
+private:
+	uint32_t							timerSpeedLow			=	1000;
+	uint32_t							timerSpeedFast			=	200;
+	USER_OS_TIMER						timStringScroll;
+	USER_OS_TIMER_STATIC_STRUCT			timStStringScroll;
+
 };
 
 }

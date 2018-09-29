@@ -34,9 +34,6 @@ enum class AYPLAYER_WINDOW_NOW {
 #define	PLAY_TASK_PRIO							1
 #define	PLAY_TICK_TASK_PRIO						1
 
-#define SCROLL_STRING_NAME_LOW					1000
-#define SCROLL_STRING_NAME_FAST					200
-
 #define LIST_NO_SORT_FAT_NAME					".fileList.list"
 #define LIST_SORT_NAME_FAT_NAME					".fileListNameSort.list"
 #define LIST_SORT_LEN_FAT_NAME					".fileListLenSort.list"
@@ -256,8 +253,6 @@ private:
 	USER_OS_STATIC_STACK_TYPE							tbPlayTickTask[ TB_PLAY_TICK_TASK_SIZE ];
 	USER_OS_STATIC_TASK_STRUCT_TYPE						tsPlayTickTask;
 
-	USER_OS_TIMER										timNameScroll;
-	USER_OS_TIMER_STATIC_STRUCT							timStNameScroll;
 
 	AYPLAYER_STATUS										playState;
 	FILE_LIST_TYPE										lType;

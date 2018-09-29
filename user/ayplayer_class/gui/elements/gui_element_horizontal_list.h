@@ -14,13 +14,17 @@ public:
 						int32_t										x,
 						int32_t										y,
 						uint32_t									w,
-						uint32_t									h			);
+						uint32_t									h	);
 
 	~HorizontalList();
 
+public:
+	void	setStringCurrentItem		(	const char*		string		);
+	void	setItemCount				(	uint32_t		countItems	);
+	int		scroll 						(	void	);
+
 private:
-	MSlimHorizontalList			shl;
-	int32_t						currentSlider;
+	MSlimHorizontalList					shl;
 
 };
 
