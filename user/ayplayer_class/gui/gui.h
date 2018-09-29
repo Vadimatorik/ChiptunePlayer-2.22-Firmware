@@ -4,10 +4,12 @@
 #include <memory>
 #include "ayplayer_struct_gui_cfg.h"
 #include "ayplayer_struct_pcb_cfg.h"
-
+#include "gui_element_status_bar.h"
 #include "gui_element_window_indexing_supported_files.h"
 #include "gui_element_window_message.h"
-#include "gui_element_window_status_bar.h"
+#include "gui_element_horizontal_list.h"
+#include "gui_element_play_bar.h"
+#include "ayplayer_struct_fat_cfg.h"
 
 #define TB_ILLUMINATION_CONTROL_TASK_SIZE			200
 
@@ -19,25 +21,37 @@ public:
 			const AyPlayerGuiModuleStyleCfg*		const cfg,
 			McHardwareInterfaces::TimPwmOneChannel*	ledPwm );
 
+
 public:
 	void	init						(	void	);
 
+public:
 	void	setMaxIlluminationDuty		(	float			maxIlluminationDuty	);
 	void	setMinIlluminationDuty		(	float			minIlluminationDuty	);
 	void	setMaxIlluminationTime		(	uint32_t		maxIlluminationTimeS	);
 	void	setMinIlluminationTime		(	uint32_t		minIlluminationTimeS	);
 
-	/// Перерисовывает GUI и обновляет экран.
+public:
+	void	setWindowMain						(	std::shared_ptr< ItemFileInFat >	item	);
+	void	setWindowIndexingSupportedFiles		(	WindowIndexingSupportedFiles**		returnWisfObj	);
+
+public:
 	void	update				(	void	);
 
+public:
 	/// Создает окно поверх остальных с каким-то уведомлением.
 	/// Когда удалится объект - удалится и уведомление.
-	WindowMessage*	addWindowMessage					(	const char* const message	);
+	WindowMessage*					addWindowMessage					(	const char* const message	);
 
+
+private:
+	HorizontalList* addHorizontalList ( void );
+	PlayBar* addPlayBar ( void );
+
+private:
 	StatusBar*						addStatusBar						(	void	);
-	WindowIndexingSupportedFiles*	addWindowIndexingSupportedFiles		(	void	);
 
-
+	void	removeOldWindow	( void );
 private:
 	/*!
 	 *	\brief		Метод проверяет удачность выполнения
@@ -63,12 +77,15 @@ private:
 	float									minIlluminationDuty;
 	uint32_t								maxIlluminationTimeS;
 	uint32_t								minIlluminationTimeS;
-	StatusBar*								statusBar;
 
 private:
 	const uint32_t	tbIlluminationControlTaskSize			=	TB_ILLUMINATION_CONTROL_TASK_SIZE;
 	const uint32_t	illuminationControlTaskPrio				=	1;
 
+private:
+	StatusBar*							statusBar	=	nullptr;
+	PlayBar*							pb			=	nullptr;
+	WindowIndexingSupportedFiles*		wisf		=	nullptr;
 };
 
 }

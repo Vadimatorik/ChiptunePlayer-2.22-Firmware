@@ -15,43 +15,6 @@ extern MakiseDriver			makiseGuiDriver;
 namespace AyPlayer {
 
 /*
-void Base::initWindowIndexingSupportedFiles( char* stateIndexing ) {
-	m_create_slist(	&this->g.sl,
-					&makiseHost.host,
-					mp_rel( 0,	11,
-							128, 64 - 11 ),
-					stateIndexing,
-					nullptr,
-					nullptr,
-					MSList_List,
-					 );
-
-	/// Привязка list-а к его элементам.
-	for ( int i = 0; i < 4; i++ ) {
-		this->g.slItem[ i ]	=	( MSList_Item* )pvPortMalloc( sizeof( MSList_Item ) );
-		assertParam( this->g.slItem[ i ] );
-
-		this->g.slItem[ i ]->text	=	nullptr;
-		m_slist_add( &this->g.sl, this->g.slItem[ i ] );
-	}
-}
-
-void Base::initWindowSortingFileList ( void ) {
-	m_create_message_window(	&this->g.mw,
-								&makiseHost.host,
-								mp_rel( 0,	11,
-										128, 64 - 11 ),
-								"Sorting list file...",
-								&this->cfg->gui->smw );
-	////this->guiUpdate();
-}
-
-void Base::removeWindowSortingFileList ( void) {
-	makise_g_cont_rem( &this->g.mw.el );
-
-	vPortFree( &this->g.mw );
-}
-
 void Base::initPlayWindow ( void ) {
 	mCreatePlayBar(	&this->g.pb,
 					&makiseHost.host,

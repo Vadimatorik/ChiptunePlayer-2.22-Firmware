@@ -18,12 +18,3 @@ struct AyPlayerGuiModuleStyleCfg {
 	const MakiseStyle_SMSlimHorizontalList		horizontalListStyle;
 	const MakiseStyle							m;
 };
-
-/*
-struct AyPlayerModuleGui {
-	MPlayBar									pb;
-	MSlimHorizontalList							shl;
-	MSlider*									sliders[ 6 ];
-	int32_t										currentSlider;
-};
-*/

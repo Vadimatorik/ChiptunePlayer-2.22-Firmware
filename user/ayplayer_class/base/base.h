@@ -68,7 +68,7 @@ enum class CAUSE_SHUTDOWN {
 	TIMEOUT					=	2
 };
 
-#include "../structs/ayplayer_struct_cfg.h"
+#include "ayplayer_struct_cfg.h"
 
 class Base {
 public:
@@ -212,6 +212,8 @@ private:
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
+
+private:
 
 private:
 	static	void	mainTask						( void* obj );

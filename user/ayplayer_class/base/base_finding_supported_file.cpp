@@ -1,9 +1,7 @@
 #include "base.h"
-#include "fat/fat.h"
+#include "fat.h"
 
 namespace AyPlayer {
-
-
 
 int	Base::createFileListInSdCard ( std::shared_ptr< char >	path,
 									WindowIndexingSupportedFiles*	w	) {

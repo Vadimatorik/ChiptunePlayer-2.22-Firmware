@@ -26,7 +26,12 @@ int Base::initMainWindow ( void ) {
 	if ( r != EOK )		return r;
 
 	r = this->fat.closeFile( f );
-	return r;
+	if ( r != EOK )		return r;
+
+	this->gui->setWindowMain( this->playItem );
+	this->gui->update();
+
+	return EOK;
 }
 
 }

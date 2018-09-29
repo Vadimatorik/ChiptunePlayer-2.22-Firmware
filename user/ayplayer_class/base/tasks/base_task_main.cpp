@@ -24,8 +24,9 @@ void Base::mainTask ( void* obj ) {
 
 	do {
 		o->waitToInsertCorrectSdCard();
-		if ( o->initFileLists() != EOK )				continue;
-		if ( o->setSysCfgParams() != EOK )				continue;
+		if ( o->initFileLists()		!= EOK )				continue;
+		if ( o->setSysCfgParams() 	!= EOK )				continue;
+		if ( o->initMainWindow()	!= EOK )				continue;
 	} while( false );
 
 
@@ -136,7 +137,7 @@ void Base::mainTask ( void* obj ) {
 
 
 	while( 1 ) {
-
+		vTaskDelay( 1000 );
 	}
 }
 

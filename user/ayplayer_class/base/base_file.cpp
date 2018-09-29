@@ -22,16 +22,17 @@ int Base::initFileLists ( void ) {
 	/// открыта где-то во вне (не были созданы временные файлы ОС), то пересоздавать не надо. А пока пусть так.
 
 
-	std::shared_ptr< WindowIndexingSupportedFiles > w( this->gui->addWindowIndexingSupportedFiles() );
+	WindowIndexingSupportedFiles*		wisfObj	=	nullptr;
+	this->gui->setWindowIndexingSupportedFiles( &wisfObj );
 
 	int res;
 
 	/// Составляем список файлов.
-	res = this->createFileListsInSdCard( fatFsPath, w.get() );
+	res = this->createFileListsInSdCard( fatFsPath, wisfObj );
 	if ( res != EOK ) return res;
 
 	/// Составляем сортированные списки.
-	res = this->findingFileListAndSort( fatFsPath, w.get() );
+	res = this->findingFileListAndSort( fatFsPath, wisfObj );
 	if ( res != EOK ) return res;
 
 	return EOK;

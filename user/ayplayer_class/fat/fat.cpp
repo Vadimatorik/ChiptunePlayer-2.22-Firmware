@@ -47,7 +47,7 @@ int Fat::setCurrentDir ( const char* const path ) {
 	FRESULT	r;
 	r	=	f_chdir( path );
 
-	if ( r != FRESULT::FR_OK ) {
+	if ( r == FRESULT::FR_OK ) {
 		return EOK;
 	} else {
 		return EIO;
