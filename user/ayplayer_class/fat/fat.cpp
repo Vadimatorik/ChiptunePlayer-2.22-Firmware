@@ -225,8 +225,8 @@ std::shared_ptr< ItemFileInFat > Fat::createtructureItemFileListFilling (	const 
 
 	memset( s->fileName, 0, FF_MAX_LFN + 1 );
 
-	/// Заполняем.
 	strcpy( s->fileName, nameTrack );
+
 	s->format		=	format;
 	s->lenTick		=	lenTickTrack;
 

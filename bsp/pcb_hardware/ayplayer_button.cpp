@@ -1,162 +1,192 @@
 #include "ayplayer_button.h"
 
-/*
-#include "buttons_through_shift_register_one_input_pin.h"
+#include "buttons_core.h"
 #include "user_os.h"
 #include "ayplayer_os_object.h"
-#include "pin.h"*/
+#include "ayplayer_mc_hardware.h"
 
-//extern uint8_t							srOutBufButton[ 1 ];
-/*
-srOneInButtonStatusStruct				bSAr[ 7 ];
+bool getKey ( uint8_t id ) {
+	keyboardStrings[ 0 ].set();
+	keyboardStrings[ 1 ].set();
+	keyboardStrings[ 2 ].set();
+
+	switch( id ) {
+	case 0:
+		keyboardStrings[ 0 ].reset();	return !keyboardColumns[ 1 ].read();
+	case 1:
+		keyboardStrings[ 2 ].reset();	return !keyboardColumns[ 1 ].read();
+	case 2:
+		keyboardStrings[ 1 ].reset();	return !keyboardColumns[ 0 ].read();
+	case 3:
+		keyboardStrings[ 1 ].reset();	return !keyboardColumns[ 2 ].read();
+	case 4:
+		keyboardStrings[ 1 ].reset();	return !keyboardColumns[ 1 ].read();
+	case 5:
+		keyboardStrings[ 0 ].reset();	return !keyboardColumns[ 2 ].read();
+	case 6:
+		keyboardStrings[ 0 ].reset();	return !keyboardColumns[ 0 ].read();
+	}
+
+	return false;
+}
 
 // При опуске коротком или длинном - одна и та же очередь.
-sr_one_in_button_item_cfg buttonChannelcfg[ 7 ] = {
+Button::OneButtonCfg cfgButtons[ 7 ] = {
 	{
-		.byte				=	0,
-		.bit				=	0,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::UP_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::UP_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::UP_CLICK ),
-		.status				=	&bSAr[0]
+		.id							=	0,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::UP_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::UP_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::UP_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	1,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_LONG_CLICK),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_CLICK ),
-		.status				=	&bSAr[1]
+		.id							=	1,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::DOWN_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	2,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_CLICK ),
-		.status				=	&bSAr[2]
+		.id							=	2,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::LEFT_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	3,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_CLICK ),
-		.status				=	&bSAr[3]
+		.id							=	3,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::RIGHT_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	4,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_CLICK ),
-		.status				=	&bSAr[4]
+		.id							=	4,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::ENTER_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	6,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_CLICK ),
-		.status				=	&bSAr[5]
+		.id							=	5,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::BACK_LONG_CLICK )
+		}
 	},
 	{
-		.byte				=	0,
-		.bit				=	5,
-		.stabildDelayMs		=	50,
-		.delayMsLongPress	=	700,
-		.sPress				=	nullptr,
-		.qPress				=	nullptr,
-		.vPress				=	0,
-		.sStartLongPress	=	nullptr,
-		.qStartLongPress	=	&osData.qAyButton,
-		.vStartLongPress	=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_LONG_PRESS ),
-		.sReleaseLongClick	=	nullptr,
-		.qReleaseLongClick	=	&osData.qAyButton,
-		.vReleaseLongClick	=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_LONG_CLICK ),
-		.sReleaseClick		=	nullptr,
-		.qReleaseClick		=	&osData.qAyButton,
-		.vReleaseClick		=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_CLICK ),
-		.status				=	&bSAr[6]
-	},
+		.id							=	6,
+		.stabilizationTimeMs		=	50,
+		.longPressDetectionTimeS	=	1,
+		.press						=	{ nullptr, nullptr, 0 },
+		.click						=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_CLICK )
+		},
+		.longPress					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_LONG_PRESS )
+		},
+		.longClick					=	{
+			.s						=	nullptr,
+			.q						=	&osData.qAyButton,
+			.v						=	M_EC_TO_U8( EC_BUTTON_NAME::MENU_LONG_CLICK )
+		}
+	}
 };
 
-ButtonsThroughShiftRegisterOneInputPinCfg buttonCfg = {
-	.pinInObj					=	&buttonIn,
-	.srObj						=	&srButton,
-	.pinCfgArray				=	buttonChannelcfg,
-	.pinCount					=	7,
-	.delayMs					=	10,
-	.prio						=	1,
-	.pointingButtonArray		=	srOutBufButton,
-	.srBufferByteCount			=	1,
-	.mutex						=	&osData.mSpi3
+Button::BaseCfg cfgButton = {
+	.taskDelayMs					=	10,
+	.taskPrio						=	3,
+	.cfgArray						=	cfgButtons,
+	.cfgArraySize					=	7,
+	.getButtonState					=	getKey
 };
-*/
-//ButtonsThroughShiftRegisterOneInputPin button( nullptr /*&buttonCfg*/ );
+
+Button::Base buttons( &cfgButton );

@@ -23,6 +23,10 @@ void	PlayBar::reset	(	void	) {
 	mPlayBarResetTrack( &this->pb );
 }
 
+void	PlayBar::inc	(	void	) {
+	mPlayBarIncSec( &this->pb );
+}
+
 PlayBar::~PlayBar () {
 	makise_g_cont_rem( &this->pb.el );
 }

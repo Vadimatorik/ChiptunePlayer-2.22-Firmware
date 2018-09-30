@@ -35,6 +35,8 @@ public:
 	void	setWindowMain				(	std::shared_ptr< ItemFileInFat >	item,
 											uint32_t							countItems	);
 	void	resetPlayBarInMainWindow	(	void	);
+	void	incTickPlayBarInMainWindow	(	void	);
+	void	updateTreckWindowMain		(	std::shared_ptr< ItemFileInFat >	item	);
 
 
 	void	setWindowIndexingSupportedFiles		(	WindowIndexingSupportedFiles**		returnWisfObj	);

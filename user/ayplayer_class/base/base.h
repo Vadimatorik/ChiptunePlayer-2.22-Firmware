@@ -27,7 +27,7 @@ enum class AYPLAYER_WINDOW_NOW {
 
 #define	TB_BUTTON_CLICK_HANDLER_TASK_SIZE		400
 #define	TB_PLAY_TASK_SIZE						800
-#define	TB_PLAY_TICK_TASK_SIZE					200
+#define	TB_PLAY_TICK_TASK_SIZE					400
 
 #define	MAIN_TASK_PRIO							3
 #define	BUTTON_CLICK_HANDLER_TASK_PRIO			1
@@ -220,9 +220,6 @@ private:
 	static void scrollNameInMainWindow ( TimerHandle_t timer );
 	int initFileLists ( void );
 	void			powerOff							(	CAUSE_SHUTDOWN	cause	);
-
-	void			guiUpdate							( void );
-
 	 /// Рисует сообщение об ошибке microsd.
 
 	void			errorMicroSdDraw					( const FRESULT r );
@@ -263,6 +260,8 @@ private:
 	uint32_t											currentFile;
 	uint32_t											countFileInCurrentDir;
 	std::shared_ptr< ItemFileInFat >					playItem;
+	std::shared_ptr< FIL > 								playList;
+
 
 	AyPlayer::Fat										fat;
 	AyPlayer::Nvic										nvic;

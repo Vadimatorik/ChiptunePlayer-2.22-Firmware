@@ -203,6 +203,8 @@ void	Gui::setWindowIndexingSupportedFiles		(	WindowIndexingSupportedFiles**		ret
 
 void Gui::setWindowMain	(	std::shared_ptr< ItemFileInFat >	item,
 							uint32_t							countItems	) {
+	USER_OS_STATIC_TIMER_STOP( this->timStringScroll );
+
 	this->removeOldWindow();
 	this->pb		=	this->addPlayBar();
 	this->pb->setLenInTick( item->lenTick );
@@ -210,13 +212,26 @@ void Gui::setWindowMain	(	std::shared_ptr< ItemFileInFat >	item,
 	this->shl->setItemCount( countItems );
 	this->shl->setStringCurrentItem( item->fileName );
 
-	USER_OS_STATIC_TIMER_STOP( this->timStringScroll );
 	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timStringScroll, this->timerSpeedLow );
 	USER_OS_STATIC_TIMER_START( this->timStringScroll );
 }
 
-void Gui::resetPlayBarInMainWindow	(	void	) {
+void Gui::updateTreckWindowMain	(	std::shared_ptr< ItemFileInFat >	item	) {
+	USER_OS_STATIC_TIMER_STOP( this->timStringScroll );
+
+	this->pb->setLenInTick( item->lenTick );
+	this->shl->setStringCurrentItem( item->fileName );
+
+	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timStringScroll, this->timerSpeedLow );
+	USER_OS_STATIC_TIMER_START( this->timStringScroll );
+}
+
+void	Gui::resetPlayBarInMainWindow	(	void	) {
 	this->pb->reset();
+}
+
+void	Gui::incTickPlayBarInMainWindow	(	void	) {
+	this->pb->inc();
 }
 
 

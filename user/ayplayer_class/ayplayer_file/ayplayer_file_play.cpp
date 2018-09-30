@@ -6,7 +6,7 @@ void	setPwr	(	uint32_t			chipNumber,
 					bool				state	) {
 	pwr5vOn.set( state );
 	ltc.init();
-	ltc.setFrequency( 1.75e6, WaveGenerators::LTC6903OutputMode::CLK_ON_INV_OFF );
+	ltc.setFrequency( 0, WaveGenerators::LTC6903OutputMode::CLK_ON_INV_OFF );
 	shdn.set();
 	pwrAy[ chipNumber ].set( state );
 }

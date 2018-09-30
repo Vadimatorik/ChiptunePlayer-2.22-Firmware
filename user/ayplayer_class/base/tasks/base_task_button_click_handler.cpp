@@ -30,12 +30,12 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 
 		CASE( AYPLAYER_STATUS::PAUSE ):
 			this->playPauseSet( true );
-			this->guiUpdate();
+			this->gui->update();
 			return;
 
 		CASE( AYPLAYER_STATUS::PLAY ):
 			this->playPauseSet( false );
-			this->guiUpdate();
+			this->gui->update();
 			return;
 		};
 	}

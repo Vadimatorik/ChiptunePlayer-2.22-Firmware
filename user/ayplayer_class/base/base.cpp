@@ -29,58 +29,36 @@ void Base::initTasks ( void ) {
 								MAIN_TASK_PRIO,
 								this->tbMainTask,
 								&this->tsMainTask );
-}
 
-void Base::start ( void ) {
-	this->initHardwareMc();
-	this->initTasks();
-	vTaskStartScheduler();
-
-	/// Основной поток проекта.
-
-
-/*
-	Контроль подсветки экрана.
-
-
-
-	/// Обработка нажатой клавиши.
-	USER_OS_STATIC_TASK_CREATE(	AyPlayer::buttonClickHandlerTask,
-								"buttonClickHandler",
+	USER_OS_STATIC_TASK_CREATE(	Base::buttonClickHandlerTask,
+								"ButtonClickHandlerTask",
 								TB_BUTTON_CLICK_HANDLER_TASK_SIZE,
 								( void* )this,
 								BUTTON_CLICK_HANDLER_TASK_PRIO,
 								this->tbButtonClickHandlerTask,
-								&this->tsButtonClickHandlerTask	);
+								&this->tsButtonClickHandlerTask );
 
-	/// Воспроизведение трека.
-	USER_OS_STATIC_TASK_CREATE(	AyPlayer::playTask,
-								"play",
+	USER_OS_STATIC_TASK_CREATE(	Base::playTask,
+								"Play",
 								TB_PLAY_TASK_SIZE,
 								( void* )this,
 								PLAY_TASK_PRIO,
 								this->tbPlayTask,
 								&this->tsPlayTask	);
 
-	/// Обновление плей-бара при прохождении секунды.
-	USER_OS_STATIC_TASK_CREATE(	AyPlayer::playTickHandlerTask,
-								"playTick",
+	USER_OS_STATIC_TASK_CREATE(	Base::playTickHandlerTask,
+								"PlayTickHandler",
 								TB_PLAY_TICK_TASK_SIZE,
 								( void* )this,
 								PLAY_TICK_TASK_PRIO,
 								this->tbPlayTickTask,
 								&this->tsPlayTickTask	);
+}
 
-	/// Прокрутка строки.
-	this->timNameScroll = USER_OS_STATIC_TIMER_CREATE(	"ScrollStringName",
-														1000,
-														( void* )this,
-														AyPlayer::scrollNameInMainWindow,
-														&this->timStNameScroll	);
-
-	USER_OS_STATIC_TIMER_START( this->timNameScroll );
-
-	*/
+void Base::start ( void ) {
+	this->initHardwareMc();
+	this->initTasks();
+	vTaskStartScheduler();
 }
 
 void Base::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {

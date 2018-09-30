@@ -12,7 +12,11 @@ ayYmConnectionChipCfg arrayConnectCfg[] = {
 };
 
 void ayplayerFuncFrequencyAyControl ( bool state ) {
-	( void )state;
+	if ( state ) {
+		ltc.setFrequency( 1.75e6, WaveGenerators::LTC6903OutputMode::CLK_ON_INV_OFF );
+	} else {
+		ltc.setFrequency( 1.75e6, WaveGenerators::LTC6903OutputMode::CLK_OFF_INV_OFF );
+	}
 }
 
 void ayplayerFuncTimInterruptTask ( bool state ) {

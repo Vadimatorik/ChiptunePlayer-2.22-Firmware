@@ -29,35 +29,6 @@ void Base::mainTask ( void* obj ) {
 		if ( o->initMainWindow()	!= EOK )				continue;
 	} while( false );
 
-
-
-
-	/*
-	std::shared_ptr< char > fatFsPath( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
-	if ( fatFsPath.get() == nullptr )	{
-		while(1);
-	}
-
-	int r;
-
-
-	strcpy( fatFsPath.get(), "0:.fileList.list" );
-	std::shared_ptr< FIL > playFile = o->fat.openFile( fatFsPath, r );
-
-	uint32_t numberTracks = o->fat.getNumberTrackInList( playFile );
-
-	for ( uint32_t i = 0; i < numberTracks; i++ ) {
-		std::shared_ptr< char > fileName( new char[ MAX_PATH_FATFS_STRING_LEN + 1 ], std::default_delete< char[] >() );
-		fileName = o->fat.getNameTrackFromFile( playFile, i, r );
-		if ( r != EOK ) {
-			while(1);
-		}
-
-		o->cfg->ay->psgFilePlay( fileName );
-	}*/
-
-
-
 /*
 	/// Счетчики отсчета времени.
 	int32_t incStabilTime	= INC_AND_DEC_STABIL_TIME;

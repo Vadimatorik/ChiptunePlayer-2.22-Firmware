@@ -17,6 +17,7 @@ public:
 				uint32_t								h			);
 
 	void		reset				(	void	);
+	void		inc					(	void	);
 
 	~PlayBar();
 
