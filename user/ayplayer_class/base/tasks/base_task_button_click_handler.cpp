@@ -39,13 +39,13 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 			return;
 		};
 	}
-/*
+
 	if ( b == EC_BUTTON_NAME::ENTER_LONG_PRESS ) {
 		if ( ( this->playState == AYPLAYER_STATUS::PLAY ) || ( this->playState == AYPLAYER_STATUS::PAUSE ) ) {
 			this->stopPlayFile();
-			//this->guiUpdate();
+			this->gui->update();
 		}
-		continue;
+		return;
 	}
 
 	if ( b == EC_BUTTON_NAME::LEFT_CLICK ) {
@@ -53,10 +53,9 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 			this->currentFile--;
 			this->stopPlayFile();
 			this->startPlayTrack();
-			mSlimHorizontalListLeft( &this->g.shl, this->fat.currentFileInfo.fileName );
-			//this->guiUpdate();
+			this->gui->update();
 		}
-		continue;
+		return;
 	}
 
 	if ( b == EC_BUTTON_NAME::RIGHT_CLICK ) {
@@ -64,12 +63,11 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 			this->currentFile++;
 			this->stopPlayFile();
 			this->startPlayTrack();
-			mSlimHorizontalListRight( &this->g.shl, this->fat.currentFileInfo.fileName );
-			//this->guiUpdate();
+			this->gui->update();
 		}
-		continue;
+		return;
 	}
-
+/*
 	/// Переход в эквалайзер.
 	if ( b == EC_BUTTON_NAME::DOWN_CLICK ) {
 		this->removePlayWindow();									/// Закрываем текущее окно.

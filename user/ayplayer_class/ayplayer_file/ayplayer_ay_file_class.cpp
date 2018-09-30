@@ -203,10 +203,14 @@ int AyYmFilePlay::writePacket (	const uint8_t	reg,
 	s.numberChip	=	static_cast< uint8_t >( this->usingChip );
 
 	while( 1 ) {
+		/// Если нет, снова смотрим флаги и ждем.
+		if ( this->flagStop ) {
+			this->abort();
+			return -1;
+		}
+
 		if ( this->cfg->ayLow->queueAddElement( &s ) == 0 )
 			return 0;		/// Место в очереди есть, все хорошо.
-
-		/// Если нет, снова смотрим флаги и ждем.
 	}
 }
 

@@ -223,6 +223,7 @@ private:
 	 /// Рисует сообщение об ошибке microsd.
 
 	void			errorMicroSdDraw					( const FRESULT r );
+	void startPlayTrack( void );
 
 
 	/// Проходится по всем каталогам и составляет список поддерживаемых файлов.

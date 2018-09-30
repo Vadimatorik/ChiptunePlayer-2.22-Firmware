@@ -24,24 +24,6 @@ int Base::startPlayFile ( void ) {
 
  	return r;
 }
-
-
-
-
-
-void Base::startPlayTrack ( void ) {
-	int r;
-	r = this->getFileInfoFromListCurDir( this->lType, this->currentFile );
-	if ( r != 0 )
-		return;
-
-	if ( this->wNow == AYPLAYER_WINDOW_NOW::MAIN ) {
-		this->trackMainWindowInit();
-	}
-
-	USER_OS_GIVE_BIN_SEMAPHORE( this->cfg->os->sStartPlay );
-}
-
 */
 
 }

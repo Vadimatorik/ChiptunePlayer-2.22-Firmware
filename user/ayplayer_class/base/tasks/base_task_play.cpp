@@ -2,7 +2,12 @@
 
 namespace AyPlayer {
 
-
+void Base::startPlayTrack( void ) {
+	int r;
+	this->playItem				= this->fat.readItemFileList( this->playList, this->currentFile, r );
+	this->gui->updateTreckWindowMain( this->playItem );
+	USER_OS_GIVE_BIN_SEMAPHORE( this->cfg->os->sStartPlay );
+}
 
 void Base::playTask (  void* obj  ) {
 	Base* o =( Base* ) obj;
