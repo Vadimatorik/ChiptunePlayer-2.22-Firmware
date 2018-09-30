@@ -15,39 +15,6 @@ extern MakiseDriver			makiseGuiDriver;
 namespace AyPlayer {
 
 /*
-void Base::initPlayWindow ( void ) {
-	mCreatePlayBar(	&this->g.pb,
-					&makiseHost.host,
-					mp_rel(	0,	57,
-							128, 7	),
-					1,
-					&this->cfg->gui->playBarStyle );
-
-	/// Время трека сразу в статус бар.
-	mPlayBarSetNewTrack( &this->g.pb, this->fat.currentFileInfo.lenTick / 50 );
-
-	mCreateSlimHorizontalList(	&this->g.shl,
-								&makiseHost.host,
-								mp_rel(	0,	11,
-										128, 12	),
-								&this->cfg->gui->horizontalListStyle	);
-
-	// Запускаем скролл строки трека в главном
-	 // окне и инициализируем все элементы.
-	this->trackMainWindowInit();
-
-	/// Указываем колличество элементов в директории.
-	mSlimHorizontalSetItemCount( &this->g.shl, this->countFileInCurrentDir );
-}
-
-void Base::removePlayWindow ( void ) {
-	USER_OS_STATIC_TIMER_STOP( this->timNameScroll );	/// Скролить строку теперь не нужно.
-
-	makise_g_cont_rem( &this->g.pb.el );
-	makise_g_cont_rem( &this->g.shl.el );
-}
-
-
 void Base::initEqualizerWindow ( void ) {
 	uint32_t	x		=	5 ;							/// 5 отступ с каждой стороны.
 	uint32_t	w		=	18;							/// Ширина 18  на каждый слайдер.
