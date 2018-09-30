@@ -16,6 +16,8 @@ public:
 				uint32_t								w,
 				uint32_t								h			);
 
+	void		reset				(	void	);
+
 	~PlayBar();
 
 public:

@@ -206,11 +206,14 @@ private:
 
 	int initMainWindow ( void );
 
+	void playPauseSet( bool state );
+	void stopPlayFile ( void );
 private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
 
 private:
+	void buttonClickInMainWindow ( EC_BUTTON_NAME data );
 
 private:
 	static	void	mainTask						( void* obj );

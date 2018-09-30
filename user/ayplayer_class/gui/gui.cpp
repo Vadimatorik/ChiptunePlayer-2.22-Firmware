@@ -215,6 +215,11 @@ void Gui::setWindowMain	(	std::shared_ptr< ItemFileInFat >	item,
 	USER_OS_STATIC_TIMER_START( this->timStringScroll );
 }
 
+void Gui::resetPlayBarInMainWindow	(	void	) {
+	this->pb->reset();
+}
+
+
 void	Gui::timerHandler	(	TimerHandle_t		timer	) {
 	Gui* o = reinterpret_cast< Gui* >( pvTimerGetTimerID( timer ) );
 

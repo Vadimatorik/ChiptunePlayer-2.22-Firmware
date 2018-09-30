@@ -19,6 +19,10 @@ void PlayBar::setLenInTick	(	uint32_t	 		quantityTicks	) {
 	mPlayBarSetNewTrack( &this->pb, quantityTicks / 50 );
 }
 
+void	PlayBar::reset	(	void	) {
+	mPlayBarResetTrack( &this->pb );
+}
+
 PlayBar::~PlayBar () {
 	makise_g_cont_rem( &this->pb.el );
 }

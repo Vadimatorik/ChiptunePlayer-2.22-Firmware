@@ -27,23 +27,7 @@ int Base::startPlayFile ( void ) {
 
 
 
-/// Метод вызывается только из main окна.
-void Base::stopPlayFile ( void ) {
-	this->cfg->ay->stop();
-	this->playState		=	AYPLAYER_STATUS::STOP;
-	mPlayBarResetTrack( &this->g.pb );
-}
 
-/// Метод вызывается только из main окна.
-void Base::playPauseSet( bool state ) {
-	this->cfg->ay->setPause( state );
-
-	if ( state ) {
-		this->playState		=	AYPLAYER_STATUS::PLAY;
-	} else {
-		this->playState		=	AYPLAYER_STATUS::PAUSE;
-	}
-}
 
 void Base::startPlayTrack ( void ) {
 	int r;
