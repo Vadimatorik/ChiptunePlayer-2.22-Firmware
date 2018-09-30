@@ -49,3 +49,6 @@
 [submodule "bsp/submodule/module_wave_generators"]
 	path = bsp/submodule/module_wave_generators
 	url = git@github.com:Vadimatorik/module_wave_generators.git
+[submodule "bsp/submodule/module_button"]
+	path = bsp/submodule/module_button
+	url = git@github.com:Vadimatorik/module_button.git

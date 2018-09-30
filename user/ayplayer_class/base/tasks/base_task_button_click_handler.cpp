@@ -83,9 +83,7 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 void Base::buttonClickHandlerTask (  void* obj  ) {
 	EC_BUTTON_NAME		b;
 	uint8_t				qData;
-	int					r;
 	Base* o =( Base* ) obj;
-	( void )r;
 	while( true ) {
 		/// Старые команды нас не интересуют
 		/// (то, что нажали за время выполнения предыдущей).
