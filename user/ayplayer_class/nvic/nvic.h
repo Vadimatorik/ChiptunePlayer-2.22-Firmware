@@ -29,7 +29,7 @@ class Nvic {
 
 #pragma once
 
-#include "../../../bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_platform.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_platform.h"
 
 namespace AyPlayer {
 
@@ -74,4 +74,5 @@ private:
 	const uint32_t TIM6_DAC_IRQn_priority				=	10;
 };
 
-}
+};
+

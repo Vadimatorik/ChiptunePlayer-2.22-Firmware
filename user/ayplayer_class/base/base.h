@@ -13,7 +13,7 @@
 #include "ayplayer_struct_cfg.h"
 #include "user_os.h"
 #include "ayplayer_button.h"
-
+#include "muxer.h"
 
 namespace AyPlayer {
 
@@ -263,6 +263,19 @@ private:
 	std::shared_ptr< ItemFileInFat >					playItem;
 	std::shared_ptr< FIL > 								playList;
 
+	uint8_t												currentVolumeIndex;		/// Текущая громкость (значение потенциометра в таблице).
+	uint8_t												volumeTable[16];		/// Соотношение "уровень громкости == значению потенциометра".
+
+
+	/// Если на флешке нет актуальной таблицы
+	/// "уровень громкости == значение потенциометра" - тогда
+	/// используем стандартное.
+	const uint8_t volumeTableDafault[16] = {
+		0x00, 0x10, 0x20, 0x30,
+		0x40, 0x50, 0x60, 0x70,
+		0x80, 0x90, 0xA0, 0xB0,
+		0xC0, 0xD0, 0xE0, 0xFF
+	};
 
 	AyPlayer::Fat										fat;
 	AyPlayer::Nvic										nvic;

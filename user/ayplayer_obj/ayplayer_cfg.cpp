@@ -8,6 +8,7 @@ extern const AyPlayerPcbStrcut			ayPcbCfg;
 
 extern AyYmFilePlay				ayYmFilePlay;
 extern RunTimeLogger			ayLog;
+extern AyPlayer::Muxer			muxer;
 
 extern const AyPlayer::BaseCfg ayCfg = {
 	.mcu								=	&ayMcuCfg,
@@ -16,5 +17,7 @@ extern const AyPlayer::BaseCfg ayCfg = {
 	.gui								=	&ayGuiCfg,
 
 	.l									=	&ayLog,
-	.ay									=	&ayYmFilePlay
+	.ay									=	&ayYmFilePlay,
+
+	.muxer								=	&muxer
 };

@@ -10,6 +10,10 @@ int Base::setSyscfgDefaultGuiParams ( void ) {
 	this->gui->setMaxIlluminationTime( 10 );
 	this->gui->setMinIlluminationTime( 5 );
 
+	/// Таблица громкости по умолчанию.
+	memcpy( this->volumeTable, volumeTableDafault, sizeof( volumeTableDafault ) );
+	this->currentVolumeIndex	=	4;
+
 	return EOK;
 }
 
@@ -24,6 +28,10 @@ int Base::setSysCfgParams ( void ) {
 	this->playState		=	AYPLAYER_STATUS::STOP;
 	this->currentFile	=	0;
 	this->wNow			=	AYPLAYER_WINDOW_NOW::MAIN;
+
+	memcpy( this->volumeTable, volumeTableDafault, sizeof( volumeTableDafault ) );
+	this->currentVolumeIndex	=	4;
+	this->cfg->muxer->setVolume(	this->volumeTable[ this->currentVolumeIndex ]	);
 
 	int r;
 

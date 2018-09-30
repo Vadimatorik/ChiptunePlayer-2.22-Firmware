@@ -20,6 +20,8 @@ void Base::mainTask ( void* obj ) {
 
 	o->sd->init();
 	o->gui->init();
+	o->cfg->muxer->init();
+
 	o->setSyscfgDefaultGuiParams();
 
 	do {
@@ -29,7 +31,6 @@ void Base::mainTask ( void* obj ) {
 		if ( o->initMainWindow()	!= EOK )				continue;
 	} while( false );
 
-/*
 	/// Счетчики отсчета времени.
 	int32_t incStabilTime	= INC_AND_DEC_STABIL_TIME;
 	int32_t decStabilTime	= INC_AND_DEC_STABIL_TIME;
@@ -66,17 +67,16 @@ void Base::mainTask ( void* obj ) {
 					o->currentVolumeIndex++;
 				incStabilTime = INC_AND_DEC_STABIL_TIME;
 
-
+			/*
 				 * Сопротивление потенциометров меняем только если идет воспроизвдеение или
 				 * пауза, поскольку при старне трека с начала значение потенциометров нарастает плавно во
 				 * избежание стука.
+*/
 
-				if ( (	o->playState == AYPLAYER_STATUS::PLAY ) ||
-						o->playState == AYPLAYER_STATUS::PAUSE	) {
-					o->volumeSet( o->volumeTable[ o->currentVolumeIndex ], o->volumeTable[ o->currentVolumeIndex ] );
-				}
 
-				continue;
+					o->cfg->muxer->setVolume(	o->volumeTable[ o->currentVolumeIndex ]	);
+					o->gui->update();
+					continue;
 				}
 			}
 
@@ -89,10 +89,8 @@ void Base::mainTask ( void* obj ) {
 					o->currentVolumeIndex--;
 				decStabilTime = INC_AND_DEC_STABIL_TIME;
 
-				if ( (	o->playState == AYPLAYER_STATUS::PLAY ) ||
-						o->playState == AYPLAYER_STATUS::PAUSE	) {
-					o->volumeSet( o->volumeTable[ o->currentVolumeIndex ], o->volumeTable[ o->currentVolumeIndex ] );
-				}
+				o->cfg->muxer->setVolume(	o->volumeTable[ o->currentVolumeIndex ]	);
+				o->gui->update();
 
 				continue;
 			}
@@ -100,7 +98,7 @@ void Base::mainTask ( void* obj ) {
 
 
 
-	}*/
+	}
 
 
 
