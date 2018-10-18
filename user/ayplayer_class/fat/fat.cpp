@@ -446,12 +446,7 @@ std::shared_ptr< ItemFileInFat > Fat::readItemFileList (	std::shared_ptr< FIL >	
 	return std::shared_ptr< ItemFileInFat >( nullptr );
 }
 
-
-
-
-/*
-
-
+/// 1
 int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
 	FRESULT		r;
 
@@ -565,7 +560,7 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 
 	return r;
 	return 0;
-}*/
+}
 
 }
 

@@ -212,6 +212,10 @@ private:
 	uint32_t		getStatePlay				( void );
 	uint32_t		getPercentBattery			( void );
 
+
+	int		deleteSystemFile					(	void	);
+	int		isSystemOsFile					(	bool&	returnState	);
+
 private:
 	void buttonClickInMainWindow ( EC_BUTTON_NAME data );
 
