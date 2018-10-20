@@ -37,7 +37,7 @@ LDFLAGS				+=	-ffunction-sections -Wl,--gc-sections
 #**********************************************************************
 # Toolchain param.
 #**********************************************************************
-TOOLCHAIN_PATH		=	/opt/arm/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi
+TOOLCHAIN_PATH		=	arm-none-eabi
 
 CC					=	$(TOOLCHAIN_PATH)-gcc
 CPP					=	$(TOOLCHAIN_PATH)-g++
@@ -122,6 +122,11 @@ $(PROJECT_NAME).siz:	build/$(PROJECT_NAME).elf
 
 all: $(PROJECT_NAME).siz
 	
+clear:
+	@rm -R ./build
+	@echo 'Project cleared!'
+	@echo ' '
+
 clear_all:	
 	@rm -R ./build
 	@echo 'Project cleared!'
