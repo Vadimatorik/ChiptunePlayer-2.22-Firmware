@@ -14,11 +14,15 @@ void Base::initHardwareMc ( void ) {
 	r = this->cfg->mcu->gp->reinitAllPorts();
 	this->checkAndExit( r );
 
+	this->cfg->mcu->gpio->pwr.allPwr->set(1);
+
 	r = this->rcc->initRccFrequancyMax();
 	this->checkAndExit( r );
 
 	this->nvic.setPriorityCallsInterruptVectors();
 	this->nvic.enableAllIrq();
+
+
 }
 
 }
