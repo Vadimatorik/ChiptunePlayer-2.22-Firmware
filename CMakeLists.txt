@@ -14,7 +14,7 @@ SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
 
 # Compiler settings & flags
 SET(OPTIMIZATION_DEBUG_FLAGS "-O0 -g3")
-SET(COMMON_FLAGS "-mcpu=cortex-m3 -mthumb -mthumb-interwork -mfloat-abi=soft")
+SET(COMMON_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 
 SET(CMAKE_C_FLAGS_INIT "${COMMON_FLAGS} ${OPTIMIZATION_DEBUG_FLAGS} -std=gnu99 -fshort-enums")
 SET(CMAKE_CXX_FLAGS_INIT "${COMMON_FLAGS} ${OPTIMIZATION_DEBUG_FLAGS} -Wall -Werror -Wextra -std=c++14 -fno-exceptions \
@@ -26,9 +26,8 @@ SET(CMAKE_EXE_LINKER_FLAGS_INIT "-fmessage-length=0 -nostartfiles -Xlinker -gc-s
         -specs=nosys.specs -specs=nano.specs -fno-exceptions -Wl,--undefined=uxTopUsedPriority -ffunction-sections \
         -Wl,--gc-sections -T ${LD_FILE}")
 
-PROJECT(rocket_logger C CXX ASM)
-SET(CMAKE_CXX_STANDARD 14)
+PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
-SET(FATFS_CFG_H "${CMAKE_SOURCE_DIR}/cfg/ffconf.h")
+SET(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)

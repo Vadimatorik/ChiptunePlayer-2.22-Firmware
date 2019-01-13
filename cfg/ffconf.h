@@ -1,7 +1,5 @@
 #pragma once
 
-#include "user_os.h"
-
 /*---------------------------------------------------------------------------/
 /  FatFs - Configuration file
 /---------------------------------------------------------------------------*/
@@ -260,9 +258,9 @@
 /      lock control is independent of re-entrancy. */
 
 
-#define FF_FS_REENTRANT	1
-#define FF_FS_TIMEOUT	1000
-#define FF_SYNC_t		USER_OS_STATIC_MUTEX
+#define FF_FS_REENTRANT	0
+#define FF_FS_TIMEOUT	0
+#define FF_SYNC_t		0
 /* The option FF_FS_REENTRANT switches the re-entrancy (thread safe) of the FatFs
 /  module itself. Note that regardless of this option, file access to different
 /  volume is always re-entrant and volume control functions, f_mount(), f_mkfs()
