@@ -1,3 +1,4 @@
 build/
 *.png
 cmake-build-debug
+.idea/workspace.xml
