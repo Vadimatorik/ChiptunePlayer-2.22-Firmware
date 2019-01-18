@@ -2,5 +2,22 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_button" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_chiptune" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_digital_potentiometer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_fatfs_by_chan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_freertos_for_stm32f4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_lcd_driver" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_makise_gui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_makise_gui_elements_by_vadimatorik" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_mc_hardware_interfaces" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_microsd_low_level_driver" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_shift_register" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_stm32f4_low_level_by_st" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_system_dummy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bsp/submodule/module_wave_generators" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/openocd_configs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/user/submodule/module_run_time_logger" vcs="Git" />
   </component>
 </project>
