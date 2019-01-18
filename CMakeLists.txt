@@ -19,12 +19,16 @@ PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};-std=gnu99;-fshort-enums;")
+SET (FREERTOS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};-std=gnu99;-fshort-enums;")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
+SET (FREERTOS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Сборка требуемых библиотек.
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4)
