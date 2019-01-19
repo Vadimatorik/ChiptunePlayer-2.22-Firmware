@@ -19,7 +19,12 @@ PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
 SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums")
-SET (USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4/inc)
+
+# Путь до файла user_os.h с прослойками под конкретную операционную систему.
+SET (USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
+
+# Путь к заголовочным файлам операционной системы.
+SET (USER_OS_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4/inc)
 
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -40,7 +45,6 @@ SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (FREERTOS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (SYSTEM_DUMMY_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (STM32F4_LOW_LEVEL_BY_ST_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
-SET (BUTTONS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Сборка требуемых библиотек.
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)
