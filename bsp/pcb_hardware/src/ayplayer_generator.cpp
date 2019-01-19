@@ -3,8 +3,8 @@
 #include "ayplayer_mc_hardware.h"
 
 const WaveGenerators::LTC6903Cfg ltcCfg = {
-	.cs		=	&ltcCs,
-	.s		=	&boardSpi,
+    .cs        =    &ltcCs,
+    .s        =    &boardSpi,
 };
 
-WaveGenerators::LTC6903	ltc( &ltcCfg );
+WaveGenerators::LTC6903 ltc(&ltcCfg);
