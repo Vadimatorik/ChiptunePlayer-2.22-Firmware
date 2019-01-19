@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.9.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13.2)
 
 SET(CMAKE_SYSTEM_NAME Generic)
 SET(CMAKE_SYSTEM_VERSION 1)
@@ -19,27 +19,32 @@ PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
 SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums")
+SET (USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4/inc)
 
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (SYSTEM_DUMMY_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (STM32F4_LOW_LEVEL_BY_ST_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (BUTTONS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
 SET (FREERTOS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
 SET (SYSTEM_DUMMY_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (STM32F4_LOW_LEVEL_BY_ST_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
+SET (BUTTONS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (FREERTOS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (SYSTEM_DUMMY_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (STM32F4_LOW_LEVEL_BY_ST_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
+SET (BUTTONS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Сборка требуемых библиотек.
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_system_dummy)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_button)
