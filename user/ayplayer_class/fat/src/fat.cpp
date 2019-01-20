@@ -447,6 +447,7 @@ std::shared_ptr< ItemFileInFat > Fat::readItemFileList (	std::shared_ptr< FIL >	
 }
 
 /// 1
+/*
 int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
 	FRESULT		r;
 
@@ -462,38 +463,22 @@ int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi
 		fatReturn = r;
 		return -1;
 	}
-}
+}*/
 
 /// 0 - ок, 1 - нет файла, -1 флешка проблемная.
-int Fat::removeFile ( const char* path, const char* nameFile, FRESULT& fatReturn ) {
+int Fat::removeFile ( std::shared_ptr< char > path, const char* nameFile, FRESULT& fatReturn ) {
 	FRESULT		r;
-
-	char* fullPath;
-	fullPath = Fat::getFullPath( path, nameFile );
-
-	do {
-		r = f_chmod( fullPath, 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
-		if ( r != FR_OK ) break;
-		r = f_unlink( fullPath );
-	} while( false );
-
-	vPortFree( fullPath );
-
-	switch( ( uint32_t )r ) {
-	case ( uint32_t )FR_OK:			return 0;
-	case ( uint32_t )FR_NO_FILE:	return 1;
-	default:
-		fatReturn = r;
-		return -1;
+	
+	int int_r;
+	std::shared_ptr< char >	fullPath( this->getFullPath( path, nameFile, int_r ) );
+	if (int_r != EOK) {
+		return r;
 	}
-}
-
-int Fat::removeDir ( const char* path, FRESULT& fatReturn ) {
-	FRESULT		r;
+	
 	do {
-		r = f_chmod( path, 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
+		r = f_chmod( fullPath.get(), 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
 		if ( r != FR_OK ) break;
-		r = f_unlink( path );
+		r = f_unlink( fullPath.get() );
 	} while( false );
 
 	switch( ( uint32_t )r ) {
@@ -505,13 +490,31 @@ int Fat::removeDir ( const char* path, FRESULT& fatReturn ) {
 	}
 }
 
-int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
+int Fat::removeDir ( std::shared_ptr< char > path, FRESULT& fatReturn ) {
+	FRESULT		r;
+	do {
+		r = f_chmod( path.get(), 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
+		if ( r != FR_OK ) break;
+		r = f_unlink( path.get() );
+	} while( false );
+
+	switch( ( uint32_t )r ) {
+	case ( uint32_t )FR_OK:			return 0;
+	case ( uint32_t )FR_NO_FILE:	return 1;
+	default:
+		fatReturn = r;
+		return -1;
+	}
+}
+
+int Fat::removeDirRecurisve ( std::shared_ptr< char > fullPath, FRESULT& fatReturn ) {
 	( void )fullPath;
 	( void )fatReturn;
 	static FILINFO			f;
 	static int				r = 0;
-
-	DIR*	d	=	Fat::openDir( fullPath );
+	int mem_r;
+	
+	std::shared_ptr< DIR > d( Fat::openDir( fullPath, mem_r) );
 
 	/// Что-то не так с драйверами или директории не существует.
 	if ( d == nullptr )
@@ -519,7 +522,7 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 
 	/// Рекурсивно обходим все папки.
 	while( 1 ) {
-		fatReturn = f_readdir( d, &f );
+		fatReturn = f_readdir( d.get(), &f );
 
 		/// Если проблемы на нижнем уравне.
 		if ( fatReturn != FR_OK ) {
@@ -533,8 +536,8 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 
 		/// Найдена новая директория.
 		if ( f.fattrib & AM_DIR ) {
-			uint32_t i = strlen( fullPath );
-			sprintf( &fullPath[ i ], "/%s", f.fname );
+			uint32_t i = strlen( fullPath.get() );
+			sprintf( &fullPath.get()[ i ], "/%s", f.fname );
 
 			r	=	Fat::removeDirRecurisve( fullPath, fatReturn );
 
@@ -543,7 +546,7 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 				break;
 			}
 
-			fullPath[ i ] = 0;
+			fullPath.get()[ i ] = 0;
 		} else {
 			r = Fat::removeFile( fullPath, f.fname, fatReturn );
 			if ( r != 0 )
@@ -559,7 +562,6 @@ int Fat::removeDirRecurisve ( char* fullPath, FRESULT& fatReturn ) {
 		r = Fat::removeDir( fullPath, fatReturn );
 
 	return r;
-	return 0;
 }
 
 }

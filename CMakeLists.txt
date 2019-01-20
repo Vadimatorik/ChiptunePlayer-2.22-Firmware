@@ -59,6 +59,9 @@ SET (MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGU
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements"
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements/inc")
 
+SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH
+     "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik/inc")
+
 # Путь до структур chiptune классов.
 SET (CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
                       "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_low_lavel/inc"
@@ -111,6 +114,7 @@ SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -137,6 +141,7 @@ SET (MC_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILE
 SET (PCB_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (USER_FREERTOS_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MC_INTERRUPT_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+SET (USER_CODE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -180,4 +185,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 

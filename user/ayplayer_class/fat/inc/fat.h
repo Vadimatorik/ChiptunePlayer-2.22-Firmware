@@ -311,14 +311,14 @@ public:
 	/*!
 	 * Проверяет наличие файла.
 	 */
-	static	int			checkingFileOrDir					( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn );
+	int			checkingFileOrDir					( std::shared_ptr< char > path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn );
 
-	static	int			removeFile						( const char* path, const char* nameFile, FRESULT& fatReturn );
+	int			removeFile						( std::shared_ptr< char > path, const char* nameFile, FRESULT& fatReturn );
 
 	/// Внимание! Нужен большой под path массив!
-	static	int			removeDir						( const char* path, FRESULT& fatReturn );
+	int			removeDir						( std::shared_ptr< char > path, FRESULT& fatReturn );
 
-	static	int			removeDirRecurisve				( char* path, FRESULT& fatReturn );
+	int			removeDirRecurisve				( std::shared_ptr< char > path, FRESULT& fatReturn );
 
 };
 
