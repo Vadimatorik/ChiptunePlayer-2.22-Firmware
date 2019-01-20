@@ -2,17 +2,27 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.13.2)
 
 # Имя библиотеки.
-project (MC_HARDWARE)
+project (MC_INTERRUPT)
 
 # Для сборки требуется:
 include_directories(
-    ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
-    ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
+    ${USER_OS_H_PATH}
+    ${USER_OS_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${MODULE_MC_HARDWARE_INTERFACES_PATH}
     ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
     ${LOW_LEVEL_H_FILES_PATH}
     ${SD_H_PATH}
+    ${USER_FREERTOS_OBJ_H_PATH}
+    ${CHIPTUNE_H_PATH}
+    ${SHIFT_REGISTER_BASE_PATH}
+    ${WAVE_GENERATORS_PATH}
+    ${LCD_DRIVER_PATH}
+    ${DIGITAL_POTENTIOMETER_PATH}
+    ${MC_HARDWARE_PATH}
+    ${BUTTON_PATH}
+    ${FATFS_PATH}
+    ${PCB_HARDWARE_PATH}
 )
 
 # Компиляции полежат все <<.cpp>> файлы из директории src.
@@ -29,6 +39,7 @@ target_compile_options (${PROJECT_NAME} PRIVATE
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
                     COMMENT
                     "${PROJECT_NAME} flags: ${${PROJECT_NAME}_COMPILER_FLAGS}${${PROJECT_NAME}_OPTIMIZATION_FLAGS}")
+
 # Вывод размера библиотеки.
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
                     DEPENDS ${PROJECT_NAME}.a

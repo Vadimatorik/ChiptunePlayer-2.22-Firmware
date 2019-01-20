@@ -39,11 +39,6 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
                     COMMENT
                     "${PROJECT_NAME} flags: ${${PROJECT_NAME}_COMPILER_FLAGS}${${PROJECT_NAME}_OPTIMIZATION_FLAGS}")
 
-# Вывод коммита.
-add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMENT "${PROJECT_NAME} commit:"
-                    COMMAND git rev-parse HEAD)
-
 # Вывод размера библиотеки.
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
                     DEPENDS ${PROJECT_NAME}.a
