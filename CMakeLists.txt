@@ -57,6 +57,11 @@ SET (MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGU
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements"
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements/inc")
 
+# Путь до структур chiptune классов.
+SET (CHIPTUNE_H_PATCH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
+                      "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_low_lavel/inc"
+                      "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_note_mode/inc")
+
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -75,6 +80,8 @@ SET (MICROSD_LOW_LEVEL_DRIVER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (WAVE_GENERATORS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -96,6 +103,8 @@ SET (MICROSD_LOW_LEVEL_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};
 SET (WAVE_GENERATORS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 SET (MC_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+SET (PCB_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+SET (USER_FREERTOS_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -132,3 +141,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driv
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
