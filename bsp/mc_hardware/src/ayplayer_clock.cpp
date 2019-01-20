@@ -1,4 +1,5 @@
 #include "ayplayer_clock.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_rcc.h"
 
 const McHardwareInterfacesImplementation::RccCfg clockCfg[ AYPLAYER_RCC_CFG_COUNT ] = {
 	{

@@ -44,6 +44,11 @@ SET (SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_reg
                               ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_8bit_port/inc
                               ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_pin/inc)
 
+# Путь до SDIO.
+SET (SD_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver
+               ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_sdio/inc
+               ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_spi/inc)
+
 # Путь до необходимых заголовочных файлов MakiseGUI, чтобы можно было использовать базу элементов.
 SET (MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI"
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/fonts"
@@ -57,6 +62,7 @@ SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (SYSTEM_DUMMY_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (STM32F4_LOW_LEVEL_BY_ST_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+
 SET (BUTTONS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (DIGITAL_POTENTIOMETER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -67,6 +73,8 @@ SET (MAKISE_GUI_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MICROSD_LOW_LEVEL_DRIVER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (WAVE_GENERATORS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+
+SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -86,6 +94,8 @@ SET (SHIFT_REGISTER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMP
 SET (LCD_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MICROSD_LOW_LEVEL_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (WAVE_GENERATORS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+
+SET (MC_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -120,3 +130,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)

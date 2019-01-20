@@ -1,5 +1,5 @@
-#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_pin.h"
-#include "../submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_port_global.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_pin.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_port_global.h"
 
 extern const McHardwareInterfacesImplementation::PinCfg		adcCfg;
 extern const McHardwareInterfacesImplementation::PinCfg		buttonIncCfg;

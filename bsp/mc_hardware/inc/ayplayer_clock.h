@@ -1,8 +1,5 @@
 #pragma once
 
-#include "rcc.h"
-#include "user_os.h"
-
 /// Количество режимов тактирования контроллера.
 #define	AYPLAYER_RCC_CFG_COUNT						4
 
