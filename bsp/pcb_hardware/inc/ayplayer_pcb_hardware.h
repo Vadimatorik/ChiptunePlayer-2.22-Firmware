@@ -1,7 +1,7 @@
 #pragma once
 
 #include "module_digital_potentiometer_ad5204.h"
-#include "shift_register.h"
+#include "shift_register_base.h"
 #include "shift_register_8bit_port.h"
 #include "shift_register_pin.h"
 #include "microsd_card_sdio.h"

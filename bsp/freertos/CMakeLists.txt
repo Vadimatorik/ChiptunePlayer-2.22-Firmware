@@ -60,10 +60,10 @@ if (NOT DEFINED LOW_LEVEL_H_FILES_PATH)
             "The value of the variable <<LOW_LEVEL_H_FILES_PATH>> is not specified!")
 endif()
 
-# Нужны структуры плеера.
-if (NOT DEFINED CHIPTUNE_H_PATCH)
+# Нужны структуры плеера.USER_FREERTOS_OBJ_H_PATH
+if (NOT DEFINED CHIPTUNE_H_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<CHIPTUNE_H_PATCH>> is not specified!")
+            "The value of the variable <<CHIPTUNE_H_PATH>> is not specified!")
 endif()
 
 # Плеер за собой тянет сдвиговые регистры.
@@ -80,7 +80,7 @@ include_directories(
     ${MODULE_MC_HARDWARE_INTERFACES_PATH}
     ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
     ${LOW_LEVEL_H_FILES_PATH}
-    ${CHIPTUNE_H_PATCH}
+    ${CHIPTUNE_H_PATH}
     ${SHIFT_REGISTER_BASE_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/low_level/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/user_obj/inc

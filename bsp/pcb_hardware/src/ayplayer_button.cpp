@@ -38,23 +38,23 @@ bool getKey (uint8_t id) {
 }
 
 // При опуске коротком или длинном - одна и та же очередь.
-Button::OneButtonCfg cfgButtons[7] = {
+button::one_button_cfg cfgButtons[7] = {
     {
         .id                            =    0,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::UP_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::UP_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::UP_LONG_CLICK)
@@ -62,20 +62,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    1,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::DOWN_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::DOWN_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::DOWN_LONG_CLICK)
@@ -83,20 +83,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    2,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::LEFT_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::LEFT_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::LEFT_LONG_CLICK)
@@ -104,20 +104,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    3,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::RIGHT_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::RIGHT_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::RIGHT_LONG_CLICK)
@@ -125,20 +125,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    4,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::ENTER_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::ENTER_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::ENTER_LONG_CLICK)
@@ -146,20 +146,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    5,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::BACK_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::BACK_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::BACK_LONG_CLICK)
@@ -167,20 +167,20 @@ Button::OneButtonCfg cfgButtons[7] = {
     },
     {
         .id                            =    6,
-        .stabilizationTimeMs        =    50,
-        .longPressDetectionTimeS    =    1,
+        .stabilization_time_ms        =    50,
+        .long_press_detection_time_sec    =    1,
         .press                        =    {nullptr, nullptr, 0},
         .click                        =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::MENU_CLICK)
         },
-        .longPress                    =    {
+        .long_press                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::MENU_LONG_PRESS)
         },
-        .longClick                    =    {
+        .long_click                    =    {
             .s                        =    nullptr,
             .q                        =    &osData.qAyButton,
             .v                        =    M_EC_TO_U8(EC_BUTTON_NAME::MENU_LONG_CLICK)
@@ -188,12 +188,12 @@ Button::OneButtonCfg cfgButtons[7] = {
     }
 };
 
-Button::BaseCfg cfgButton = {
-    .taskDelayMs                    =    10,
-    .taskPrio                        =    3,
-    .cfgArray                        =    cfgButtons,
-    .cfgArraySize                    =    7,
-    .getButtonState                    =    getKey
+button::base_cfg cfgButton = {
+    .task_delay_ms                    =    10,
+    .task_prio                        =    3,
+    .cfg_array                        =    cfgButtons,
+    .cfg_array_size                    =    7,
+    .get_button_state                    =    getKey
 };
 
-Button::Base buttons(&cfgButton);
+button::base buttons(&cfgButton);

@@ -39,6 +39,8 @@ SET (LOW_LEVEL_H_FILES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low
                             ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/device/inc
                             ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/inc)
 
+SET (BUTTON_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_button/buttons_core/inc")
+
 # Путь до сдвиговых регистров.
 SET (SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_base/inc
                               ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_8bit_port/inc
@@ -58,9 +60,30 @@ SET (MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGU
                    "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements/inc")
 
 # Путь до структур chiptune классов.
-SET (CHIPTUNE_H_PATCH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
+SET (CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
                       "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_low_lavel/inc"
                       "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_note_mode/inc")
+
+# Путь до структуры с объектами FreeRTOS пользователя.
+SET (USER_FREERTOS_OBJ_H_PATH "${CMAKE_SOURCE_DIR}/bsp/freertos/user_obj/inc")
+
+# Путь до генератора миандра.
+SET (WAVE_GENERATORS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators/ltc6903/inc")
+
+# Путь до lcd.
+SET (LCD_DRIVER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver"
+                     "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/gdeh0154d27/inc"
+                     "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/ssd1306/inc"
+                     "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/st7565/inc")
+
+# Путь до потенциометров.
+SET (DIGITAL_POTENTIOMETER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_digital_potentiometer/ad5204/inc")
+
+# Путь до потенциометров.
+SET (MC_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/mc_hardware/inc")
+
+# Путь до потенциометров.
+SET (FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan/inc")
 
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -142,4 +165,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
-#add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
