@@ -15,6 +15,15 @@ SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
 # Флаги конфигурации аппаратной части (параметры архитектуры).
 SET(MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs")
 
+
+set(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/mem.ld")
+set(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/sections.ld")
+
+
+set(CMAKE_EXE_LINKER_FLAGS "-fmessage-length=0 -nostartfiles -Xlinker -gc-sections --specs=nano.specs -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD}")
+
+
+
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
@@ -115,7 +124,8 @@ SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+
+SET (${PROJECT_NAME}_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -143,7 +153,8 @@ SET (PCB_HARDWARE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPIL
 SET (USER_FREERTOS_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MC_INTERRUPT_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (USER_BSP_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
-SET (USER_CODE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+
+SET (${PROJECT_NAME}_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -189,5 +200,90 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/user)
+
+
+
+# Для сборки требуется:
+include_directories(
+        ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
+        ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
+        ${MODULE_MC_HARDWARE_INTERFACES_PATH}
+        ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
+        ${LOW_LEVEL_H_FILES_PATH}
+        ${SD_H_PATH}
+        ${USER_FREERTOS_OBJ_H_PATH}
+        ${CHIPTUNE_H_PATH}
+        ${SHIFT_REGISTER_BASE_PATH}
+        ${WAVE_GENERATORS_PATH}
+        ${LCD_DRIVER_PATH}
+        ${DIGITAL_POTENTIOMETER_PATH}
+        ${MC_HARDWARE_PATH}
+        ${BUTTON_PATH}
+        ${FATFS_PATH}
+        ${PCB_HARDWARE_PATH}
+        ${MAKISE_E_PATH}
+        ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/elements/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/muxer/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/nvic/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/rcc/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/structs
+        ${CMAKE_CURRENT_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
+)
+
+
+# Компиляции полежат все <<.cpp>> файлы из директории src.
+file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/user/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/elements/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/muxer/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/nvic/src/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/sd_control/*.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_obj/*.cpp")
+
+# переопределяем переменную линкера, чтобы включить многопроходную линковку
+# без этого линковщик выдает драматические сообщения о том, что он не знает системных вызовов, описанных в _syscalls
+string(REPLACE "<OBJECTS>" "" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
+string(REPLACE "<LINK_LIBRARIES>" "-Wl,--start-group -Wl,--whole-archive <LINK_LIBRARIES> -lm -Wl,--no-whole-archive <OBJECTS> -Wl,--end-group -Wl,--no-wchar-size-warning" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
+
+
+add_executable(${PROJECT_NAME}.elf ${${PROJECT_NAME}_SOURCES})
+
+
+target_compile_options (${PROJECT_NAME}.elf PRIVATE
+                        "${${PROJECT_NAME}_COMPILER_FLAGS}${${PROJECT_NAME}_OPTIMIZATION_FLAGS}")
+
+
+add_custom_command (TARGET ${PROJECT_NAME}.elf PRE_BUILD
+        COMMENT "${CMAKE_EXE_LINKER_FLAGS}")
+
+target_link_libraries (${PROJECT_NAME}.elf PUBLIC
+                       USER_FREERTOS_LEVEL
+                       USER_BSP_LEVEL
+                       MC_INTERRUPT
+                       MC_HARDWARE
+                       PCB_HARDWARE
+                       BUTTONS
+                       CHIPTUNE
+                       DIGITAL_POTENTIOMETER
+                       FATFS
+                       FREERTOS
+                       LCD_DRIVER
+                       MAKISE_GUI
+                       MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK
+                       MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32
+                       MICROSD_LOW_LEVEL_DRIVER
+                       SHIFT_REGISTER
+                       STM32F4_LOW_LEVEL_BY_ST
+                       SYSTEM_DUMMY
+                       WAVE_GENERATORS)
 
