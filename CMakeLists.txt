@@ -1,30 +1,25 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.13.2)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.13.2)
 
-SET(CMAKE_SYSTEM_NAME Generic)
-SET(CMAKE_SYSTEM_VERSION 1)
+SET (CMAKE_SYSTEM_NAME Generic)
+SET (CMAKE_SYSTEM_VERSION 1)
 
 # Настройки компилятора.
-SET(TOOLCHAIN_BIN_PATH /opt/arm/gcc-arm-none-eabi-7-2018-q2-update/bin)
-SET(CMAKE_C_COMPILER_WORKS 1)
-SET(CMAKE_CXX_COMPILER_WORKS 1)
-SET(CMAKE_C_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-gcc)
-SET(CMAKE_CXX_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-g++)
-SET(ARM_SIZE "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-size")
-SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
-
-# Флаги конфигурации аппаратной части (параметры архитектуры).
-SET(MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs")
-
-
-set(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/mem.ld")
-set(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/sections.ld")
-
-
-set(CMAKE_EXE_LINKER_FLAGS "-fmessage-length=0 -nostartfiles -Xlinker -gc-sections --specs=nano.specs -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD}")
-
-
+SET (TOOLCHAIN_BIN_PATH /opt/arm/gcc-arm-none-eabi-7-2018-q2-update/bin)
+SET (CMAKE_C_COMPILER_WORKS 1)
+SET (CMAKE_CXX_COMPILER_WORKS 1)
+SET (CMAKE_C_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-gcc)
+SET (CMAKE_CXX_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-g++)
+SET (ARM_SIZE "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-size")
+SET (ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
 
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
+
+# Флаги конфигурации аппаратной части (параметры архитектуры).
+SET (MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs")
+
+SET (MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/mem.ld")
+SET (SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/sections.ld")
+
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
 SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums")
@@ -250,12 +245,6 @@ file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/user/*.cpp"
                                    "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/sd_control/*.cpp"
                                    "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_obj/*.cpp")
 
-# переопределяем переменную линкера, чтобы включить многопроходную линковку
-# без этого линковщик выдает драматические сообщения о том, что он не знает системных вызовов, описанных в _syscalls
-string(REPLACE "<OBJECTS>" "" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
-string(REPLACE "<LINK_LIBRARIES>" "-Wl,--start-group -Wl,--whole-archive <LINK_LIBRARIES> -lm -Wl,--no-whole-archive <OBJECTS> -Wl,--end-group -Wl,--no-wchar-size-warning" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
-
-
 add_executable(${PROJECT_NAME}.elf ${${PROJECT_NAME}_SOURCES})
 
 
@@ -287,3 +276,16 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
                        SYSTEM_DUMMY
                        WAVE_GENERATORS)
 
+
+SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
+
+SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};-Wl,--undefined=uxTopUsedPriority;-ffunction-sections;-Wl,--gc-sections")
+
+target_link_options(${PROJECT_NAME}.elf PRIVATE "${LD_FLAGS};${LD_FILES}")
+
+# Вывод размера итогового elf (цельного).
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    DEPENDS ${PROJECT_NAME}.elf
+                    COMMENT "${PROJECT_NAME} size information:"
+                    COMMAND cd ${PROJECT_BINARY_DIR}
+                    COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
