@@ -120,7 +120,7 @@ SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
-SET (${PROJECT_NAME}_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -149,7 +149,7 @@ SET (USER_FREERTOS_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP
 SET (MC_INTERRUPT_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (USER_BSP_LEVEL_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
-SET (${PROJECT_NAME}_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+SET (USER_CODE_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
 # Пути к конфигурационным файлам библиотек.
 SET (FATFS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -195,9 +195,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 
-#add_subdirectory(${CMAKE_SOURCE_DIR}/user)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 
-
+add_executable(${PROJECT_NAME}.elf "main.cpp")
 
 # Для сборки требуется:
 include_directories(
@@ -232,25 +232,8 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
 )
 
-
-# Компиляции полежат все <<.cpp>> файлы из директории src.
-file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/user/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/elements/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/muxer/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/nvic/src/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/sd_control/*.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_obj/*.cpp")
-
-add_executable(${PROJECT_NAME}.elf ${${PROJECT_NAME}_SOURCES})
-
-
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
                         "${${PROJECT_NAME}_COMPILER_FLAGS}${${PROJECT_NAME}_OPTIMIZATION_FLAGS}")
-
 
 add_custom_command (TARGET ${PROJECT_NAME}.elf PRE_BUILD
         COMMENT "${CMAKE_EXE_LINKER_FLAGS}")
@@ -274,18 +257,27 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
                        SHIFT_REGISTER
                        STM32F4_LOW_LEVEL_BY_ST
                        SYSTEM_DUMMY
-                       WAVE_GENERATORS)
+                       WAVE_GENERATORS
+                       USER_CODE)
 
 
 SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
-
 SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};-Wl,--undefined=uxTopUsedPriority;-ffunction-sections;-Wl,--gc-sections")
 
-target_link_options(${PROJECT_NAME}.elf PRIVATE "${LD_FLAGS};${LD_FILES}")
+# Компиляция файлов происходит по флагам из корневого CMakeList.
+target_compile_options (${PROJECT_NAME}.elf PRIVATE
+        "${USER_CODE_COMPILER_FLAGS}${USER_CODE_OPTIMIZATION_FLAGS}")
+
+SET (MAIN_OBJ_PATH "-L${PROJECT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.elf.dir")
+
+target_link_options(${PROJECT_NAME}.elf PRIVATE
+                    "${LD_FLAGS};"
+                    "${LD_FILES};"
+                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map"
+                    "${MAIN_OBJ_PATH}")
 
 # Вывод размера итогового elf (цельного).
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     DEPENDS ${PROJECT_NAME}.elf
                     COMMENT "${PROJECT_NAME} size information:"
-                    COMMAND cd ${PROJECT_BINARY_DIR}
                     COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)

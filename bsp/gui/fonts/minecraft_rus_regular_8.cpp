@@ -125,7 +125,7 @@ const uint16_t minecraft_rus_regular_8_unicode [] =
 };
 #endif
 
-const MakiseFont F_minecraft_rus_regular_8 = {
+extern const MakiseFont F_minecraft_rus_regular_8 = {
     minecraft_rus_regular_8_table,
     0,
     8,

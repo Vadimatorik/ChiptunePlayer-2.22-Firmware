@@ -1,3 +1,20 @@
+/*
+
+
+*(.ARM.attributes*)  /* ARM-специфичные атрибуты файла. */
+
+*(.rodata*)
+*/
+
+
+.user_rodata :
+    {
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+    } >ROM_MAIN_PROGRAMM
+
+
 this->cfg->mcu->gpio->pwr.allPwr->reset();
 
 this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "MakiseGui started." );
