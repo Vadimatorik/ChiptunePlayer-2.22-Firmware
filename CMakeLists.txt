@@ -4,7 +4,7 @@ SET (CMAKE_SYSTEM_NAME Generic)
 SET (CMAKE_SYSTEM_VERSION 1)
 
 # Настройки компилятора.
-SET (TOOLCHAIN_BIN_PATH /opt/arm/gcc-arm-none-eabi-7-2018-q2-update/bin)
+SET (TOOLCHAIN_BIN_PATH /opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin)
 SET (CMAKE_C_COMPILER_WORKS 1)
 SET (CMAKE_CXX_COMPILER_WORKS 1)
 SET (CMAKE_C_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-gcc)
@@ -244,37 +244,39 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
                        MC_INTERRUPT
                        MC_HARDWARE
                        PCB_HARDWARE
+                       SYSTEM_DUMMY
+                       USER_CODE
+
                        BUTTONS
                        CHIPTUNE
                        DIGITAL_POTENTIOMETER
-                       FATFS
-                       FREERTOS
                        LCD_DRIVER
-                       MAKISE_GUI
                        MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK
                        MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32
                        MICROSD_LOW_LEVEL_DRIVER
                        SHIFT_REGISTER
-                       STM32F4_LOW_LEVEL_BY_ST
-                       SYSTEM_DUMMY
                        WAVE_GENERATORS
-                       USER_CODE)
+
+                       STM32F4_LOW_LEVEL_BY_ST
+                       FATFS
+                       FREERTOS
+                       MAKISE_GUI)
 
 
 SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
-SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};-Wl,--undefined=uxTopUsedPriority;-ffunction-sections;-Wl,--gc-sections")
+SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};"
+              "-Wl,--undefined=uxTopUsedPriority;"
+              "-ffunction-sections;"
+              "-Wl,--gc-sections")
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
         "${USER_CODE_COMPILER_FLAGS}${USER_CODE_OPTIMIZATION_FLAGS}")
 
-SET (MAIN_OBJ_PATH "-L${PROJECT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.elf.dir")
-
 target_link_options(${PROJECT_NAME}.elf PRIVATE
                     "${LD_FLAGS};"
                     "${LD_FILES};"
-                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map"
-                    "${MAIN_OBJ_PATH}")
+                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 
 # Вывод размера итогового elf (цельного).
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD

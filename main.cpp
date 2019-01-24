@@ -5,10 +5,11 @@ AyPlayer::Base ay( &ayCfg );
 
 extern "C" {
 
-int main ( void ) {
-	ay.start();
+int main (void) {
+    ay.start();
 }
 
 }
+
 
 
