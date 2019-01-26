@@ -1,301 +1,339 @@
+/* Под начальный стек до запуска планировщика у нас есть своя секция в RAM. */
+_estack = ORIGIN(RAM_MAIN_PROGRAMM_STACK) + LENGTH(RAM_MAIN_PROGRAMM_STACK);
+
+/* Размер начального стека. */
+_stack_size = LENGTH(RAM_MAIN_PROGRAMM_STACK);
+
+/* Программа начинается с метода Reset_Handler. */
+ENTRY(Reset_Handler)
+
+/* Описание секций. */
 SECTIONS
 {
-    /*-------------------------Основная программа------------------------*/
-
-    /* Таблица векторов прерываний программы целевого устройства,
-       выравниванная по 4 байта (во flash). */
-    .section_user_code_irq_table :
+    /*---------------------ROM область загрузчика------------------------*/
+    .section_bootloader :
     {
-        KEEP(*vectors.cpp.obj(.isr_vector*))
+        /* На данный момент загрузчик отсутствует.
+           Поэтому на месте кода загрузчика будет находиться
+           только таблица векторов прерываний основного проекта.
+           Таблица векторов прерываний должна быть передана
+           компоновщику как отдельный .o файл, а не как часть
+           библиотеки.*/
+        . = ALIGN(4);    KEEP(*(.user_code_isr_vector))
         . = ALIGN(4);
-    } >ROM_MAIN_PROGRAMM
+    } >ROM_BOOTLOADER
 
-    /* Располагаем необходимые для выполнения основной программы созданные компилятором секции. */
-    .sections_required_by_the_compiler :
-    {
-        . = ALIGN(4);    *(.glue_7*)          /* Собственные методы-прослойки для ARMv7 */
-        . = ALIGN(4);    *(.glue_7t*)
-        . = ALIGN(4);    *(.vfp11_veneer*)    /* Прочие секции поддержки. */
-        . = ALIGN(4);    *(.v4_bx*)
-        . = ALIGN(4);    *(.iplt*)
-        . = ALIGN(4);    *(.rel.dyn*)
-        . = ALIGN(4);    *(.eh_frame*)        /* Для использования исключений в CPP. */
-        . = ALIGN(4);    *(.eh_framehdr*)
-        . = ALIGN(4);    *(.init*)            /* Методы, выполняющиеся в начале программа. */
-        . = ALIGN(4);    *(.fini*)            /* Методы, исполняемые по окончании программы. */
-        . = ALIGN(4);    *(.init_array*)      /* Данные для служебных библиотек и инициализаторов C++. */
-        . = ALIGN(4);    *(.fini_array*)
-        . = ALIGN(4);    *(.ARM.exidx*)       /* ARM magic sections. */
-
-        . = ALIGN(4);    *main.cpp.obj(.comment*);
-        . = ALIGN(4);    *main.cpp.obj(.ARM.attributes*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.comment*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.comment*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.comment*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.comment*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.comment*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.comment*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.comment*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.comment*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.ARM.attributes*);
-        . = ALIGN(4);
-    } >ROM_MAIN_PROGRAMM
-
-    /* Код основной программы. */
-    .section_user_code_text :
-    {
-        . = ALIGN(4);    *main.cpp.obj(.text*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.text*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.text*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.text*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.text*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.text*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.text*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.text*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.text*);
-        . = ALIGN(4);
-    } >ROM_MAIN_PROGRAMM
-
-    /* Объекты с неизменяемыми значениями.
-       Используемые из кода основного проекта. */
-    .section_user_code_rodata :
-    {
-        . = ALIGN(4);    *main.cpp.obj(.rodata*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.rodata*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.rodata*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.rodata*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.rodata*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.rodata*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.rodata*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.rodata*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.rodata*);
-        . = ALIGN(4);
-    } >ROM_MAIN_PROGRAMM
-
-    /* Начальные значения изменяемых сущностей.
-       Используемых из кода основного проекта. */
-    .section_user_code_data :
-    {
-        . = ALIGN(4);    *main.cpp.obj(.data*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.data*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.data*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.data*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.data*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.data*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.data*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.data*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.data*);
-        . = ALIGN(4);
-    } >RAM_MAIN_PROGRAMM AT> ROM_MAIN_PROGRAMM
-
-    /* Изменяемые сущности, значение которых по умолчанию 0.
-       Используемые из кода основного проекта */
-    .section_user_code_bss :
-    {
-        . = ALIGN(4);    *main.cpp.obj(.bss*);
-
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.bss*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.bss*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.bss*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.bss*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.bss*);
-        . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.bss*);
-        . = ALIGN(4);    *libUSER_CODE.a:*(.bss*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.bss*);
-        . = ALIGN(4);
-    } >RAM_MAIN_PROGRAMM
-
-    /*-------------------------Внешние библиотеки------------------------*/
-    /* Код внешних библиотек. */
+    /*----------------ROM область под внешние библиотеки-----------------*/
+    /* Код. */
     .section_external_lib_text :
     {
-        /* Библиотеки, требуемые для поддержки
-           базовых возможностей языка. */
-        . = ALIGN(4);    *libstdc++_nano.a:*(.text*);
-        . = ALIGN(4);    *libgcc.a:*(.text*);
+        /* Библиотеки компилятора. */
+        . = ALIGN(4);    *libstdc++_nano.a:*(.text .text*);
+        . = ALIGN(4);    *libgcc.a:*(.text .text*);
+        . = ALIGN(4);    *libg_nano.a:*(.text .text*);
 
-        /* Библиотеки, добавленные пользователем. */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.text*);
-        . = ALIGN(4);    *libFATFS.a:*(.text*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.text*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.text*);
-
-
-
+        /* Библиотеки пользователя */
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.text .text*);
+        . = ALIGN(4);    *libFATFS.a:*(.text .text*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.text .text*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.text .text*);
         . = ALIGN(4);
     } >ROM_EXTERNAL_LIBRARIES
 
+    /* Секции, созданные компилятором */
     .section_external_lib_required_by_the_compiler :
     {
-        /* Библиотеки, требуемые для поддержки
-           базовых возможностей языка. */
-        . = ALIGN(4);    *libgcc.a:*(.comment*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.comment*);
+        /* Библиотеки компилятора. */
+        . = ALIGN(4);    *libgcc.a:*(.comment .comment*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.comment .comment*);
+        . = ALIGN(4);    *libg_nano.a:*(.comment .comment*);
 
-        . = ALIGN(4);    *libgcc.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.attributes*);
+        . = ALIGN(4);    *libgcc.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libg_nano.a:*(.ARM.attributes .ARM.attributes*);
 
-        /* Библиотеки, добавленные пользователем. */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.comment*);
-        . = ALIGN(4);    *libFATFS.a:*(.comment*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.comment*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.comment*);
+        /* Библиотеки пользователя */
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.comment .comment*);
+        . = ALIGN(4);    *libFATFS.a:*(.comment .comment*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.comment .comment*);
 
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libFATFS.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.ARM.attributes*);
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libFATFS.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);
     }  >ROM_EXTERNAL_LIBRARIES
 
-    /* Объекты с неизменяемыми значениями.
-       Используемые из кода внешних библиотек. */
+    /* Сущности с неизменяемыми значениями. */
     .section_external_lib_rodata :
     {
-        /* Библиотеки, требуемые для поддержки
-           базовых возможностей языка. */
-        . = ALIGN(4);    *libgcc.a:*(.rodata*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.rodata*);
+        /* Библиотеки компилятора. */
+        . = ALIGN(4);    *libgcc.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libg_nano.a:*(.rodata .rodata*);
 
-        /* Библиотеки, добавленные пользователем. */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.rodata*);
-        . = ALIGN(4);    *libFATFS.a:*(.rodata*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.rodata*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.rodata*);
+        /* Библиотеки пользователя */
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libFATFS.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.rodata .rodata*);
         . = ALIGN(4);
     } >ROM_EXTERNAL_LIBRARIES
 
-    /* Начальные значения изменяемых сущностей.
-       Используемые из кода внешних библиотек. */
+    /* Начальные значения изменяемых сущностей. */
     .section_external_lib_data :
     {
-        /* Библиотеки, требуемые для поддержки
-           базовых возможностей языка. */
-        . = ALIGN(4);    *libgcc.a:*(.data*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.data*);
+        /* Библиотеки компилятора. */
+        . = ALIGN(4);    *libgcc.a:*(.data .data*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.data .data*);
+        . = ALIGN(4);    *libg_nano.a:*(.data .data*);
 
-        /* Библиотеки, добавленные пользователем. */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.data*);
-        . = ALIGN(4);    *libFATFS.a:*(.data*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.data*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.data*);
+        /* Библиотеки пользователя */
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.data .data*);
+        . = ALIGN(4);    *libFATFS.a:*(.data .data*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.data .data*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.data .data*);
         . = ALIGN(4);
     } >RAM_EXTERNAL_LIBRARIES AT> ROM_EXTERNAL_LIBRARIES
 
-    /* Изменяемые сущности, значение которых по умолчанию 0.
-       Используемые из кода внешних библиотек. */
-    .section_external_lib_bss :
-    {
-        /* Библиотеки, требуемые для поддержки
-               базовых возможностей языка. */
-        . = ALIGN(4);    *libgcc.a:*(.bss*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.bss*);
-
-        /* Библиотеки, добавленные пользователем. */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.bss*);
-        . = ALIGN(4);    *libFATFS.a:*(.bss*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.bss*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.bss*);
-        . = ALIGN(4);
-    } >RAM_EXTERNAL_LIBRARIES
-
     /*-----------------------Библиотеки пользователя---------------------*/
-    /* Код библиотек пользователя. */
+    /* Код. */
     .section_user_lib_text :
     {
-        . = ALIGN(4);    *libBUTTONS.a:*(.text*);
-        . = ALIGN(4);    *libCHIPTUNE.a:*(.text*);
-        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.text*);
-        . = ALIGN(4);    *libLCD_DRIVER.a:*(.text*);
-        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.text*);
-        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.text*);
-        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.text*);
-        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.text*);
-        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.text*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.text .text*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.text .text*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.text .text*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.text .text*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.text .text*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.text .text*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.text .text*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.text .text*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.text .text*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.text .text*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.text .text*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.text .text*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.text .text*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.text .text*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.text .text*);
         . = ALIGN(4);
     } >ROM_USER_LIBRARIES
 
+    /* Секции, созданные компилятором */
     .section_user_lib_required_by_the_compiler :
     {
-        . = ALIGN(4);    *libBUTTONS.a:*(.comment*);
-        . = ALIGN(4);    *libCHIPTUNE.a:*(.comment*);
-        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.comment*);
-        . = ALIGN(4);    *libLCD_DRIVER.a:*(.comment*);
-        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.comment*);
-        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.comment*);
-        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.comment*);
-        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.comment*);
-        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.comment*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.comment .comment*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.comment .comment*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.comment .comment*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.comment .comment*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.comment .comment*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.comment .comment*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.comment .comment*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.comment .comment*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.comment .comment*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.comment .comment*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.comment .comment*);
 
-        . = ALIGN(4);    *libBUTTONS.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libCHIPTUNE.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libLCD_DRIVER.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.ARM.attributes*);
-        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.ARM.attributes*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libUSER_CODE.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.ARM.attributes .ARM.attributes*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);
     }  >ROM_EXTERNAL_LIBRARIES
 
-    /* Объекты с неизменяемыми значениями.
-       Используемые из кода библиотек пользователя. */
+    /* Сущности с неизменяемыми значениями. */
     .section_user_lib_rodata :
     {
-        . = ALIGN(4);    *libBUTTONS.a:*(.rodata*);
-        . = ALIGN(4);    *libCHIPTUNE.a:*(.rodata*);
-        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.rodata*);
-        . = ALIGN(4);    *libLCD_DRIVER.a:*(.rodata*);
-        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.rodata*);
-        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.rodata*);
-        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.rodata*);
-        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.rodata*);
-        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.rodata*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.rodata .rodata*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.rodata .rodata*);
         . = ALIGN(4);
     } >ROM_USER_LIBRARIES
 
-    /* Начальные значения изменяемых сущностей.
-       Используемые из кода библиотек пользователя. */
+    /* Начальные значения изменяемых сущностей. */
     .section_user_lib_data :
     {
-        . = ALIGN(4);     *libBUTTONS.a:*(.data*);
-        . = ALIGN(4);     *libCHIPTUNE.a:*(.data*);
-        . = ALIGN(4);     *libDIGITAL_POTENTIOMETER.a:*(.data*);
-        . = ALIGN(4);     *libLCD_DRIVER.a:*(.data*);
-        . = ALIGN(4);     *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.data*);
-        . = ALIGN(4);     *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.data*);
-        . = ALIGN(4);     *libMICROSD_LOW_LEVEL_DRIVER.a:*(.data*);
-        . = ALIGN(4);     *libSHIFT_REGISTER.a:*(.data*);
-        . = ALIGN(4);     *libWAVE_GENERATORS.a:*(.data*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.data .data*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.data .data*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.data .data*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.data .data*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.data .data*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.data .data*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.data .data*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.data .data*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.data .data*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.data .data*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.data .data*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.data .data*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.data .data*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.data .data*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.data .data*);
         . = ALIGN(4);
     } >RAM_USER_LIBRARIES AT> ROM_USER_LIBRARIES
 
-    /* Изменяемые сущности, значение которых по умолчанию 0.
-       Используемые из кода библиотек пользователя. */
+    /*-------------------------Основная программа------------------------*/
+    /* Код. */
+    .section_user_code_text :
+    {
+        . = ALIGN(4);    *(.text .text.*)
+        . = ALIGN(4);
+    } >ROM_MAIN_PROGRAMM
+
+    /* Секции, созданные компилятором */
+    .sections_user_code_required_by_the_compiler :
+    {
+        . = ALIGN(4);    *(.glue_7 .glue_7*)              /* Собственные методы-прослойки для ARMv7 */
+        . = ALIGN(4);    *(.glue_7t .glue_7t*)
+        . = ALIGN(4);    *(.vfp11_veneer .vfp11_veneer*)  /* Прочие секции поддержки. */
+        . = ALIGN(4);    *(.v4_bx .v4_bx*)
+        . = ALIGN(4);    *(.iplt .iplt*)
+        . = ALIGN(4);    *(.rel.dyn .rel.dyn*)
+        . = ALIGN(4);    *(.eh_frame .eh_frame*)          /* Для использования исключений в CPP. */
+        . = ALIGN(4);    *(.eh_framehdr .eh_framehdr*)
+        . = ALIGN(4);    *(.init .init*)                  /* Методы, выполняющиеся в начале программа. */
+        . = ALIGN(4);    *(.fini .fini*)                  /* Методы, исполняемые по окончании программы. */
+        . = ALIGN(4);    *(.init_array .init_array*)      /* Данные для служебных библиотек и инициализаторов C++. */
+        . = ALIGN(4);    *(.fini_array .fini_array*)
+        . = ALIGN(4);    *(.ARM.extab* .gnu.linkonce.armextab.*)    /* ARM magic sections */
+        . = ALIGN(4);    *(.ARM.attributes .ARM.attributes.*)       /* Песь оставшийся дополнительный код,
+                                                                       созданный компилятором. */
+        . = ALIGN(4);    *(vtable)					      /* C++ virtual tables */
+        /* Для отладки */
+        . = ALIGN(4);    *(.comment .comment.*)
+        . = ALIGN(4);    *(.stab .stab.*)
+        . = ALIGN(4);    *(.stabstr .stabstr.*)
+        . = ALIGN(4);    *(.stab .stab.*)
+        . = ALIGN(4);    *(.stab.excl .stab.excl.*)
+        . = ALIGN(4);    *(.stab.exclstr .stab.exclstr.*)
+        . = ALIGN(4);    *(.stab.index .stab.index.*)
+        . = ALIGN(4);    *(.stab.indexstr .stab.indexstr.*)
+        . = ALIGN(4);    *(.debug .debug.*)
+        . = ALIGN(4);    *(.debug_srcinfo .debug_srcinfo.*)
+        . = ALIGN(4);    *(.debug_sfnames .debug_sfnames.*)
+        . = ALIGN(4);    *(.debug_aranges .debug_aranges.*)
+        . = ALIGN(4);    *(.debug_info .debug_info.*)
+        . = ALIGN(4);    *(.gnu.linkonce.wi .gnu.linkonce.wi.*)
+        . = ALIGN(4);    *(.debug_abbrev .debug_abbrev.*)
+        . = ALIGN(4);    *(.debug_line .debug_line.*)
+        . = ALIGN(4);    *(.debug_frame .debug_frame.*)
+        . = ALIGN(4);    *(.debug_str .debug_str.*)
+        . = ALIGN(4);    *(.debug_loc .debug_loc.*)
+        . = ALIGN(4);    *(.debug_macinfo .debug_macinfo.*)
+        . = ALIGN(4);    *(.debug_weaknames .debug_weaknames.*)
+        . = ALIGN(4);    *(.debug_funcnames .debug_funcnames.*)
+        . = ALIGN(4);    *(.debug_typenames .debug_typenames.*)
+        . = ALIGN(4);    *(.debug_varnames .debug_varnames.*)
+        . = ALIGN(4);
+    } >ROM_MAIN_PROGRAMM
+
+    /* Сущности с неизменяемыми значениями. */
+    .section_user_code_rodata :
+    {
+        . = ALIGN(4);    *(.rodata .rodata.*)
+        . = ALIGN(4);
+    } >ROM_MAIN_PROGRAMM
+
+    /* Начальные значения изменяемых сущностей. */
+    .section_user_code_data :
+    {
+        . = ALIGN(4);    *(.data .data.*)
+        . = ALIGN(4);
+    } >RAM_MAIN_PROGRAMM AT> ROM_MAIN_PROGRAMM
+
+    /* Область с нулевыми начальными значениями в RAM */
+    .section_external_lib_bss :
+    {
+        /* Библиотеки компилятора. */
+        . = ALIGN(4);    *libgcc.a:*(.bss .bss*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.bss .bss*);
+        . = ALIGN(4);    *libg_nano.a:*(*COMMON);
+
+        . = ALIGN(4);    *libgcc.a:*(*COMMON);
+        . = ALIGN(4);    *libstdc++_nano.a:*(*COMMON);
+        . = ALIGN(4);    *libg_nano.a:*(*COMMON);
+
+        /* Библиотеки пользователя */
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.bss .bss*);
+        . = ALIGN(4);    *libFATFS.a:*(.bss .bss*);
+        . = ALIGN(4);    *libFREERTOS.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(.bss .bss*);
+
+        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(*COMMON);
+        . = ALIGN(4);    *libFATFS.a:*(*COMMON);
+        . = ALIGN(4);    *libFREERTOS.a:*(*COMMON);
+        . = ALIGN(4);    *libMAKISE_GUI.a:*(*COMMON);
+        . = ALIGN(4);
+    } >RAM_EXTERNAL_LIBRARIES
+
     .section_user_lib_bss :
     {
-        . = ALIGN(4);     *libBUTTONS.a:*(.bss*);
-        . = ALIGN(4);     *libCHIPTUNE.a:*(.bss*);
-        . = ALIGN(4);     *libDIGITAL_POTENTIOMETER.a:*(.bss*);
-        . = ALIGN(4);     *libLCD_DRIVER.a:*(.bss*);
-        . = ALIGN(4);     *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.bss*);
-        . = ALIGN(4);     *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.bss*);
-        . = ALIGN(4);     *libMICROSD_LOW_LEVEL_DRIVER.a:*(.bss*);
-        . = ALIGN(4);     *libSHIFT_REGISTER.a:*(.bss*);
-        . = ALIGN(4);     *libWAVE_GENERATORS.a:*(.bss*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.bss .bss*);
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(.bss .bss*);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.bss .bss*);
+        . = ALIGN(4);    *libUSER_CODE.a:*(.bss .bss*);
+        . = ALIGN(4);    *libBUTTONS.a:*(.bss .bss*);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(.bss .bss*);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.bss .bss*);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.bss .bss*);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.bss .bss*);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.bss .bss*);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.bss .bss*);
+        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.bss .bss*);
+
+        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(*COMMON);
+        . = ALIGN(4);    *libMC_INTERRUPT.a:*(*COMMON);
+        . = ALIGN(4);    *libMC_HARDWARE.a:*(*COMMON);
+        . = ALIGN(4);    *libPCB_HARDWARE.a:*(*COMMON);
+        . = ALIGN(4);    *libUSER_CODE.a:*(*COMMON);
+        . = ALIGN(4);    *libBUTTONS.a:*(*COMMON);
+        . = ALIGN(4);    *libCHIPTUNE.a:*(*COMMON);
+        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(*COMMON);
+        . = ALIGN(4);    *libLCD_DRIVER.a:*(*COMMON);
+        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(*COMMON);
+        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(*COMMON);
+        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(*COMMON);
+        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(*COMMON);
+        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(*COMMON);
         . = ALIGN(4);
     } >RAM_USER_LIBRARIES
+
+    .section_user_code_bss :
+    {
+        . = ALIGN(4);    __bss_start__ = .;
+        *(.bss .bss.*)
+        *(COMMON)
+        . = ALIGN(4);    __bss_end__ = .;
+    } >RAM_MAIN_PROGRAMM
 }

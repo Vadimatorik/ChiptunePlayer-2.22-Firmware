@@ -98,7 +98,7 @@ SET (FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan/inc")
 # Флаги оптимизации библиотек.
 SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (SYSTEM_DUMMY_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+
 SET (STM32F4_LOW_LEVEL_BY_ST_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 SET (BUTTONS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -111,7 +111,6 @@ SET (MAKISE_GUI_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MICROSD_LOW_LEVEL_DRIVER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (WAVE_GENERATORS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-
 SET (RUN_TIME_LOGGER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
@@ -119,7 +118,6 @@ SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (USER_STARTUP_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
@@ -131,7 +129,6 @@ SET (MAKISE_GUI_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_F
 SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_COMPILER_FLAGS
      "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
 
-SET (SYSTEM_DUMMY_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (BUTTONS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32_COMPILER_FLAGS
      "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
@@ -141,7 +138,6 @@ SET (SHIFT_REGISTER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMP
 SET (LCD_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MICROSD_LOW_LEVEL_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (WAVE_GENERATORS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
-SET (USER_STARTUP_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
 
 SET (RUN_TIME_LOGGER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
@@ -162,7 +158,6 @@ SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_CFG_H_PATH ${CMA
 
 SET (RUN_TIME_LOGGER_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
-SET (SYSTEM_DUMMY_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (BUTTONS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET (DIGITAL_POTENTIOMETER_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -179,7 +174,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_s
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_system_dummy)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_button)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register)
@@ -196,14 +190,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
-#add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/startup)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 
 add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/vectors.cpp")
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/vectors.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/src/cpp_system_calls.cpp" )
 
-# Для сборки требуется:
 include_directories(
         ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
         ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
@@ -223,6 +216,7 @@ include_directories(
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
+        ${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/inc
@@ -243,30 +237,27 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf PRE_BUILD
         COMMENT "${CMAKE_EXE_LINKER_FLAGS}")
 
 target_link_libraries (${PROJECT_NAME}.elf PUBLIC
-        "-Wl,--start-group"
-                       USER_FREERTOS_LEVEL
-                       USER_BSP_LEVEL
-                       MC_INTERRUPT
-                       MC_HARDWARE
-                       PCB_HARDWARE
-                       SYSTEM_DUMMY
-                       USER_CODE
-
-                       BUTTONS
-                       CHIPTUNE
-                       DIGITAL_POTENTIOMETER
-                       LCD_DRIVER
-                       MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK
-                       MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32
-                       MICROSD_LOW_LEVEL_DRIVER
-                       SHIFT_REGISTER
-                       WAVE_GENERATORS
-
-                       STM32F4_LOW_LEVEL_BY_ST
-                       FATFS
-                       FREERTOS
-                       MAKISE_GUI
-         "-Wl,--end-group")
+    "-Wl,--start-group"
+        USER_FREERTOS_LEVEL
+        USER_BSP_LEVEL
+        MC_INTERRUPT
+        MC_HARDWARE
+        PCB_HARDWARE
+        USER_CODE
+        BUTTONS
+        CHIPTUNE
+        DIGITAL_POTENTIOMETER
+        LCD_DRIVER
+        MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK
+        MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32
+        MICROSD_LOW_LEVEL_DRIVER
+        SHIFT_REGISTER
+        WAVE_GENERATORS
+        STM32F4_LOW_LEVEL_BY_ST
+        FATFS
+        FREERTOS
+        MAKISE_GUI
+    "-Wl,--end-group")
 
 
 SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
@@ -281,13 +272,7 @@ target_compile_options (${PROJECT_NAME}.elf PRIVATE
 target_link_options(${PROJECT_NAME}.elf PRIVATE
                     "${LD_FLAGS};"
                     "${LD_FILES};"
-                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map"
-                    "-Wl,-Tbss=0"
-                    "-Wl,-Tdata=0"
-                    "-Wl,-Ttext=0"
-                    "-Wl,-text-segment=0"
-                    "-Wl,-Trodata-segment=0"
-                    "-Wl,-Tldata-segment=0")
+                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 
 # Вывод размера итогового elf (цельного).
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD

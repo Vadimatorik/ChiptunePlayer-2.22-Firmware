@@ -182,14 +182,14 @@ void FPU_IRQHandler (void);
 /// Вершина стека берется из sectins.ld.
 extern unsigned int _estack;
 
-typedef void (*const pHandler) (void);
+typedef void (*pHandler) (void);
 
 /// Все элементы одномерного массива (вектора прерываний)
 /// являются указателями на функции. Кроме 0-й ячейки,
 /// которая является вершиной стека.
-__attribute__ ((section(".isr_vector")))
+__attribute__ ((section(".user_code_isr_vector")))
 volatile pHandler __isr_vectors[] = {
-    0,                     // The initial stack pointer /// (void*)&_estack
+    reinterpret_cast<pHandler>(_estack),      // The initial stack pointer.
     Reset_Handler,                           // The reset handler
     
     NMI_Handler,                             // The NMI handler
