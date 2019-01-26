@@ -19,7 +19,7 @@ SECTIONS
            Таблица векторов прерываний должна быть передана
            компоновщику как отдельный .o файл, а не как часть
            библиотеки.*/
-        . = ALIGN(4);    KEEP(*(.user_code_isr_vector))
+        . = ALIGN(4);    KEEP(*(.user_code_isr_vector .user_code_isr_vector*))
         . = ALIGN(4);
     } >ROM_BOOTLOADER
 
@@ -44,20 +44,11 @@ SECTIONS
     .section_external_lib_required_by_the_compiler :
     {
         /* Библиотеки компилятора. */
-        . = ALIGN(4);    *libgcc.a:*(.comment .comment*);
-        . = ALIGN(4);    *libstdc++_nano.a:*(.comment .comment*);
-        . = ALIGN(4);    *libg_nano.a:*(.comment .comment*);
-
         . = ALIGN(4);    *libgcc.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libstdc++_nano.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libg_nano.a:*(.ARM.attributes .ARM.attributes*);
 
         /* Библиотеки пользователя */
-        . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.comment .comment*);
-        . = ALIGN(4);    *libFATFS.a:*(.comment .comment*);
-        . = ALIGN(4);    *libFREERTOS.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMAKISE_GUI.a:*(.comment .comment*);
-
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libFATFS.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libFREERTOS.a:*(.ARM.attributes .ARM.attributes*);
@@ -122,21 +113,6 @@ SECTIONS
     /* Секции, созданные компилятором */
     .section_user_lib_required_by_the_compiler :
     {
-        . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.comment .comment*);
-        . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMC_INTERRUPT.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMC_HARDWARE.a:*(.comment .comment*);
-        . = ALIGN(4);    *libPCB_HARDWARE.a:*(.comment .comment*);
-        . = ALIGN(4);    *libUSER_STARTUP.a:*(.comment .comment*);
-        . = ALIGN(4);    *libBUTTONS.a:*(.comment .comment*);
-        . = ALIGN(4);    *libCHIPTUNE.a:*(.comment .comment*);
-        . = ALIGN(4);    *libDIGITAL_POTENTIOMETER.a:*(.comment .comment*);
-        . = ALIGN(4);    *libLCD_DRIVER.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32.a:*(.comment .comment*);
-        . = ALIGN(4);    *libMICROSD_LOW_LEVEL_DRIVER.a:*(.comment .comment*);
-        . = ALIGN(4);    *libSHIFT_REGISTER.a:*(.comment .comment*);
-        . = ALIGN(4);    *libWAVE_GENERATORS.a:*(.comment .comment*);
 
         . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
@@ -226,31 +202,6 @@ SECTIONS
         . = ALIGN(4);    *(.ARM.attributes .ARM.attributes.*)       /* Песь оставшийся дополнительный код,
                                                                        созданный компилятором. */
         . = ALIGN(4);    *(vtable)					      /* C++ virtual tables */
-        /* Для отладки */
-        . = ALIGN(4);    *(.comment .comment.*)
-        . = ALIGN(4);    *(.stab .stab.*)
-        . = ALIGN(4);    *(.stabstr .stabstr.*)
-        . = ALIGN(4);    *(.stab .stab.*)
-        . = ALIGN(4);    *(.stab.excl .stab.excl.*)
-        . = ALIGN(4);    *(.stab.exclstr .stab.exclstr.*)
-        . = ALIGN(4);    *(.stab.index .stab.index.*)
-        . = ALIGN(4);    *(.stab.indexstr .stab.indexstr.*)
-        . = ALIGN(4);    *(.debug .debug.*)
-        . = ALIGN(4);    *(.debug_srcinfo .debug_srcinfo.*)
-        . = ALIGN(4);    *(.debug_sfnames .debug_sfnames.*)
-        . = ALIGN(4);    *(.debug_aranges .debug_aranges.*)
-        . = ALIGN(4);    *(.debug_info .debug_info.*)
-        . = ALIGN(4);    *(.gnu.linkonce.wi .gnu.linkonce.wi.*)
-        . = ALIGN(4);    *(.debug_abbrev .debug_abbrev.*)
-        . = ALIGN(4);    *(.debug_line .debug_line.*)
-        . = ALIGN(4);    *(.debug_frame .debug_frame.*)
-        . = ALIGN(4);    *(.debug_str .debug_str.*)
-        . = ALIGN(4);    *(.debug_loc .debug_loc.*)
-        . = ALIGN(4);    *(.debug_macinfo .debug_macinfo.*)
-        . = ALIGN(4);    *(.debug_weaknames .debug_weaknames.*)
-        . = ALIGN(4);    *(.debug_funcnames .debug_funcnames.*)
-        . = ALIGN(4);    *(.debug_typenames .debug_typenames.*)
-        . = ALIGN(4);    *(.debug_varnames .debug_varnames.*)
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
@@ -336,4 +287,41 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);    __bss_end__ = .;
     } >RAM_MAIN_PROGRAMM
+
+    /* Stabs debugging sections.  */
+    .stab          0 : { *(.stab) }
+    .stabstr       0 : { *(.stabstr) }
+    .stab.excl     0 : { *(.stab.excl) }
+    .stab.exclstr  0 : { *(.stab.exclstr) }
+    .stab.index    0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment       0 : { *(.comment) }
+
+    /*
+     * DWARF debug sections.
+     * Symbols in the DWARF debugging sections are relative to the beginning
+     * of the section so we begin them at 0.
+     */
+    /* DWARF 1 */
+    .debug          0 : { *(.debug) }
+    .line           0 : { *(.line) }
+    /* GNU DWARF 1 extensions */
+    .debug_srcinfo  0 : { *(.debug_srcinfo) }
+    .debug_sfnames  0 : { *(.debug_sfnames) }
+    /* DWARF 1.1 and DWARF 2 */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    /* DWARF 2 */
+    .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
+    /* SGI/MIPS DWARF 2 extensions */
+    .debug_weaknames 0 : { *(.debug_weaknames) }
+    .debug_funcnames 0 : { *(.debug_funcnames) }
+    .debug_typenames 0 : { *(.debug_typenames) }
+    .debug_varnames  0 : { *(.debug_varnames) }
 }

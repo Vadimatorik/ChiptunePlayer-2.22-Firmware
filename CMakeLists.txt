@@ -15,14 +15,14 @@ SET (ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 # Флаги конфигурации аппаратной части (параметры архитектуры).
-SET (MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs")
+SET (MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs;-ffunction-sections")
 
 SET (MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/mem.ld")
 SET (SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/sections.ld")
 
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
-SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums")
+SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums;")
 
 # Путь до файла user_os.h с прослойками под конкретную операционную систему.
 SET (USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -119,7 +119,7 @@ SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
-SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (USER_CODE_OPTIMIZATION_FLAGS "-O0;-g3;")
 
 # Оставшиеся параметры сборки библиотек.
 SET (FATFS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
@@ -259,11 +259,10 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
         MAKISE_GUI
     "-Wl,--end-group")
 
-
 SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
 SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};"
               "-Wl,--undefined=uxTopUsedPriority;"
-              "-ffunction-sections;")
+              "-fmessage-length=0;-nostartfiles;-Xlinker;-gc-sections;")
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
@@ -279,3 +278,16 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     DEPENDS ${PROJECT_NAME}.elf
                     COMMENT "${PROJECT_NAME} size information:"
                     COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
+
+# ASM файл.
+set(ASM_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.asm)
+
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+                   DEPENDS ${PROJECT_NAME}.elf
+                   COMMENT "Disassembly elf"
+                   COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${PROJECT_NAME}.elf> >> ${ASM_FILE})
+
+set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+        COMMENT "Building ${BIN_FILE}")

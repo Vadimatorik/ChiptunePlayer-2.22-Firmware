@@ -467,25 +467,22 @@ int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi
 
 /// 0 - ок, 1 - нет файла, -1 флешка проблемная.
 int Fat::removeFile ( std::shared_ptr< char > path, const char* nameFile, FRESULT& fatReturn ) {
-	FRESULT		r;
-	
 	int int_r;
 	std::shared_ptr< char >	fullPath( this->getFullPath( path, nameFile, int_r ) );
 	if (int_r != EOK) {
-		return r;
+		return ENOMEM;
 	}
 	
 	do {
-		r = f_chmod( fullPath.get(), 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
-		if ( r != FR_OK ) break;
-		r = f_unlink( fullPath.get() );
+		fatReturn = f_chmod( fullPath.get(), 0, AM_RDO|AM_ARC|AM_SYS|AM_HID );		/// Снимаем блокировки.
+		if ( fatReturn != FR_OK ) break;
+		fatReturn = f_unlink( fullPath.get() );
 	} while( false );
 
-	switch( ( uint32_t )r ) {
+	switch( ( uint32_t )fatReturn ) {
 	case ( uint32_t )FR_OK:			return 0;
 	case ( uint32_t )FR_NO_FILE:	return 1;
 	default:
-		fatReturn = r;
 		return -1;
 	}
 }
