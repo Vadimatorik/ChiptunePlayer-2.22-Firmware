@@ -119,6 +119,7 @@ SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (USER_STARTUP_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
 SET (USER_CODE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
 
@@ -140,6 +141,7 @@ SET (SHIFT_REGISTER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMP
 SET (LCD_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (MICROSD_LOW_LEVEL_DRIVER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 SET (WAVE_GENERATORS_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
+SET (USER_STARTUP_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${C_COMPILER_FLAGS};")
 
 SET (RUN_TIME_LOGGER_COMPILER_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};${CPP_COMPILER_FLAGS};")
 
@@ -194,10 +196,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
+#add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/startup)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 
-add_executable(${PROJECT_NAME}.elf "main.cpp")
+add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/user/vectors.cpp")
 
 # Для сборки требуется:
 include_directories(
@@ -239,6 +243,7 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf PRE_BUILD
         COMMENT "${CMAKE_EXE_LINKER_FLAGS}")
 
 target_link_libraries (${PROJECT_NAME}.elf PUBLIC
+        "-Wl,--start-group"
                        USER_FREERTOS_LEVEL
                        USER_BSP_LEVEL
                        MC_INTERRUPT
@@ -260,14 +265,14 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
                        STM32F4_LOW_LEVEL_BY_ST
                        FATFS
                        FREERTOS
-                       MAKISE_GUI)
+                       MAKISE_GUI
+         "-Wl,--end-group")
 
 
 SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
 SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};"
               "-Wl,--undefined=uxTopUsedPriority;"
-              "-ffunction-sections;"
-              "-Wl,--gc-sections")
+              "-ffunction-sections;")
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
@@ -276,7 +281,13 @@ target_compile_options (${PROJECT_NAME}.elf PRIVATE
 target_link_options(${PROJECT_NAME}.elf PRIVATE
                     "${LD_FLAGS};"
                     "${LD_FILES};"
-                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
+                    "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map"
+                    "-Wl,-Tbss=0"
+                    "-Wl,-Tdata=0"
+                    "-Wl,-Ttext=0"
+                    "-Wl,-text-segment=0"
+                    "-Wl,-Trodata-segment=0"
+                    "-Wl,-Tldata-segment=0")
 
 # Вывод размера итогового elf (цельного).
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
