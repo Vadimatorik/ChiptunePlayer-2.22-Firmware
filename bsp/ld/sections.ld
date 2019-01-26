@@ -6,10 +6,7 @@ SECTIONS
        выравниванная по 4 байта (во flash). */
     .section_user_code_irq_table :
     {
-        . = ALIGN(4);                       /* Задаем счетчику адрес кратный 4-м байтам. */
-        KEEP(*(.user_code_irq_table))       /* Отключаем оптимизацию сборщика мусора (KEEP). */
-        /* Иначе говоря, даже если массив векторов прерываний
-           не используется программой, его обязательно следует разместить во flash. */
+        KEEP(*vectors.cpp.obj(.isr_vector*))
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
@@ -26,11 +23,9 @@ SECTIONS
         . = ALIGN(4);    *(.eh_framehdr*)
         . = ALIGN(4);    *(.init*)            /* Методы, выполняющиеся в начале программа. */
         . = ALIGN(4);    *(.fini*)            /* Методы, исполняемые по окончании программы. */
-
         . = ALIGN(4);    *(.init_array*)      /* Данные для служебных библиотек и инициализаторов C++. */
         . = ALIGN(4);    *(.fini_array*)
         . = ALIGN(4);    *(.ARM.exidx*)       /* ARM magic sections. */
-
 
         . = ALIGN(4);    *main.cpp.obj(.comment*);
         . = ALIGN(4);    *main.cpp.obj(.ARM.attributes*);
@@ -42,6 +37,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.comment*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.comment*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.comment*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.comment*);
 
         . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.ARM.attributes*);
         . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.ARM.attributes*);
@@ -50,6 +46,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.ARM.attributes*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.ARM.attributes*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.ARM.attributes*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.ARM.attributes*);
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
@@ -65,6 +62,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.text*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.text*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.text*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.text*);
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
@@ -81,6 +79,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.rodata*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.rodata*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.rodata*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.rodata*);
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
@@ -97,6 +96,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.data*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.data*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.data*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.data*);
         . = ALIGN(4);
     } >RAM_MAIN_PROGRAMM AT> ROM_MAIN_PROGRAMM
 
@@ -113,6 +113,7 @@ SECTIONS
         . = ALIGN(4);    *libPCB_HARDWARE.a:*(.bss*);
         . = ALIGN(4);    *libSYSTEM_DUMMY.a:*(.bss*);
         . = ALIGN(4);    *libUSER_CODE.a:*(.bss*);
+        . = ALIGN(4);    *libUSER_STARTUP.a:*(.bss*);
         . = ALIGN(4);
     } >RAM_MAIN_PROGRAMM
 
@@ -120,10 +121,19 @@ SECTIONS
     /* Код внешних библиотек. */
     .section_external_lib_text :
     {
+        /* Библиотеки, требуемые для поддержки
+           базовых возможностей языка. */
+        . = ALIGN(4);    *libstdc++_nano.a:*(.text*);
+        . = ALIGN(4);    *libgcc.a:*(.text*);
+
+        /* Библиотеки, добавленные пользователем. */
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.text*);
         . = ALIGN(4);    *libFATFS.a:*(.text*);
         . = ALIGN(4);    *libFREERTOS.a:*(.text*);
         . = ALIGN(4);    *libMAKISE_GUI.a:*(.text*);
+
+
+
         . = ALIGN(4);
     } >ROM_EXTERNAL_LIBRARIES
 
@@ -131,8 +141,11 @@ SECTIONS
     {
         /* Библиотеки, требуемые для поддержки
            базовых возможностей языка. */
-        . = ALIGN(4);    *crti.o(.comment*);
-        . = ALIGN(4);    *crti.o(.ARM.attributes*);
+        . = ALIGN(4);    *libgcc.a:*(.comment*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.comment*);
+
+        . = ALIGN(4);    *libgcc.a:*(.ARM.attributes*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.attributes*);
 
         /* Библиотеки, добавленные пользователем. */
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.comment*);
@@ -151,6 +164,12 @@ SECTIONS
        Используемые из кода внешних библиотек. */
     .section_external_lib_rodata :
     {
+        /* Библиотеки, требуемые для поддержки
+           базовых возможностей языка. */
+        . = ALIGN(4);    *libgcc.a:*(.rodata*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.rodata*);
+
+        /* Библиотеки, добавленные пользователем. */
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.rodata*);
         . = ALIGN(4);    *libFATFS.a:*(.rodata*);
         . = ALIGN(4);    *libFREERTOS.a:*(.rodata*);
@@ -162,6 +181,12 @@ SECTIONS
        Используемые из кода внешних библиотек. */
     .section_external_lib_data :
     {
+        /* Библиотеки, требуемые для поддержки
+           базовых возможностей языка. */
+        . = ALIGN(4);    *libgcc.a:*(.data*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.data*);
+
+        /* Библиотеки, добавленные пользователем. */
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.data*);
         . = ALIGN(4);    *libFATFS.a:*(.data*);
         . = ALIGN(4);    *libFREERTOS.a:*(.data*);
@@ -173,6 +198,12 @@ SECTIONS
        Используемые из кода внешних библиотек. */
     .section_external_lib_bss :
     {
+        /* Библиотеки, требуемые для поддержки
+               базовых возможностей языка. */
+        . = ALIGN(4);    *libgcc.a:*(.bss*);
+        . = ALIGN(4);    *libstdc++_nano.a:*(.bss*);
+
+        /* Библиотеки, добавленные пользователем. */
         . = ALIGN(4);    *libSTM32F4_LOW_LEVEL_BY_ST.a:*(.bss*);
         . = ALIGN(4);    *libFATFS.a:*(.bss*);
         . = ALIGN(4);    *libFREERTOS.a:*(.bss*);
