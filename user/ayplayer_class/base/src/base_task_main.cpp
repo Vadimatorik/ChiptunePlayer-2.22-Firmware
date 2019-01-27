@@ -27,11 +27,11 @@ void Base::mainTask ( void* obj ) {
 	do {
 		o->waitToInsertCorrectSdCard();
 
-		bool systemOsFileFlag;
-		if ( o->isSystemOsFile( systemOsFileFlag )		!= EOK )				continue;
-		if ( systemOsFileFlag == true ) {
-			if ( o->initFileLists()						!= EOK )				continue;
-		}
+		//bool systemOsFileFlag;
+		//if ( o->isSystemOsFile( systemOsFileFlag )		!= EOK )				continue;
+		//if ( systemOsFileFlag == true ) {
+		//	if ( o->initFileLists()						!= EOK )				continue;
+		//}
 
 		if ( o->setSysCfgParams() 						!= EOK )				continue;
 		if ( o->initMainWindow()						!= EOK )				continue;

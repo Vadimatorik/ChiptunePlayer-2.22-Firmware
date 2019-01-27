@@ -46,12 +46,13 @@ file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/gui/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/muxer/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/nvic/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/sd_control/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/sd_control/src/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/rcc/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_obj/*.cpp")
 
 
 # Собираем библиотеку из .obj файлов, полученных из файлов, добавленных выше.
-add_library (${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library (${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME} PRIVATE

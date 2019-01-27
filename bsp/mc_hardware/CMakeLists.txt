@@ -19,7 +19,7 @@ include_directories(
 file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 # Собираем библиотеку из .obj файлов, полученных из файлов, добавленных выше.
-add_library (${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
+add_library (${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES})
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME} PRIVATE

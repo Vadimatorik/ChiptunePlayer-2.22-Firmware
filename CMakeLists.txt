@@ -15,14 +15,22 @@ SET (ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
 # Флаги конфигурации аппаратной части (параметры архитектуры).
-SET (MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;-mthumb;-mfloat-abi=hard;-mfpu=fpv4-sp-d16;--specs=nano.specs;-ffunction-sections")
+SET (MICROCONTROLLER_HARDWARE_FLAGS "-mcpu=cortex-m4;"
+                                    "-mthumb;"
+                                    "-mfloat-abi=hard"
+                                    "-mfpu=fpv4-sp-d16;"
+                                    "--specs=nano.specs;"
+                                    "-fdata-sections"
+                                    "-ffunction-sections"
+                                    "-Wl,--gc-sections")
 
 SET (MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/mem.ld")
 SET (SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/ld/sections.ld")
 
 
 SET (C_COMPILER_FLAGS "-std=gnu99;-fshort-enums")
-SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-fno-exceptions;-fshort-enums;")
+SET (CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-Wno-type-limits;-fno-exceptions;")
+
 
 # Путь до файла user_os.h с прослойками под конкретную операционную систему.
 SET (USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
@@ -96,28 +104,28 @@ SET (PCB_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/pcb_hardware/inc")
 SET (FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan/inc")
 
 # Флаги оптимизации библиотек.
-SET (FATFS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (FREERTOS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (FATFS_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (FREERTOS_OPTIMIZATION_FLAGS "-O0;-g3;")
 
-SET (STM32F4_LOW_LEVEL_BY_ST_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (STM32F4_LOW_LEVEL_BY_ST_OPTIMIZATION_FLAGS "-O0;-g3;")
 
-SET (BUTTONS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (DIGITAL_POTENTIOMETER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (CHIPTUNE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (SHIFT_REGISTER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (LCD_DRIVER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (MAKISE_GUI_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (MICROSD_LOW_LEVEL_DRIVER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (WAVE_GENERATORS_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (RUN_TIME_LOGGER_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (BUTTONS_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (MC_HARDWARE_INTERFACES_IMPLEMENTATION_FOR_STM32_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (DIGITAL_POTENTIOMETER_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (CHIPTUNE_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (SHIFT_REGISTER_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (LCD_DRIVER_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (MAKISE_GUI_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_ELEMENTS_BY_VADIMATORIK_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (MICROSD_LOW_LEVEL_DRIVER_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (WAVE_GENERATORS_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (RUN_TIME_LOGGER_OPTIMIZATION_FLAGS "-O0;-g3;")
 
-SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-Ofast;-g0;")
-SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-Ofast;-g0;")
+SET (MC_HARDWARE_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (USER_FREERTOS_LEVEL_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (PCB_HARDWARE_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (MC_INTERRUPT_OPTIMIZATION_FLAGS "-O0;-g3;")
+SET (USER_BSP_LEVEL_OPTIMIZATION_FLAGS "-O0;-g3;")
 
 SET (USER_CODE_OPTIMIZATION_FLAGS "-O0;-g3;")
 
@@ -194,7 +202,8 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 
 add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
-                                   "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/vectors.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/vectors.cpp"
+                                   "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/loader.cpp"
                                    "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/src/cpp_system_calls.cpp" )
 
 include_directories(
@@ -217,6 +226,7 @@ include_directories(
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/inc
@@ -257,12 +267,16 @@ target_link_libraries (${PROJECT_NAME}.elf PUBLIC
         FATFS
         FREERTOS
         MAKISE_GUI
+        RUN_TIME_LOGGER
     "-Wl,--end-group")
 
-SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD}")
+SET (LD_FILES "-T${MEM_LD};-T${SECTIONS_LD};")
 SET (LD_FLAGS "${MICROCONTROLLER_HARDWARE_FLAGS};"
               "-Wl,--undefined=uxTopUsedPriority;"
-              "-fmessage-length=0;-nostartfiles;-Xlinker;-gc-sections;")
+              "-Wl,--gc-sections;"
+              "-Wl,--strip-discarded;"
+              "-Wl,--no-dynamic-linker;"
+              "-nostartfiles"  )
 
 # Компиляция файлов происходит по флагам из корневого CMakeList.
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
@@ -280,14 +294,14 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
 
 # ASM файл.
-set(ASM_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.asm)
+#set(ASM_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.asm)
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-                   DEPENDS ${PROJECT_NAME}.elf
-                   COMMENT "Disassembly elf"
-                   COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${PROJECT_NAME}.elf> >> ${ASM_FILE})
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#                   DEPENDS ${PROJECT_NAME}.elf
+#                   COMMENT "Disassembly elf"
+#                   COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${PROJECT_NAME}.elf> >> ${ASM_FILE})
 
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-        COMMENT "Building ${BIN_FILE}")
+                    COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+                    COMMENT "Building ${BIN_FILE}")

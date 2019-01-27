@@ -30,19 +30,18 @@ MEMORY
     /*-----------------------------RAM---------------------------------*/
     /* В режиме выполнения загрузчика карта RAM
        перекрывает карту целевого устройства. */
-    RAM_PAGE_1 (RW)                 : ORIGIN = 0x10000000, LENGTH = 64K
-    RAM_PAGE_2 (RW)                 : ORIGIN = 0x20000000, LENGTH = 112K
-    RAM_PAGE_3 (RW)                 : ORIGIN = 0x2001C000, LENGTH = 16K
+    RAM_PAGE_1 (RW)                 : ORIGIN = 0x20000000, LENGTH = 112K
+    RAM_PAGE_2 (RW)                 : ORIGIN = 0x2001C000, LENGTH = 16K
 
     /* С этой областью памяти будут работать сторонние
        библиотеки на манер FATFS или FreeRTOS. */
-    RAM_EXTERNAL_LIBRARIES (RW)     : ORIGIN = 0x10000000, LENGTH = 10K
+    RAM_EXTERNAL_LIBRARIES (RW)     : ORIGIN = 0x20000000, LENGTH = 10K
 
     /* С этой областью памяти будут работать библиотеки пользователя. */
-    RAM_USER_LIBRARIES (RW)         : ORIGIN = 0x10004000, LENGTH = 54K
+    RAM_USER_LIBRARIES (RW)         : ORIGIN = 0x20002800, LENGTH = 90K
 
     /* С этой областью RAM будет работать код пользователя. */
-    RAM_MAIN_PROGRAMM (RW)          : ORIGIN = 0x20000000, LENGTH = 127K
+    RAM_MAIN_PROGRAMM (RW)          : ORIGIN = 0x20019000, LENGTH = 27K
 
     /* Немного памяти RAM выделяется под начальный стек.
        До запуска планировщика FreeRTOS. */
