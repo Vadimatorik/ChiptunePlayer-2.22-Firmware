@@ -25,7 +25,7 @@ SECTIONS
 
     /*----------------ROM область под внешние библиотеки-----------------*/
     /* Код. */
-    .section_external_lib_text : ALIGN(4)
+    .section_external_libraries_text : ALIGN(4)
     {
         /* Библиотеки компилятора. */
         . = ALIGN(4);    *libstdc++_nano.a:*(.text .text*);
@@ -41,7 +41,7 @@ SECTIONS
     } >ROM_EXTERNAL_LIBRARIES
 
     /* Секции, созданные компилятором */
-    .section_external_lib_required_by_the_compiler : ALIGN(4)
+    .section_external_libraries_required_by_the_compiler : ALIGN(4)
     {
         /* Библиотеки компилятора. */
         . = ALIGN(4);    *libgcc.a:*(.ARM.attributes .ARM.attributes*);
@@ -57,7 +57,7 @@ SECTIONS
     }  >ROM_EXTERNAL_LIBRARIES
 
     /* Сущности с неизменяемыми значениями. */
-    .section_external_lib_rodata : ALIGN(4)
+    .section_external_libraries_rodata : ALIGN(4)
     {
         /* Библиотеки компилятора. */
         . = ALIGN(4);    *libgcc.a:*(.rodata .rodata*);
@@ -74,7 +74,7 @@ SECTIONS
 
     /*-----------------------Библиотеки пользователя---------------------*/
     /* Код. */
-    .section_user_lib_text : ALIGN(4)
+    .section_user_libraries_text : ALIGN(4)
     {
         . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.text .text*);
         . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.text .text*);
@@ -96,7 +96,7 @@ SECTIONS
     } >ROM_USER_LIBRARIES
 
     /* Секции, созданные компилятором */
-    .section_user_lib_required_by_the_compiler : ALIGN(4)
+    .section_user_libraries_required_by_the_compiler : ALIGN(4)
     {
         . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
         . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.ARM.attributes .ARM.attributes*);
@@ -119,7 +119,7 @@ SECTIONS
     }  >ROM_EXTERNAL_LIBRARIES
 
     /* Сущности с неизменяемыми значениями. */
-    .section_user_lib_rodata : ALIGN(4)
+    .section_user_libraries_rodata : ALIGN(4)
     {
         . = ALIGN(4);    *libUSER_FREERTOS_LEVEL.a:*(.rodata .rodata*);
         . = ALIGN(4);    *libUSER_BSP_LEVEL.a:*(.rodata .rodata*);
@@ -159,7 +159,6 @@ SECTIONS
         . = ALIGN(4);    *(.rel.dyn .rel.dyn*)
         . = ALIGN(4);    KEEP(*(.eh_frame .eh_frame*))    /* Для использования исключений в CPP. */
         . = ALIGN(4);    *(.eh_framehdr .eh_framehdr*)
-        . = ALIGN(4);    *(.ARM.extab* .gnu.linkonce.armextab.*)    /* ARM magic sections */
         . = ALIGN(4);    *(.ARM.attributes .ARM.attributes.*)       /* Песь оставшийся дополнительный код,
                                                                        созданный компилятором. */
         . = ALIGN(4);    *(vtable)					            /* C++ virtual tables */
@@ -196,9 +195,16 @@ SECTIONS
         . = ALIGN(4);
     } >ROM_MAIN_PROGRAMM
 
+    /* Для stack trace. */
+    .ARM.exidx :
+    {
+        . = ALIGN(4);    *(.ARM.extab* .gnu.linkonce.armextab.*)
+        . = ALIGN(4);    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > ROM_MAIN_PROGRAMM
+
     /*-------------------------------RAM-----------------------------*/
     /* Начальные значения изменяемых сущностей. */
-    .section_external_lib_data : ALIGN(4)
+    .section_external_libraries_data : ALIGN(4)
     {
         . = ALIGN(4);    __external_lib_data_start =  . ;
 
@@ -217,7 +223,7 @@ SECTIONS
     } >RAM_EXTERNAL_LIBRARIES AT> ROM_EXTERNAL_LIBRARIES
 
     /* Область с нулевыми начальными значениями в RAM */
-    .section_external_lib_bss : ALIGN(4)
+    .section_external_libraries_bss : ALIGN(4)
     {
         . = ALIGN(4);    __external_lib_bss_start = .;
 
@@ -245,7 +251,7 @@ SECTIONS
     } >RAM_EXTERNAL_LIBRARIES
 
     /* Начальные значения изменяемых сущностей. */
-    .section_user_lib_data : ALIGN(4)
+    .section_user_libraries_data : ALIGN(4)
     {
         . = ALIGN(4);    __user_lib_data_start =  . ;
 
@@ -269,7 +275,7 @@ SECTIONS
         . = ALIGN(4);    __user_lib_data_end =  . ;
     } >RAM_USER_LIBRARIES AT> ROM_USER_LIBRARIES
 
-    .section_user_lib_bss : ALIGN(4)
+    .section_user_libraries_bss : ALIGN(4)
     {
         . = ALIGN(4);    __user_lib_bss_start = .;
 
@@ -328,8 +334,8 @@ SECTIONS
         . = ALIGN(4);    __bss_end__ = .;    __user_code_bss_end = .;
     } >RAM_MAIN_PROGRAMM
 
-    __external_lib_data_in_rom_start = LOADADDR(.section_external_lib_data);
-    __user_lib_data_in_rom_start = LOADADDR(.section_user_lib_data);
+    __external_lib_data_in_rom_start = LOADADDR(.section_external_libraries_data);
+    __user_lib_data_in_rom_start = LOADADDR(.section_user_libraries_data);
     __user_code_data_in_rom_start = LOADADDR(.section_user_code_data);
 
     /*-------------------------Отладочная информация-----------------*/

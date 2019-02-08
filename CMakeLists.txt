@@ -11,6 +11,18 @@ SET (CMAKE_C_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-gcc)
 SET (CMAKE_CXX_COMPILER ${TOOLCHAIN_BIN_PATH}/arm-none-eabi-g++)
 SET (ARM_SIZE "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-size")
 SET (ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objdump")
+SET (ARM_OBJCOPY "${TOOLCHAIN_BIN_PATH}/arm-none-eabi-objcopy")
+
+# STM32PROG.
+SET (STM32PROG "/home/vadim/user_prog/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI")
+SET (STM32PROG_PORT "SWD")
+SET (STM32PROG_FREQ "4000")
+
+# Секции.
+SET (SECTION_EXTERNAL_LIB_ADDRESS "0x08020000")
+SET (SECTION_USER_LIBRARIES_ADDRESS "0x08080000")
+SET (SECTION_USER_CODE_ADDRESS "0x080C0000")
+
 
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
@@ -225,19 +237,19 @@ include_directories(
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
-        ${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/base/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/fat/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/gui/elements/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/muxer/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/nvic/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/rcc/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/ayplayer_class/structs
-        ${CMAKE_CURRENT_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
+        ${CMAKE_SOURCE_DIR}/bsp/startup/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/base/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/fat/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/elements/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/muxer/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/nvic/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/rcc/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
+        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/structs
+        ${CMAKE_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
 )
 
 target_compile_options (${PROJECT_NAME}.elf PRIVATE
@@ -301,7 +313,59 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
 #                   COMMENT "Disassembly elf"
 #                   COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${PROJECT_NAME}.elf> >> ${ASM_FILE})
 
-set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-                    COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-                    COMMENT "Building ${BIN_FILE}")
+#set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#                    COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+#                    COMMENT "Building ${BIN_FILE}")
+
+
+# Создание бинарного файла из секций пользователя и часто меняющихся системных.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    DEPENDS ${PROJECT_NAME}.elf
+                    COMMENT "Creating a binary file of the <<user_code>> section."
+                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
+                                           --only-section=.section_user_code_text;
+                                           --only-section=.sections_user_code_required_by_the_compiler;
+                                           --only-section=.section_user_code_rodata;
+                                           --only-section=.ARM.exidxж
+                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin)
+
+# Загружаем бинарный файл из секций пользователя и часто меняющихся системных.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    COMMENT "Write <<user_code>> section."
+                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
+                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${SECTION_USER_CODE_ADDRESS})
+
+# Создание бинарного файла из редко меняющихся библиотек.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    COMMENT "Creating a binary file of the <<external_libraries>> section."
+                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
+                    --only-section=.section_external_libraries_text;
+                    --only-section=.section_external_libraries_required_by_the_compiler;
+                    --only-section=.section_external_libraries_rodata;
+                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin)
+
+# Загружаем бинарный файл из редко меняющихся библиотек.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    COMMENT "Write <<external_libraries>> section."
+                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
+                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${SECTION_EXTERNAL_LIB_ADDRESS})
+
+# Создание бинарного файла из чаще меняющихся библиотек.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    COMMENT "Creating a binary file of the <<user_libraries>> section."
+                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
+                    --only-section=.section_user_libraries_text;
+                    --only-section=.section_user_libraries_required_by_the_compiler;
+                    --only-section=.section_user_libraries_rodata;
+                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin)
+
+# Загружаем бинарный файл из чаще меняющихся библиотек.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+                    COMMENT "Write <<user_libraries>> section."
+                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
+                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS})
+
