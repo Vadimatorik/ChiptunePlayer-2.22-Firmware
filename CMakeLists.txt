@@ -305,67 +305,74 @@ add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     COMMENT "${PROJECT_NAME} size information:"
                     COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
 
-# ASM файл.
-#set(ASM_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.asm)
+# Создание бинарного файла и прошивка им при необходимости из файлов
+# пользователя и самых часто меняющихся библиотек.
+add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+        DEPENDS ${PROJECT_NAME}.elf
+        COMMENT "Creating a binary file of the <<user_code>> section."
+        COMMAND ${ARM_OBJCOPY} --output-target=binary;
+        --only-section=.section_user_code_text;
+        --only-section=.sections_user_code_required_by_the_compiler;
+        --only-section=.section_user_code_rodata;
+        --only-section=.ARM.exidxж
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin
+        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin
+        "${STM32PROG} -c port=${STM32PROG_PORT}
+                                                                  freq=${STM32PROG_FREQ}
+                                                               -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin
+                                                                  ${SECTION_USER_CODE_ADDRESS}")
 
-#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-#                   DEPENDS ${PROJECT_NAME}.elf
-#                   COMMENT "Disassembly elf"
-#                   COMMAND ${CMAKE_OBJDUMP} -D $<TARGET_FILE:${PROJECT_NAME}.elf> >> ${ASM_FILE})
-
-#set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
-#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-#                    COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-#                    COMMENT "Building ${BIN_FILE}")
-
-
-# Создание бинарного файла из секций пользователя и часто меняющихся системных.
+#
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     DEPENDS ${PROJECT_NAME}.elf
-                    COMMENT "Creating a binary file of the <<user_code>> section."
-                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
-                                           --only-section=.section_user_code_text;
-                                           --only-section=.sections_user_code_required_by_the_compiler;
-                                           --only-section=.section_user_code_rodata;
-                                           --only-section=.ARM.exidxж
-                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
-                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin)
-
-# Загружаем бинарный файл из секций пользователя и часто меняющихся системных.
-add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
-                    COMMENT "Write <<user_code>> section."
-                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
-                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${SECTION_USER_CODE_ADDRESS})
-
-# Создание бинарного файла из редко меняющихся библиотек.
-add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
                     COMMENT "Creating a binary file of the <<external_libraries>> section."
                     COMMAND ${ARM_OBJCOPY} --output-target=binary;
-                    --only-section=.section_external_libraries_text;
-                    --only-section=.section_external_libraries_required_by_the_compiler;
-                    --only-section=.section_external_libraries_rodata;
-                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
-                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin)
+                                           --only-section=.section_external_libraries_text;
+                                           --only-section=.section_external_libraries_required_by_the_compiler;
+                                           --only-section=.section_external_libraries_rodata;
+                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+                                           ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
+                    COMMAND cd ${CMAKE_SOURCE_DIR} &&
+                            ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin
+                                     ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
+                                     "${STM32PROG} -c port=${STM32PROG_PORT}
+                                                      freq=${STM32PROG_FREQ}
+                                                   -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin
+                                                      ${SECTION_EXTERNAL_LIB_ADDRESS}")
 
-# Загружаем бинарный файл из редко меняющихся библиотек.
 add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
-                    COMMENT "Write <<external_libraries>> section."
-                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
-                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${SECTION_EXTERNAL_LIB_ADDRESS})
+        DEPENDS ${PROJECT_NAME}.elf
+        COMMENT "Creating a binary file of the <<external_libraries>> section."
+        COMMAND ${ARM_OBJCOPY} --output-target=binary;
+        --only-section=.section_external_libraries_text;
+        --only-section=.section_external_libraries_required_by_the_compiler;
+        --only-section=.section_external_libraries_rodata;
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
+        COMMAND cd ${CMAKE_SOURCE_DIR} &&
+        ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin
+        ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
+        "${STM32PROG} -c port=${STM32PROG_PORT}
+                                                      freq=${STM32PROG_FREQ}
+                                                   -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin
+                                                      ${SECTION_EXTERNAL_LIB_ADDRESS}")
+
 
 # Создание бинарного файла из чаще меняющихся библиотек.
-add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
-                    COMMENT "Creating a binary file of the <<user_libraries>> section."
-                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
-                    --only-section=.section_user_libraries_text;
-                    --only-section=.section_user_libraries_required_by_the_compiler;
-                    --only-section=.section_user_libraries_rodata;
-                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
-                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin)
+#add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+#                    COMMENT "Creating a binary file of the <<user_libraries>> section."
+#                    COMMAND ${ARM_OBJCOPY} --output-target=binary;
+#                    --only-section=.section_user_libraries_text;
+#                    --only-section=.section_user_libraries_required_by_the_compiler;
+#                    --only-section=.section_user_libraries_rodata;
+#                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf;
+#                    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin)
 
 # Загружаем бинарный файл из чаще меняющихся библиотек.
-add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
-                    COMMENT "Write <<user_libraries>> section."
-                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
-                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS})
+# add_custom_command (TARGET ${PROJECT_NAME}.elf POST_BUILD
+#                    COMMENT "Write <<user_libraries>> section."
+#                    COMMAND ${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ}
+#                    -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS})
 
