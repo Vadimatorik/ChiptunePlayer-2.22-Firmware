@@ -162,26 +162,24 @@ SECTIONS
         . = ALIGN(4);    *(.ARM.attributes .ARM.attributes.*)       /* Песь оставшийся дополнительный код,
                                                                        созданный компилятором. */
         . = ALIGN(4);    *(vtable)					            /* C++ virtual tables */
-        . = ALIGN(4);
 
         PROVIDE_HIDDEN (__preinit_array_start = .);             /* Список методов, вызываемых перед конструкторами. */
-        KEEP(*(.preinit_array_sysinit .preinit_array_sysinit*))
-        KEEP(*(.preinit_array_platform .preinit_array_platform.*))
-        KEEP(*(.preinit_array .preinit_array.*))
+        . = ALIGN(4); KEEP(*(.preinit_array_sysinit .preinit_array_sysinit*))
+        . = ALIGN(4); KEEP(*(.preinit_array_platform .preinit_array_platform.*))
+        . = ALIGN(4); KEEP(*(.preinit_array .preinit_array.*))
         PROVIDE_HIDDEN (__preinit_array_end = .);
-        . = ALIGN(4);
 
         PROVIDE_HIDDEN (__init_array_start = .);                /* Вызов конструкторов глобальных объектов. */
-        KEEP(*(SORT(.init_array.*)))
-        KEEP(*(.init_array))
-        PROVIDE_HIDDEN (__init_array_end = .);
+        . = ALIGN(4);KEEP(*(SORT(.init_array.*)))
+        . = ALIGN(4); KEEP(*(.init_array))
         . = ALIGN(4);
+        PROVIDE_HIDDEN (__init_array_end = .);
 
         PROVIDE_HIDDEN (__fini_array_start = .);                /* Вызов деструкторов глобальных объектов. */
-        KEEP(*(SORT(.fini_array.*)))
-        KEEP(*(.fini_array))
-        PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4); KEEP(*(SORT(.fini_array.*)))
+        . = ALIGN(4); KEEP(*(.fini_array))
         . = ALIGN(4);
+        PROVIDE_HIDDEN (__fini_array_end = .);
 
         . = ALIGN(4);    KEEP(*(.cfmconfig))
         . = ALIGN(4);    *(.after_vectors .after_vectors.*)
@@ -200,6 +198,7 @@ SECTIONS
     {
         . = ALIGN(4);    *(.ARM.extab* .gnu.linkonce.armextab.*)
         . = ALIGN(4);    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        . = ALIGN(4);
     } > ROM_MAIN_PROGRAMM
 
     /*-------------------------------RAM-----------------------------*/
