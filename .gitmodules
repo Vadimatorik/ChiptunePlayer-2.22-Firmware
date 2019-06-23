@@ -52,3 +52,6 @@
 [submodule "bsp/submodule/module_button"]
 	path = bsp/submodule/module_button
 	url = git@github.com:Vadimatorik/module_button.git
+[submodule "submodules/lua"]
+	path = submodules/lua
+	url = git@github.com:lua/lua.git
