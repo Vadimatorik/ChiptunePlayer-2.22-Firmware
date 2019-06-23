@@ -1,3 +1,20 @@
+/*
+
+
+*(.ARM.attributes*)  /* ARM-специфичные атрибуты файла. */
+
+*(.rodata*)
+*/
+
+
+.user_rodata :
+    {
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+    } >ROM_MAIN_PROGRAMM
+
+
 this->cfg->mcu->gpio->pwr.allPwr->reset();
 
 this->cfg->l->sendMessage( RTL_TYPE_M::INIT_OK, "MakiseGui started." );
@@ -79,4 +96,18 @@ void Base::setValueEqualizer (	void	) {
 		break;
 	}
 }
+
+
+    /*---------------------ROM область загрузчика------------------------*/
+    .section_bootloader : ALIGN(4)
+    {
+        /* На данный момент загрузчик отсутствует.
+           Поэтому на месте кода загрузчика будет находиться
+           только таблица векторов прерываний основного проекта.
+           Таблица векторов прерываний должна быть передана
+           компоновщику как отдельный .o файл, а не как часть
+           библиотеки.*/
+        . = ALIGN(4);    KEEP(*(.user_code_isr_vector .user_code_isr_vector*))
+        . = ALIGN(4);
+    } >ROM_BOOTLOADER
 

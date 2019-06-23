@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc/mc_hardware_interfaces_implementation_for_stm32_uart.h"
+#include "mc_hardware_interfaces_implementation_for_stm32_uart.h"
 #include "ayplayer_class/structs/ayplayer_struct_mcu_cfg.h"
 #include "run_time_logger.h"
 
