@@ -54,4 +54,4 @@
 	url = git@github.com:Vadimatorik/module_button.git
 [submodule "submodules/lua"]
 	path = submodules/lua
-	url = git@github.com:lua/lua.git
+	url = git@github.com:Vadimatorik/lua.git
