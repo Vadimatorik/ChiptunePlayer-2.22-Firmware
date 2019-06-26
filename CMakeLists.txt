@@ -14,6 +14,7 @@ SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}objdump")
 SET(ARM_OBJCOPY "${TOOLCHAIN_BIN_PATH}objcopy")
 
 # STM32PROG.
+set(STM32PROG_USE off)
 SET(STM32PROG "/home/vadimatorik/u_prog/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI")
 SET(STM32PROG_PORT "SWD")
 SET(STM32PROG_FREQ "4000")
@@ -299,12 +300,12 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
         "${LD_FILES};"
         "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 
-# Вывод размера итогового elf (цельного).
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         DEPENDS ${PROJECT_NAME}.elf
         COMMENT "${PROJECT_NAME} size information:"
         COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
 
+if (STM32PROG_USE STREQUAL "ON")
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         DEPENDS ${PROJECT_NAME}.elf
         COMMENT "Creating a binary file of all section."
@@ -333,4 +334,4 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMENT "Creating a binary file of the <<user_libraries>> section."
         COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_user_libraries_text --only-section=.section_user_libraries_required_by_the_compiler --only-section=.section_user_libraries_rodata  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin
         COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS}")
-
+endif()
