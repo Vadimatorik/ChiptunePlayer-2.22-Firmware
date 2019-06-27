@@ -55,3 +55,9 @@
 [submodule "user_code/submodules/module_run_time_logger"]
 	path = user_code/submodules/module_run_time_logger
 	url = git@github.com:Vadimatorik/module_run_time_logger.git
+[submodule "bsp/submodules/git@github.com:Vadimatorik/module_chiptune.git"]
+	path = bsp/submodules/git@github.com:Vadimatorik/module_chiptune.git
+	url = git@github.com:Vadimatorik/module_digital_potentiometer.git
+[submodule "bsp/submodules/openocd_configs"]
+	path = bsp/submodules/openocd_configs
+	url = git@github.com:Vadimatorik/openocd_configs.git

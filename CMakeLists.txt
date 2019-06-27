@@ -212,7 +212,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user_code)
 
 add_executable(${PROJECT_NAME}.elf "user_code/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/vectors.cpp"

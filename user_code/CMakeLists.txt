@@ -34,7 +34,7 @@ include_directories(
         ayplayer_class/rcc/inc
         ayplayer_class/sd_control/inc
         ayplayer_class/structs
-        ${CMAKE_CURRENT_SOURCE_DIR}/submodule/module_run_time_logger/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/submodules/module_run_time_logger/inc
 )
 
 # Компиляции полежат все <<.cpp>> файлы из директории src.
