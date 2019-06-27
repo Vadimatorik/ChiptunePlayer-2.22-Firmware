@@ -204,7 +204,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_wave_generators)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user/submodules/module_run_time_logger)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user_code/submodules/module_run_time_logger)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
@@ -214,7 +214,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 
-add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
+add_executable(${PROJECT_NAME}.elf "user_code/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/vectors.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/loader.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodules/module_system_dummy/src/cpp_system_calls.cpp")
@@ -240,17 +240,17 @@ include_directories(
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
         ${CMAKE_SOURCE_DIR}/bsp/submodules/module_system_dummy/inc
         ${CMAKE_SOURCE_DIR}/bsp/startup/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/base/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/fat/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/elements/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/muxer/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/nvic/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/rcc/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/structs
-        ${CMAKE_SOURCE_DIR}/user/submodules/module_run_time_logger/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/ayplayer_file/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/base/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/fat/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/gui/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/gui/elements/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/muxer/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/nvic/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/rcc/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/sd_control/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/structs
+        ${CMAKE_SOURCE_DIR}/user_code/submodules/module_run_time_logger/inc
 )
 
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
