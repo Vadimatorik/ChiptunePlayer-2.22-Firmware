@@ -49,63 +49,63 @@ SET(CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-Wno-type-limits;-fno-e
 SET(USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Путь к заголовочным файлам операционной системы.
-SET(USER_OS_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4/inc)
+SET(USER_OS_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_freertos_for_stm32f4/inc)
 
-# Путь до submodule с описанием интерфейсов.
-SET(MODULE_MC_HARDWARE_INTERFACES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces)
+# Путь до submodules с описанием интерфейсов.
+SET(MODULE_MC_HARDWARE_INTERFACES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces)
 
 # Путь к реализациям интерфейсов под текущий микроконтроллер.
 SET(MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc)
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32/inc)
 
 # Путь до заголовочных файлов работы с аппаратной периферией низкого уровня.
-SET(LOW_LEVEL_H_FILES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/hal/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/hal/inc/legacy
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/device/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/inc)
+SET(LOW_LEVEL_H_FILES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/hal/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/hal/inc/legacy
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/cmsis/device/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/cmsis/inc)
 
-SET(BUTTON_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_button/buttons_core/inc")
+SET(BUTTON_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_button/buttons_core/inc")
 
 # Путь до сдвиговых регистров.
-SET(SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_base/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_8bit_port/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_pin/inc)
+SET(SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_base/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_8bit_port/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_pin/inc)
 
 # Путь до SDIO.
-SET(SD_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_sdio/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_spi/inc)
+SET(SD_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver/microsd_card_sdio/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver/microsd_card_spi/inc)
 
 # Путь до необходимых заголовочных файлов MakiseGUI, чтобы можно было использовать базу элементов.
-SET(MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/fonts"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/styles"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements/inc")
+SET(MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/fonts"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/styles"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/elements"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/elements/inc")
 
 SET(MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik/inc")
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui_elements_by_vadimatorik/inc")
 
 # Путь до структур chiptune классов.
-SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_low_lavel/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_note_mode/inc")
+SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_file_play/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_low_lavel/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_note_mode/inc")
 
 # Путь до структуры с объектами FreeRTOS пользователя.
 SET(USER_FREERTOS_OBJ_H_PATH "${CMAKE_SOURCE_DIR}/bsp/freertos/user_obj/inc")
 
 # Путь до генератора миандра.
-SET(WAVE_GENERATORS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators/ltc6903/inc")
+SET(WAVE_GENERATORS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_wave_generators/ltc6903/inc")
 
 # Путь до lcd.
-SET(LCD_DRIVER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/gdeh0154d27/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/ssd1306/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/st7565/inc")
+SET(LCD_DRIVER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/gdeh0154d27/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/ssd1306/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/st7565/inc")
 
 # Путь до потенциометров.
-SET(DIGITAL_POTENTIOMETER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_digital_potentiometer/ad5204/inc")
+SET(DIGITAL_POTENTIOMETER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_digital_potentiometer/ad5204/inc")
 
 # Путь до потенциометров.
 SET(MC_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/mc_hardware/inc")
@@ -114,7 +114,7 @@ SET(MC_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/mc_hardware/inc")
 SET(PCB_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/pcb_hardware/inc")
 
 # Путь до потенциометров.
-SET(FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan/inc")
+SET(FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_fatfs_by_chan/inc")
 
 # Флаги оптимизации библиотек.
 SET(FATFS_OPTIMIZATION_FLAGS "-O0;-g3;")
@@ -189,22 +189,22 @@ SET(MICROSD_LOW_LEVEL_DRIVER_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET(WAVE_GENERATORS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Сборка требуемых библиотек.
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_fatfs_by_chan)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_freertos_for_stm32f4)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui_elements_by_vadimatorik)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_button)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_digital_potentiometer)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_button)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_digital_potentiometer)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_wave_generators)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user/submodule/module_run_time_logger)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user/submodules/module_run_time_logger)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
@@ -217,7 +217,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/user)
 add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/vectors.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/loader.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/src/cpp_system_calls.cpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodules/module_system_dummy/src/cpp_system_calls.cpp")
 
 include_directories(
         ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
@@ -238,7 +238,7 @@ include_directories(
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_system_dummy/inc
         ${CMAKE_SOURCE_DIR}/bsp/startup/inc
         ${CMAKE_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
         ${CMAKE_SOURCE_DIR}/user/ayplayer_class/base/inc
@@ -250,7 +250,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/user/ayplayer_class/rcc/inc
         ${CMAKE_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
         ${CMAKE_SOURCE_DIR}/user/ayplayer_class/structs
-        ${CMAKE_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
+        ${CMAKE_SOURCE_DIR}/user/submodules/module_run_time_logger/inc
 )
 
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
