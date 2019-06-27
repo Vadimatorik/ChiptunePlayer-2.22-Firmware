@@ -88,9 +88,15 @@ SET(MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH
         "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui_elements_by_vadimatorik/inc")
 
 # Путь до структур chiptune классов.
-SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_file_play/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_low_lavel/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/ay_ym_note_mode/inc")
+SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/readers/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/low_lavel/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/note_mode/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/mc_file_container/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/include"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/binary"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/formats/chiptune/aym")
 
 # Путь до структуры с объектами FreeRTOS пользователя.
 SET(USER_FREERTOS_OBJ_H_PATH "${CMAKE_SOURCE_DIR}/bsp/freertos/user_obj/inc")
