@@ -61,3 +61,6 @@
 [submodule "bsp/submodules/openocd_configs"]
 	path = bsp/submodules/openocd_configs
 	url = git@github.com:Vadimatorik/openocd_configs.git
+[submodule "bin_extractor"]
+	path = bin_extractor
+	url = git@github.com:Vadimatorik/bin_extractor.git

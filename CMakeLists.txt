@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13.2)
 
+include(cmake_functions.cmake)
+
 SET(CMAKE_SYSTEM_NAME Generic)
 SET(CMAKE_SYSTEM_VERSION 1)
 
@@ -13,17 +15,19 @@ SET(ARM_SIZE "${TOOLCHAIN_BIN_PATH}size")
 SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}objdump")
 SET(ARM_OBJCOPY "${TOOLCHAIN_BIN_PATH}objcopy")
 
+SET(BIN_EXTRACTOR ${CMAKE_SOURCE_DIR}/bin_extractor/build/bin_extractor)
+
 # STM32PROG.
-set(STM32PROG_USE off)
-SET(STM32PROG "/home/vadimatorik/u_prog/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI")
 SET(STM32PROG_PORT "SWD")
 SET(STM32PROG_FREQ "4000")
 
 # Секции.
 SET(SECTION_BOOTLOADER_ADDRESS "0x08000000")
+SET(SECTION_SYSCFG_PAGE_1_ADDRESS "0x08008000")
 SET(SECTION_EXTERNAL_LIB_ADDRESS "0x08020000")
 SET(SECTION_USER_LIBRARIES_ADDRESS "0x08080000")
 SET(SECTION_USER_CODE_ADDRESS "0x080E0000")
+SET(ADDR_END_FLASH "0x08100000")
 
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
@@ -311,33 +315,9 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMENT "${PROJECT_NAME} size information:"
         COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
 
-if (STM32PROG_USE STREQUAL "ON")
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of all section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_all.bin)
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<bootloader>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_bootloader ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader.bin ${SECTION_BOOTLOADER_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<user_code>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_user_code_text --only-section=.section_user_code_required_by_the_compiler --only-section=.section_user_code_rodata --only-section=.ARM.exidx ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${SECTION_USER_CODE_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<external_libraries>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_external_libraries_text --only-section=.section_external_libraries_required_by_the_compiler --only-section=.section_external_libraries_rodata  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${SECTION_EXTERNAL_LIB_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<user_libraries>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_user_libraries_text --only-section=.section_user_libraries_required_by_the_compiler --only-section=.section_user_libraries_rodata  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS}")
-endif()
+if (ST_FLASH_USE STREQUAL "ON")
+    write_sector("bootloader" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_SYSCFG_PAGE_1_ADDRESS})
+    write_sector("external_libraries" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_EXTERNAL_LIB_ADDRESS} ${SECTION_USER_LIBRARIES_ADDRESS})
+    write_sector("user_libraries" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_USER_LIBRARIES_ADDRESS} ${SECTION_USER_CODE_ADDRESS})
+    write_sector("main_programm" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_USER_CODE_ADDRESS} ${ADDR_END_FLASH})
+endif ()
