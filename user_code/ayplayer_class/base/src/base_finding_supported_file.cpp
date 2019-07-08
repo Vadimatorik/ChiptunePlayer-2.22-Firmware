@@ -39,7 +39,7 @@ int	Base::createFileListInSdCard ( std::shared_ptr< char >	path,
 		uint32_t fileLen = 23;			/// 23 - это для теста.
 
 		int rPsgGet = 0;
-		rPsgGet = this->cfg->ay->psgFileGetLong( fullPath, fileLen );
+		rPsgGet = this->cfg->ay->get_len_psg( fullPath, fileLen );
 
 		/// Если файл прошел проверку.
 		if ( rPsgGet == EOK ) {

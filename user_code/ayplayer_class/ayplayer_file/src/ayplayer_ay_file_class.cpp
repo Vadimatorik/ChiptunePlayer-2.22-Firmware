@@ -1,7 +1,8 @@
 #include "ayplayer_ay_file_class.h"
 
 AyYmFilePlay::AyYmFilePlay( const AyYmFilePlayCfg* const cfg ) :
-		cfg( cfg ) {}
+		cfg( cfg ) {
+}
 
 /*
 void AyYmFilePlay::setUsingChip ( uint32_t chipNumber ) {
@@ -26,12 +27,12 @@ void AyYmFilePlay::resetFlags ( void ) {
 	this->pointInBuffer				=	0;
 }
 
-int AyYmFilePlay::getFileLen ( uint32_t&	returnFileLenByte ) {
+int AyYmFilePlay::get_len_file (uint32_t &returnFileLenByte) {
 	returnFileLenByte = this->fat.getFileSize( this->file );
 	return EOK;
 }
 
-int AyYmFilePlay::openFile (	std::shared_ptr< char >		fullFilePath	) {
+int AyYmFilePlay::open_file (std::shared_ptr<char> fullFilePath) {
 	this->resetFlags();
 
 	int r;
@@ -61,19 +62,19 @@ int AyYmFilePlay::openFile (	std::shared_ptr< char >		fullFilePath	) {
 	return EOK;
 }
 
-int AyYmFilePlay::closeFile ( void ) {
+int AyYmFilePlay::close_file (void) {
 	while( this->cfg->ayLow->queueEmptyCheck() != true ) {			/// Ждем, пока AY освободится.
 		USER_OS_DELAY_MS(20);
 	}
 
 	this->cfg->ayLow->playStateSet( 0 );								/// Отключаем аппаратку.
-	this->setPwrChip( false );									/// Питание чипа.
+    this->set_pwr_chip(false);									/// Питание чипа.
 	this->cfg->ayLow->queueClear();									/// Чистим очередь.
 
 	return this->fat.closeFile( this->file );
 }
 
-int AyYmFilePlay::setOffsetByteInFile ( const uint32_t offsetByte ) {
+int AyYmFilePlay::set_offset (const uint32_t offsetByte) {
 	int	r;
 
 	uint32_t countByteInTreck;
@@ -123,8 +124,8 @@ int AyYmFilePlay::setOffsetByteInFile ( const uint32_t offsetByte ) {
 	return 0;
 }
 
-int AyYmFilePlay::readInArray (	uint8_t*		returnDataBuffer,
-								const uint32_t	countByteRead	) {
+int AyYmFilePlay::read (uint8_t *returnDataBuffer,
+                        const uint32_t countByteRead) {
 	int	r;
 
 	/// Если то, что мы хотим считать уже есть в буффере.
@@ -173,30 +174,30 @@ int AyYmFilePlay::readInArray (	uint8_t*		returnDataBuffer,
 	return 0;
 }
 
-int AyYmFilePlay::setPwrChip ( bool state ) {
+int AyYmFilePlay::set_pwr_chip (bool state) {
 	this->cfg->setPwr( this->usingChip, state );
 	return 0;
 }
 
-int AyYmFilePlay::initChip ( void ) {
+int AyYmFilePlay::init_chip (void) {
 	this->cfg->ayLow->queueClear();
 	this->cfg->ayLow->hardwareClear();
 	this->cfg->ayLow->playStateSet( 1 );
 	return 0;
 }
 
-int AyYmFilePlay::sleepChip ( const uint32_t countTick ) {
+int AyYmFilePlay::sleep (const uint32_t countTick) {
 	int r;
 	for ( uint32_t i = 0; i < countTick; i++ ) {
-		r = this->writePacket( 0xFF, 0 );			/// 0xFF - знак паузы.
+		r = this->set_reg(0xFF, 0);			/// 0xFF - знак паузы.
 		if ( r != 0 )								/// Если была остановка или проблемы на нижнем уровне...
 			return r;								///  - выходим.
 	}
 	return 0;
 }
 
-int AyYmFilePlay::writePacket (	const uint8_t	reg,
-								const uint8_t	data ) {
+int AyYmFilePlay::set_reg (const uint8_t reg,
+                           const uint8_t data) {
 	ayQueueStruct		s;
 	s.data			=	data;
 	s.reg			=	reg;
@@ -216,7 +217,7 @@ int AyYmFilePlay::writePacket (	const uint8_t	reg,
 
 void AyYmFilePlay::abort ( void ) {
 	this->cfg->ayLow->playStateSet( 0 );				/// Отключаем аппаратку.
-	this->setPwrChip( false );					/// Питание чипа.
+    this->set_pwr_chip(false);					/// Питание чипа.
 	this->cfg->ayLow->queueClear();					/// Чистим очередь.
 	this->fat.closeFile( this->file );			///	Хотя бы удаляем FIL-структуру.
 }

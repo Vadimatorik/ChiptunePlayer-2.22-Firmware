@@ -24,31 +24,31 @@ include_directories(
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/ayplayer_file/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/base/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/fat/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/gui/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/gui/elements/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/muxer/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/nvic/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/rcc/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/sd_control/inc
-        ${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/structs
-        ${CMAKE_CURRENT_SOURCE_DIR}/submodule/module_run_time_logger/inc
+        ayplayer_class/ayplayer_file/inc
+        ayplayer_class/base/inc
+        ayplayer_class/fat/inc
+        ayplayer_class/gui/inc
+        ayplayer_class/gui/elements/inc
+        ayplayer_class/muxer/inc
+        ayplayer_class/nvic/inc
+        ayplayer_class/rcc/inc
+        ayplayer_class/sd_control/inc
+        ayplayer_class/structs
+        ${CMAKE_CURRENT_SOURCE_DIR}/submodules/module_run_time_logger/inc
 )
 
 # Компиляции полежат все <<.cpp>> файлы из директории src.
 file (GLOB ${PROJECT_NAME}_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/ayplayer_file/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/base/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/fat/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/gui/elements/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/gui/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/muxer/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/nvic/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/sd_control/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_class/rcc/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ayplayer_obj/*.cpp")
+        "ayplayer_class/ayplayer_file/src/*.cpp"
+        "ayplayer_class/base/src/*.cpp"
+        "ayplayer_class/fat/src/*.cpp"
+        "ayplayer_class/gui/elements/src/*.cpp"
+        "ayplayer_class/gui/src/*.cpp"
+        "ayplayer_class/muxer/src/*.cpp"
+        "ayplayer_class/nvic/src/*.cpp"
+        "ayplayer_class/sd_control/src/*.cpp"
+        "ayplayer_class/rcc/src/*.cpp"
+        "ayplayer_obj/*.cpp")
 
 
 # Собираем библиотеку из .obj файлов, полученных из файлов, добавленных выше.

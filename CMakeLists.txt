@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13.2)
 
+include(cmake_functions.cmake)
+
 SET(CMAKE_SYSTEM_NAME Generic)
 SET(CMAKE_SYSTEM_VERSION 1)
 
@@ -13,16 +15,19 @@ SET(ARM_SIZE "${TOOLCHAIN_BIN_PATH}size")
 SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}objdump")
 SET(ARM_OBJCOPY "${TOOLCHAIN_BIN_PATH}objcopy")
 
+SET(BIN_EXTRACTOR ${CMAKE_SOURCE_DIR}/bin_extractor/build/bin_extractor)
+
 # STM32PROG.
-SET(STM32PROG "/home/vadimatorik/u_prog/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI")
 SET(STM32PROG_PORT "SWD")
 SET(STM32PROG_FREQ "4000")
 
 # Секции.
 SET(SECTION_BOOTLOADER_ADDRESS "0x08000000")
+SET(SECTION_SYSCFG_PAGE_1_ADDRESS "0x08008000")
 SET(SECTION_EXTERNAL_LIB_ADDRESS "0x08020000")
 SET(SECTION_USER_LIBRARIES_ADDRESS "0x08080000")
 SET(SECTION_USER_CODE_ADDRESS "0x080E0000")
+SET(ADDR_END_FLASH "0x08100000")
 
 PROJECT(ChiptunePlayer-2.22 C CXX ASM)
 
@@ -48,63 +53,69 @@ SET(CPP_COMPILER_FLAGS "-Werror;-Wall;-Wextra;-std=c++14;-Wno-type-limits;-fno-e
 SET(USER_OS_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Путь к заголовочным файлам операционной системы.
-SET(USER_OS_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4/inc)
+SET(USER_OS_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_freertos_for_stm32f4/inc)
 
-# Путь до submodule с описанием интерфейсов.
-SET(MODULE_MC_HARDWARE_INTERFACES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces)
+# Путь до submodules с описанием интерфейсов.
+SET(MODULE_MC_HARDWARE_INTERFACES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces)
 
 # Путь к реализациям интерфейсов под текущий микроконтроллер.
 SET(MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32/inc)
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32/inc)
 
 # Путь до заголовочных файлов работы с аппаратной периферией низкого уровня.
-SET(LOW_LEVEL_H_FILES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/hal/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/hal/inc/legacy
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/device/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st/cmsis/inc)
+SET(LOW_LEVEL_H_FILES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/hal/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/hal/inc/legacy
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/cmsis/device/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st/cmsis/inc)
 
-SET(BUTTON_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_button/buttons_core/inc")
+SET(BUTTON_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_button/buttons_core/inc")
 
 # Путь до сдвиговых регистров.
-SET(SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_base/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_8bit_port/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register/shift_register_pin/inc)
+SET(SHIFT_REGISTER_BASE_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_base/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_8bit_port/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register/shift_register_pin/inc)
 
 # Путь до SDIO.
-SET(SD_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_sdio/inc
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver/microsd_card_spi/inc)
+SET(SD_H_PATH ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver/microsd_card_sdio/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver/microsd_card_spi/inc)
 
 # Путь до необходимых заголовочных файлов MakiseGUI, чтобы можно было использовать базу элементов.
-SET(MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/fonts"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/styles"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui/MakiseGUI/gui/elements/inc")
+SET(MAKISE_E_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/fonts"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/styles"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/elements"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui/MakiseGUI/gui/elements/inc")
 
 SET(MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik/inc")
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui_elements_by_vadimatorik/inc")
 
 # Путь до структур chiptune классов.
-SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_file_play/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_low_lavel/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune/ay_ym_note_mode/inc")
+SET(CHIPTUNE_H_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/readers/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/low_lavel/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/note_mode/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/aym/file_play/mc_file_container/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/include"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/binary"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune/submodules/zxtune/src/formats/chiptune/aym")
 
 # Путь до структуры с объектами FreeRTOS пользователя.
 SET(USER_FREERTOS_OBJ_H_PATH "${CMAKE_SOURCE_DIR}/bsp/freertos/user_obj/inc")
 
 # Путь до генератора миандра.
-SET(WAVE_GENERATORS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators/ltc6903/inc")
+SET(WAVE_GENERATORS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_wave_generators/ltc6903/inc")
 
 # Путь до lcd.
-SET(LCD_DRIVER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/gdeh0154d27/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/ssd1306/inc"
-        "${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver/st7565/inc")
+SET(LCD_DRIVER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/gdeh0154d27/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/ssd1306/inc"
+        "${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver/st7565/inc")
 
 # Путь до потенциометров.
-SET(DIGITAL_POTENTIOMETER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_digital_potentiometer/ad5204/inc")
+SET(DIGITAL_POTENTIOMETER_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_digital_potentiometer/ad5204/inc")
 
 # Путь до потенциометров.
 SET(MC_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/mc_hardware/inc")
@@ -113,7 +124,7 @@ SET(MC_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/mc_hardware/inc")
 SET(PCB_HARDWARE_PATH "${CMAKE_SOURCE_DIR}/bsp/pcb_hardware/inc")
 
 # Путь до потенциометров.
-SET(FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan/inc")
+SET(FATFS_PATH "${CMAKE_SOURCE_DIR}/bsp/submodules/module_fatfs_by_chan/inc")
 
 # Флаги оптимизации библиотек.
 SET(FATFS_OPTIMIZATION_FLAGS "-O0;-g3;")
@@ -188,22 +199,22 @@ SET(MICROSD_LOW_LEVEL_DRIVER_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 SET(WAVE_GENERATORS_CFG_H_PATH ${CMAKE_SOURCE_DIR}/cfg)
 
 # Сборка требуемых библиотек.
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_fatfs_by_chan)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_freertos_for_stm32f4)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_stm32f4_low_level_by_st)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_makise_gui_elements_by_vadimatorik)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_fatfs_by_chan)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_freertos_for_stm32f4)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_stm32f4_low_level_by_st)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_makise_gui_elements_by_vadimatorik)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_button)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces_implementation_for_stm32)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_shift_register)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_digital_potentiometer)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_chiptune)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_lcd_driver)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_microsd_low_level_driver)
-add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodule/module_wave_generators)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_button)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_shift_register)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_digital_potentiometer)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_chiptune)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_lcd_driver)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_microsd_low_level_driver)
+add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/submodules/module_wave_generators)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user/submodule/module_run_time_logger)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user_code/submodules/module_run_time_logger)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/mc_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/freertos)
@@ -211,12 +222,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/pcb_hardware)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/interrupt)
 add_subdirectory(${CMAKE_SOURCE_DIR}/bsp/gui)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/user)
+add_subdirectory(${CMAKE_SOURCE_DIR}/user_code)
 
-add_executable(${PROJECT_NAME}.elf "${CMAKE_CURRENT_SOURCE_DIR}/user/main.cpp"
+add_executable(${PROJECT_NAME}.elf "user_code/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/vectors.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/bsp/startup/src/loader.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodule/module_system_dummy/src/cpp_system_calls.cpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/bsp/submodules/module_system_dummy/src/cpp_system_calls.cpp")
 
 include_directories(
         ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
@@ -237,19 +248,19 @@ include_directories(
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
         ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
-        ${CMAKE_SOURCE_DIR}/bsp/submodule/module_system_dummy/inc
+        ${CMAKE_SOURCE_DIR}/bsp/submodules/module_system_dummy/inc
         ${CMAKE_SOURCE_DIR}/bsp/startup/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/ayplayer_file/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/base/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/fat/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/gui/elements/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/muxer/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/nvic/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/rcc/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/sd_control/inc
-        ${CMAKE_SOURCE_DIR}/user/ayplayer_class/structs
-        ${CMAKE_SOURCE_DIR}/user/submodule/module_run_time_logger/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/ayplayer_file/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/base/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/fat/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/gui/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/gui/elements/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/muxer/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/nvic/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/rcc/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/sd_control/inc
+        ${CMAKE_SOURCE_DIR}/user_code/ayplayer_class/structs
+        ${CMAKE_SOURCE_DIR}/user_code/submodules/module_run_time_logger/inc
 )
 
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
@@ -299,38 +310,14 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
         "${LD_FILES};"
         "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 
-# Вывод размера итогового elf (цельного).
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         DEPENDS ${PROJECT_NAME}.elf
         COMMENT "${PROJECT_NAME} size information:"
         COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of all section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_all.bin)
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<bootloader>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_bootloader ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_section_bootloader.bin ${SECTION_BOOTLOADER_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<user_code>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_user_code_text --only-section=.section_user_code_required_by_the_compiler --only-section=.section_user_code_rodata --only-section=.ARM.exidx ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_code.bin ${SECTION_USER_CODE_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<external_libraries>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_external_libraries_text --only-section=.section_external_libraries_required_by_the_compiler --only-section=.section_external_libraries_rodata  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_external_libraries.bin ${SECTION_EXTERNAL_LIB_ADDRESS}")
-
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "Creating a binary file of the <<user_libraries>> section."
-        COMMAND ${ARM_OBJCOPY} --output-target=binary --only-section=.section_user_libraries_text --only-section=.section_user_libraries_required_by_the_compiler --only-section=.section_user_libraries_rodata  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin
-        COMMAND cd ${CMAKE_SOURCE_DIR} && ./cmp.sh ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries_new.bin "${STM32PROG} -c port=${STM32PROG_PORT} freq=${STM32PROG_FREQ} -w ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_user_libraries.bin ${SECTION_USER_LIBRARIES_ADDRESS}")
-
+if (ST_FLASH_USE STREQUAL "ON")
+    write_sector("bootloader" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_SYSCFG_PAGE_1_ADDRESS})
+    write_sector("external_libraries" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_EXTERNAL_LIB_ADDRESS} ${SECTION_USER_LIBRARIES_ADDRESS})
+    write_sector("user_libraries" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_USER_LIBRARIES_ADDRESS} ${SECTION_USER_CODE_ADDRESS})
+    write_sector("main_programm" ${SECTION_BOOTLOADER_ADDRESS} ${SECTION_USER_CODE_ADDRESS} ${ADDR_END_FLASH})
+endif ()
