@@ -6,24 +6,24 @@ project (USER_CODE)
 
 # Для сборки требуется:
 include_directories(
-        ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
-        ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
-        ${MODULE_MC_HARDWARE_INTERFACES_PATH}
-        ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
+        ${USER_OS_H_FILES_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
+        ${USER_OS_H_FILES_PATH} # Путь к заголовочным файлам операционной системы.
+        ${MODULE_MC_HARDWARE_INTERFACES_H_FILES_PATH}
+        ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_H_FILES_PATH}
         ${LOW_LEVEL_H_FILES_PATH}
-        ${SD_H_PATH}
-        ${USER_FREERTOS_OBJ_H_PATH}
-        ${CHIPTUNE_H_PATH}
-        ${SHIFT_REGISTER_BASE_PATH}
-        ${WAVE_GENERATORS_PATH}
-        ${LCD_DRIVER_PATH}
-        ${DIGITAL_POTENTIOMETER_PATH}
+        ${SD_H_FILES_PATH}
+        ${USER_FREERTOS_OBJ_H_FILES_PATH}
+        ${MODULE_CHIPTUNE_H_FILES_PATH}
+        ${MODULE_SHIFT_REGISTER_BASE_H_FILES_PATH}
+        ${MODULE_WAVE_GENERATORS_PATH}
+        ${MODULE_LCD_DRIVER_PATH}
+        ${MODULE_DIGITAL_POTENTIOMETER_PATH}
         ${MC_HARDWARE_PATH}
         ${BUTTON_PATH}
-        ${FATFS_PATH}
+        ${MODULE_FATFS_PATH}
         ${PCB_HARDWARE_PATH}
         ${MAKISE_E_PATH}
-        ${MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
+        ${MODULE_MAKISE_GUI_ELEMENTS_BY_VADIMATORIK_PATH}
         ayplayer_class/ayplayer_file/inc
         ayplayer_class/base/inc
         ayplayer_class/fat/inc

@@ -27,29 +27,29 @@ endif ()
 
 # Путь до файла user_os.h с прослойками под конкретную операционную систему.
 # Должен быть обязательно указан.
-if (NOT DEFINED USER_OS_H_PATH)
+if (NOT DEFINED USER_OS_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<USER_OS_H_PATH>> is not specified!")
+            "The value of the variable <<USER_OS_H_FILES_PATH>> is not specified!")
 endif()
 
 # Путь к заголовочным файлам операционной системы.
-if (NOT DEFINED USER_OS_PATH)
+if (NOT DEFINED USER_OS_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<USER_OS_PATH>> is not specified!")
+            "The value of the variable <<USER_OS_H_FILES_PATH>> is not specified!")
 endif()
 
 # Путь до submodule с описанием интерфейсов должен быть указан обязательно.
 # Пример:
 # SET (MODULE_USER_FREERTOS_LEVEL_INTERFACES_PATH ${CMAKE_SOURCE_DIR}/bsp/submodule/module_mc_hardware_interfaces)
-if (NOT DEFINED MODULE_MC_HARDWARE_INTERFACES_PATH)
+if (NOT DEFINED MODULE_MC_HARDWARE_INTERFACES_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<MODULE_MC_HARDWARE_INTERFACES_PATH>> is not specified!")
+            "The value of the variable <<MODULE_MC_HARDWARE_INTERFACES_H_FILES_PATH>> is not specified!")
 endif()
 
 # Путь к реализациям интерфейсов под текущий микроконтроллер.
-if (NOT DEFINED MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH)
+if (NOT DEFINED MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH>> is not specified!")
+            "The value of the variable <<MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_H_FILES_PATH>> is not specified!")
 endif()
 
 # Путь до заголовочных файлов работы с аппаратной периферией низкого уровня.
@@ -60,28 +60,28 @@ if (NOT DEFINED LOW_LEVEL_H_FILES_PATH)
             "The value of the variable <<LOW_LEVEL_H_FILES_PATH>> is not specified!")
 endif()
 
-# Нужны структуры плеера.USER_FREERTOS_OBJ_H_PATH
-if (NOT DEFINED CHIPTUNE_H_PATH)
+# Нужны структуры плеера.USER_FREERTOS_OBJ_H_FILES_PATH
+if (NOT DEFINED MODULE_CHIPTUNE_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<CHIPTUNE_H_PATH>> is not specified!")
+            "The value of the variable <<MODULE_CHIPTUNE_H_FILES_PATH>> is not specified!")
 endif()
 
 # Плеер за собой тянет сдвиговые регистры.
-if (NOT DEFINED SHIFT_REGISTER_BASE_PATH)
+if (NOT DEFINED MODULE_SHIFT_REGISTER_BASE_H_FILES_PATH)
     message (FATAL_ERROR
-            "The value of the variable <<SHIFT_REGISTER_BASE_PATH>> is not specified!")
+            "The value of the variable <<MODULE_SHIFT_REGISTER_BASE_H_FILES_PATH>> is not specified!")
 endif()
 
 
 # Для сборки требуется:
 include_directories(
-    ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
-    ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
-    ${MODULE_MC_HARDWARE_INTERFACES_PATH}
-    ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
+    ${USER_OS_H_FILES_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
+    ${USER_OS_H_FILES_PATH} # Путь к заголовочным файлам операционной системы.
+    ${MODULE_MC_HARDWARE_INTERFACES_H_FILES_PATH}
+    ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_H_FILES_PATH}
     ${LOW_LEVEL_H_FILES_PATH}
-    ${CHIPTUNE_H_PATH}
-    ${SHIFT_REGISTER_BASE_PATH}
+    ${MODULE_CHIPTUNE_H_FILES_PATH}
+    ${MODULE_SHIFT_REGISTER_BASE_H_FILES_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/low_level/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/user_obj/inc
 )

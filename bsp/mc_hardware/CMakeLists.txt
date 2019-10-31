@@ -6,13 +6,13 @@ project (MC_HARDWARE)
 
 # Для сборки требуется:
 include_directories(
-    ${USER_OS_H_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
-    ${USER_OS_PATH} # Путь к заголовочным файлам операционной системы.
+    ${USER_OS_H_FILES_PATH} # Путь до файла user_os с прослойками под конкретную операционную систему.
+    ${USER_OS_H_FILES_PATH} # Путь к заголовочным файлам операционной системы.
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
-    ${MODULE_MC_HARDWARE_INTERFACES_PATH}
-    ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_PATH}
+    ${MODULE_MC_HARDWARE_INTERFACES_H_FILES_PATH}
+    ${MODULE_MC_HARDWARE_INTERFACES_IMPLEMENTATION_H_FILES_PATH}
     ${LOW_LEVEL_H_FILES_PATH}
-    ${SD_H_PATH}
+    ${SD_H_FILES_PATH}
 )
 
 # Компиляции полежат все <<.cpp>> файлы из директории src.
