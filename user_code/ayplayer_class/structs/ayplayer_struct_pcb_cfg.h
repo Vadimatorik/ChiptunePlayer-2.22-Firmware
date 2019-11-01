@@ -5,7 +5,7 @@
 
 struct AyPlayerPcbStrcut {
     MicrosdBase *const sd;
-    MonoLcd::ST7565 *const lcd;
+    mono_lcd::st7565 *const lcd;
     WaveGenerators::LTC6903 *const generator;
     button::base *const buttons;
 };

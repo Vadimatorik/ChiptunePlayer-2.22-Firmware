@@ -22,7 +22,7 @@ void Base::playTask (void *obj) {
             std::shared_ptr<char> fileName(new char[nameLen], std::default_delete<char[]>());
             strcpy(fileName.get(), o->playItem->fileName);
 
-            r = o->cfg->ay->parse_psg(fileName);
+//            r = o->cfg->ay->parse_psg(fileName);
 
             /// Если трек был остановлен или проблемы на аппаратном уровне.
             if (r != 0) {

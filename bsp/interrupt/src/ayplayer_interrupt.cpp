@@ -22,7 +22,7 @@ void HardFault_Handler (void) {
 }
 
 void PVD_IRQHandler (void) {
-    pwr.irqHandler();
+    pwr.irq_handler();
     NVIC_SystemReset();
 }
 
@@ -37,11 +37,11 @@ void TIM6_DAC_IRQHandler (void) {
 }
 
 void DMA2_Stream5_IRQHandler (void) {
-    lcdSpi.irqHandler();
+    lcdSpi.irq_handler();
 }
 
 void DMA1_Stream4_IRQHandler (void) {
-    boardSpi.irqHandler();
+    boardSpi.irq_handler();
 }
 
 void DMA2_Stream3_IRQHandler (void) {
@@ -49,11 +49,11 @@ void DMA2_Stream3_IRQHandler (void) {
 }
 
 void USART1_IRQHandler (void) {
-    usart.irqHandler();
+    usart.uart_irq_handler();
 }
 
 void DMA2_Stream7_IRQHandler (void) {
-    usart.irqHandler();
+    usart.dma_irq_handler();
 }
 
 void CRYP_IRQHandler (void) {

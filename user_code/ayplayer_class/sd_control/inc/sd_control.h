@@ -6,18 +6,18 @@ namespace AyPlayer {
 
 class SdControl {
 public:
-	SdControl	(	McHardwareInterfaces::PinMultifuncIt*	pinIt,
-					McHardwareInterfaces::Pin*				pinRead,
-					McHardwareInterfaces::Pin*				pinSet	);
+	SdControl	(	mc_interfaces::PinMultifuncIt*	pinIt,
+					mc_interfaces::Pin*				pinRead,
+					mc_interfaces::Pin*				pinSet	);
 
 public:
 	void	init					(	void	);
 	bool	getState				(	void	);
 
 private:
-	McHardwareInterfaces::PinMultifuncIt*	pinIt;
-	McHardwareInterfaces::Pin*				pinRead;
-	McHardwareInterfaces::Pin*				pinSet;
+	mc_interfaces::PinMultifuncIt*	pinIt;
+	mc_interfaces::Pin*				pinRead;
+	mc_interfaces::Pin*				pinSet;
 
 };
 

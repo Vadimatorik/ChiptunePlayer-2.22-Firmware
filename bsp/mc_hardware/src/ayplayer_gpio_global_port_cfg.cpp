@@ -1,40 +1,40 @@
-#include "mc_hardware_interfaces_implementation_for_stm32_pin.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_port_global.h"
+#include "pin.h"
+#include "port_global.h"
 
-extern const McHardwareInterfacesImplementation::PinCfg		adcCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		buttonIncCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		buttonDecCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		lcdClkCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		lcdPwmCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		lcdResCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		lcdDcCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		lcdCsCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sd1SmdCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdIoAndClkCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdSetCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		sdReadCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		usbCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		spiBoardTxCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		spiBoardClkCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		boardGpio1;
-extern const McHardwareInterfacesImplementation::PinCfg		boardGpio2;
-extern const McHardwareInterfacesImplementation::PinCfg		boardGpio3;
-extern const McHardwareInterfacesImplementation::PinCfg		boardGpio4;
-extern const McHardwareInterfacesImplementation::PinCfg		jtagPart1Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		jtagPart1Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		pwr5vOnCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		pwrOnCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		tpStCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		tpChCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		uartDebugCfg;
-extern const McHardwareInterfacesImplementation::PinCfg		br0Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		br1Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		br2Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		bc0Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		bc1Cfg;
-extern const McHardwareInterfacesImplementation::PinCfg		bc2Cfg;
+extern const mc::PinCfg		adcCfg;
+extern const mc::PinCfg		buttonIncCfg;
+extern const mc::PinCfg		buttonDecCfg;
+extern const mc::PinCfg		lcdClkCfg;
+extern const mc::PinCfg		lcdPwmCfg;
+extern const mc::PinCfg		lcdResCfg;
+extern const mc::PinCfg		lcdDcCfg;
+extern const mc::PinCfg		lcdCsCfg;
+extern const mc::PinCfg		sd1SmdCfg;
+extern const mc::PinCfg		sdIoAndClkCfg;
+extern const mc::PinCfg		sdSetCfg;
+extern const mc::PinCfg		sdReadCfg;
+extern const mc::PinCfg		usbCfg;
+extern const mc::PinCfg		spiBoardTxCfg;
+extern const mc::PinCfg		spiBoardClkCfg;
+extern const mc::PinCfg		boardGpio1;
+extern const mc::PinCfg		boardGpio2;
+extern const mc::PinCfg		boardGpio3;
+extern const mc::PinCfg		boardGpio4;
+extern const mc::PinCfg		jtagPart1Cfg;
+extern const mc::PinCfg		jtagPart1Cfg;
+extern const mc::PinCfg		pwr5vOnCfg;
+extern const mc::PinCfg		pwrOnCfg;
+extern const mc::PinCfg		tpStCfg;
+extern const mc::PinCfg		tpChCfg;
+extern const mc::PinCfg		uartDebugCfg;
+extern const mc::PinCfg		br0Cfg;
+extern const mc::PinCfg		br1Cfg;
+extern const mc::PinCfg		br2Cfg;
+extern const mc::PinCfg		bc0Cfg;
+extern const mc::PinCfg		bc1Cfg;
+extern const mc::PinCfg		bc2Cfg;
 
-extern const McHardwareInterfacesImplementation::PinCfg gpCfg[ 35 ] = {
+extern const mc::PinCfg gpCfg[ 35 ] = {
 	buttonIncCfg,					buttonDecCfg,				/// Button.
 	br0Cfg,			br1Cfg,			br2Cfg,						/// KeyBoard.
 	bc0Cfg,			bc1Cfg,			bc2Cfg,

@@ -2,7 +2,6 @@
 #include "diskio.h"
 #include "user_os.h"
 #include "ffconf.h"
-#include "microsd_card_spi.h"
 #include "microsd_card_sdio.h"
 
 extern MicrosdSdio sd;

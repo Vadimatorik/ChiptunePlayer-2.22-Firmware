@@ -1,10 +1,9 @@
-#include "mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
-#include "FreeRTOS.h"
+#include "tim_cnt.h"
 #include "FreeRTOSConfig.h"
 #include <stdint.h>
 
 #ifdef configGENERATE_RUN_TIME_STATS
-extern McHardwareInterfacesImplementation::TimCounter timRunTimeStats;
+extern mc::TimCounter timRunTimeStats;
 #endif
 
 extern "C" {

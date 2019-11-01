@@ -15,7 +15,7 @@ const ShiftRegister::Port8bitCfg chip2Port = {
 
 ShiftRegister::Port8bit chip2(&chip2Port);
 
-McHardwareInterfaces::Port8bit *ayPorts[2] = {
+mc_interfaces::Port8bit *ayPorts[2] = {
     &chip1,
     &chip2
 };

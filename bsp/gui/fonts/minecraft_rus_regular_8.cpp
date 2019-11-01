@@ -126,6 +126,8 @@ const uint16_t minecraft_rus_regular_8_unicode [] =
 #endif
 
 extern const MakiseFont F_minecraft_rus_regular_8 = {
+    nullptr,
+    0,
     minecraft_rus_regular_8_table,
     0,
     8,

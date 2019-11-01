@@ -19,7 +19,7 @@ class Gui {
 public:
 	Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 			const AyPlayerGuiModuleStyleCfg*		const cfg,
-			McHardwareInterfaces::TimPwmOneChannel*	ledPwm );
+			mc_interfaces::TimPwmOneChannel*	ledPwm );
 
 
 public:
@@ -67,7 +67,7 @@ private:
 	 *				предыдущей операции и в случае провала
 	 *				перезагружает контроллер.
 	 */
-	void	checkAndExit			(	McHardwareInterfaces::BaseResult	resultValue	);
+	void	checkAndExit			(	mc_interfaces::res	resultValue	);
 
 private:
 	static	void	illuminationControlTask		(	void*	obj	);
@@ -75,7 +75,7 @@ private:
 private:
 	const AyPlayerPcbStrcut*				const pcbObj;
 	const AyPlayerGuiModuleStyleCfg*		const cfg;
-	McHardwareInterfaces::TimPwmOneChannel*	ledPwm;
+	mc_interfaces::TimPwmOneChannel*	ledPwm;
 	USER_OS_STATIC_MUTEX_BUFFER				mbHost;
 	USER_OS_STATIC_MUTEX					mHost;
 	USER_OS_STATIC_STACK_TYPE				tbIlluminationControlTask[ TB_ILLUMINATION_CONTROL_TASK_SIZE ];

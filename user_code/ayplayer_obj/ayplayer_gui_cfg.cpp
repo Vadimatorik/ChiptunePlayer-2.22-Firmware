@@ -4,7 +4,7 @@ extern const MakiseFont F_minecraft_rus_regular_8;
 
 extern uint32_t	ayplayerGetStatePlay			( void );
 extern uint32_t	ayplayerGetPercentBattery		( void );
-
+/*
 extern const AyPlayerGuiModuleStyleCfg ayGuiCfg = {
 	.smw = {
 		.font							=	&F_minecraft_rus_regular_8,
@@ -121,4 +121,4 @@ extern const AyPlayerGuiModuleStyleCfg ayGuiCfg = {
 			.double_border				=	1
 		}
 	}
-};
+};*/

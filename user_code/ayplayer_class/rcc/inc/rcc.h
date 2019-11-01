@@ -17,7 +17,7 @@ public:
 	 *	\return		0	- если инициализация прошла успешно.
 	 *				-1	- в противном случае.
 	 */
-	McHardwareInterfaces::BaseResult	initRccFrequancyMax		(	void	);
+	mc_interfaces::res	initRccFrequancyMax		(	void	);
 
 private:
 	/*!
@@ -30,7 +30,7 @@ private:
 	 *				заданную конфигурацию - микроконтроллер переходит
 	 *				в режим работы по умолчанию.
 	 */
-	McHardwareInterfaces::RccResult		setCfg					(	uint32_t	cfgNumber	);
+	mc_interfaces::RccResult		setCfg					(	uint32_t	cfgNumber	);
 
 	/*!
 	 *	\brief		Метод останавливает работу всех аппаратных блоков,
@@ -55,7 +55,7 @@ private:
 	 *				предыдущей операции и в случае провала
 	 *				перезагружает контроллер.
 	 */
-	void								checkAndExit			(	McHardwareInterfaces::BaseResult	resultValue	);
+	void								checkAndExit			(	mc_interfaces::res	resultValue	);
 
 private:
 	const AyPlayerMcuCfg*			const mcuCfg;

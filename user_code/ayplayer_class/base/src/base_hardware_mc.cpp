@@ -3,7 +3,7 @@
 namespace AyPlayer {
 
 void Base::initHardwareMc ( void ) {
-	McHardwareInterfaces::BaseResult r;
+	mc_interfaces::res r;
 
 	r = this->cfg->mcu->wdt->reinit();
 	this->checkAndExit( r );

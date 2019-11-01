@@ -1,5 +1,5 @@
 #include "ayplayer_mc_hardware.h"
 
-extern const McHardwareInterfacesImplementation::PinCfg gpCfg[ 35 ];
+extern const mc::PinCfg gpCfg[ 35 ];
 
-McHardwareInterfacesImplementation::PortGlobal gp( gpCfg, M_SIZE_ARRAY( gpCfg ) );
+mc::PortGlobal gp( gpCfg, M_SIZE_ARRAY( gpCfg ) );

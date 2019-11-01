@@ -2,9 +2,9 @@
 
 namespace AyPlayer {
 
-SdControl::SdControl	(	McHardwareInterfaces::PinMultifuncIt*	pinIt,
-							McHardwareInterfaces::Pin*				pinRead,
-							McHardwareInterfaces::Pin*				pinSet	)
+SdControl::SdControl	(	mc_interfaces::PinMultifuncIt*	pinIt,
+							mc_interfaces::Pin*				pinRead,
+							mc_interfaces::Pin*				pinSet	)
 								: pinIt( pinIt ), pinRead( pinRead ), pinSet( pinSet ) {
 }
 

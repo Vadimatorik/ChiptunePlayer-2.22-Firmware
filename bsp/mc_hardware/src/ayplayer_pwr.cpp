@@ -1,6 +1,6 @@
-#include "mc_hardware_interfaces_implementation_for_stm32_pwr.h"
+#include "pwr.h"
 
-McHardwareInterfacesImplementation::PwrCfg pwrCfg = {
+mc::PwrCfg pwrCfg = {
 	.cfg = {
 		/// Min: 2.65; Typ: 2.84; Max: 3.02
 		.PVDLevel		=	PWR_PVDLEVEL_5,
@@ -8,4 +8,4 @@ McHardwareInterfacesImplementation::PwrCfg pwrCfg = {
 	}
 };
 
-McHardwareInterfacesImplementation::Pwr	pwr( &pwrCfg );
+mc::Pwr	pwr( &pwrCfg );

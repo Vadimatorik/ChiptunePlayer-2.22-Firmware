@@ -40,9 +40,9 @@
 [submodule "openocd_configs"]
 	path = openocd_configs
 	url = git@github.com:Vadimatorik/openocd_configs.git
-[submodule "bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32"]
-	path = bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32
-	url = git@github.com:Vadimatorik/module_mc_hardware_interfaces_implementation_for_stm32.git
+[submodule "bsp/submodules/module_implementation_for_stm32"]
+	path = bsp/submodules/module_implementation_for_stm32
+	url = git@github.com:Vadimatorik/module_implementation_for_stm32.git
 [submodule "bsp/submodules/module_wave_generators"]
 	path = bsp/submodules/module_wave_generators
 	url = git@github.com:Vadimatorik/module_wave_generators.git

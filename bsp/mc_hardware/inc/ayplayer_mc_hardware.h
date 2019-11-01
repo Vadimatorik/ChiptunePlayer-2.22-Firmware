@@ -1,53 +1,52 @@
 #pragma once
 
-#include "mc_hardware_interfaces_implementation_for_stm32_adc_one_channel.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_pin.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_pin_multifunc_it.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_port_global.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_pwr.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_rcc.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_spi_master_8bit.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_timer_counter.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_timer_interrupt.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_timer_pwm_one_channel.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_uart.h"
-#include "mc_hardware_interfaces_implementation_for_stm32_wdt.h"
+#include "adc_one_ch.h"
+#include "pin.h"
+#include "pin_multifunc_it.h"
+#include "port_global.h"
+#include "pwr.h"
+#include "clk.h"
+#include "spi_master_8bit.h"
+#include "tim_cnt.h"
+#include "tim_int.h"
+#include "tim_pwm_one_ch.h"
+#include "uart.h"
+#include "wdt.h"
 #include "user_os.h"
-
 #include "microsd_card_sdio.h"
 
-extern McHardwareInterfacesImplementation::SpiMaster8Bit		boardSpi;
-extern McHardwareInterfacesImplementation::Wdt					wdt;
-extern McHardwareInterfacesImplementation::Uart					usart;
-extern McHardwareInterfacesImplementation::TimInterrupt			interruptAy;
-extern McHardwareInterfacesImplementation::TimPwmOneChannel		lcdPwm;
-extern McHardwareInterfacesImplementation::SpiMaster8Bit		lcdSpi;
-extern McHardwareInterfacesImplementation::SpiMaster8Bit		boardSpi;
-extern McHardwareInterfacesImplementation::Rcc					rcc;
-extern McHardwareInterfacesImplementation::Pwr					pwr;
-extern McHardwareInterfacesImplementation::AdcOneChannel		adcBat;
-extern MicrosdSdio												sd;
+extern mc::SpiMaster8Bit boardSpi;
+extern mc::Wdt wdt;
+extern mc::uart usart;
+extern mc::TimInterrupt interruptAy;
+extern mc::TimPwmOneChannel lcdPwm;
+extern mc::SpiMaster8Bit lcdSpi;
+extern mc::SpiMaster8Bit boardSpi;
+extern mc::Rcc rcc;
+extern mc::Pwr pwr;
+extern mc::AdcOneChannel adcBat;
+extern MicrosdSdio sd;
 
-extern McHardwareInterfacesImplementation::Pin					shStrob;
-extern McHardwareInterfacesImplementation::PinMultifuncIt		buttonInc;
-extern McHardwareInterfacesImplementation::PinMultifuncIt		buttonDec;
-extern McHardwareInterfacesImplementation::Pin 					lcdRes;
-extern McHardwareInterfacesImplementation::Pin					lcdDc;
-extern McHardwareInterfacesImplementation::Pin					lcdCs;
-extern McHardwareInterfacesImplementation::Pin					sdSet;
-extern McHardwareInterfacesImplementation::PinMultifuncIt		sdRead;
-extern McHardwareInterfacesImplementation::Pin					shStrob;
-extern McHardwareInterfacesImplementation::Pin					ad5204Cs;
-extern McHardwareInterfacesImplementation::Pin					ltcCs;
-extern McHardwareInterfacesImplementation::Pin					pwr5vOn	;
-extern McHardwareInterfacesImplementation::Pin					pwrOn;
-extern McHardwareInterfacesImplementation::Pin					tpSt;
-extern McHardwareInterfacesImplementation::Pin					tpCh;
-extern McHardwareInterfacesImplementation::Pin					keyboardStrings[ 3 ];
-extern McHardwareInterfacesImplementation::Pin					keyboardColumns[ 3 ];
+extern mc::Pin shStrob;
+extern mc::PinMultifuncIt buttonInc;
+extern mc::PinMultifuncIt buttonDec;
+extern mc::Pin lcdRes;
+extern mc::Pin lcdDc;
+extern mc::Pin lcdCs;
+extern mc::Pin sdSet;
+extern mc::PinMultifuncIt sdRead;
+extern mc::Pin shStrob;
+extern mc::Pin ad5204Cs;
+extern mc::Pin ltcCs;
+extern mc::Pin pwr5vOn;
+extern mc::Pin pwrOn;
+extern mc::Pin tpSt;
+extern mc::Pin tpCh;
+extern mc::Pin keyboardStrings[3];
+extern mc::Pin keyboardColumns[3];
 
-extern McHardwareInterfacesImplementation::PortGlobal			gp;
+extern mc::PortGlobal gp;
 
 #ifdef configGENERATE_RUN_TIME_STATS
-extern McHardwareInterfacesImplementation::TimCounter			timRunTimeStats;
+extern mc::TimCounter timRunTimeStats;
 #endif

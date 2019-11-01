@@ -6,16 +6,16 @@ namespace AyPlayer {
 
 Rcc::Rcc ( const AyPlayerMcuCfg*	const mcuCfg ) : mcuCfg( mcuCfg ) {}
 
-McHardwareInterfaces::RccResult Rcc::setCfg ( uint32_t cfgNumber ) {
+mc_interfaces::RccResult Rcc::setCfg ( uint32_t cfgNumber ) {
 	__disable_irq();
 
 	this->mcuCfg->wdt->resetService();
 	this->offObjDependingRcc();
 
-	McHardwareInterfaces::RccResult r;
+	mc_interfaces::RccResult r;
 	r = this->mcuCfg->rcc->setCfg( cfgNumber );
 
-	if ( r == McHardwareInterfaces::RccResult::ok ) {
+	if ( r == mc_interfaces::RccResult::ok ) {
 		this->rccIndex = cfgNumber;
 		reinitObjDependingRcc();
 		startBaseInterfaces();
@@ -44,7 +44,7 @@ void Rcc::offObjDependingRcc ( void ) {
 }
 
 void Rcc::reinitObjDependingRcc ( void ) {
-	McHardwareInterfaces::BaseResult	r;
+	mc_interfaces::res	r;
 
 	r = this->mcuCfg->lcdPwmTim->reinit( this->rccIndex );
 	this->checkAndExit( r );
@@ -75,14 +75,14 @@ void Rcc::reinitObjDependingRcc ( void ) {
 	this->checkAndExit( r );
 }
 
-void Rcc::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
-	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
+void Rcc::checkAndExit ( mc_interfaces::res resultValue ) {
+	if ( resultValue != mc_interfaces::res::err_ok ) {
 		AyPlayer::Nvic::reboot();
 	}
 }
 
 void Rcc::startBaseInterfaces ( void ) {
-	McHardwareInterfaces::BaseResult	r;
+	mc_interfaces::res	r;
 
 	r = this->mcuCfg->adcBat->startContinuousConversion();
 	this->checkAndExit( r );
@@ -97,11 +97,11 @@ void Rcc::startBaseInterfaces ( void ) {
 	this->checkAndExit( r );
 }
 
-McHardwareInterfaces::BaseResult Rcc::initRccFrequancyMax ( void ) {
-	if ( this->setCfg( RCC_SPEED_FREQ_VERY_HIGH ) == McHardwareInterfaces::RccResult::ok ) {
-		return McHardwareInterfaces::BaseResult::ok;
+mc_interfaces::res Rcc::initRccFrequancyMax ( void ) {
+	if ( this->setCfg( RCC_SPEED_FREQ_VERY_HIGH ) == mc_interfaces::RccResult::ok ) {
+		return mc_interfaces::res::err_ok;
 	} else {
-		return McHardwareInterfaces::BaseResult::errInit;
+		return mc_interfaces::res::err_init;
 	}
 }
 

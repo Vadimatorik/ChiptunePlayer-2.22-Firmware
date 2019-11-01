@@ -10,10 +10,11 @@
 #include "ay_ym_file_play.h"
 #include "ltc6903.h"
 #include "buttons_base.h"
+#include "mc_port_8bit.h"
 
 extern ShiftRegister::Base boardShiftRegisters;
 extern MicrosdSdio sd;
-extern MonoLcd::ST7565 lcd;
+extern mono_lcd::st7565 lcd;
 extern DigitalPotentiometer::AD5204 soundDp;
 extern AyYmLowLavel ayLow;
 
@@ -24,7 +25,7 @@ extern ShiftRegister::Pin bc1;
 extern ShiftRegister::Pin bdir;
 extern ShiftRegister::Pin shdn;
 
-extern McHardwareInterfaces::Port8bit *ayPorts[2];
+extern mc_interfaces::Port8bit *ayPorts[2];
 
 extern WaveGenerators::LTC6903 ltc;
 extern button::base buttons;

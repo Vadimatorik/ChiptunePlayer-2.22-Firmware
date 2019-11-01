@@ -61,8 +61,8 @@ void Base::start ( void ) {
 	vTaskStartScheduler();
 }
 
-void Base::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
-	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
+void Base::checkAndExit ( mc_interfaces::res resultValue ) {
+	if ( resultValue != mc_interfaces::res::err_ok ) {
 		this->nvic.reboot();
 	}
 }

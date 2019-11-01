@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "mc_hardware_interfaces_implementation_for_stm32_uart.h"
+#include "uart.h"
 #include "ayplayer_class/structs/ayplayer_struct_mcu_cfg.h"
 #include "run_time_logger.h"
 
 
-McHardwareInterfaces::BaseResult		uartSendMessage ( const char* string );
+mc_interfaces::res		uartSendMessage ( const char* string );
 
 const RunTimeLoggerCfg log_cfg = {
 	.color = {
@@ -22,6 +22,6 @@ const RunTimeLoggerCfg log_cfg = {
 
 RunTimeLogger ayLog( &log_cfg );
 
-McHardwareInterfaces::BaseResult uartSendMessage ( const char* string ) {
+mc_interfaces::res uartSendMessage ( const char* string ) {
 	return usart.tx( (uint8_t*)string, strlen(string), 100 );
 }

@@ -18,7 +18,7 @@ namespace AyPlayer {
 
 Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 				const AyPlayerGuiModuleStyleCfg*		const cfg,
-				McHardwareInterfaces::TimPwmOneChannel*	ledPwm	) :
+				mc_interfaces::TimPwmOneChannel*	ledPwm	) :
 						pcbObj( pcbObj ), cfg( cfg ), ledPwm( ledPwm )	{
 	this->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->mbHost );
 	this->sUpdateLcd	=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->sbUpdateLcd );
@@ -70,7 +70,7 @@ void Gui::illuminationControlTask ( void*	obj ) {
 
 
 void Gui::init ( void ) {
-	makise_gui_autoinit(	&makiseHost,
+	/*makise_gui_autoinit(	&makiseHost,
 							&makiseGui,
 							&makiseGuiDriver,
 							makiseGuiGetBuffer,
@@ -85,13 +85,13 @@ void Gui::init ( void ) {
 																Gui::timerHandler,
 																&this->timStStringScroll	);
 
-	McHardwareInterfaces::BaseResult	r;
+	mc_interfaces::res	r;
 
 	r = this->pcbObj->lcd->reset();
 	this->checkAndExit( r );
-	r = this->pcbObj->lcd->setContrast( 8 );
+	r = this->pcbObj->lcd->set_contrast( 8 );
 	this->checkAndExit( r );
-	r = this->pcbObj->lcd->lcdClear();
+	r = this->pcbObj->lcd->lcd_clear();
 	this->checkAndExit( r );
 	r = this->pcbObj->lcd->on();
 	this->checkAndExit( r );
@@ -104,7 +104,7 @@ void Gui::init ( void ) {
 								( void* )this,
 								this->illuminationControlTaskPrio,
 								this->tbIlluminationControlTask,
-								&this->tsIlluminationControlTask	);
+								&this->tsIlluminationControlTask	);*/
 }
 
 void Gui::update ( void ) {
@@ -113,11 +113,11 @@ void Gui::update ( void ) {
 }
 
 void Gui::updateWithoutLed ( void ) {
-	McHardwareInterfaces::BaseResult r;
+	mc_interfaces::res r;
 
 	USER_OS_TAKE_MUTEX( this->mHost, portMAX_DELAY );
 
-	this->pcbObj->lcd->bufClear();
+	this->pcbObj->lcd->buf_clear();
 
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_PREDRAW );
 	makise_g_host_call( &makiseHost, &makiseGui, M_G_CALL_DRAW );
@@ -128,8 +128,8 @@ void Gui::updateWithoutLed ( void ) {
 	USER_OS_GIVE_MUTEX( this->mHost );
 }
 
-void Gui::checkAndExit ( McHardwareInterfaces::BaseResult resultValue ) {
-	if ( resultValue != McHardwareInterfaces::BaseResult::ok ) {
+void Gui::checkAndExit ( mc_interfaces::res resultValue ) {
+	if ( resultValue != mc_interfaces::res::err_ok ) {
 		AyPlayer::Nvic::reboot();
 	}
 }

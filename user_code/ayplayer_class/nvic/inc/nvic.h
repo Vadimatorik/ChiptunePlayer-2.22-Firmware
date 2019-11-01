@@ -29,7 +29,7 @@ class Nvic {
 
 #pragma once
 
-#include "mc_hardware_interfaces_implementation_for_stm32_platform.h"
+#include "platform.h"
 
 namespace AyPlayer {
 

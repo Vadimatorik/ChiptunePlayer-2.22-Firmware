@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mc_hardware_interfaces_implementation_for_stm32_pin.h"
+#include "pin.h"
 #include "fat.h"
 #include "ay_ym_file_play.h"
 #include "ay_ym_low_lavel.h"
@@ -15,7 +15,7 @@ struct AyYmFilePlayCfg {
                       bool state);
 };
 
-class AyYmFilePlay : public aym_base_parse {
+class AyYmFilePlay  {
 public:
     AyYmFilePlay (const AyYmFilePlayCfg *const cfg);
 

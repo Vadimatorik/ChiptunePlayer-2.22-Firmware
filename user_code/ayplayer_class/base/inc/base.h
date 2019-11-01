@@ -78,14 +78,14 @@ private:
 	/*!
 	 *	\brief		Метод проверяет результат выполнения
 	 *				предыдущей операции и в случае, если
-	 *				он не McHardwareInterfaces::BaseResult::ok
+	 *				он не mc_interfaces::res::err_ok
 	 *				производит аварийную перезагрузку устройства.
 	 *
 	 *	\param[in]	resultValue	-	возвращенный предыдущим по ходу выполнения
 	 *								программы методом результат выполнения.
 	 *
 	 */
-	void	checkAndExit				(	McHardwareInterfaces::BaseResult	resultValue	);
+	void	checkAndExit				(	mc_interfaces::res	resultValue	);
 
 private:
 	/*!
