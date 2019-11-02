@@ -1,5 +1,6 @@
 #include "freertos_headers.h"
 #include "hardware.h"
+#include "lua.h"
 
 int main () {
     int rv = 0;

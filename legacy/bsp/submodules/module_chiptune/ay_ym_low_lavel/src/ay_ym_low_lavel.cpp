@@ -1,4 +1,4 @@
-#include "../inc/ay_ym_low_lavel.h"
+#include "inc/ay_ym_low_lavel.h"
 
 #ifdef MODULE_AY_YM_LOW_LAVEL_ENABLED
 

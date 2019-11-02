@@ -1,4 +1,4 @@
-#include "../ayplayer_class/structs/ayplayer_struct_gpio_cfg.h"
+#include "ayplayer_class/structs/ayplayer_struct_gpio_cfg.h"
 #include "ayplayer_mc_hardware.h"
 #include "ayplayer_pcb_hardware.h"
 

@@ -1,4 +1,4 @@
-#include "../ayplayer_class/structs/ayplayer_struct_mcu_cfg.h"
+#include "ayplayer_class/structs/ayplayer_struct_mcu_cfg.h"
 #include "ayplayer_mc_hardware.h"
 
 extern const AyplayerGpio		gpio;

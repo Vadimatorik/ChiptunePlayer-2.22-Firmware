@@ -35,6 +35,7 @@ file(GLOB SOURCES
         "lib/st/device/src/*.c"
         "lib/st/hal/src/*.c"
         "lib/freertos/src/*.c"
+        "lib/lua/src/*.c"
 
         "hardware/src/*.c")
 
@@ -48,6 +49,7 @@ include_directories(
         "lib/st/cmsis"
         "lib/st/device/inc"
         "lib/freertos/inc"
+        "lib/lua/inc"
 
         "hardware/inc")
 

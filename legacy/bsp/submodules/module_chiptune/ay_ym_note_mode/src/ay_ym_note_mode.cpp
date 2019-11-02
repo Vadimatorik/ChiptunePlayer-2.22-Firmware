@@ -1,4 +1,4 @@
-#include "../inc/ay_ym_note_mode.h"
+#include "inc/ay_ym_note_mode.h"
 
 #ifdef MODULE_AY_YM_NOTE_MODE_ENABLED
 
