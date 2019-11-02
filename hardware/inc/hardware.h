@@ -1,8 +1,8 @@
 #pragma once
 
-int init_rcc_hse_16_mhz ();
-
+int init_core ();
 int init_gpio ();
+int init_rcc ();
 
 int init_adc ();
 int init_spi ();

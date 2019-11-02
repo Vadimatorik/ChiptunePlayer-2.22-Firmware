@@ -4,6 +4,7 @@
 #define STM32F4
 #define STM32
 
+#define USE_FULL_LL_DRIVER
 #define USE_FULL_ASSERT
 #define HAL_MODULE_ENABLED
 #define HAL_ADC_MODULE_ENABLED

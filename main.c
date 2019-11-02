@@ -3,7 +3,16 @@
 
 int main () {
     int rv = 0;
-    if ((rv = init_rcc_hse_16_mhz()) != 0) {
+
+    if ((rv = init_core()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_gpio()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_rcc()) != 0) {
         return rv;
     }
 

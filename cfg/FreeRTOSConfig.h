@@ -64,7 +64,4 @@
 #define vPortSVCHandler				SVC_Handler
 #define xPortPendSVHandler			PendSV_Handler
 
-#define assertParam(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
-void assertFailed ( uint8_t* file, uint32_t line );
-
 #endif
