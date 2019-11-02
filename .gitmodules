@@ -64,3 +64,6 @@
 [submodule "bsp/submodules/module_fat_controller"]
 	path = bsp/submodules/module_fat_controller
 	url = git@github.com:Vadimatorik/module_fat_controller.git
+[submodule "bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32"]
+	path = bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32
+	url = git@github.com:Vadimatorik/module_mc_hardware_interfaces_implementation_for_stm32.git
