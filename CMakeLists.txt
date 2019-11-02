@@ -29,19 +29,27 @@ project(aym C)
 
 file(GLOB SOURCES
         "main.c"
+
         "startup/src/*.c"
+
         "lib/st/device/src/*.c"
         "lib/st/hal/src/*.c"
-        "lib/freertos/src/*.c")
+        "lib/freertos/src/*.c"
+
+        "hardware/src/*.c")
 
 include_directories(
         "cfg"
+
         "startup/inc"
+
         "lib/st/hal/inc"
         "lib/st/hal/inc/legacy"
-        "lib/st/cmsis/inc"
+        "lib/st/cmsis"
         "lib/st/device/inc"
-        "lib/freertos/inc")
+        "lib/freertos/inc"
+
+        "hardware/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 
