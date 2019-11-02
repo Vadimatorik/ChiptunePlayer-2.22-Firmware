@@ -346,3 +346,18 @@ static void prvInsertBlockIntoFreeList (BlockLink_t *pxBlockToInsert) {
         mtCOVERAGE_TEST_MARKER();
     }
 }
+
+int vPortGetSizeBlock (void *pv) {
+    uint8_t *puc = (uint8_t *)pv;
+    BlockLink_t *pxLink;
+
+    if (pv != NULL) {
+        puc -= xHeapStructSize;
+        pxLink = (BlockLink_t *)puc;
+        configASSERT((pxLink->xBlockSize & xBlockAllocatedBit) != 0);
+        configASSERT(pxLink->pxNextFreeBlock == NULL);
+        return pxLink->xBlockSize & ~xBlockAllocatedBit;
+    }
+
+    return 0;
+}

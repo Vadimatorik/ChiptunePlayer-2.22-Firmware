@@ -55,7 +55,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 
-target_link_options(${PROJECT_NAME}.elf PRIVATE "-Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
+target_link_options(${PROJECT_NAME}.elf PRIVATE)
 
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         DEPENDS ${PROJECT_NAME}.elf

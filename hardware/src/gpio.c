@@ -13,6 +13,7 @@ int init_gpio () {
     __HAL_RCC_GPIOD_CLK_ENABLE();
     __HAL_RCC_GPIOH_CLK_ENABLE();
 
+    // Обычные выводы.
     HAL_GPIO_WritePin(GPIOC, BOARD_GPIO_1 | BOARD_GPIO_2 | BOARD_GPIO_3 | BR0, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOA, PWR_5V_ON | BOARD_GPIO_4 | USB_ID, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, LCD_A0 | LCD_CS | LCD_RES | SD_CD1
@@ -50,6 +51,14 @@ int init_gpio () {
     cfg.Pin = SD_PUSH | NOT_USED | BAT_CHRG | DOWN;
     cfg.Mode = GPIO_MODE_INPUT;
     cfg.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &cfg);
+
+    // UART.
+    cfg.Pin = DEBUG_TX | DEBUG_RX;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_PULLUP;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOB, &cfg);
 
     return 0;

@@ -1,7 +1,7 @@
 __estack = ORIGIN(RAM_STACK) + LENGTH(RAM_STACK);
 __stack_size = LENGTH(RAM_STACK);
-__heap_end = ORIGIN(RAM_STACK);
-__heap_start = __estack;
+__heap_end = __estack;
+__heap_start = ORIGIN(RAM_STACK);
 
 /* Программа начинается с метода Reset_Handler. */
 ENTRY(Reset_Handler)
