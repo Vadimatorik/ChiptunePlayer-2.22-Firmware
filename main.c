@@ -11,7 +11,7 @@ StackType_t task_lua_stack[TASK_LUA_STACK_SIZE];
 
 void task_lua (void *p) {
     while (1) {
-        printf("%s\n\r", "Hello world!");
+        printf("%s\r\n", "Hello world!");
         vTaskDelay(1000);
     }
 }
