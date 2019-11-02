@@ -4,51 +4,53 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_rcc.h"
 
-int init_gpio() {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+int init_gpio () {
+    GPIO_InitTypeDef cfg = {0};
 
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
 
-    HAL_GPIO_WritePin(GPIOC, BOARD_GPIO_1_Pin | BOARD_GPIO_2_Pin | BOARD_GPIO_3_Pin | BR0_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOA, PWR_5V_ON_Pin | BOARD_GPIO_4_Pin | USB_ID_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOB, LCD_A0_Pin | LCD_CS_Pin | LCD_RES_Pin | SD_CD1_Pin
-                             | BR2_Pin | BR1_Pin | PWR_ON_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, BOARD_GPIO_1 | BOARD_GPIO_2 | BOARD_GPIO_3 | BR0, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, PWR_5V_ON | BOARD_GPIO_4 | USB_ID, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, LCD_A0 | LCD_CS | LCD_RES | SD_CD1
+                             | BR2 | BR1 | PWR_ON, GPIO_PIN_RESET);
 
-    GPIO_InitStruct.Pin = BAT_STDBY_Pin | BC1_Pin | BC2_Pin | UP_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    cfg.Pin = BAT_STDBY | BC1 | BC2 | UP;
+    cfg.Mode = GPIO_MODE_INPUT;
+    cfg.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &cfg);
 
-    GPIO_InitStruct.Pin = BOARD_GPIO_1_Pin | BOARD_GPIO_2_Pin | BOARD_GPIO_3_Pin | BR0_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    cfg.Pin = BOARD_GPIO_1 | BOARD_GPIO_2 | BOARD_GPIO_3 | BR0;
+    cfg.Mode = GPIO_MODE_OUTPUT_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &cfg);
 
-    GPIO_InitStruct.Pin = PWR_5V_ON_Pin | BOARD_GPIO_4_Pin | USB_ID_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    cfg.Pin = PWR_5V_ON | BOARD_GPIO_4 | USB_ID;
+    cfg.Mode = GPIO_MODE_OUTPUT_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &cfg);
 
-    GPIO_InitStruct.Pin = BC0_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BC0_GPIO_Port, &GPIO_InitStruct);
+    cfg.Pin = BC0;
+    cfg.Mode = GPIO_MODE_INPUT;
+    cfg.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(BC0_GPIO_Port, &cfg);
 
-    GPIO_InitStruct.Pin = LCD_A0_Pin | LCD_CS_Pin | LCD_RES_Pin | SD_CD1_Pin
-                          | BR2_Pin | BR1_Pin | PWR_ON_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    cfg.Pin = LCD_A0 | LCD_CS | LCD_RES | SD_CD1
+              | BR2 | BR1 | PWR_ON;
+    cfg.Mode = GPIO_MODE_OUTPUT_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOB, &cfg);
 
-    GPIO_InitStruct.Pin = SD_PUSH_Pin | NOT_USED_Pin | BAT_CHRG_Pin | DOWN_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    cfg.Pin = SD_PUSH | NOT_USED | BAT_CHRG | DOWN;
+    cfg.Mode = GPIO_MODE_INPUT;
+    cfg.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &cfg);
+
+    return 0;
 }
