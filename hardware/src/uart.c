@@ -7,9 +7,11 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/unistd.h>
+#include <memory.h>
+#include <math.h>
 
-UART_HandleTypeDef u;
-DMA_HandleTypeDef u_dma;
+UART_HandleTypeDef u = {0};
+DMA_HandleTypeDef u_dma = {0};
 
 int init_uart () {
     __HAL_RCC_USART1_CLK_ENABLE();
@@ -21,7 +23,7 @@ int init_uart () {
     u.Init.Parity = UART_PARITY_NONE;
     u.Init.Mode = UART_MODE_TX_RX;
     u.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    u.Init.OverSampling = UART_OVERSAMPLING_16;
+    u.Init.OverSampling = UART_OVERSAMPLING_8;
     if (HAL_UART_Init(&u) != HAL_OK) {
         return EIO;
     }
@@ -45,6 +47,10 @@ int init_uart () {
     }
 
     __HAL_LINKDMA(&u, hdmatx, u_dma);
+
+    __HAL_UART_DISABLE_IT(&u, UART_IT_RXNE);
+    __HAL_UART_DISABLE_IT(&u, UART_IT_PE);
+    __HAL_UART_DISABLE_IT(&u, UART_IT_ERR);
 
     HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -87,3 +93,33 @@ int _write (int file, char *buf, int len) {
 
     return 0;
 }
+
+uint8_t u_rx_buffer[1024];
+int u_rx_pointer = 0;
+
+void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
+    if (u_rx_pointer == sizeof(u_rx_buffer)) {
+        volatile int buf = huart->Instance->DR;
+        (void)buf;
+        return;
+    }
+
+    __disable_irq();
+    u_rx_buffer[u_rx_pointer++] = huart->Instance->DR;
+    __enable_irq();
+}
+
+int __attribute__ ((weak)) _read (char *ptr, int len) {
+    while (u_rx_pointer == 0) {
+        vTaskDelay(1);
+    }
+
+    __disable_irq();
+    int l_cpy = (u_rx_pointer > len)?len:u_rx_pointer;
+    memcpy(ptr, u_rx_buffer, l_cpy);
+    u_rx_pointer -= l_cpy;
+    __enable_irq();
+
+    return l_cpy;
+}
+
