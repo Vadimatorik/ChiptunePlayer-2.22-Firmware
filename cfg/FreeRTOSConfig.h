@@ -1,10 +1,6 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define configUSE_HEAP_SCHEME						4
 
 #define configUSE_PREEMPTION						1
@@ -26,7 +22,7 @@ extern "C" {
 #define configUSE_DAEMON_TASK_STARTUP_HOOK  	    0
 
 #define configRECORD_STACK_HIGH_ADDRESS				1
-#define configGENERATE_RUN_TIME_STATS				1
+#define configGENERATE_RUN_TIME_STATS				0
 #define configUSE_TRACE_FACILITY					1
 #define configUSE_STATS_FORMATTING_FUNCTIONS		1
 
@@ -68,18 +64,7 @@ extern "C" {
 #define vPortSVCHandler				SVC_Handler
 #define xPortPendSVHandler			PendSV_Handler
 
-#ifdef configGENERATE_RUN_TIME_STATS
-extern void				vConfigureTimerForRunTimeStats		( void );
-extern uint32_t			vGetRunTimeCounterValue				( void );
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()			vConfigureTimerForRunTimeStats()
-#define portGET_RUN_TIME_COUNTER_VALUE()					vGetRunTimeCounterValue();
-#endif
-
-#define assertParam(expr) ((expr) ? (void)0U : assertFailed((uint8_t *)__FILE__, __LINE__))
+#define assertParam(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 void assertFailed ( uint8_t* file, uint32_t line );
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
