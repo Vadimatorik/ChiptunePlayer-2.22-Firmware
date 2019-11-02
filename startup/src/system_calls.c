@@ -3,6 +3,14 @@ extern int errno;
 
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <time.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <time.h>
+
 #include "stm32f4xx_hal_conf.h"
 
 extern uint32_t __bss_end;    // Конечный адрес BSS области.
@@ -26,7 +34,7 @@ void __attribute__ ((weak)) _init () {
 // Вызвать ее могут exit, abort.
 //**********************************************************************
 void __attribute__ ((weak)) _exit (int code) {
-    (void) code;
+    (void)code;
     NVIC_SystemReset();
     while (1);
 }
@@ -140,16 +148,6 @@ int __attribute__ ((weak)) _unlink (char *name) {
 }
 
 //**********************************************************************
-// Ожидание дочерних процессов.
-// ( Не используется ).
-//**********************************************************************
-int __attribute__ ((weak)) _wait (int *status) {
-    (void)status;
-    errno = ECHILD;
-    return -1;
-}
-
-//**********************************************************************
 // Проверяем, что наши данные ( которые malloc и прочие могут
 // попробовать запросить ) не наложатся на стек.
 //**********************************************************************
@@ -173,4 +171,44 @@ void *__attribute__ ((weak)) _sbrk (int incr) {
         NVIC_SystemReset();
     }
     return (void *)prev_heap_end;
+}
+
+time_t __attribute__ ((weak)) _Time (time_t *timer) {
+    time_t buf = {0};
+    return buf;
+}
+
+time_t __attribute__ ((weak)) _time (time_t *tod) {
+    time_t t = _Time(NULL);
+
+    if (tod)
+        *tod = t;
+
+    return (t);
+}
+
+int __attribute__ ((weak)) _open(const char *filename, int oflags) {
+    (void)filename;
+    (void)oflags;
+    return 0;
+}
+
+struct tm tms;
+
+/* _times -- no clock, so return an error.  */
+clock_t __attribute__ ((weak)) _times (struct tms *buf) {
+    buf = buf;
+    errno = EINVAL;
+    return (-1);
+}
+
+/* _gettimeofday -- implement in terms of time.  */
+int __attribute__ ((weak)) _gettimeofday (struct timeval *tv, void *tzvp) {
+    struct timezone *tz = tzvp;
+    if (tz)
+        tz->tz_minuteswest = tz->tz_dsttime = 0;
+
+    tv->tv_usec = 0;
+    tv->tv_sec = _time(0);
+    return 0;
 }
