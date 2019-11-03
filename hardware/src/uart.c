@@ -48,9 +48,9 @@ int init_uart () {
 
     __HAL_LINKDMA(&u, hdmatx, u_dma);
 
-    __HAL_UART_DISABLE_IT(&u, UART_IT_RXNE);
-    __HAL_UART_DISABLE_IT(&u, UART_IT_PE);
-    __HAL_UART_DISABLE_IT(&u, UART_IT_ERR);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_RXNE);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_PE);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_ERR);
 
     HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -94,7 +94,7 @@ int _write (int file, char *buf, int len) {
     return 0;
 }
 
-uint8_t u_rx_buffer[1024];
+uint8_t u_rx_buffer[1024] = {0};
 int u_rx_pointer = 0;
 
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
