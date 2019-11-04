@@ -8,6 +8,5 @@ int init_spi_board ();
 int init_spi_lcd ();
 
 int init_adc ();
-int init_spi ();
 int init_pwr ();
 int init_wdt ();

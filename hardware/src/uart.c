@@ -27,7 +27,6 @@ int init_uart () {
         return EIO;
     }
 
-    __HAL_RCC_DMA2_CLK_ENABLE();
     u_dma.Instance = DMA2_Stream7;
     u_dma.Init.Channel = DMA_CHANNEL_4;
     u_dma.Init.Direction = DMA_MEMORY_TO_PERIPH;

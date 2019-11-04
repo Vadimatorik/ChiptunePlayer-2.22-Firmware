@@ -21,6 +21,8 @@
 #ifndef STM32F4xx_HAL_SPI_H
 #define STM32F4xx_HAL_SPI_H
 
+#include "stm32f4xx_hal_dma.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

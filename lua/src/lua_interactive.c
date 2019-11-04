@@ -202,7 +202,7 @@ static int lua_report (int status) {
     return status;
 }
 
-void task_lua (void *p) {
+void task_lua_interactive (void *p) {
     p = p;
 
     L = luaL_newstate();

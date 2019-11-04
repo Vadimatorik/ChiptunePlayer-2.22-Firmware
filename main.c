@@ -28,7 +28,15 @@ int main () {
         return rv;
     }
 
-    if (xTaskCreateStatic(task_lua, "lua", TASK_LUA_STACK_SIZE, NULL, 3, task_lua_stack, &task_lua_buf) == NULL) {
+    if ((rv = init_spi_board()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_spi_lcd()) != 0) {
+        return rv;
+    }
+
+    if (xTaskCreateStatic(task_lua_interactive, "lua", TASK_LUA_STACK_SIZE, NULL, 3, task_lua_stack, &task_lua_buf) == NULL) {
         return ENOMEM;
     }
 

@@ -61,5 +61,28 @@ int init_gpio () {
     cfg.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOB, &cfg);
 
+    // SPI_LCD.
+    cfg.Pin = LCD_CLK | LCD_TX;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF5_SPI1;
+    HAL_GPIO_Init(GPIOA, &cfg);
+
+    // SPI_BOARD.
+    cfg.Pin = BOARD_TX;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(BOARD_TX_GPIO_Port, &cfg);
+
+    cfg.Pin = BOARD_CLK;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(BOARD_CLK_GPIO_Port, &cfg);
+
     return 0;
 }
