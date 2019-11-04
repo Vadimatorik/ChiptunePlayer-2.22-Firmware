@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <sys/unistd.h>
 #include <memory.h>
-#include <math.h>
 
 UART_HandleTypeDef u = {0};
 DMA_HandleTypeDef u_dma = {0};
@@ -23,7 +22,7 @@ int init_uart () {
     u.Init.Parity = UART_PARITY_NONE;
     u.Init.Mode = UART_MODE_TX_RX;
     u.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    u.Init.OverSampling = UART_OVERSAMPLING_8;
+    u.Init.OverSampling = UART_OVERSAMPLING_16;
     if (HAL_UART_Init(&u) != HAL_OK) {
         return EIO;
     }

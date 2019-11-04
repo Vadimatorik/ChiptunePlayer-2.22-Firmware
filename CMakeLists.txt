@@ -30,6 +30,8 @@ project(aym C)
 file(GLOB SOURCES
         "main.c"
 
+        "lua/src/*.c"
+
         "startup/src/*.c"
 
         "lib/st/device/src/*.c"
@@ -41,6 +43,8 @@ file(GLOB SOURCES
 
 include_directories(
         "cfg"
+
+        "lua/inc"
 
         "startup/inc"
 

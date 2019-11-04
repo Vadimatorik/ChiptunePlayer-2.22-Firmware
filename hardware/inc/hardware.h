@@ -4,6 +4,8 @@ int init_core ();
 int init_gpio ();
 int init_rcc ();
 int init_uart ();
+int init_spi_board ();
+int init_spi_lcd ();
 
 int init_adc ();
 int init_spi ();
