@@ -39,7 +39,8 @@ file(GLOB SOURCES
         "lib/freertos/src/*.c"
         "lib/lua/src/*.c"
 
-        "hardware/src/*.c")
+        "mc_hardware/src/*.c"
+        "pcb_hardware/*/src/*.c")
 
 include_directories(
         "cfg"
@@ -55,7 +56,10 @@ include_directories(
         "lib/freertos/inc"
         "lib/lua/inc"
 
-        "hardware/inc")
+        "mc_hardware/inc"
+
+        "pcb_hardware/digital_potentiometer/inc"
+        "pcb_hardware/sr/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 

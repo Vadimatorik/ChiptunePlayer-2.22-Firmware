@@ -1,6 +1,32 @@
-#include "shift_register_pin.h"
+struct PinCfg {
+    const uint8_t byte;        /// Байт в сдвиговом регистре.
+    const uint8_t bit;        /// Бит в сдвиговом регистре.
+    ShiftRegister::Base *sr;            /// Сам сдвиговый регистр.
+};
 
-namespace ShiftRegister {
+void Port8bit::write (uint8_t data) {
+    this->cfg->sr->writeByte(this->cfg->byte, data);
+    this->cfg->sr->update();
+}
+
+void Port8bit::reset (void) {
+    this->cfg->sr->writeByte(this->cfg->byte, 0);
+    this->cfg->sr->update();
+}
+
+void Port8bit::toggle (void) {
+    uint8_t data;
+    this->cfg->sr->readByte(this->cfg->byte, &data);
+    data = ~data;
+    this->cfg->sr->writeByte(this->cfg->byte, data);
+    this->cfg->sr->update();
+}
+
+uint8_t Port8bit::read (void) {
+    uint8_t data;
+    this->cfg->sr->readByte(this->cfg->byte, &data);
+    return data;
+}
 
 void Pin::set (void) {
     uint8_t buf;
@@ -42,8 +68,17 @@ bool Pin::read (void) {
     uint8_t buf;
     this->cfg->sr->readByte(this->cfg->byte, &buf);
     buf &= 1 << this->cfg->bit;
-    
+
     return static_cast< bool >( buf );
 }
 
+
+
+void sr_set_pin_ad5204_shdn () {
+
 }
+
+void sr_reset_pin_ad5204_shdn () {
+
+}
+

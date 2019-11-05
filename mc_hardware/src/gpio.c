@@ -86,3 +86,22 @@ int init_gpio () {
 
     return 0;
 }
+
+#define AD5204_CS_GPIO BOARD_TX_GPIO_Port
+#define AD5204_CS BOARD_GPIO_3
+
+void set_pin_ad5204_cs () {
+    HAL_GPIO_WritePin(AD5204_CS_GPIO, AD5204_CS, GPIO_PIN_SET);
+}
+
+void reset_pin_ad5204_cs () {
+    HAL_GPIO_WritePin(AD5204_CS_GPIO, AD5204_CS, GPIO_PIN_RESET);
+}
+
+void set_pin_lcd_cs () {
+    HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
+}
+
+void reset_pin_lcd_cs () {
+    HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_RESET);
+}

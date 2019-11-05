@@ -2,6 +2,8 @@
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
 
+#include "mc_hardware.h"
+
 #include <errno.h>
 
 SPI_HandleTypeDef s_board = {0};
@@ -29,7 +31,12 @@ int init_spi_board () {
     HAL_NVIC_EnableIRQ(SPI2_IRQn);
 }
 
-
 void SPI2_IRQHandler () {
     HAL_SPI_IRQHandler(&s_board);
+}
+
+int spi_board_device_ad5204_tx (void *d, uint32_t len) {
+    reset_pin_ad5204_cs();
+    HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
+    return (rv == HAL_OK)?0:EIO;
 }

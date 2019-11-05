@@ -61,3 +61,4 @@ void SPI1_IRQHandler () {
 void DMA2_Stream3_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
 }
+

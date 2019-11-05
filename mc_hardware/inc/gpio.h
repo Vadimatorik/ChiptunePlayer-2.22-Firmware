@@ -41,7 +41,7 @@
 #define LCD_A0 GPIO_PIN_0
 #define LCD_A0_GPIO_Port GPIOB
 #define LCD_CS GPIO_PIN_1
-#define LCD_CS_GPIO_Port GPIOB
+#define LCD_CS_GPIO GPIOB
 #define LCD_RES GPIO_PIN_2
 #define LCD_RES_GPIO_Port GPIOB
 #define BOARD_CLK GPIO_PIN_10

@@ -1,6 +1,7 @@
 #include "freertos_headers.h"
-#include "hardware.h"
+#include "mc_hardware.h"
 #include "l.h"
+#include "dp.h"
 
 #include <errno.h>
 
