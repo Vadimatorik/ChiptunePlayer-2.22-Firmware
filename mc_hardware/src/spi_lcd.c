@@ -52,6 +52,8 @@ int init_spi_lcd () {
     HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
 
     __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
+
+    return 0;
 }
 
 void SPI1_IRQHandler () {

@@ -29,6 +29,8 @@ int init_spi_board () {
 
     HAL_NVIC_SetPriority(SPI2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(SPI2_IRQn);
+
+    return 0;
 }
 
 void SPI2_IRQHandler () {

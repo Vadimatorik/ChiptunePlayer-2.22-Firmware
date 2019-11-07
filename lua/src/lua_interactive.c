@@ -9,6 +9,7 @@
 #include <signal.h>
 
 #include "freertos_headers.h"
+#include "mc_hardware.h"
 
 lua_State *L = NULL;
 
@@ -53,7 +54,7 @@ static const char *get_prompt (int firstline) {
 
 static void lua_readline (char *b, const char *p) {
     fputs(p, stdout);
-    fgets(b, LUA_STRING_MAX_LEN - 1, stdin);
+    get_string_from_uart(b, LUA_STRING_MAX_LEN);
 }
 
 static int pushline (int firstline) {

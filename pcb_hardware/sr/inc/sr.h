@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 void set (void);
 
 void reset (void);
@@ -20,7 +20,7 @@ void reset (void);
 
 void toggle (void);
 
-uint8_t read (void);
+uint8_t read (void);*/
 
 void sr_set_pin_ad5204_shdn ();
 void sr_reset_pin_ad5204_shdn ();

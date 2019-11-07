@@ -9,6 +9,8 @@ int init_uart ();
 int init_spi_board ();
 int init_spi_lcd ();
 
+void get_string_from_uart (char* buf, uint32_t max_len);
+
 int spi_board_device_ad5204_tx (void *d, uint32_t len);
 
 void set_pin_ad5204_cs ();

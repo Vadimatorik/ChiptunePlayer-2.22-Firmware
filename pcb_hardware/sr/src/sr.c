@@ -1,4 +1,5 @@
-struct PinCfg {
+
+/*struct PinCfg {
     const uint8_t byte;        /// Байт в сдвиговом регистре.
     const uint8_t bit;        /// Бит в сдвиговом регистре.
     ShiftRegister::Base *sr;            /// Сам сдвиговый регистр.
@@ -80,5 +81,5 @@ void sr_set_pin_ad5204_shdn () {
 
 void sr_reset_pin_ad5204_shdn () {
 
-}
+}*/
 
