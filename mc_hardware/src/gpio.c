@@ -84,6 +84,14 @@ int init_gpio () {
     cfg.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(BOARD_CLK_GPIO_Port, &cfg);
 
+    // TIM_LCD_PWM.
+    cfg.Pin = LCD_PWM;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_LOW;
+    cfg.Alternate = GPIO_AF1_TIM1;
+    HAL_GPIO_Init(LCD_PWM_GPIO_Port, &cfg);
+
     return 0;
 }
 

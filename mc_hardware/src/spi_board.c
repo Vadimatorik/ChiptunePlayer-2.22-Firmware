@@ -29,7 +29,7 @@ int init_spi_board () {
         return EIO;
     }
 
-    HAL_NVIC_SetPriority(SPI2_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(SPI2_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(SPI2_IRQn);
 
     return 0;

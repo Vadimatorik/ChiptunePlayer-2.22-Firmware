@@ -14,6 +14,13 @@ int init_rcc ();
 int init_uart ();
 int init_spi_board ();
 int init_spi_lcd ();
+int init_tim_lcd_pwm ();
+int init_tim_int_ay ();
+
+int start_tim_lcd_pwm ();
+int start_tim_int_ay ();
+
+int set_tim_lcd_pwm_duty (float duty);
 
 int spi_board_device_ad5204_tx (void *d, uint32_t len);
 int spi_board_device_sr_tx (void *d, uint32_t len);
