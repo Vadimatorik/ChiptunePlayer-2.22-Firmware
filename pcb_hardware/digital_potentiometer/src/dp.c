@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <errno.h>
-#include <string.h>
 
 #define AD5204_CHIP_COUNT 2
 #define AD5204_BUF_SIZE(COUNT) ((COUNT * 11) /8) + ((((COUNT * 11) % 8) != 0 )?1:0) + 1

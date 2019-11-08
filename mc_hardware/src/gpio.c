@@ -87,19 +87,40 @@ int init_gpio () {
     return 0;
 }
 
-#define AD5204_CS_GPIO BOARD_TX_GPIO_Port
+#define LTC_CS_GPIO BOARD_GPIO_4_GPIO_Port
+#define AD5204_CS_GPIO BOARD_GPIO_3_GPIO_Port
+#define SH_STROB_GPIO BOARD_GPIO_2_GPIO_Port
+
+#define LTC_CS BOARD_GPIO_4
 #define AD5204_CS BOARD_GPIO_3
+#define SH_STROB BOARD_GPIO_2
+
+void set_pin_ltc_cs () {
+    HAL_GPIO_WritePin(LTC_CS_GPIO, LTC_CS, GPIO_PIN_SET);
+}
 
 void set_pin_ad5204_cs () {
     HAL_GPIO_WritePin(AD5204_CS_GPIO, AD5204_CS, GPIO_PIN_SET);
+}
+
+void set_pin_sr_strob () {
+    HAL_GPIO_WritePin(SH_STROB_GPIO, SH_STROB, GPIO_PIN_SET);
+}
+
+void set_pin_lcd_cs () {
+    HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
+}
+
+void reset_pin_ltc_cs () {
+    HAL_GPIO_WritePin(LTC_CS_GPIO, LTC_CS, GPIO_PIN_RESET);
 }
 
 void reset_pin_ad5204_cs () {
     HAL_GPIO_WritePin(AD5204_CS_GPIO, AD5204_CS, GPIO_PIN_RESET);
 }
 
-void set_pin_lcd_cs () {
-    HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
+void reset_pin_sr_strob () {
+    HAL_GPIO_WritePin(SH_STROB_GPIO, SH_STROB, GPIO_PIN_RESET);
 }
 
 void reset_pin_lcd_cs () {

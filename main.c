@@ -2,6 +2,7 @@
 #include "mc_hardware.h"
 #include "l.h"
 #include "dp.h"
+#include "sr.h"
 
 #include <errno.h>
 
@@ -34,6 +35,10 @@ int main () {
     }
 
     if ((rv = init_spi_lcd()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_sr()) != 0) {
         return rv;
     }
 

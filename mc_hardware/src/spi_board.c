@@ -8,6 +8,8 @@
 
 SPI_HandleTypeDef s_board = {0};
 
+SPI_BOARD_DEVICE spi_device = SPI_BOARD_DEVICE_NO_SET;
+
 int init_spi_board () {
     __HAL_RCC_SPI2_CLK_ENABLE();
 
@@ -38,7 +40,15 @@ void SPI2_IRQHandler () {
 }
 
 int spi_board_device_ad5204_tx (void *d, uint32_t len) {
+    spi_device = SPI_BOARD_DEVICE_AD5204;
     reset_pin_ad5204_cs();
+    HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
+    return (rv == HAL_OK)?0:EIO;
+}
+
+int spi_board_device_sr_tx (void *d, uint32_t len) {
+    spi_device = SPI_BOARD_DEVICE_SR;
+    reset_pin_sr_strob();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
     return (rv == HAL_OK)?0:EIO;
 }
