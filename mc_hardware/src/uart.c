@@ -6,20 +6,71 @@
 
 #include <errno.h>
 #include <stdio.h>
-#include <sys/unistd.h>
 #include <memory.h>
+#include <stdlib.h>
 
-UART_HandleTypeDef u = {0};
-DMA_HandleTypeDef u_dma = {0};
+#define TASK_UART_STACK_SIZE 400
+#define TASK_UART_PRIO 2
 
-uint8_t u_rx_byte = 0;
+static StaticTask_t task_uart_buf;
+static StackType_t task_uart_stack[TASK_UART_STACK_SIZE];
 
-SemaphoreHandle_t rx_msg_semaphore = NULL;
-StaticSemaphore_t rx_msg_semaphore_str = {0};
+static SemaphoreHandle_t rx_msg_semaphore = NULL;
+static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
-int init_uart () {
-    rx_msg_semaphore = xSemaphoreCreateBinaryStatic(&rx_msg_semaphore_str);
+#define UART_TX_QUEUE_LEN 10
+typedef struct _tx_msg_cfg {
+    union data {
+        uint8_t *p;
+        uint8_t data[4];
+    } data_t;
 
+    uint32_t len;
+} tx_msg_cfg_t;
+
+static QueueHandle_t tx_points_queue = NULL;
+static StaticQueue_t tx_points_queue_str = {0};
+static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0};
+
+SemaphoreHandle_t rx_buffer_mutex = NULL;
+StaticSemaphore_t rx_buffer_mutex_buf = {0};
+
+static UART_HandleTypeDef u = {0};
+static DMA_HandleTypeDef u_dma = {0};
+
+static uint8_t u_rx_byte = 0;
+
+char u_rx_buffer[1024] = {0};
+volatile int u_rx_pointer = 0;
+
+static void task_uart (void *p) {
+    tx_msg_cfg_t msg = {0};
+
+    while (1) {
+        xQueueReceive(tx_points_queue, &msg, portMAX_DELAY);
+        if (msg.len <= 4) {
+            while (HAL_UART_Transmit_DMA(&u, msg.data_t.data, msg.len) != HAL_OK);
+        } else {
+            if (msg.data_t.p == NULL) {
+                continue;
+            }
+
+            while (HAL_UART_Transmit_DMA(&u, msg.data_t.p, msg.len) != HAL_OK);
+
+            free(msg.data_t.p);
+        }
+    }
+}
+
+void DMA2_Stream7_IRQHandler () {
+    HAL_DMA_IRQHandler(&u_dma);
+}
+
+void USART1_IRQHandler () {
+    HAL_UART_IRQHandler(&u);
+}
+
+static int init_mc_uart () {
     __HAL_RCC_USART1_CLK_ENABLE();
 
     u.Instance = USART1;
@@ -33,7 +84,9 @@ int init_uart () {
     if (HAL_UART_Init(&u) != HAL_OK) {
         return EIO;
     }
+}
 
+static int init_mc_uart_dma () {
     u_dma.Instance = DMA2_Stream7;
     u_dma.Init.Channel = DMA_CHANNEL_4;
     u_dma.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -53,7 +106,27 @@ int init_uart () {
 
     __HAL_LINKDMA(&u, hdmatx, u_dma);
 
-    HAL_UART_Receive_IT(&u, &u_rx_byte, 1);
+    return 0;
+}
+
+static int init_mc_uart_os () {
+    rx_msg_semaphore = xSemaphoreCreateBinaryStatic(&rx_msg_semaphore_str);
+    rx_buffer_mutex = xSemaphoreCreateMutexStatic(&rx_buffer_mutex_buf);
+    tx_points_queue = xQueueCreateStatic(UART_TX_QUEUE_LEN, sizeof(tx_msg_cfg_t),
+                                         &tx_points_queue_buf[0], &tx_points_queue_str);
+
+    if (xTaskCreateStatic(task_uart, "uart", TASK_UART_STACK_SIZE, NULL, TASK_UART_PRIO,
+                          task_uart_stack, &task_uart_buf) == NULL) {
+        return ENOMEM;
+    }
+
+    return 0;
+}
+
+static int start_mc_uart () {
+    if (HAL_UART_Receive_IT(&u, &u_rx_byte, 1) != HAL_OK) {
+        return EIO;
+    }
 
     NVIC_SetPriority(USART1_IRQn, 6);
 
@@ -63,53 +136,102 @@ int init_uart () {
     return 0;
 }
 
-void DMA2_Stream7_IRQHandler () {
-    HAL_DMA_IRQHandler(&u_dma);
+int init_uart () {
+    int rv = 0;
+
+    if ((rv = init_mc_uart()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_mc_uart_dma()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_mc_uart_os()) != 0) {
+        return rv;
+    }
+
+    if ((rv = start_mc_uart()) != 0) {
+        return rv;
+    }
+
+    return 0;
 }
 
-void USART1_IRQHandler () {
-    HAL_UART_IRQHandler(&u);
+static int add_transaction (const void *p, uint32_t len) {
+    tx_msg_cfg_t msg;
+    msg.len = len;
+    if (len <= 4) {
+        memcpy(msg.data_t.data, p, len);
+    } else {
+        msg.data_t.p = malloc(msg.len);
+        if (p == NULL) {
+            return ENOMEM;
+        }
+        memcpy(msg.data_t.p, p, len);
+    }
+
+    xQueueSend(tx_points_queue, &msg, portMAX_DELAY);
+
+    return 0;
+}
+
+static int add_transaction_from_irq (uint8_t data) {
+    tx_msg_cfg_t msg;
+    msg.len = 1;
+    msg.data_t.data[0] = data;
+    xQueueSendFromISR(tx_points_queue, &msg, NULL);
 }
 
 size_t fwrite (const void *buf, size_t size, size_t count, FILE *stream) {
-    return (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, count) == HAL_OK)?(int)count:0;
+    stream = stream;
+
+    if (add_transaction(buf, size*count) == 0) {
+        return size*count;
+    }
+
+    return 0;
 }
 
 int _write (int fd, const void *buf, size_t count) {
-    return (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, count) == HAL_OK)?(int)count:0;
-}
+    if (add_transaction(buf, count) == 0) {
+        return count;
+    }
 
-char u_rx_buffer[1024] = {0};
-volatile int u_rx_pointer = 0;
+    return 0;
+}
 
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
     if (u_rx_pointer == sizeof(u_rx_buffer)) {
         return;
     }
 
+    xSemaphoreTakeFromISR(rx_buffer_mutex, NULL);
     if (u_rx_byte == '\r') {
         u_rx_buffer[u_rx_pointer++] = '\n';
         xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
-        while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
+        add_transaction_from_irq(u_rx_byte);
     } else if (u_rx_byte == 127) {
         if (u_rx_pointer > 0) {
             u_rx_pointer--;
             u_rx_buffer[u_rx_pointer] = 0;
-            while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
+            add_transaction_from_irq(u_rx_byte);
         }
     } else {
         u_rx_buffer[u_rx_pointer++] = u_rx_byte;
-        while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
+        add_transaction_from_irq(u_rx_byte);
     }
+    xSemaphoreGiveFromISR(rx_buffer_mutex, NULL);
 
     while (HAL_UART_Receive_IT(huart, &u_rx_byte, 1) != HAL_OK);
 }
 
-
 int _read (int fd, void *buf, size_t count) {
     xSemaphoreTake(rx_msg_semaphore, portMAX_DELAY);
+    xSemaphoreTake(rx_buffer_mutex, portMAX_DELAY);
     memcpy(buf, u_rx_buffer, u_rx_pointer);
     int rv = u_rx_pointer;
     u_rx_pointer = 0;
+    xSemaphoreGive(rx_buffer_mutex);
     return rv;
 }
