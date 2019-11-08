@@ -2,7 +2,8 @@
 
 #include <stdio.h>
 
-static char stdout_buffer[1024] = {0};
+static char stdout_buffer[BUFSIZ] = {0};
+static char stdin_buffer[BUFSIZ] = {0};
 
 int init_core () {
     __HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
@@ -14,9 +15,8 @@ int init_core () {
     __HAL_RCC_DMA2_CLK_ENABLE();
 
 
-    setvbuf(stdin, NULL, _IONBF, 0);
-    setvbuf(stderr, NULL, _IONBF, 0);
-    setvbuf(stdout, stdout_buffer, _IOFBF, sizeof(stdout_buffer));
+    setbuf(stdout, stdout_buffer);
+    setbuf(stdin, stdin_buffer);
 
     return 0;
 }

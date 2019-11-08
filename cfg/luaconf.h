@@ -11,7 +11,7 @@
 #include <limits.h>
 #include <stddef.h>
 
-
+#define lua_writeline()        (lua_writestring("\r\n", 2), fflush(stdout))
 /*
 ** ===================================================================
 ** Search for "@@" to find all configurable definitions.

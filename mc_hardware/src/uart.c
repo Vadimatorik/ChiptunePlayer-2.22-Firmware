@@ -55,8 +55,10 @@ int init_uart () {
 
     HAL_UART_Receive_IT(&u, &u_rx_byte, 1);
 
-    HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
+    NVIC_SetPriority(USART1_IRQn, 6);
+
+    NVIC_EnableIRQ(DMA2_Stream7_IRQn);
+    NVIC_EnableIRQ(USART1_IRQn);
 
     return 0;
 }
@@ -70,75 +72,44 @@ void USART1_IRQHandler () {
 }
 
 size_t fwrite (const void *buf, size_t size, size_t count, FILE *stream) {
-    stream = stream;
-    size_t len = size*count;
-
-    if (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, len) == HAL_OK) {
-        return len;
-    }
-
-    return 0;
+    return (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, count) == HAL_OK)?(int)count:0;
 }
 
 int _write (int fd, const void *buf, size_t count) {
-    if ((fd != STDOUT_FILENO) && (fd != STDERR_FILENO)) {
-        errno = EBADF;
-        return -1;
-    }
-
-    while (HAL_UART_GetState(&u) != HAL_UART_STATE_READY) {
-        vTaskDelay(1);
-    }
-
-    if (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, count) == HAL_OK) {
-        return count;
-    }
-
-    return 0;
+    return (HAL_UART_Transmit_DMA(&u, (uint8_t *)buf, count) == HAL_OK)?(int)count:0;
 }
 
-
-uint8_t u_rx_buffer[1024] = {0};
+char u_rx_buffer[1024] = {0};
 volatile int u_rx_pointer = 0;
 
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
-    // -1 на то, чтобы 0-терминатор добавить в конец очень длинной строки.
-    if (u_rx_pointer == sizeof(u_rx_buffer) - 1) {
+    if (u_rx_pointer == sizeof(u_rx_buffer)) {
         return;
     }
 
-    u_rx_buffer[u_rx_pointer++] = u_rx_byte;
-
-    HAL_UART_Receive_IT(huart, &u_rx_byte, 1);
-
-    if (u_rx_byte == '\n') {
-        u_rx_buffer[u_rx_pointer++] = 0;
+    if (u_rx_byte == '\r') {
+        u_rx_buffer[u_rx_pointer++] = '\n';
         xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
-    }
-}
-
-
-void get_string_from_uart (char *buf, uint32_t max_len) {
-    xSemaphoreTake (rx_msg_semaphore, portMAX_DELAY);
-    __disable_irq();
-    strncpy(buf, u_rx_buffer, max_len);
-    u_rx_pointer -= strlen(buf);
-    __enable_irq();
-}
-
-/*
-int _read (int fd, void *buf, size_t len) {
-    while (u_rx_pointer == 0) {
-        vTaskDelay(1);
+        while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
+    } else if (u_rx_byte == 127) {
+        if (u_rx_pointer > 0) {
+            u_rx_pointer--;
+            u_rx_buffer[u_rx_pointer] = 0;
+            while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
+        }
+    } else {
+        u_rx_buffer[u_rx_pointer++] = u_rx_byte;
+        while (HAL_UART_Transmit_IT(huart, &u_rx_byte, 1) != HAL_OK);
     }
 
-    __disable_irq();
-    int l_cpy = (u_rx_pointer > len)?len:u_rx_pointer;
-    memcpy((uint8_t*)buf, u_rx_buffer, l_cpy);
-    u_rx_pointer -= l_cpy;
-    __enable_irq();
-
-    return l_cpy;
+    while (HAL_UART_Receive_IT(huart, &u_rx_byte, 1) != HAL_OK);
 }
 
-*/
+
+int _read (int fd, void *buf, size_t count) {
+    xSemaphoreTake(rx_msg_semaphore, portMAX_DELAY);
+    memcpy(buf, u_rx_buffer, u_rx_pointer);
+    int rv = u_rx_pointer;
+    u_rx_pointer = 0;
+    return rv;
+}

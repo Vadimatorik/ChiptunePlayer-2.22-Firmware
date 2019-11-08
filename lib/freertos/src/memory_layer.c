@@ -1,7 +1,4 @@
 #include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-
-#include <stdint.h>
 #include <string.h>
 
 void *malloc (size_t size) {
@@ -32,7 +29,7 @@ void *realloc (void *ptr, size_t new_size) {
     return p;
 }
 
-static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
+void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud; (void)osize;  /* not used */
     if (nsize == 0) {
         free(ptr);
