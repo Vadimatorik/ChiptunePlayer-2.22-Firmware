@@ -50,14 +50,13 @@ int main () {
         return rv;
     }
 
-    if ((rv = set_tim_lcd_pwm_duty(0.5)) != 0) {
+    if ((rv = set_tim_lcd_pwm_duty(0.1)) != 0) {
         return rv;
     }
 
-    /*
     if ((rv = start_tim_lcd_pwm()) != 0) {
         return rv;
-    }*/
+    }
 
     if (xTaskCreateStatic(task_lua_interactive, "lua", TASK_LUA_STACK_SIZE, NULL, 3, task_lua_stack, &task_lua_buf) == NULL) {
         return ENOMEM;

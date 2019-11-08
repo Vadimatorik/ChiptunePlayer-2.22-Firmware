@@ -30,23 +30,24 @@ int init_tim_lcd_pwm () {
         return EIO;
     }
 
-    if (HAL_TIM_OC_Init(&tim_lcd_pwm) != HAL_OK) {
+    if (HAL_TIM_PWM_Init(&tim_lcd_pwm) != HAL_OK) {
         return EIO;
     }
+
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-
     if (HAL_TIMEx_MasterConfigSynchronization(&tim_lcd_pwm, &sMasterConfig) != HAL_OK) {
         return EIO;
     }
-    sConfigOC.OCMode = TIM_OCMODE_FORCED_ACTIVE;
-    sConfigOC.Pulse = 0;
+
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = 999;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
     sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    if (HAL_TIM_OC_ConfigChannel(&tim_lcd_pwm, &sConfigOC, TIM_CHANNEL_1) != HAL_OK) {
+    if (HAL_TIM_PWM_ConfigChannel(&tim_lcd_pwm, &sConfigOC, TIM_CHANNEL_1) != HAL_OK) {
         return EIO;
     }
 
@@ -69,7 +70,7 @@ int set_tim_lcd_pwm_duty (float duty) {
         return EINVAL;
     }
 
-    __HAL_TIM_SET_COUNTER(&tim_lcd_pwm, 999 * duty);
+    __HAL_TIM_SET_COMPARE(&tim_lcd_pwm, TIM_CHANNEL_1, 999*duty);
 
     return 0;
 }
