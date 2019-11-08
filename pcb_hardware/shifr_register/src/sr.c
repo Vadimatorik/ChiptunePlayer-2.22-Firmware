@@ -98,13 +98,13 @@ int sr_pin_reset (uint32_t port_num, uint32_t pin_num) {
 }
 
 
-#define SR_PWR_AY_1_ON_PORT_NUM 2
-#define SR_PWR_AY_2_ON_PORT_NUM 2
-#define SR_AY_1_RES_PORT_NUM 2
-#define SR_AY_2_RES_PORT_NUM 2
-#define SR_BC1_PORT_NUM 2
-#define SR_BDIR_PORT_NUM 2
-#define SR_SHDN_PORT_NUM 2
+#define SR_PWR_AY_1_ON_PORT_NUM 0
+#define SR_PWR_AY_2_ON_PORT_NUM 0
+#define SR_AY_1_RES_PORT_NUM 0
+#define SR_AY_2_RES_PORT_NUM 0
+#define SR_BC1_PORT_NUM 0
+#define SR_BDIR_PORT_NUM 0
+#define SR_SHDN_PORT_NUM 0
 
 #define SR_PWR_AY_1_ON_PIN_NUM 0
 #define SR_PWR_AY_2_ON_PIN_NUM 1
