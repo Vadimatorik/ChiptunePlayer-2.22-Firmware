@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <stddef.h>
 
+#define LUA_32BITS
 #define lua_writeline()        (lua_writestring("\r\n", 2), fflush(stdout))
 /*
 ** ===================================================================
