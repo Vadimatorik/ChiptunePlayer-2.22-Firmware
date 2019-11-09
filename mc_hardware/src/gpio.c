@@ -127,6 +127,14 @@ void set_pin_lcd_cs () {
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
 }
 
+void set_pin_lcd_dc () {
+    HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_SET);
+}
+
+void set_pin_lcd_rst () {
+    HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_SET);
+}
+
 void reset_pin_pwr_5_v () {
     HAL_GPIO_WritePin(PWR_5V_ON_GPIO, PWR_5V_ON, GPIO_PIN_RESET);
 }
@@ -149,5 +157,13 @@ void reset_pin_sr_strob () {
 
 void reset_pin_lcd_cs () {
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_RESET);
+}
+
+void reset_pin_lcd_dc () {
+    HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_RESET);
+}
+
+void reset_pin_lcd_rst () {
+    HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_RESET);
 }
 

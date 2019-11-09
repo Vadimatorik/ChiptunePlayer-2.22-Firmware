@@ -22,8 +22,8 @@ SET(MC_LD_FLAGS "--specs=nano.specs -fdata-sections -ffunction-sections -Wl,--gc
 
 SET(COMPILER_OPTIMIZATION "-O0 -g3")
 
-SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
-SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
+SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
+SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
 
 project(aym C)
 
@@ -38,6 +38,7 @@ file(GLOB SOURCES
         "lib/st/hal/src/*.c"
         "lib/freertos/src/*.c"
         "lib/lua/src/*.c"
+        "lib/u8g2/csrc/*.c"
 
         "mc_hardware/src/*.c"
         "pcb_hardware/*/src/*.c"
@@ -56,6 +57,7 @@ include_directories(
         "lib/st/device/inc"
         "lib/freertos/inc"
         "lib/lua/inc"
+        "lib/u8g2/csrc/*.c"
 
         "mc_hardware/inc"
 
@@ -64,7 +66,8 @@ include_directories(
         "pcb_hardware/aym/inc"
         "pcb_hardware/ltc6903/inc"
 
-        "logic/aym_psg_parser/inc")
+        "logic/aym_psg_parser/inc"
+        "lib/u8g2/csrc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 

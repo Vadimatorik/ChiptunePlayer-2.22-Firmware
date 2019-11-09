@@ -7,6 +7,7 @@
 #include <errno.h>
 #include "ltc6903.h"
 #include "aym_psg_parser.h"
+#include "u8g2.h"
 
 #define TASK_LUA_STACK_SIZE 1000
 
@@ -24,14 +25,83 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 extern const uint8_t psg_track_test[];
 extern uint32_t psg_track_test_len;
 
+u8g2_t gui;
+
+uint8_t u8x8_byte_send (U8X8_UNUSED u8x8_t *u8x8, uint8_t msg, U8X8_UNUSED uint8_t arg_int, U8X8_UNUSED void *arg_ptr) {
+    switch (msg) {
+        case U8X8_MSG_BYTE_INIT:
+            break;
+
+        case U8X8_MSG_BYTE_START_TRANSFER:
+        case U8X8_MSG_BYTE_END_TRANSFER:
+            break;
+
+        case U8X8_MSG_BYTE_SEND:
+            spi_lcd_tx(arg_ptr, arg_int);
+            return arg_int;
+
+        case U8X8_MSG_BYTE_SET_DC:
+            u8x8_gpio_SetDC(u8x8, arg_int);
+            break;
+
+        default:
+            while (1);
+    }
+    return 1;
+}
+
+uint8_t u8x8_io (U8X8_UNUSED u8x8_t *u8x8, uint8_t msg, U8X8_UNUSED uint8_t arg_int, U8X8_UNUSED void *arg_ptr) {
+    switch (msg) {
+        case U8X8_MSG_GPIO_AND_DELAY_INIT:
+            break;
+
+        case U8X8_MSG_GPIO_DC:
+            if (arg_int) {
+                set_pin_lcd_dc();
+            } else {
+                reset_pin_lcd_dc();
+            }
+            break;
+
+        case U8X8_MSG_GPIO_RESET:
+            if (arg_int) {
+                set_pin_lcd_rst();
+            } else {
+                reset_pin_lcd_rst();
+            }
+            break;
+
+        case U8X8_MSG_DELAY_MILLI:
+            vTaskDelay(arg_int);
+            break;
+
+        default:
+            while (1);
+    }
+    return 1;
+}
+
+
 static void task_up_down_button (void *p) {
     p = p;
 
-    sr_set_pin_ay_2_res();
-    sr_reset_pin_pwr_ay_2_on();
+    u8g2_Setup_st7565_ea_dogm128_f(&gui, U8G2_R0, u8x8_byte_send, u8x8_io);
+    u8g2_InitDisplay(&gui);
+    u8g2_ClearBuffer(&gui);
+    u8g2_SendBuffer(&gui);
+    u8g2_SetContrast(&gui, 4);
+    u8g2_SetPowerSave(&gui, 0);
+
+    u8g2_SetFont(&gui, u8g2_font_ncenB08_tr);
+    u8g2_DrawStr(&gui, 0, 10, "Hello World!");
+    u8g2_SendBuffer(&gui);
+
+
+    sr_set_pin_ay_1_res();
+    sr_reset_pin_pwr_ay_1_on();
     set_pin_pwr_5_v();
-    sr_set_pin_pwr_ay_2_on();
-    sr_reset_pin_ay_2_res();
+    sr_set_pin_pwr_ay_1_on();
+    sr_reset_pin_ay_1_res();
     clear_aym_hardware();
 
     reset_shdn();
@@ -42,10 +112,10 @@ static void task_up_down_button (void *p) {
     start_tim_int_ay();
 
     aym_psg_reset();
-    aym_psg_play(AY_DIP_40_PIN_INDEX, psg_track_test, psg_track_test_len);
+    aym_psg_play(AY_DIP_28_PIN_INDEX, psg_track_test, psg_track_test_len);
 
     while (1) {
-        vTaskDelay(1000);
+        vTaskDelay(10);
     }
 }
 
@@ -88,7 +158,11 @@ int main () {
         return rv;
     }
 
-    if ((rv = set_tim_lcd_pwm_duty(0.1)) != 0) {
+    if ((rv = set_tim_lcd_pwm_duty(0.5)) != 0) {
+        return rv;
+    }
+
+    if ((rv = start_tim_lcd_pwm()) != 0) {
         return rv;
     }
 

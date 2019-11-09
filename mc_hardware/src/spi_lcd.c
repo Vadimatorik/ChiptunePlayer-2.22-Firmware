@@ -5,6 +5,8 @@
 
 #include <errno.h>
 
+#include "mc_hardware.h"
+
 SPI_HandleTypeDef s_lcd = {0};
 DMA_HandleTypeDef s_lcd_dma = {0};
 
@@ -62,5 +64,11 @@ void SPI1_IRQHandler () {
 
 void DMA2_Stream3_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
+}
+
+int spi_lcd_tx (void *d, uint32_t len) {
+    reset_pin_lcd_cs();
+    HAL_StatusTypeDef rv = HAL_SPI_Transmit_DMA(&s_lcd, d, len);
+    return (rv == HAL_OK)?0:EIO;
 }
 
