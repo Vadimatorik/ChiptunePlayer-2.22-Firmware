@@ -24,12 +24,17 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 static void task_up_down_button (void *p) {
     p = p;
 
+    while(aym_note_reset(AY_DIP_28_PIN_INDEX) != 0) {
+        vTaskDelay(100);
+    }
+
     while(aym_note_reset(AY_DIP_40_PIN_INDEX) != 0) {
         vTaskDelay(100);
     }
 
     while (1) {
         static uint8_t i = 0;
+        aym_note_write_note_to_channel(AY_DIP_28_PIN_INDEX, 1, i);
         aym_note_write_note_to_channel(AY_DIP_40_PIN_INDEX, 1, i);
         i++;
         vTaskDelay(100);

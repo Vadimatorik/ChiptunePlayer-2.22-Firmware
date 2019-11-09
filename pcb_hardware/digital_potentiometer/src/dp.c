@@ -11,11 +11,11 @@ static uint8_t tx_buf[AD5204_BUF_SIZE(AD5204_CHIP_COUNT)] = {0};
 static uint8_t reg_data[AD5204_CHIP_COUNT][4] = {0};
 
 void set_shdn () {
-    sr_set_pin_ad5204_shdn();
+    sr_reset_pin_ad5204_shdn();
 }
 
 void reset_shdn () {
-    sr_reset_pin_ad5204_shdn();
+    sr_set_pin_ad5204_shdn();
 }
 
 int set_value (uint8_t chip_num, uint8_t reg, uint8_t value) {

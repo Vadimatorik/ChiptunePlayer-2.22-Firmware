@@ -5,6 +5,7 @@
 #include "mc_hardware.h"
 #include "sr.h"
 #include "ltc6903.h"
+#include "dp.h"
 
 #include <errno.h>
 
@@ -164,12 +165,16 @@ static void task_aym (void *p) {
     sr_reset_pin_ay_1_res();
     sr_reset_pin_ay_2_res();
 
+    reset_shdn();
+
     ltc6903_start();
     ltc6903_set_requency(1.75e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
 
     start_tim_int_ay();
 
     while (1) {
+
+
         xSemaphoreTake (tim_irq_request, portMAX_DELAY);
         if (check_queue_empty() == QUEUE_STATE_EMPTY) {
             continue;

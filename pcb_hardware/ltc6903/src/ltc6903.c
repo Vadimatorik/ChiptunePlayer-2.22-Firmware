@@ -13,7 +13,7 @@ int ltc6903_init () {
 int ltc6903_start () {
     uint16_t output_buf = 3;
     uint8_t array_out[2];
-    array_out[0] = output_buf >> 8;
+    array_out[0] = (output_buf >> 8) & 0xFF;
     array_out[1] = output_buf & 0xFF;
     return spi_board_device_ltc6903_tx(array_out, 2);
 }
@@ -68,7 +68,7 @@ int ltc6903_set_requency (float freq, LTC6903_OUTPUT_MODE mode) {
     outputBuf |= (uint8_t)mode;
 
     uint8_t array_out[2];
-    array_out[0] = outputBuf >> 8;
+    array_out[0] = (outputBuf >> 8) & 0xFF;
     array_out[1] = outputBuf & 0xFF;
 
     return spi_board_device_ltc6903_tx(array_out, 2);

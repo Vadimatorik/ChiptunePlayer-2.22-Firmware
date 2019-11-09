@@ -15,12 +15,12 @@ int init_spi_board () {
 
     s_board.Instance = SPI2;
     s_board.Init.Mode = SPI_MODE_MASTER;
-    s_board.Init.Direction = SPI_DIRECTION_2LINES;
+    s_board.Init.Direction = SPI_DIRECTION_1LINE;
     s_board.Init.DataSize = SPI_DATASIZE_8BIT;
     s_board.Init.CLKPolarity = SPI_POLARITY_LOW;
     s_board.Init.CLKPhase = SPI_PHASE_1EDGE;
     s_board.Init.NSS = SPI_NSS_SOFT;
-    s_board.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+    s_board.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
     s_board.Init.FirstBit = SPI_FIRSTBIT_MSB;
     s_board.Init.TIMode = SPI_TIMODE_DISABLE;
     s_board.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
