@@ -16,7 +16,7 @@ static const uint8_t ssd1306_init_command[] = {
 };
 
 Ssd1306::Ssd1306 ( const mono_lcd_lib_ssd1306_cfg_t* const cfg, uint8_t* const buf ) : cfg(cfg), buf(buf) {
-    this->mutex     = USER_OS_STATIC_MUTEX_CREATE( &this->mutex_buf );
+    this->mutex     = xSemaphoreCreateMutexStatic( &this->mutex_buf );
 }
 
 // Инициализируем LCD.
@@ -25,17 +25,17 @@ BASE_RESULT Ssd1306::reset ( void ) {
     cfg->cs->set();                     // Переводим дисплей в невыбранное положение.
     // Перезагружаем дисплей.
     cfg->res->reset();
-    USER_OS_DELAY_MS(10);
+    vTaskDelay(10);
     cfg->res->set();
-    USER_OS_DELAY_MS(10);               // Ждем, пока запустится.
+    vTaskDelay(10);               // Ждем, пока запустится.
 
-    USER_OS_TAKE_MUTEX( this->mutex, portMAX_DELAY );   // Ждем, пока освободится SPI.
+    xSemaphoreTake( this->mutex, portMAX_DELAY );   // Ждем, пока освободится SPI.
 
     cfg->cs->reset();  	// Выбираем наш дисплей.
     BASE_RESULT r;
     r = this->cfg->s->tx( ssd1306_init_command, sizeof( ssd1306_init_command ), 100 );
     cfg->cs->reset();
-    USER_OS_GIVE_MUTEX( this->mutex );	// Разрешаем использование SPI другим потокам.
+    xSemaphoreGive( this->mutex );	// Разрешаем использование SPI другим потокам.
 
     checkResult( r );
     this->flag = true;
@@ -69,7 +69,7 @@ BASE_RESULT Ssd1306::set_pos_to_lcd ( const uint8_t& x, const uint8_t& y ) {
 BASE_RESULT Ssd1306::update ( void ) {
     BASE_RESULT r;
     if ( this->flag == 0 ) return BASE_RESULT::ERROR_INIT;		// Если экран еще не инициализирован - выходим.
-    USER_OS_TAKE_MUTEX( this->mutex, portMAX_DELAY );   // Ждем, пока освободится SPI.
+    xSemaphoreTake( this->mutex, portMAX_DELAY );   // Ждем, пока освободится SPI.
 
     cfg->cs->reset();               // Выбираем дисплей.
 
@@ -82,7 +82,7 @@ BASE_RESULT Ssd1306::update ( void ) {
 
         cfg->cs->set();// Отсоединяем SPI от дисплея.
     }
-    USER_OS_GIVE_MUTEX( this->mutex );	// Разрешаем использование SPI другим потокам.
+    xSemaphoreGive( this->mutex );	// Разрешаем использование SPI другим потокам.
 
     return r;
 }

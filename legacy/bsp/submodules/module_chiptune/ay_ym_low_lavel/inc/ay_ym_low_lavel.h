@@ -29,10 +29,10 @@ struct ayYmConnectionChipCfg {
  */
 struct ayYmLowLavelCfg {
 
-	USER_OS_STATIC_MUTEX*								const mutex;			/// Мутекс заберается на время передачи данных в AY/YM.
+	SemaphoreHandle_t*								const mutex;			/// Мутекс заберается на время передачи данных в AY/YM.
 	mc_interfaces::Port8bit**					ports;					/// Порты, к которым подключены AY. Минимум 1 должен быть указан.
 
-	USER_OS_STATIC_BIN_SEMAPHORE*						const semaphoreSecOut;	// Этим симафором будем показывать, что прошла секунда воспроизведения. Опционально (можно nullptr).
+	SemaphoreHandle_t*						const semaphoreSecOut;	// Этим симафором будем показывать, что прошла секунда воспроизведения. Опционально (можно nullptr).
 
 	// Выводы управления AY должны быть указаны обязательно (включение всех AY - параллельное).
 	// Выводы должны быть указано явно.
@@ -44,7 +44,7 @@ struct ayYmLowLavelCfg {
 	// Здесь указатель на массив указателей на эти очереди.
 	// Очередь должна содержать ay_low_out_data элементы!!!
 	//
-	USER_OS_STATIC_QUEUE*			queueArray;
+	QueueHandle_t*			queueArray;
 	const uint8_t					ayNumber;							// Колличество AY.
 	ayYmConnectionChipCfg*			const connectCfg;					// Способ подключения каждого чипа.
 	const uint8_t					taskPrio;							// Приоритет задачи-обработчика данных из очереди.
@@ -68,11 +68,8 @@ struct ayQueueStruct {
 	uint8_t	 data;
 };
 
-struct __attribute__( ( packed ) ) ayChipReg {
-	uint8_t reg[16];
-};
 
-#define AY_YM_LOW_LAVEL_TASK_STACK_SIZE			 2000
+
 
 // Очередь должна быть как минимум 1 элемент (в идеале - по 16*2 b и более для каждого чипа).
 // Очердь общая для все чипов!
@@ -124,20 +121,6 @@ private:
 	static void task		( void* p_this );
 
 	const ayYmLowLavelCfg*			const cfg;
-
-	/*
-	 * Этим симафором будем показывать, что пора передать следущую порцию данных.
-	 * Мы ждем его в задаче ay_queue_out_task и отдаем в ay_timer_handler.
-	 */
-	USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sb;
-	USER_OS_STATIC_BIN_SEMAPHORE		s	 = nullptr;
-
-	/*
-	 * Для создания задачи.
-	 */
-	USER_OS_STATIC_STACK_TYPE			tb[ AY_YM_LOW_LAVEL_TASK_STACK_SIZE ] = { 0 };
-	USER_OS_STATIC_TASK_STRUCT_TYPE		ts;
-
 	uint8_t tic_ff		= 0;						 // Считаем время воспроизведения (колличество прерываний).
 
 	ayChipReg*							buf_data_chip = nullptr;						// Массив структур данных регистров.

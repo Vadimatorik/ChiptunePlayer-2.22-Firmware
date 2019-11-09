@@ -4,6 +4,8 @@
 
 #include <errno.h>
 
+#include "aym_hardware.h"
+
 TIM_HandleTypeDef tim_int_ay = {0};
 
 int init_tim_int_ay () {
@@ -25,7 +27,7 @@ int init_tim_int_ay () {
         return EIO;
     }
 
-    HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     return 0;
@@ -33,4 +35,9 @@ int init_tim_int_ay () {
 
 int start_tim_int_ay () {
     return (HAL_TIM_Base_Start_IT(&tim_int_ay) == HAL_OK)?:EIO;
+}
+
+void TIM6_DAC_IRQHandler () {
+    aym_hardware_irq_handler();
+    HAL_TIM_IRQHandler(&tim_int_ay);
 }

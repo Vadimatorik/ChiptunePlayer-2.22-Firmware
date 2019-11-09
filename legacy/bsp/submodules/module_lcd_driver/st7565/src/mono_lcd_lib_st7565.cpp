@@ -17,7 +17,7 @@ namespace mono_lcd {
 
 st7565::st7565 (const st7565_cfg *const cfg, uint8_t *const buf) :
     cfg(cfg), userBuf(buf) {
-    this->m = USER_OS_STATIC_MUTEX_CREATE(&this->mb);
+    this->m = xSemaphoreCreateMutexStatic(&this->mb);
 }
 
 mc_interfaces::res st7565::comOut (uint8_t command) {
@@ -38,7 +38,7 @@ mc_interfaces::res st7565::dataOut (uint8_t data) {
 
 
 mc_interfaces::res st7565::set_contrast (uint8_t val) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     
@@ -48,22 +48,22 @@ mc_interfaces::res st7565::set_contrast (uint8_t val) {
         r = this->comOut(CMD_SET_VOLUME_SECOND | (val & 0x3f));
     } while (false);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 mc_interfaces::res st7565::reset (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     
     do {
         cfg->cs->set();
         cfg->res->reset();
-        USER_OS_DELAY_MS(5);
+        vTaskDelay(5);
         cfg->res->set();
-        USER_OS_DELAY_MS(5);
+        vTaskDelay(5);
         
         // LCD bias select
         r = this->comOut(CMD_SET_BIAS_9);
@@ -84,17 +84,17 @@ mc_interfaces::res st7565::reset (void) {
         // turn on voltage converter (VC=1, VR=0, VF=0)
         r = this->comOut(CMD_SET_POWER_CONTROL | 0x4);
         checkResultAndBreak(r);
-        USER_OS_DELAY_MS(5);
+        vTaskDelay(5);
         
         // turn on voltage regulator (VC=1, VR=1, VF=0)
         r = this->comOut(CMD_SET_POWER_CONTROL | 0x6);
         checkResultAndBreak(r);
-        USER_OS_DELAY_MS(5);
+        vTaskDelay(5);
         
         // turn on voltage follower (VC=1, VR=1, VF=1)
         r = this->comOut(CMD_SET_POWER_CONTROL | 0x7);
         checkResultAndBreak(r);
-        USER_OS_DELAY_MS(1);
+        vTaskDelay(1);
         
         // set lcd operating voltage (regulator resistor, ref voltage resistor)
         r = this->comOut(CMD_SET_RESISTOR_RATIO | 0x6);
@@ -103,35 +103,35 @@ mc_interfaces::res st7565::reset (void) {
         r = this->comOut(CMD_SET_ALLPTS_NORMAL);
     } while (false);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 mc_interfaces::res st7565::on (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     r = this->comOut(CMD_DISPLAY_ON);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 mc_interfaces::res st7565::off (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     r = this->comOut(CMD_DISPLAY_OFF);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 mc_interfaces::res st7565::update (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     
@@ -177,13 +177,13 @@ mc_interfaces::res st7565::update (void) {
         }
     } while (false);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 mc_interfaces::res st7565::lcd_clear (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res r;
     
@@ -204,17 +204,17 @@ mc_interfaces::res st7565::lcd_clear (void) {
         }
     } while (false);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return r;
 }
 
 void st7565::buf_clear (void) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     memset(this->userBuf, 0, 1024);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
 }
 
 }

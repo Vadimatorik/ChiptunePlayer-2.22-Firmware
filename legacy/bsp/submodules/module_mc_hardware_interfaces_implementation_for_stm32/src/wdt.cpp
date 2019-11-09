@@ -21,7 +21,7 @@ mc_interfaces::res Wdt::reinit (uint32_t cfgNumber) {
     
     IWDG->KR = 0xAAAA;                                // Перезагружаем WDT.
     
-    USER_OS_STATIC_TASK_CREATE(this->task, "wdt", WDT_TASK_STACK_SIZE, (void *)this, this->cfg->taskPrio,
+    xTaskCreateStatic(this->task, "wdt", WDT_TASK_STACK_SIZE, (void *)this, this->cfg->taskPrio,
                                this->taskStack, &this->taskStruct);
     
     return mc_interfaces::res::err_ok;
@@ -46,13 +46,13 @@ void Wdt::resetService (void) {
 //**********************************************************************
 void Wdt::task (void *p_obj) {
     Wdt *obj = (Wdt *)p_obj;
-    USER_OS_TICK_TYPE last_wake_time;
-    const USER_OS_TICK_TYPE time_out = 10;
-    last_wake_time = USER_OS_TASK_GET_TICK_COUNT();
+    TickType_t last_wake_time;
+    const TickType_t time_out = 10;
+    last_wake_time = xTaskGetTickCount();
     while (true) {
         configASSERT(!obj->reboot);                    // Если задана перезагрузка - виснем!
         obj->reset();
-        USER_OS_TASK_DELAY_UNTIL(&last_wake_time, time_out);
+        vTaskDelayUntil(&last_wake_time, time_out);
     }
 }
 

@@ -39,8 +39,8 @@ uart_base::uart_base (const uart_cfg *const cfg, uint32_t cfg_num) :
     
     this->u.obj = this;
     
-    this->m = USER_OS_STATIC_MUTEX_CREATE(&this->mb);
-    this->s = USER_OS_STATIC_BIN_SEMAPHORE_CREATE(&this->sb);
+    this->m = xSemaphoreCreateMutexStatic(&this->mb);
+    this->s = xSemaphoreCreateBinaryStatic(&this->sb);
 }
 
 mc_interfaces::res uart_base::reinit (uint32_t numberCfg) {
@@ -104,8 +104,8 @@ void uart_base::off (void) {
 mc_interfaces::res uart_base::tx (const uint8_t *const txArray,
                                            uint16_t len,
                                            uint32_t timeout_ms) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake(this->m, portMAX_DELAY);
+    xSemaphoreTake (this->s, 0);
     
     if (this->cfg->de != nullptr) this->cfg->de->set();
     
@@ -116,13 +116,13 @@ mc_interfaces::res uart_base::tx (const uint8_t *const txArray,
     }
     
     mc_interfaces::res rv = mc_interfaces::res::err_timeout;
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeout_ms) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeout_ms) == pdTRUE) {
         rv = mc_interfaces::res::err_ok;
     }
     
     if (this->cfg->de != nullptr) this->cfg->de->reset();
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     return rv;
 }
 
@@ -152,16 +152,16 @@ mc_interfaces::res uart_base::get_byte (uint8_t *buf,
         return mc_interfaces::res::err_ok;
     }
     
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake(this->m, portMAX_DELAY);
+    xSemaphoreTake (this->s, 0);
     
     volatile mc_interfaces::res rv = mc_interfaces::res::err_timeout;
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeoutMs) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeoutMs) == pdTRUE) {
         *buf = this->u.Instance->DR;
         rv = mc_interfaces::res::err_ok;
     }
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -189,7 +189,7 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
 void uart_base::give_semaphore (void) {
     if (this->s) {
         BaseType_t xHigherPriorityTaskWoken = pdTRUE;
-        USER_OS_GIVE_BIN_SEMAPHORE_FROM_ISR (this->s, &xHigherPriorityTaskWoken);
+        xSemaphoreGiveFromISR (this->s, &xHigherPriorityTaskWoken);
     }
 }
 

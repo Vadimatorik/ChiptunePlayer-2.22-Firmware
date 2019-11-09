@@ -3,8 +3,9 @@
 #include "l.h"
 #include "dp.h"
 #include "sr.h"
-
+#include "aym_hardware.h"
 #include <errno.h>
+#include "ltc6903.h"
 
 #define TASK_LUA_STACK_SIZE 1000
 
@@ -54,7 +55,11 @@ int main () {
         return rv;
     }
 
-    if ((rv = start_tim_lcd_pwm()) != 0) {
+    if ((rv = init_aym_hardware()) != 0) {
+        return rv;
+    }
+
+    if ((rv = ltc6903_init()) != 0) {
         return rv;
     }
 

@@ -20,8 +20,8 @@ Gui::Gui	(	const AyPlayerPcbStrcut*				const pcbObj,
 				const AyPlayerGuiModuleStyleCfg*		const cfg,
 				mc_interfaces::TimPwmOneChannel*	ledPwm	) :
 						pcbObj( pcbObj ), cfg( cfg ), ledPwm( ledPwm )	{
-	this->mHost			=	USER_OS_STATIC_MUTEX_CREATE( &this->mbHost );
-	this->sUpdateLcd	=	USER_OS_STATIC_BIN_SEMAPHORE_CREATE( &this->sbUpdateLcd );
+	this->mHost			=	xSemaphoreCreateMutexStatic( &this->mbHost );
+	this->sUpdateLcd	=	xSemaphoreCreateBinaryStatic( &this->sbUpdateLcd );
 }
 
 #define	TEST_POINT_AND_DELITE(POINT)			\
@@ -47,7 +47,7 @@ void Gui::illuminationControlTask ( void*	obj ) {
 	bool		flagMode		=	true;
 
 	while( true ) {
-		if ( USER_OS_TAKE_BIN_SEMAPHORE ( o->sUpdateLcd, 1000 ) == pdTRUE ) {
+		if ( xSemaphoreTake ( o->sUpdateLcd, 1000 ) == pdTRUE ) {
 			downCounterTime =	o->maxIlluminationTimeS;
 			o->ledPwm->setDuty( o->maxIlluminationDuty );
 			o->ledPwm->on();
@@ -79,7 +79,7 @@ void Gui::init ( void ) {
 							makiseGuiPredraw,
 							makiseGuiUpdate		);
 
-	this->timStringScroll	= USER_OS_STATIC_TIMER_CREATE(	"scrollStringCurrentNameTrack",
+	this->timStringScroll	= xTimerCreateStatic(	"scrollStringCurrentNameTrack",
 																this->timerSpeedLow,
 																this,
 																Gui::timerHandler,
@@ -98,7 +98,7 @@ void Gui::init ( void ) {
 
 	this->statusBar	=	this->addStatusBar();
 
-	USER_OS_STATIC_TASK_CREATE(	illuminationControlTask,
+	xTaskCreateStatic(	illuminationControlTask,
 								"illuminationControl",
 								this->tbIlluminationControlTaskSize,
 								( void* )this,
@@ -109,13 +109,13 @@ void Gui::init ( void ) {
 
 void Gui::update ( void ) {
 	this->updateWithoutLed();
-	USER_OS_GIVE_BIN_SEMAPHORE( this->sUpdateLcd );
+	xSemaphoreGive( this->sUpdateLcd );
 }
 
 void Gui::updateWithoutLed ( void ) {
 	mc_interfaces::res r;
 
-	USER_OS_TAKE_MUTEX( this->mHost, portMAX_DELAY );
+	xSemaphoreTake( this->mHost, portMAX_DELAY );
 
 	this->pcbObj->lcd->buf_clear();
 
@@ -125,7 +125,7 @@ void Gui::updateWithoutLed ( void ) {
 	r = this->pcbObj->lcd->update();
 	this->checkAndExit( r );
 
-	USER_OS_GIVE_MUTEX( this->mHost );
+	xSemaphoreGive( this->mHost );
 }
 
 void Gui::checkAndExit ( mc_interfaces::res resultValue ) {
@@ -213,7 +213,7 @@ void Gui::setWindowMain	(	std::shared_ptr< ItemFileInFat >	item,
 	this->shl->setStringCurrentItem( item->fileName );
 
 	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timStringScroll, this->timerSpeedLow );
-	USER_OS_STATIC_TIMER_START( this->timStringScroll );
+	xTimerStart( this->timStringScroll );
 }
 
 void Gui::updateTreckWindowMain	(	std::shared_ptr< ItemFileInFat >	item	) {
@@ -223,7 +223,7 @@ void Gui::updateTreckWindowMain	(	std::shared_ptr< ItemFileInFat >	item	) {
 	this->shl->setStringCurrentItem( item->fileName );
 
 	USER_OS_STATIC_TIMER_CHANGE_PERIOD( this->timStringScroll, this->timerSpeedLow );
-	USER_OS_STATIC_TIMER_START( this->timStringScroll );
+	xTimerStart( this->timStringScroll );
 }
 
 void	Gui::resetPlayBarInMainWindow	(	void	) {

@@ -103,6 +103,14 @@ int init_gpio () {
 #define AD5204_CS BOARD_GPIO_3
 #define SH_STROB BOARD_GPIO_2
 
+void set_pin_pwr_5_v () {
+    HAL_GPIO_WritePin(PWR_5V_ON_GPIO, PWR_5V_ON, GPIO_PIN_SET);
+}
+
+void set_pin_pwr_3_v_3 () {
+    HAL_GPIO_WritePin(PWR_ON_GPIO, PWR_ON, GPIO_PIN_SET);
+}
+
 void set_pin_ltc_cs () {
     HAL_GPIO_WritePin(LTC_CS_GPIO, LTC_CS, GPIO_PIN_SET);
 }
@@ -117,6 +125,14 @@ void set_pin_sr_strob () {
 
 void set_pin_lcd_cs () {
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
+}
+
+void reset_pin_pwr_5_v () {
+    HAL_GPIO_WritePin(PWR_5V_ON_GPIO, PWR_5V_ON, GPIO_PIN_RESET);
+}
+
+void reset_pin_pwr_3_v_3 () {
+    HAL_GPIO_WritePin(PWR_ON_GPIO, PWR_ON, GPIO_PIN_RESET);
 }
 
 void reset_pin_ltc_cs () {
@@ -134,3 +150,4 @@ void reset_pin_sr_strob () {
 void reset_pin_lcd_cs () {
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_RESET);
 }
+

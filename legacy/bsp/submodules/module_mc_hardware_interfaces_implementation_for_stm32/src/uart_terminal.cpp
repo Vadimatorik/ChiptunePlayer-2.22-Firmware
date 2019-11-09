@@ -6,7 +6,7 @@ namespace mc {
 
 uart_terminal::uart_terminal (const uart_cfg *const cfg, uint32_t cfg_num, uint32_t thread_prio) :
     uart_base(cfg, cfg_num) {
-    USER_OS_STATIC_TASK_CREATE(uart_terminal::thread,
+    xTaskCreateStatic(uart_terminal::thread,
                                "uart_terminal",
                                TB_THREAD_SIZE,
                                this,
@@ -14,7 +14,7 @@ uart_terminal::uart_terminal (const uart_cfg *const cfg, uint32_t cfg_num, uint3
                                this->tb_thread,
                                &this->ts_thread);
 
-    this->q_answer = USER_OS_STATIC_QUEUE_CREATE(Q_LEN, Q_ITEM_SIZE, this->qb, &this->qs);
+    this->q_answer = xQueueCreateStatic(Q_LEN, Q_ITEM_SIZE, this->qb, &this->qs);
 }
 
 void uart_terminal::char_parser (char c, uint32_t &i) {
@@ -48,11 +48,11 @@ void uart_terminal::thread (void *obj) {
     while(true) {
         uint32_t i = 0;
         uint8_t  b_char = 0;
-        USER_OS_QUEUE_RECEIVE(o->q_answer, &b_char, portMAX_DELAY);
+        xQueueReceive(o->q_answer, &b_char, portMAX_DELAY);
         o->char_parser(b_char, i);
 
         for (;i < sizeof(buf_repack_answer); i++) {
-            if (USER_OS_QUEUE_RECEIVE(o->q_answer, &b_char, 10) == pdFALSE) {
+            if (xQueueReceive(o->q_answer, &b_char, 10) == pdFALSE) {
                 break;
             }
 

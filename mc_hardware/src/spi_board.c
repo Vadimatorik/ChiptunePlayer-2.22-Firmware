@@ -39,6 +39,13 @@ void SPI2_IRQHandler () {
     HAL_SPI_IRQHandler(&s_board);
 }
 
+int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
+    spi_device = SPI_BOARD_DEVICE_LTC6903;
+    reset_pin_ltc_cs();
+    HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
+    return (rv == HAL_OK)?0:EIO;
+}
+
 int spi_board_device_ad5204_tx (void *d, uint32_t len) {
     spi_device = SPI_BOARD_DEVICE_AD5204;
     reset_pin_ad5204_cs();

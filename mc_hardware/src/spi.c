@@ -17,7 +17,10 @@ void HAL_SPI_TxCpltCallback (SPI_HandleTypeDef *hspi) {
                 set_pin_sr_strob();
                 reset_pin_sr_strob();
                 break;
-        }
 
+            case SPI_BOARD_DEVICE_LTC6903:
+                set_pin_ltc_cs();
+                break;
+        }
     }
 }

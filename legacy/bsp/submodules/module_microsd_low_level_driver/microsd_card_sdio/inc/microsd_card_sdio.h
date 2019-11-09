@@ -68,11 +68,11 @@ private:
     SD_HandleTypeDef handle;
     DMA_HandleTypeDef dmaRx;
     
-    USER_OS_STATIC_MUTEX m = nullptr;
-    USER_OS_STATIC_MUTEX_BUFFER mb;
+    SemaphoreHandle_t m = nullptr;
+    StaticSemaphore_t mb;
     
-    USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sb;
-    USER_OS_STATIC_BIN_SEMAPHORE s = nullptr;
+    StaticSemaphore_t sb;
+    SemaphoreHandle_t s = nullptr;
 };
 
 #endif

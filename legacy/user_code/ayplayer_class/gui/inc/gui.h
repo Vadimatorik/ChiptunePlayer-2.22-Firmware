@@ -76,12 +76,12 @@ private:
 	const AyPlayerPcbStrcut*				const pcbObj;
 	const AyPlayerGuiModuleStyleCfg*		const cfg;
 	mc_interfaces::TimPwmOneChannel*	ledPwm;
-	USER_OS_STATIC_MUTEX_BUFFER				mbHost;
-	USER_OS_STATIC_MUTEX					mHost;
-	USER_OS_STATIC_STACK_TYPE				tbIlluminationControlTask[ TB_ILLUMINATION_CONTROL_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE			tsIlluminationControlTask;
-	USER_OS_STATIC_BIN_SEMAPHORE			sUpdateLcd;
-	USER_OS_STATIC_BIN_SEMAPHORE_BUFFER		sbUpdateLcd;
+	StaticSemaphore_t				mbHost;
+	SemaphoreHandle_t					mHost;
+	StackType_t				tbIlluminationControlTask[ TB_ILLUMINATION_CONTROL_TASK_SIZE ];
+	StaticTask_t			tsIlluminationControlTask;
+	SemaphoreHandle_t			sUpdateLcd;
+	StaticSemaphore_t		sbUpdateLcd;
 	float									maxIlluminationDuty;
 	float									minIlluminationDuty;
 	uint32_t								maxIlluminationTimeS;
@@ -100,8 +100,8 @@ private:
 private:
 	uint32_t							timerSpeedLow			=	1000;
 	uint32_t							timerSpeedFast			=	200;
-	USER_OS_TIMER						timStringScroll;
-	USER_OS_TIMER_STATIC_STRUCT			timStStringScroll;
+	TimerHandle_t						timStringScroll;
+	StaticTimer_t			timStStringScroll;
 
 };
 

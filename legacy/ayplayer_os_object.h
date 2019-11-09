@@ -9,32 +9,32 @@
 
 struct FreeRtosObj {
     /// Queue.
-    USER_OS_STATIC_QUEUE qAyLow[2];
-    USER_OS_STATIC_QUEUE qAyButton;
+    QueueHandle_t qAyLow[2];
+    QueueHandle_t qAyButton;
     
     /// Queue buffer.
     uint8_t qbAyLow[2][sizeof(ayLowOutDataStruct) * QB_AY_LOW_SIZE];
     uint8_t qbAyButton[1];
     
     /// Queue struct.
-    USER_OS_STATIC_QUEUE_STRUCT qsAyLow[2];
-    USER_OS_STATIC_QUEUE_STRUCT qsAyButton;
+    StaticQueue_t qsAyLow[2];
+    StaticQueue_t qsAyButton;
     
     /// Mutex.
-    USER_OS_STATIC_MUTEX mBoardSpi;
+    SemaphoreHandle_t mBoardSpi;
     
     
     /// Mutex buffer.
-    USER_OS_STATIC_MUTEX_BUFFER mbBoardSpi;
+    StaticSemaphore_t mbBoardSpi;
     
     
     /// Semaphore.
-    USER_OS_STATIC_BIN_SEMAPHORE sPlayTic;
-    USER_OS_STATIC_BIN_SEMAPHORE sStartPlay;
+    SemaphoreHandle_t sPlayTic;
+    SemaphoreHandle_t sStartPlay;
     
     /// Semaphore buffer.
-    USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sbPlayTic;
-    USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sbStartPlay;            /// Выдается, когда надо запустить воспроизведение,
+    StaticSemaphore_t sbPlayTic;
+    StaticSemaphore_t sbStartPlay;            /// Выдается, когда надо запустить воспроизведение,
     ///а все данные о треке уже указаны (внутри объекта ayplayer).
 };
 

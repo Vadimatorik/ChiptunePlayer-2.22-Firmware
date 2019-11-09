@@ -64,7 +64,7 @@ int AyYmFilePlay::open_file (std::shared_ptr<char> fullFilePath) {
 
 int AyYmFilePlay::close_file (void) {
 	while( this->cfg->ayLow->queueEmptyCheck() != true ) {			/// Ждем, пока AY освободится.
-		USER_OS_DELAY_MS(20);
+		vTaskDelay(20);
 	}
 
 	this->cfg->ayLow->playStateSet( 0 );								/// Отключаем аппаратку.

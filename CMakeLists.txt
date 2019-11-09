@@ -59,7 +59,9 @@ include_directories(
         "mc_hardware/inc"
 
         "pcb_hardware/digital_potentiometer/inc"
-        "pcb_hardware/shift_register/inc")
+        "pcb_hardware/shift_register/inc"
+        "pcb_hardware/aym/inc"
+        "pcb_hardware/ltc6903/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 

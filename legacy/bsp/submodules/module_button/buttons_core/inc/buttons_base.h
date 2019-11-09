@@ -23,7 +23,7 @@ struct event {
      * возникновении события не будет
      * выдачи семафора.
      */
-    USER_OS_STATIC_BIN_SEMAPHORE *s;
+    SemaphoreHandle_t *s;
     
     /*!
      * Указатель на очередь, в которую
@@ -33,7 +33,7 @@ struct event {
      * возникновении события сообщение в
      * очередь положено не будет.
      */
-    USER_OS_STATIC_QUEUE *q;
+    QueueHandle_t *q;
     uint8_t v;
 };
 
@@ -220,8 +220,8 @@ private:
     const static uint32_t TASK_STACK_SIZE = 400;
 
 private:
-    USER_OS_STATIC_STACK_TYPE task_stack[button::base::TASK_STACK_SIZE];
-    USER_OS_STATIC_TASK_STRUCT_TYPE task_struct;
+    StackType_t task_stack[button::base::TASK_STACK_SIZE];
+    StaticTask_t task_struct;
     
 };
 

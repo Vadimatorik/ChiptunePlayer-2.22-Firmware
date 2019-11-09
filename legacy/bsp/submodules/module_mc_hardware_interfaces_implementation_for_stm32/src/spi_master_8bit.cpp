@@ -9,8 +9,8 @@ namespace mc {
 SpiMaster8Bit::SpiMaster8Bit (const SpiMaster8BitCfg *const cfg, const uint32_t countCfg) :
     cfg(cfg), cfgCount(countCfg) {
     this->spi.obj = this;
-    this->m = USER_OS_STATIC_MUTEX_CREATE(&mb);
-    this->s = USER_OS_STATIC_BIN_SEMAPHORE_CREATE(&this->sb);
+    this->m = xSemaphoreCreateMutexStatic(&mb);
+    this->s = xSemaphoreCreateBinaryStatic(&this->sb);
 }
 
 mc_interfaces::res SpiMaster8Bit::reinit (uint32_t numberCfg) {
@@ -95,10 +95,10 @@ void SpiMaster8Bit::off (void) {
 mc_interfaces::res SpiMaster8Bit::tx (const uint8_t *const txArray,
                                                     uint16_t length,
                                                     uint32_t timeoutMs) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res rv = mc_interfaces::res::err_timeout;
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake (this->s, 0);
     
     if (this->cs != nullptr)
         this->cs->set(0);
@@ -107,14 +107,14 @@ mc_interfaces::res SpiMaster8Bit::tx (const uint8_t *const txArray,
         HAL_SPI_Transmit_DMA(&this->spi, (uint8_t *)txArray, length);
     }
     
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeoutMs) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeoutMs) == pdTRUE) {
         rv = mc_interfaces::res::err_ok;
     }
     
     if (this->cs != nullptr)
         this->cs->set(1);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -123,8 +123,8 @@ mc_interfaces::res SpiMaster8Bit::tx (const uint8_t *const txArray,
                                                     uint8_t *rxArray,
                                                     uint16_t length,
                                                     uint32_t timeoutMs) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake(this->m, portMAX_DELAY);
+    xSemaphoreTake (this->s, 0);
     
     mc_interfaces::res rv = mc_interfaces::res::err_timeout;
     
@@ -137,14 +137,14 @@ mc_interfaces::res SpiMaster8Bit::tx (const uint8_t *const txArray,
         HAL_SPI_TransmitReceive_IT(&this->spi, (uint8_t *)txArray, rxArray, length);
     }
     
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeoutMs) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeoutMs) == pdTRUE) {
         rv = mc_interfaces::res::err_ok;
     }
     
     if (this->cs != nullptr)
         this->cs->set(1);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -152,10 +152,10 @@ mc_interfaces::res SpiMaster8Bit::tx (const uint8_t *const txArray,
 mc_interfaces::res SpiMaster8Bit::txOneItem (uint8_t txByte,
                                                            uint16_t count,
                                                            uint32_t timeoutMs) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     mc_interfaces::res rv = mc_interfaces::res::err_timeout;
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake (this->s, 0);
     
     if (this->cs != nullptr)
         this->cs->set(0);
@@ -169,14 +169,14 @@ mc_interfaces::res SpiMaster8Bit::txOneItem (uint8_t txByte,
         HAL_SPI_Transmit_IT(&this->spi, txArray, count);
     }
     
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeoutMs) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeoutMs) == pdTRUE) {
         rv = mc_interfaces::res::err_ok;
     }
     
     if (this->cs != nullptr)
         this->cs->set(1);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -185,8 +185,8 @@ mc_interfaces::res SpiMaster8Bit::rx (uint8_t *rxArray,
                                                     uint16_t length,
                                                     uint32_t timeoutMs,
                                                     uint8_t outValue) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
-    USER_OS_TAKE_BIN_SEMAPHORE (this->s, 0);
+    xSemaphoreTake(this->m, portMAX_DELAY);
+    xSemaphoreTake (this->s, 0);
     
     mc_interfaces::res rv = mc_interfaces::res::err_timeout;
     
@@ -202,14 +202,14 @@ mc_interfaces::res SpiMaster8Bit::rx (uint8_t *rxArray,
         HAL_SPI_TransmitReceive_IT(&this->spi, txDummy, rxArray, length);
     }
     
-    if (USER_OS_TAKE_BIN_SEMAPHORE (this->s, timeoutMs) == pdTRUE) {
+    if (xSemaphoreTake (this->s, timeoutMs) == pdTRUE) {
         rv = mc_interfaces::res::err_ok;
     }
     
     if (this->cs != nullptr)
         this->cs->set(1);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -225,12 +225,12 @@ void SpiMaster8Bit::irq_handler (void) {
 mc_interfaces::res SpiMaster8Bit::setPrescaler (uint32_t prescalerNumber) {
     if (prescalerNumber >= this->numberBaudratePrescalerCfg) return mc_interfaces::res::err_input_value;
     
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     this->spi.Instance->CR1 &= ~((uint32_t)SPI_CR1_BR_Msk);
     this->spi.Instance->CR1 |= this->baudratePrescalerArray[prescalerNumber];
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return mc_interfaces::res::err_ok;
 }

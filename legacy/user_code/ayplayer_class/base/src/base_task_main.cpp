@@ -47,7 +47,7 @@ void Base::mainTask ( void* obj ) {
 	bool decF = false;
 
 	while ( true ) {
-		USER_OS_DELAY_MS( PERIOD_DETECT_PRESS_BUTTON_INC_DEC );
+		vTaskDelay( PERIOD_DETECT_PRESS_BUTTON_INC_DEC );
 
 		/// Состояние клавиш.
 		incF = o->cfg->mcu->gpio->vr.inc->read();

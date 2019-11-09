@@ -11,7 +11,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 
 			while( !this->sd->getState() ) {
 				this->printMessage( RTL_TYPE_M::RUN_MESSAGE_ISSUE, "SD not present!" );
-				USER_OS_DELAY_MS( 100 );
+				vTaskDelay( 100 );
 			}
 
 			delete w;
@@ -32,7 +32,7 @@ void Base::waitToInsertCorrectSdCard ( void ) {
 			this->gui->update();
 
 			while( this->sd->getState() ) {
-				USER_OS_DELAY_MS( 100 );
+				vTaskDelay( 100 );
 			}
 
 			delete w;

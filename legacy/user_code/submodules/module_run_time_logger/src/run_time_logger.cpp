@@ -18,7 +18,7 @@ const char *startString[6] = {
 };
 
 RunTimeLogger::RunTimeLogger (const RunTimeLoggerCfg *const cfg) : cfg(cfg) {
-    this->m = USER_OS_STATIC_MUTEX_CREATE(&mb);
+    this->m = xSemaphoreCreateMutexStatic(&mb);
     this->color[0] = this->cfg->color.initOkColorString;
     this->color[1] = this->cfg->color.initIssueColorString;
     this->color[2] = this->cfg->color.initErrorColorString;
@@ -28,7 +28,7 @@ RunTimeLogger::RunTimeLogger (const RunTimeLoggerCfg *const cfg) : cfg(cfg) {
 }
 
 int RunTimeLogger::sendMessage (RTL_TYPE_M type, const char *message) {
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     snprintf(this->bufMessage, MAX_MESSAGE_LEN, "%s %s %s \n\r", this->color[(uint8_t)type], startString[(uint8_t)type],
              message);
@@ -36,7 +36,7 @@ int RunTimeLogger::sendMessage (RTL_TYPE_M type, const char *message) {
     mc_interfaces::res r;
     r = this->cfg->outBuffer((char *)this->bufMessage);
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     if (r == mc_interfaces::res::err_ok) {
         return EOK;

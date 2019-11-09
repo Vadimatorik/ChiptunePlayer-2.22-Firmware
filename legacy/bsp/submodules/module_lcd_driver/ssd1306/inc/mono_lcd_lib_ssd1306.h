@@ -40,8 +40,8 @@ private:
     const mono_lcd_lib_ssd1306_cfg_t* const cfg;
     uint8_t* const buf; // Сам буффер менять можно, но указетль на него - нет.
     // Для предотвращения попытки использовать LCD из разных потоков одновременно.
-    USER_OS_STATIC_MUTEX_BUFFER	 mutex_buf;
-    USER_OS_STATIC_MUTEX			mutex = nullptr;
+    StaticSemaphore_t	 mutex_buf;
+    SemaphoreHandle_t			mutex = nullptr;
 };
 
 #endif

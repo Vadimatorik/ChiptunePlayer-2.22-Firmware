@@ -10,7 +10,7 @@ namespace MonoLcd {
 
 GDEH0154D27::GDEH0154D27 ( const GDEH0154D27Cfg* const cfg, uint8_t* const buf ) :
     cfg( cfg ), userBuf( buf ) {
-    this->m     = USER_OS_STATIC_MUTEX_CREATE( &this->mb );
+    this->m     = xSemaphoreCreateMutexStatic( &this->mb );
 }
 
 /*!
@@ -54,7 +54,7 @@ mc_interfaces::res GDEH0154D27::writeCmd( uint8_t command ) {
 
 void GDEH0154D27::ReadBusy ( void ) {
     while( this->cfg->busy->read() ) {
-        USER_OS_DELAY_MS( 100 );
+        vTaskDelay( 100 );
     }
 }
 
@@ -123,16 +123,16 @@ mc_interfaces::res GDEH0154D27::setRamPointer(uint8_t addrX,uint8_t addrY,uint8_
 
 
 mc_interfaces::res GDEH0154D27::reset ( void ) {
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     mc_interfaces::res r = mc_interfaces::res::err_ok;
 
     do {
         cfg->cs->set();
         cfg->res->reset();
-        USER_OS_DELAY_MS(100);
+        vTaskDelay(100);
         cfg->res->set();
-        USER_OS_DELAY_MS(100);
+        vTaskDelay(100);
 
         r = this->write(this->GDOControl, sizeof(this->GDOControl));	// Pannel configuration, Gate selection
         checkResultAndBreak( r );
@@ -153,7 +153,7 @@ mc_interfaces::res GDEH0154D27::reset ( void ) {
         r = this->write(this->LUTDefault_full, sizeof(this->LUTDefault_full));
     } while ( false );
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }
@@ -229,7 +229,7 @@ mc_interfaces::res 	GDEH0154D27::writeDispRam( uint8_t XSize, uint8_t  YSize,		u
 
 
 mc_interfaces::res GDEH0154D27::on ( void ) {
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     mc_interfaces::res r;
 
@@ -239,19 +239,19 @@ mc_interfaces::res GDEH0154D27::on ( void ) {
         r = writeCmd( 0x20 );
     } while ( false );
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }
 
 mc_interfaces::res GDEH0154D27::off ( void ) {
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     mc_interfaces::res r;
     r = mc_interfaces::res::errNotData;
     //r = this->comOut(CMD_DISPLAY_OFF);
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }
@@ -259,34 +259,34 @@ mc_interfaces::res GDEH0154D27::off ( void ) {
 mc_interfaces::res GDEH0154D27::update ( void ) {
     mc_interfaces::res r;
 
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     r = this->sendBuffer();
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }
 
 mc_interfaces::res GDEH0154D27::lcdClear ( void ) {
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     mc_interfaces::res r;
 
     memset( this->userBuf, 0, 5000 );
     r = this->sendBuffer();
 
-     USER_OS_GIVE_MUTEX( this->m );
+     xSemaphoreGive( this->m );
 
     return r;
 }
 
 void GDEH0154D27::bufClear ( void ) {
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     memset( this->userBuf, 0, 5000 );
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 }
 
 }

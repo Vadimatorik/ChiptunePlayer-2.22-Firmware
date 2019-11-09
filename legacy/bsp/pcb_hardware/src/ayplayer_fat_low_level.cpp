@@ -47,7 +47,7 @@ DRESULT disk_read (__attribute__((unused))    BYTE pdrv,
         funcR = (DRESULT)sd.readSector(sector, buff, count, 1000);
         if (funcR != RES_OK) {
             l--;
-            USER_OS_DELAY_MS(1);
+            vTaskDelay(1);
         }
     } while ((funcR != RES_OK) && (l != 0));
     
@@ -65,7 +65,7 @@ DRESULT disk_write (__attribute__((unused))    BYTE pdrv,
         funcR = (DRESULT)sd.writeSector(buff, sector, count, 1000);
         if (funcR != RES_OK) {
             l--;
-            USER_OS_DELAY_MS(1);
+            vTaskDelay(1);
         }
     } while ((funcR != RES_OK) && (l != 0));
     
@@ -110,9 +110,9 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff) {
 int ff_cre_syncobj ( BYTE vol,  FF_SYNC_t *sobj ) {
     int ret;
     static FF_SYNC_t								mutex[ FF_VOLUMES ];
-    static USER_OS_STATIC_BIN_SEMAPHORE_BUFFER		mutex_buf[ FF_VOLUMES ];
+    static StaticSemaphore_t		mutex_buf[ FF_VOLUMES ];
     if (!mutex[vol])
-    mutex[vol] = USER_OS_STATIC_MUTEX_CREATE( &mutex_buf[vol] );
+    mutex[vol] = xSemaphoreCreateMutexStatic( &mutex_buf[vol] );
     *sobj = mutex[vol];
     ret = (*sobj != NULL);
 
@@ -121,18 +121,18 @@ int ff_cre_syncobj ( BYTE vol,  FF_SYNC_t *sobj ) {
 
 int ff_del_syncobj ( FF_SYNC_t sobj ) {
     ( void )sobj;
-    USER_OS_STATIC_MUTEX_DELETE(sobj);
+    vSemaphoreDelete(sobj);
     return 1;
 }
 
 int ff_req_grant ( FF_SYNC_t sobj ) {
     int ret;
-    ret = (USER_OS_TAKE_MUTEX( sobj, FF_FS_TIMEOUT ) == pdTRUE);
+    ret = (xSemaphoreTake( sobj, FF_FS_TIMEOUT ) == pdTRUE);
     return ret;
 }
 
 void ff_rel_grant ( FF_SYNC_t sobj ) {
-    USER_OS_GIVE_MUTEX(sobj);
+    xSemaphoreGive(sobj);
 }
 
 #endif

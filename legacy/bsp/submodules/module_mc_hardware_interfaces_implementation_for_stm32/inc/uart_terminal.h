@@ -23,15 +23,15 @@ private:
 
 private:
     static const uint32_t TB_THREAD_SIZE = 200;
-    USER_OS_STATIC_STACK_TYPE tb_thread[TB_THREAD_SIZE] = {0};
-    USER_OS_STATIC_TASK_STRUCT_TYPE ts_thread;
+    StackType_t tb_thread[TB_THREAD_SIZE] = {0};
+    StaticTask_t ts_thread;
 
 private:
-    USER_OS_STATIC_QUEUE q_answer = nullptr;
+    QueueHandle_t q_answer = nullptr;
     static const uint32_t Q_LEN = 10;
     static const uint32_t Q_ITEM_SIZE = sizeof(char);
     uint8_t qb[Q_LEN * Q_ITEM_SIZE] = {0};
-    USER_OS_STATIC_QUEUE_STRUCT qs;
+    StaticQueue_t qs;
 
 private:
     const uint8_t BACK_SPACE_8 = 8;

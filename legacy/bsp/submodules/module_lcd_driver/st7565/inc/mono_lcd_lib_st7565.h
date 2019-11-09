@@ -65,8 +65,8 @@ private:
     // Дисплей едресуется вертикальными столбцами по 8 бит в высоту и 1 ширину. И так 8 строк.
     uint8_t lcdImage[128] = {0};
     // Для предотвращения попытки использовать LCD из разных потоков одновременно.
-    USER_OS_STATIC_MUTEX_BUFFER mb;
-    USER_OS_STATIC_MUTEX m = nullptr;
+    StaticSemaphore_t mb;
+    SemaphoreHandle_t m = nullptr;
 };
 
 }

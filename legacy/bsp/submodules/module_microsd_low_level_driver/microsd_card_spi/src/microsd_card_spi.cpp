@@ -23,7 +23,7 @@
 
 
 MicrosdSpi::MicrosdSpi ( const microsdSpiCfg* const cfg ) : cfg( cfg ) {
-    this->m = USER_OS_STATIC_MUTEX_CREATE( &this->mb );
+    this->m = xSemaphoreCreateMutexStatic( &this->mb );
     this->generateCrcTable();
 }
 
@@ -90,7 +90,7 @@ EC_SD_RES MicrosdSpi::waitMark ( uint8_t mark ) {
             }
         }
         if ( r != EC_SD_RES::TIMEOUT ) break;
-        USER_OS_DELAY_MS(1);
+        vTaskDelay(1);
     }
 
     this->csHigh();
@@ -309,7 +309,7 @@ EC_MICRO_SD_TYPE MicrosdSpi::initialize ( void ) {
     uint8_t			r1;
     EC_SD_RES		sendResult;
 
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
     this->cfg->setSpiSpeed( this->cfg->s, false );
     this->typeMicrosd = EC_MICRO_SD_TYPE::ERROR;
 
@@ -410,7 +410,7 @@ EC_MICRO_SD_TYPE MicrosdSpi::initialize ( void ) {
         this->cfg->setSpiSpeed( this->cfg->s, true );
     }
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return this->typeMicrosd;
 }
@@ -464,7 +464,7 @@ EC_SD_RESULT MicrosdSpi::readSector ( uint32_t sector, uint8_t *target_array, ui
     EC_SD_RESULT r = EC_SD_RESULT::ERROR;
 
 
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     uint8_t* p_buf = target_array;
 
@@ -501,7 +501,7 @@ EC_SD_RESULT MicrosdSpi::readSector ( uint32_t sector, uint8_t *target_array, ui
 
     this->csHigh();
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }
@@ -525,7 +525,7 @@ EC_SD_RESULT MicrosdSpi::writeSector ( const uint8_t* const source_array, uint32
 
     EC_SD_RESULT r = EC_SD_RESULT::ERROR;
 
-    USER_OS_TAKE_MUTEX( this->m, portMAX_DELAY );
+    xSemaphoreTake( this->m, portMAX_DELAY );
 
     uint8_t* p_buf = ( uint8_t* )source_array;
 
@@ -575,7 +575,7 @@ EC_SD_RESULT MicrosdSpi::writeSector ( const uint8_t* const source_array, uint32
 
     this->csHigh();
 
-    USER_OS_GIVE_MUTEX( this->m );
+    xSemaphoreGive( this->m );
 
     return r;
 }

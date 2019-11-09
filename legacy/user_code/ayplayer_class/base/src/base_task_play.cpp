@@ -6,14 +6,14 @@ void Base::startPlayTrack (void) {
     int r;
     this->playItem = this->fat.readItemFileList(this->playList, this->currentFile, r);
     this->gui->updateTreckWindowMain(this->playItem);
-    USER_OS_GIVE_BIN_SEMAPHORE(this->cfg->os->sStartPlay);
+    xSemaphoreGive(this->cfg->os->sStartPlay);
 }
 
 void Base::playTask (void *obj) {
     Base *o = (Base *)obj;
     int r;
     while (true) {
-        USER_OS_TAKE_BIN_SEMAPHORE(o->cfg->os->sStartPlay, portMAX_DELAY);
+        xSemaphoreTake(o->cfg->os->sStartPlay, portMAX_DELAY);
 
         do {
             o->playState = AYPLAYER_STATUS::PLAY;

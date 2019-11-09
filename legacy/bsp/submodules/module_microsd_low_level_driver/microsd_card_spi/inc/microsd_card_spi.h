@@ -76,8 +76,8 @@ private:
 
     const microsdSpiCfg*			const cfg;
 
-    USER_OS_STATIC_MUTEX_BUFFER		mb;
-    USER_OS_STATIC_MUTEX			m				= nullptr;
+    StaticSemaphore_t		mb;
+    SemaphoreHandle_t			m				= nullptr;
 
     EC_MICRO_SD_TYPE				typeMicrosd		= EC_MICRO_SD_TYPE::ERROR;			 // Тип microSD.
 

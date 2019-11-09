@@ -62,8 +62,8 @@ private:
     const GDEH0154D27Cfg*				const cfg;
     uint8_t*							const userBuf;		// Сам буффер менять можно, но указетль на него - нет.
     // Для предотвращения попытки использовать LCD из разных потоков одновременно.
-    USER_OS_STATIC_MUTEX_BUFFER			mb;
-    USER_OS_STATIC_MUTEX				m					= nullptr;
+    StaticSemaphore_t			mb;
+    SemaphoreHandle_t				m					= nullptr;
 
 private:
 const uint8_t	xDot 	=	200;

@@ -25,7 +25,7 @@ void Base::buttonClickInMainWindow ( EC_BUTTON_NAME b ) {
 	if ( b == EC_BUTTON_NAME::ENTER_CLICK ) {
 		PARAM( this->playState ) {
 		CASE( AYPLAYER_STATUS::STOP ):
-			USER_OS_GIVE_BIN_SEMAPHORE( this->cfg->os->sStartPlay );
+			xSemaphoreGive( this->cfg->os->sStartPlay );
 			return;
 
 		CASE( AYPLAYER_STATUS::PAUSE ):
@@ -85,8 +85,8 @@ void Base::buttonClickHandlerTask (  void* obj  ) {
 	while( true ) {
 		/// Старые команды нас не интересуют
 		/// (то, что нажали за время выполнения предыдущей).
-		USER_OS_QUEUE_RESET( o->cfg->os->qAyButton );
-		USER_OS_QUEUE_RECEIVE( o->cfg->os->qAyButton, &qData, portMAX_DELAY );
+		xQueueReset( o->cfg->os->qAyButton );
+		xQueueReceive( o->cfg->os->qAyButton, &qData, portMAX_DELAY );
 
 		b	=	static_cast< EC_BUTTON_NAME >( qData );
 

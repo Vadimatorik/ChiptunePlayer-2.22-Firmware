@@ -74,8 +74,8 @@ public:
 private:
     const RunTimeLoggerCfg *const cfg;
     
-    USER_OS_STATIC_MUTEX m = nullptr;
-    USER_OS_STATIC_MUTEX_BUFFER mb;
+    SemaphoreHandle_t m = nullptr;
+    StaticSemaphore_t mb;
     const char *color[6];
     
     char bufMessage[MAX_MESSAGE_LEN];

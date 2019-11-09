@@ -248,15 +248,15 @@ private:
 private:
 	const BaseCfg* const cfg;
 
-	USER_OS_STATIC_STACK_TYPE							tbMainTask[ TB_MAIN_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE						tsMainTask;
+	StackType_t							tbMainTask[ TB_MAIN_TASK_SIZE ];
+	StaticTask_t						tsMainTask;
 
-	USER_OS_STATIC_STACK_TYPE							tbButtonClickHandlerTask[ TB_BUTTON_CLICK_HANDLER_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE						tsButtonClickHandlerTask;
-	USER_OS_STATIC_STACK_TYPE							tbPlayTask[ TB_PLAY_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE						tsPlayTask;
-	USER_OS_STATIC_STACK_TYPE							tbPlayTickTask[ TB_PLAY_TICK_TASK_SIZE ];
-	USER_OS_STATIC_TASK_STRUCT_TYPE						tsPlayTickTask;
+	StackType_t							tbButtonClickHandlerTask[ TB_BUTTON_CLICK_HANDLER_TASK_SIZE ];
+	StaticTask_t						tsButtonClickHandlerTask;
+	StackType_t							tbPlayTask[ TB_PLAY_TASK_SIZE ];
+	StaticTask_t						tsPlayTask;
+	StackType_t							tbPlayTickTask[ TB_PLAY_TICK_TASK_SIZE ];
+	StaticTask_t						tsPlayTickTask;
 
 
 	AYPLAYER_STATUS										playState;

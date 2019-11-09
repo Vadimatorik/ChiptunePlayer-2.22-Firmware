@@ -61,11 +61,11 @@ protected:
     
     DMA_HandleTypeDef d;
     UART_HandleTypeDef u;
-    USER_OS_STATIC_MUTEX m = nullptr;
-    USER_OS_STATIC_BIN_SEMAPHORE s = nullptr;
+    SemaphoreHandle_t m = nullptr;
+    SemaphoreHandle_t s = nullptr;
 
-    USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sb;
-    USER_OS_STATIC_MUTEX_BUFFER mb;
+    StaticSemaphore_t sb;
+    StaticSemaphore_t mb;
 };
 
 }

@@ -12,13 +12,13 @@ class SpiMaster8Bit {
 	{field}-	uint32_t*							baudratePrescalerArray
 	{field}-	uint32_t							numberBaudratePrescalerCfg
 	{field}-	SPI_HandleTypeDef					spi
-	{field}-	USER_OS_STATIC_BIN_SEMAPHORE_BUFFER	sb
-	{field}-	USER_OS_STATIC_BIN_SEMAPHORE		s
+	{field}-	StaticSemaphore_t	sb
+	{field}-	SemaphoreHandle_t		s
 	{field}-	DMA_HandleTypeDef					dmaTx
 	{field}-	DMA_HandleTypeDef					dmaRx
 	{field}-	PinBase*							cs
-	{field}-	USER_OS_STATIC_MUTEX				m = nullptr
-	{field}-	USER_OS_STATIC_MUTEX_BUFFER			mb
+	{field}-	SemaphoreHandle_t				m = nullptr
+	{field}-	StaticSemaphore_t			mb
 	__Constructor__
 	{method}+	SpiMaster8Bit	( const SpiMaster8BitCfg*		const cfg,\n\t\t\t  uint32_t\t\t\t\t\tcfgCount	= 1 )
 	__Public methods__
@@ -124,16 +124,16 @@ private:
     
     SPI_HandleTypeDef spi;
     
-    USER_OS_STATIC_BIN_SEMAPHORE_BUFFER sb;
-    USER_OS_STATIC_BIN_SEMAPHORE s = nullptr;
+    StaticSemaphore_t sb;
+    SemaphoreHandle_t s = nullptr;
     
     DMA_HandleTypeDef dmaTx;
     DMA_HandleTypeDef dmaRx;
     
     mc_interfaces::Pin *cs;
     
-    USER_OS_STATIC_MUTEX m = nullptr;
-    USER_OS_STATIC_MUTEX_BUFFER mb;
+    SemaphoreHandle_t m = nullptr;
+    StaticSemaphore_t mb;
     
 };
 

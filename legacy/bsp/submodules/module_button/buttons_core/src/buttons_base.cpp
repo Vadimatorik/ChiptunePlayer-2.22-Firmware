@@ -7,7 +7,7 @@ namespace button {
 
 base::base (const base_cfg *const cfg) :
     cfg(cfg) {
-    USER_OS_STATIC_TASK_CREATE(this->task,
+    xTaskCreateStatic(this->task,
                                "ButtonBase",
                                TASK_STACK_SIZE,
                                this,
@@ -21,41 +21,41 @@ base::base (const base_cfg *const cfg) :
 
 void base::send_message_event_press (one_button_cfg *p_st) {
     if (p_st->press.s != nullptr) {
-        USER_OS_GIVE_BIN_SEMAPHORE(*p_st->press.s);
+        xSemaphoreGive(*p_st->press.s);
     }
     
     if (p_st->press.q != nullptr) {
-        USER_OS_QUEUE_SEND(*p_st->press.q, &p_st->press.v, 0);
+        xQueueSend(*p_st->press.q, &p_st->press.v, 0);
     }
 }
 
 void base::send_message_event_long_press (one_button_cfg *p_st) {
     if (p_st->long_press.s != nullptr) {
-        USER_OS_GIVE_BIN_SEMAPHORE(*p_st->long_press.s);
+        xSemaphoreGive(*p_st->long_press.s);
     }
     
     if (p_st->long_press.q != nullptr) {
-        USER_OS_QUEUE_SEND(*p_st->long_press.q, &p_st->long_press.v, 0);
+        xQueueSend(*p_st->long_press.q, &p_st->long_press.v, 0);
     }
 }
 
 void base::send_message_event_long_click (one_button_cfg *p_st) {
     if (p_st->long_click.s != nullptr) {
-        USER_OS_GIVE_BIN_SEMAPHORE(*p_st->long_click.s);
+        xSemaphoreGive(*p_st->long_click.s);
     }
     
     if (p_st->long_click.q != nullptr) {
-        USER_OS_QUEUE_SEND(*p_st->long_click.q, &p_st->long_click.v, 0);
+        xQueueSend(*p_st->long_click.q, &p_st->long_click.v, 0);
     }
 }
 
 void base::send_message_event_click (one_button_cfg *p_st) {
     if (p_st->click.s != nullptr) {
-        USER_OS_GIVE_BIN_SEMAPHORE(*p_st->click.s);
+        xSemaphoreGive(*p_st->click.s);
     }
     
     if (p_st->click.q != nullptr) {
-        USER_OS_QUEUE_SEND(*p_st->click.q, &p_st->click.v, 0);
+        xQueueSend(*p_st->click.q, &p_st->click.v, 0);
     }
 }
 
@@ -150,7 +150,7 @@ void base::task (void *obj) {
             }
         }
         
-        USER_OS_DELAY_MS(o->cfg->task_delay_ms);
+        vTaskDelay(o->cfg->task_delay_ms);
     }
 }
     

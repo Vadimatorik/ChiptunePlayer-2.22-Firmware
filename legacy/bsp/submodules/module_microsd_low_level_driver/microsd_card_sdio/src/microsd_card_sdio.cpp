@@ -36,15 +36,15 @@ MicrosdSdio::MicrosdSdio (const MicrosdSdioCfg *const cfg) : cfg(cfg) {
     this->handle.hdmarx->Init.MemBurst = DMA_MBURST_INC4;
     this->handle.hdmarx->Init.PeriphBurst = DMA_PBURST_INC4;
     
-    this->m = USER_OS_STATIC_MUTEX_CREATE(&mb);
-    this->s = USER_OS_STATIC_BIN_SEMAPHORE_CREATE(&this->sb);
+    this->m = xSemaphoreCreateMutexStatic(&mb);
+    this->s = xSemaphoreCreateBinaryStatic(&this->sb);
 }
 
 EC_SD_RESULT MicrosdSdio::waitReadySd (void) {
     uint32_t timeout_flag = 1000;
     while (timeout_flag) {
         if (HAL_SD_GetCardState(&this->handle) != HAL_SD_CARD_TRANSFER) {
-            USER_OS_DELAY_MS(1);
+            vTaskDelay(1);
             timeout_flag--;
         } else {
             return EC_SD_RESULT::OK;
@@ -97,7 +97,7 @@ EC_SD_RESULT MicrosdSdio::readSector (uint32_t sector, uint8_t *targetArray, uin
     
     EC_SD_RESULT rv = EC_SD_RESULT::ERROR;
     
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     xSemaphoreTake (this->s, 0);
     
@@ -111,7 +111,7 @@ EC_SD_RESULT MicrosdSdio::readSector (uint32_t sector, uint8_t *targetArray, uin
         
     }
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -123,7 +123,7 @@ MicrosdSdio::writeSector (const uint8_t *const sourceArray, uint32_t sector, uin
     
     EC_SD_RESULT rv = EC_SD_RESULT::ERROR;
     
-    USER_OS_TAKE_MUTEX(this->m, portMAX_DELAY);
+    xSemaphoreTake(this->m, portMAX_DELAY);
     
     if (this->waitReadySd() == EC_SD_RESULT::OK) {
         
@@ -136,7 +136,7 @@ MicrosdSdio::writeSector (const uint8_t *const sourceArray, uint32_t sector, uin
         
     }
     
-    USER_OS_GIVE_MUTEX(this->m);
+    xSemaphoreGive(this->m);
     
     return rv;
 }
@@ -173,7 +173,7 @@ EC_SD_STATUS MicrosdSdio::getStatus (void) {
             return EC_SD_STATUS::OK;
         }
         l--;
-        USER_OS_DELAY_MS(1);
+        vTaskDelay(1);
     } while (l);
     
     return EC_SD_STATUS::NOINIT;

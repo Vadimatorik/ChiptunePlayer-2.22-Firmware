@@ -10,8 +10,8 @@ class Wdt {
 	{field}-	const WdtCfg*					const cfg
 	{field}-	const uint32_t					cfgCount
 	{field}-	uint32_t						cfgNow
-	{field}-	USER_OS_STATIC_STACK_TYPE		taskStack[ 64 ]
-	{field}-	USER_OS_STATIC_TASK_STRUCT_TYPE	taskStruct
+	{field}-	StackType_t		taskStack[ 64 ]
+	{field}-	StaticTask_t	taskStruct
 	{field}-	uint8_t						reboot
 	__Constructor__
 	{method}+	Wdt ( const WdtCfg*		const cfg,\n\tuint32_t			cfgCount = 1 )
@@ -70,8 +70,8 @@ private:
     
     static void task (void *obj);
     
-    USER_OS_STATIC_STACK_TYPE taskStack[WDT_TASK_STACK_SIZE];
-    USER_OS_STATIC_TASK_STRUCT_TYPE taskStruct;
+    StackType_t taskStack[WDT_TASK_STACK_SIZE];
+    StaticTask_t taskStruct;
     
     uint8_t reboot;
 };
