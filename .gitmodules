@@ -67,3 +67,6 @@
 [submodule "bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32"]
 	path = bsp/submodules/module_mc_hardware_interfaces_implementation_for_stm32
 	url = git@github.com:Vadimatorik/module_mc_hardware_interfaces_implementation_for_stm32.git
+[submodule "lib/u8g2"]
+	path = lib/u8g2
+	url = git@github.com:olikraus/u8g2.git
