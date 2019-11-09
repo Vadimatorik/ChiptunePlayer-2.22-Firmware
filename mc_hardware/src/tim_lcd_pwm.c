@@ -15,9 +15,9 @@ int init_tim_lcd_pwm () {
     TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
 
     tim_lcd_pwm.Instance = TIM1;
-    tim_lcd_pwm.Init.Prescaler = 15;
+    tim_lcd_pwm.Init.Prescaler = 16 - 1;
     tim_lcd_pwm.Init.CounterMode = TIM_COUNTERMODE_UP;
-    tim_lcd_pwm.Init.Period = 999;
+    tim_lcd_pwm.Init.Period = 1000 - 1;
     tim_lcd_pwm.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     tim_lcd_pwm.Init.RepetitionCounter = 0;
     tim_lcd_pwm.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
@@ -70,7 +70,7 @@ int set_tim_lcd_pwm_duty (float duty) {
         return EINVAL;
     }
 
-    __HAL_TIM_SET_COMPARE(&tim_lcd_pwm, TIM_CHANNEL_1, 999*duty);
+    __HAL_TIM_SET_COMPARE(&tim_lcd_pwm, TIM_CHANNEL_1, (1000 - 1)*duty);
 
     return 0;
 }

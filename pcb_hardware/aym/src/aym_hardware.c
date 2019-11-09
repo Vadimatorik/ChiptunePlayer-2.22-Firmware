@@ -147,67 +147,63 @@ int clear_aym_hardware () {
     return update_all_reg();
 }
 
+int flags_is_set (uint8_t* flags) {
+    for (int i = 0; i < AY_NUM; i++) {
+        if (flags[i] == 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 static void task_aym (void *p) {
     p = p;
 
     aym_out_data q_data_buf[AY_NUM] = {0};
 
-    sr_set_pin_ay_1_res();
-    sr_set_pin_ay_2_res();
-    sr_reset_pin_pwr_ay_1_on();
-    sr_reset_pin_pwr_ay_2_on();
-
-    set_pin_pwr_3_v_3();
-    set_pin_pwr_5_v();
-
-    sr_set_pin_pwr_ay_1_on();
-    sr_set_pin_pwr_ay_2_on();
-    sr_reset_pin_ay_1_res();
-    sr_reset_pin_ay_2_res();
-
-    reset_shdn();
-
-    ltc6903_start();
-    ltc6903_set_requency(1.75e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
-
-    start_tim_int_ay();
-
     while (1) {
-
-
         xSemaphoreTake (tim_irq_request, portMAX_DELAY);
         if (check_queue_empty() == QUEUE_STATE_EMPTY) {
             continue;
         }
 
-        for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-            uint32_t q_item_num = uxQueueMessagesWaiting(aym_reg_data_queue[chip_index]);
+        uint8_t q_not_use[AY_NUM] = {0};
 
-            if (q_item_num != 0) {
-                xQueueReceive(aym_reg_data_queue[chip_index], &q_data_buf[chip_index], 0);
-                if (q_data_buf[chip_index].reg == REG_PAUSE) {
-                    q_data_buf[chip_index].reg = 17;
+        while (flags_is_set(q_not_use) != 0) {
+            for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
+                uint32_t q_item_num = uxQueueMessagesWaiting(aym_reg_data_queue[chip_index]);
+
+                if (q_item_num != 0) {
+                    xQueueReceive(aym_reg_data_queue[chip_index], &q_data_buf[chip_index], 0);
+                    if (q_data_buf[chip_index].reg == REG_PAUSE) {
+                        q_not_use[chip_index] = 0xFF;
+                        q_data_buf[chip_index].reg = 18;
+                    } else {
+                        aym_data[chip_index].reg[q_data_buf[chip_index].reg] = q_data_buf[chip_index].data;
+                    }
                 } else {
-                    aym_data[chip_index].reg[q_data_buf[chip_index].reg] = q_data_buf[chip_index].data;
+                    q_not_use[chip_index] = 0xFF;
+                    q_data_buf[chip_index].reg = 18;
                 }
-            } else {
-                q_data_buf[chip_index].reg = 17;
             }
-        }
 
-        for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-            sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+            for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
+                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+            }
+
             sr_update();
-        }
 
-        set_reg();
+            set_reg();
 
-        for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-            sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+            for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
+                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+            }
+
             sr_update();
-        }
 
-        set_data();
+            set_data();
+        }
 
         tic_ff++;
         if (tic_ff != 50) {
@@ -234,13 +230,12 @@ int add_aym_element (aym_reg_data_t *item) {
     buf.reg = item->reg;
     buf.data = item->data;
 
-    if (xQueueSend(aym_reg_data_queue[item->chip_num], &buf, 20) == pdTRUE) {
+    if (xQueueSend(aym_reg_data_queue[item->chip_num], &buf, 0) == pdTRUE) {
         return 0;
     } else {
         return ENOMEM;
     }
 }
-
 
 
 void aym_hardware_irq_handler () {

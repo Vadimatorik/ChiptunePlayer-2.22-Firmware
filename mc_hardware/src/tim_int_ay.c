@@ -14,9 +14,9 @@ int init_tim_int_ay () {
     TIM_MasterConfigTypeDef sMasterConfig = {0};
 
     tim_int_ay.Instance = TIM6;
-    tim_int_ay.Init.Prescaler = 31;
+    tim_int_ay.Init.Prescaler = 100 - 1;
     tim_int_ay.Init.CounterMode = TIM_COUNTERMODE_UP;
-    tim_int_ay.Init.Period = 3199;
+    tim_int_ay.Init.Period = 3200 - 1;
     tim_int_ay.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     if (HAL_TIM_Base_Init(&tim_int_ay) != HAL_OK) {
         return EIO;

@@ -62,14 +62,6 @@ static void task_uart (void *p) {
     }
 }
 
-void DMA2_Stream7_IRQHandler () {
-    HAL_DMA_IRQHandler(&u_dma);
-}
-
-void USART1_IRQHandler () {
-    HAL_UART_IRQHandler(&u);
-}
-
 static int init_mc_uart () {
     __HAL_RCC_USART1_CLK_ENABLE();
 
@@ -124,13 +116,9 @@ static int init_mc_uart_os () {
 }
 
 static int start_mc_uart () {
-    if (HAL_UART_Receive_IT(&u, &u_rx_byte, 1) != HAL_OK) {
-        return EIO;
-    }
+    __HAL_UART_ENABLE_IT(&u, UART_IT_PE | UART_IT_ERR | UART_IT_RXNE);
 
     NVIC_SetPriority(USART1_IRQn, 6);
-
-    NVIC_EnableIRQ(DMA2_Stream7_IRQn);
     NVIC_EnableIRQ(USART1_IRQn);
 
     return 0;
@@ -201,7 +189,7 @@ int _write (int fd, const void *buf, size_t count) {
     return 0;
 }
 
-void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
+void USART1_IRQHandler () {
     if (u_rx_pointer == sizeof(u_rx_buffer)) {
         return;
     }
@@ -222,8 +210,6 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef *huart) {
         add_transaction_from_irq(u_rx_byte);
     }
     xSemaphoreGiveFromISR(rx_buffer_mutex, NULL);
-
-    while (HAL_UART_Receive_IT(huart, &u_rx_byte, 1) != HAL_OK);
 }
 
 int _read (int fd, void *buf, size_t count) {

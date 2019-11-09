@@ -28,7 +28,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} ${COMPILER_OPTIMIZATION} ${MC_L
 project(aym C)
 
 file(GLOB SOURCES
-        "main.c"
+        "*.c"
 
         "lua/src/*.c"
 
@@ -63,7 +63,8 @@ include_directories(
         "pcb_hardware/shift_register/inc"
         "pcb_hardware/aym/inc"
         "pcb_hardware/ltc6903/inc"
-        "logic/aym_note/inc")
+
+        "logic/aym_psg_parser/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 

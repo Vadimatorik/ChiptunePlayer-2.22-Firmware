@@ -6,7 +6,7 @@
 #include "aym_hardware.h"
 #include <errno.h>
 #include "ltc6903.h"
-#include "aym_note.h"
+#include "aym_psg_parser.h"
 
 #define TASK_LUA_STACK_SIZE 1000
 
@@ -18,26 +18,34 @@ static StackType_t task_lua_stack[TASK_LUA_STACK_SIZE];
 static StaticTask_t task_up_down_button_buf;
 static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 
-#define AY_DIP_28_PIN_INDEX 1
-#define AY_DIP_40_PIN_INDEX 0
+#define AY_DIP_28_PIN_INDEX 0
+#define AY_DIP_40_PIN_INDEX 1
+
+extern const uint8_t psg_track_test[];
+extern uint32_t psg_track_test_len;
 
 static void task_up_down_button (void *p) {
     p = p;
 
-    while(aym_note_reset(AY_DIP_28_PIN_INDEX) != 0) {
-        vTaskDelay(100);
-    }
+    sr_set_pin_ay_2_res();
+    sr_reset_pin_pwr_ay_2_on();
+    set_pin_pwr_5_v();
+    sr_set_pin_pwr_ay_2_on();
+    sr_reset_pin_ay_2_res();
+    clear_aym_hardware();
 
-    while(aym_note_reset(AY_DIP_40_PIN_INDEX) != 0) {
-        vTaskDelay(100);
-    }
+    reset_shdn();
+
+    ltc6903_start();
+    ltc6903_set_requency(1.77e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
+
+    start_tim_int_ay();
+
+    aym_psg_reset();
+    aym_psg_play(AY_DIP_40_PIN_INDEX, psg_track_test, psg_track_test_len);
 
     while (1) {
-        static uint8_t i = 0;
-        aym_note_write_note_to_channel(AY_DIP_28_PIN_INDEX, 1, i);
-        aym_note_write_note_to_channel(AY_DIP_40_PIN_INDEX, 1, i);
-        i++;
-        vTaskDelay(100);
+        vTaskDelay(1000);
     }
 }
 

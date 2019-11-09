@@ -17,7 +17,7 @@
 #define BOARD_GPIO_3 GPIO_PIN_2
 #define BOARD_GPIO_3_GPIO_Port GPIOC
 #define BOARD_TX GPIO_PIN_3
-#define BOARD_TX_GPIO_Port GPIOC
+#define BOARD_TX_GPIO GPIOC
 #define ADC_BAT GPIO_PIN_0
 #define ADC_BAT_GPIO_Port GPIOA
 #define AMPLIFIER_LEFT GPIO_PIN_1
@@ -31,7 +31,7 @@
 #define LCD_CLK GPIO_PIN_5
 #define LCD_CLK_GPIO_Port GPIOA
 #define BC0 GPIO_PIN_6
-#define BC0_GPIO_Port GPIOA
+#define BC0_GPIO GPIOA
 #define LCD_TX GPIO_PIN_7
 #define LCD_TX_GPIO_Port GPIOA
 #define BC1 GPIO_PIN_4
@@ -45,7 +45,7 @@
 #define LCD_RES GPIO_PIN_2
 #define LCD_RES_GPIO_Port GPIOB
 #define BOARD_CLK GPIO_PIN_10
-#define BOARD_CLK_GPIO_Port GPIOB
+#define BOARD_CLK_GPIO GPIOB
 #define SD_PUSH GPIO_PIN_11
 #define SD_PUSH_GPIO_Port GPIOB
 #define NOT_USED GPIO_PIN_12
@@ -65,7 +65,7 @@
 #define SD_D1 GPIO_PIN_9
 #define SD_D1_GPIO_Port GPIOC
 #define LCD_PWM GPIO_PIN_8
-#define LCD_PWM_GPIO_Port GPIOA
+#define LCD_PWM_GPIO GPIOA
 #define USB_VDD GPIO_PIN_9
 #define USB_VDD_GPIO_Port GPIOA
 #define USB_ID GPIO_PIN_10
