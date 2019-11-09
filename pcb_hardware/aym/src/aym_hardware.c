@@ -151,6 +151,11 @@ static void task_aym (void *p) {
 
     aym_out_data q_data_buf[AY_NUM] = {0};
 
+    sr_set_pin_ay_1_res();
+    sr_set_pin_ay_2_res();
+    sr_reset_pin_pwr_ay_1_on();
+    sr_reset_pin_pwr_ay_2_on();
+
     set_pin_pwr_3_v_3();
     set_pin_pwr_5_v();
 
@@ -187,12 +192,14 @@ static void task_aym (void *p) {
 
         for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
             sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+            sr_update();
         }
 
         set_reg();
 
         for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
             sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+            sr_update();
         }
 
         set_data();

@@ -40,7 +40,8 @@ file(GLOB SOURCES
         "lib/lua/src/*.c"
 
         "mc_hardware/src/*.c"
-        "pcb_hardware/*/src/*.c")
+        "pcb_hardware/*/src/*.c"
+        "logic/*/src/*.c")
 
 include_directories(
         "cfg"
@@ -61,7 +62,8 @@ include_directories(
         "pcb_hardware/digital_potentiometer/inc"
         "pcb_hardware/shift_register/inc"
         "pcb_hardware/aym/inc"
-        "pcb_hardware/ltc6903/inc")
+        "pcb_hardware/ltc6903/inc"
+        "logic/aym_note/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 
