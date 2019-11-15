@@ -39,10 +39,13 @@ file(GLOB SOURCES
         "lib/freertos/src/*.c"
         "lib/lua/src/*.c"
         "lib/u8g2/csrc/*.c"
+        "lib/fatfs/src/*.c"
 
         "mc_hardware/src/*.c"
         "pcb_hardware/*/src/*.c"
-        "logic/*/src/*.c")
+        "logic/*/src/*.c"
+
+        )
 
 include_directories(
         "cfg"
@@ -57,7 +60,7 @@ include_directories(
         "lib/st/device/inc"
         "lib/freertos/inc"
         "lib/lua/inc"
-        "lib/u8g2/csrc/*.c"
+        "lib/fatfs/inc"
 
         "mc_hardware/inc"
 
@@ -67,6 +70,7 @@ include_directories(
         "pcb_hardware/ltc6903/inc"
 
         "logic/aym_psg_parser/inc"
+
         "lib/u8g2/csrc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})

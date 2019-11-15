@@ -2,20 +2,6 @@
 
 #include <string.h>
 
-int fatfs::initFatFs (std::shared_ptr<char> fatStartDir) {
-    FRESULT fr;
-
-    static FATFS f;
-
-    fr = f_mount(&f, fatStartDir.get(), 1);
-
-    if (fr == FRESULT::FR_OK) {
-        return EOK;
-    } else {
-        return EIO;
-    }
-}
-
 std::shared_ptr<DIR> fatfs::openDir (std::shared_ptr<char> path,
                                    int &returnResult) {
     FRESULT r;

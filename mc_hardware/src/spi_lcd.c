@@ -30,7 +30,7 @@ int init_spi_lcd () {
         return EIO;
     }
 
-    s_lcd_dma.Instance = DMA2_Stream3;
+    s_lcd_dma.Instance = DMA2_Stream5;
     s_lcd_dma.Init.Channel = DMA_CHANNEL_3;
     s_lcd_dma.Init.Direction = DMA_MEMORY_TO_PERIPH;
     s_lcd_dma.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -47,22 +47,15 @@ int init_spi_lcd () {
         return EIO;
     }
 
-    HAL_NVIC_SetPriority(SPI1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(SPI1_IRQn);
-
-    HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+    HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
     __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
 
     return 0;
 }
 
-void SPI1_IRQHandler () {
-    HAL_SPI_IRQHandler(&s_lcd);
-}
-
-void DMA2_Stream3_IRQHandler () {
+void DMA2_Stream5_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
 }
 

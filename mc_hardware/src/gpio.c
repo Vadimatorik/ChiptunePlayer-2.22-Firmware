@@ -92,6 +92,22 @@ int init_gpio () {
     cfg.Alternate = GPIO_AF1_TIM1;
     HAL_GPIO_Init(LCD_PWM_GPIO, &cfg);
 
+    // SDIO.
+    cfg.Pin = SD_D0 | SD_D1 | SD_D2 | SD_D3
+              | SD_CLK;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF12_SDIO;
+    HAL_GPIO_Init(GPIOC, &cfg);
+
+    cfg.Pin = SD_CMD;
+    cfg.Mode = GPIO_MODE_AF_PP;
+    cfg.Pull = GPIO_NOPULL;
+    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    cfg.Alternate = GPIO_AF12_SDIO;
+    HAL_GPIO_Init(SD_CMD_GPIO_Port, &cfg);
+
     return 0;
 }
 

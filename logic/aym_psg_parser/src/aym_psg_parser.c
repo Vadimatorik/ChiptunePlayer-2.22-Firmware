@@ -18,9 +18,11 @@
 #include <errno.h>
 
 static uint8_t flag_handler_got = 0;
+static uint8_t reg_got = 0;
 
 void aym_psg_reset () {
     flag_handler_got = 0;
+    reg_got = 0;
 }
 
 int aym_psg_play (uint8_t chip_num, const uint8_t *data, uint32_t len) {
@@ -43,7 +45,7 @@ int aym_psg_play (uint8_t chip_num, const uint8_t *data, uint32_t len) {
         }
     }
 
-    uint8_t reg_got = 0;
+
 
     while (pos < len) {
         if (reg_got == 1) {

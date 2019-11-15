@@ -21,6 +21,8 @@
 #ifndef __STM32F4xx_HAL_SD_H
 #define __STM32F4xx_HAL_SD_H
 
+#include "stm32f4xx_hal_conf.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -218,7 +220,7 @@ typedef struct
 typedef struct
 {
   __IO uint8_t  ManufacturerID;  /*!< Manufacturer ID       */
-  __IO uint16_t OEM_AppliID;     /*!< OEM/Application ID    */
+  __IO uint16_t OEM_AppliID;     /*!< OSD_HandleTypeDefEM/Application ID    */
   __IO uint32_t ProdName1;       /*!< Product Name part1    */
   __IO uint8_t  ProdName2;       /*!< Product Name part2    */
   __IO uint8_t  ProdRev;         /*!< Product Revision      */

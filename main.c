@@ -14,7 +14,7 @@
 static StaticTask_t task_lua_buf;
 static StackType_t task_lua_stack[TASK_LUA_STACK_SIZE];
 
-#define TASK_UP_DOWN_BUTTON 400
+#define TASK_UP_DOWN_BUTTON 2000
 
 static StaticTask_t task_up_down_button_buf;
 static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
@@ -81,10 +81,20 @@ uint8_t u8x8_io (U8X8_UNUSED u8x8_t *u8x8, uint8_t msg, U8X8_UNUSED uint8_t arg_
     return 1;
 }
 
+#include "ff.h"
+
+FRESULT fr = 0;
+DIR d = {0};
+FILINFO f_info = {0};
+FIL fa = {0};
+
+static FATFS f = {0};
+
+uint8_t read_psg_test[1024*5];
 
 static void task_up_down_button (void *p) {
     p = p;
-
+/*
     u8g2_Setup_st7565_ea_dogm128_f(&gui, U8G2_R0, u8x8_byte_send, u8x8_io);
     u8g2_InitDisplay(&gui);
     u8g2_ClearBuffer(&gui);
@@ -95,6 +105,33 @@ static void task_up_down_button (void *p) {
     u8g2_SetFont(&gui, u8g2_font_ncenB08_tr);
     u8g2_DrawStr(&gui, 0, 10, "Hello World!");
     u8g2_SendBuffer(&gui);
+
+
+
+*/
+
+
+    fr = f_mount(&f, "0", 1);
+
+    if (fr != FR_OK) {
+        while (1);
+    };
+
+    fr = f_findfirst(&d, &f_info, ".", "*.psg");
+
+    if (fr != FR_OK) {
+        while (1);
+    };
+
+    if (f_info.fname[0] == 0) {
+        while (1);
+    }
+
+    fr = f_open(&fa, f_info.fname, FA_READ);
+
+    if (fr != FR_OK) {
+        while (1);
+    };
 
 
     sr_set_pin_ay_1_res();
@@ -112,10 +149,17 @@ static void task_up_down_button (void *p) {
     start_tim_int_ay();
 
     aym_psg_reset();
-    aym_psg_play(AY_DIP_28_PIN_INDEX, psg_track_test, psg_track_test_len);
+
 
     while (1) {
-        vTaskDelay(10);
+        UINT rlen = 0;
+        fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
+
+        if (fr != FR_OK) {
+            while (1);
+        };
+
+        aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
     }
 }
 
