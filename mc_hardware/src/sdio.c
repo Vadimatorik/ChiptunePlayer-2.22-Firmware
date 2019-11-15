@@ -36,9 +36,17 @@ int init_sdio () {
     sdio.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     sdio.Init.BusWide = SDIO_BUS_WIDE_1B;
     sdio.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
-    sdio.Init.ClockDiv = 0;
+    sdio.Init.ClockDiv = 4;
+
+    if (HAL_SD_DeInit(&sdio) != HAL_OK) {
+        return EIO;
+    }
 
     if (HAL_SD_Init(&sdio) != HAL_OK) {
+        return EIO;
+    }
+
+    if (HAL_SD_ConfigWideBusOperation(&sdio, SDIO_BUS_WIDE_4B) != HAL_OK) {
         return EIO;
     }
 

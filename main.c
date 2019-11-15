@@ -123,17 +123,6 @@ static void task_up_down_button (void *p) {
         while (1);
     };
 
-    if (f_info.fname[0] == 0) {
-        while (1);
-    }
-
-    fr = f_open(&fa, f_info.fname, FA_READ);
-
-    if (fr != FR_OK) {
-        while (1);
-    };
-
-
     sr_set_pin_ay_1_res();
     sr_reset_pin_pwr_ay_1_on();
     set_pin_pwr_5_v();
@@ -151,15 +140,49 @@ static void task_up_down_button (void *p) {
     aym_psg_reset();
 
 
-    while (1) {
-        UINT rlen = 0;
-        fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
+    while  (1) {
+        fr = f_open(&fa, f_info.fname, FA_READ);
 
         if (fr != FR_OK) {
             while (1);
         };
 
-        aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
+        if (f_info.fname[0] == 0) {
+            while (1);
+        }
+
+
+        while (1) {
+            UINT rlen = 0;
+            fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
+
+            if (fr != FR_OK) {
+                while (1);
+            };
+
+            aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
+
+            if (rlen < sizeof(read_psg_test)) {
+                break;
+            }
+        }
+
+        fr = f_close(&fa);
+
+        if (fr != FR_OK) {
+            while (1);
+        };
+
+        fr = f_findnext(&d, &f_info);
+
+        if (fr != FR_OK) {
+            while (1);
+        };
+
+        if (f_info.fname[0] == 0) {
+            while (1);
+        }
+
     }
 }
 
