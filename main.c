@@ -166,6 +166,8 @@ static void task_up_down_button (void *p) {
                 break;
             }
         }
+        aym_psg_reset();
+
 
         fr = f_close(&fa);
 
