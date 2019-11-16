@@ -1,3 +1,4 @@
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_uart.h"
 #include "stm32f4xx_hal_cortex.h"
@@ -34,6 +35,7 @@ static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0}
 
 SemaphoreHandle_t rx_buffer_mutex = NULL;
 StaticSemaphore_t rx_buffer_mutex_buf = {0};
+
 
 static UART_HandleTypeDef u = {0};
 static DMA_HandleTypeDef u_dma = {0};
@@ -76,6 +78,8 @@ static int init_mc_uart () {
     if (HAL_UART_Init(&u) != HAL_OK) {
         return EIO;
     }
+
+    return 0;
 }
 
 static int init_mc_uart_dma () {
@@ -123,10 +127,12 @@ static int start_mc_uart () {
 
     return 0;
 }
+#endif
 
 int init_uart () {
     int rv = 0;
 
+#ifdef AYM_HARDWARE
     if ((rv = init_mc_uart()) != 0) {
         return rv;
     }
@@ -142,10 +148,12 @@ int init_uart () {
     if ((rv = start_mc_uart()) != 0) {
         return rv;
     }
+#endif
 
-    return 0;
+    return rv;
 }
 
+#ifdef AYM_HARDWARE
 static int add_transaction (const void *p, uint32_t len) {
     tx_msg_cfg_t msg;
     msg.len = len;
@@ -221,3 +229,4 @@ int _read (int fd, void *buf, size_t count) {
     xSemaphoreGive(rx_buffer_mutex);
     return rv;
 }
+#endif

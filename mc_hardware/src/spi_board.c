@@ -1,16 +1,17 @@
+#include "mc_hardware.h"
+#include <errno.h>
+
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
 
-#include "mc_hardware.h"
-
-#include <errno.h>
-
 SPI_HandleTypeDef s_board = {0};
-
 SPI_BOARD_DEVICE spi_device = SPI_BOARD_DEVICE_NO_SET;
+#endif
 
 int init_spi_board () {
+#ifdef AYM_HARDWARE
     __HAL_RCC_SPI2_CLK_ENABLE();
 
     s_board.Instance = SPI2;
@@ -31,31 +32,46 @@ int init_spi_board () {
 
     HAL_NVIC_SetPriority(SPI2_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(SPI2_IRQn);
+#endif
 
     return 0;
 }
 
+#ifdef AYM_HARDWARE
 void SPI2_IRQHandler () {
     HAL_SPI_IRQHandler(&s_board);
 }
+#endif
 
 int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
+#ifdef AYM_HARDWARE
     spi_device = SPI_BOARD_DEVICE_LTC6903;
     reset_pin_ltc_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
     return (rv == HAL_OK)?0:EIO;
+#else
+    return 0;
+#endif
 }
 
 int spi_board_device_ad5204_tx (void *d, uint32_t len) {
+#ifdef AYM_HARDWARE
     spi_device = SPI_BOARD_DEVICE_AD5204;
     reset_pin_ad5204_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
     return (rv == HAL_OK)?0:EIO;
+#else
+    return 0;
+#endif
 }
 
 int spi_board_device_sr_tx (void *d, uint32_t len) {
+#ifdef AYM_HARDWARE
     spi_device = SPI_BOARD_DEVICE_SR;
     reset_pin_sr_strob();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
     return (rv == HAL_OK)?0:EIO;
+#else
+    return 0;
+#endif
 }

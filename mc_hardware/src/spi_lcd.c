@@ -1,16 +1,20 @@
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_dma.h"
 #include "stm32f4xx_hal_cortex.h"
-
-#include <errno.h>
+#endif
 
 #include "mc_hardware.h"
+#include <errno.h>
 
+#ifdef AYM_HARDWARE
 SPI_HandleTypeDef s_lcd = {0};
 DMA_HandleTypeDef s_lcd_dma = {0};
+#endif
 
 int init_spi_lcd () {
+#ifdef AYM_HARDWARE
     __HAL_RCC_SPI1_CLK_ENABLE();
 
     s_lcd.Instance = SPI1;
@@ -51,17 +55,24 @@ int init_spi_lcd () {
     HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
     __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
+#endif
 
     return 0;
 }
 
+#ifdef AYM_HARDWARE
 void DMA2_Stream5_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
 }
+#endif
 
 int spi_lcd_tx (void *d, uint32_t len) {
+#ifdef AYM_HARDWARE
     reset_pin_lcd_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_DMA(&s_lcd, d, len);
     return (rv == HAL_OK)?0:EIO;
+#else
+    return 0;
+#endif
 }
 

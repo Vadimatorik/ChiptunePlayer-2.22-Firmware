@@ -1,3 +1,4 @@
+#ifdef AYM_HARDWARE
 #include "diskio.h"
 #include "mc_hardware.h"
 #include "freertos_headers.h"
@@ -77,3 +78,4 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff) {
 
     return res;
 }
+#endif

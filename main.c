@@ -1,8 +1,9 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
-#include "l.h"
+#include "lua.h"
 #include "dp.h"
 #include "sr.h"
+#include "l.h"
 #include "aym_hardware.h"
 #include <errno.h>
 #include "ltc6903.h"
@@ -22,64 +23,8 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 #define AY_DIP_28_PIN_INDEX 0
 #define AY_DIP_40_PIN_INDEX 1
 
-extern const uint8_t psg_track_test[];
-extern uint32_t psg_track_test_len;
-
 u8g2_t gui;
 
-uint8_t u8x8_byte_send (U8X8_UNUSED u8x8_t *u8x8, uint8_t msg, U8X8_UNUSED uint8_t arg_int, U8X8_UNUSED void *arg_ptr) {
-    switch (msg) {
-        case U8X8_MSG_BYTE_INIT:
-            break;
-
-        case U8X8_MSG_BYTE_START_TRANSFER:
-        case U8X8_MSG_BYTE_END_TRANSFER:
-            break;
-
-        case U8X8_MSG_BYTE_SEND:
-            spi_lcd_tx(arg_ptr, arg_int);
-            return arg_int;
-
-        case U8X8_MSG_BYTE_SET_DC:
-            u8x8_gpio_SetDC(u8x8, arg_int);
-            break;
-
-        default:
-            while (1);
-    }
-    return 1;
-}
-
-uint8_t u8x8_io (U8X8_UNUSED u8x8_t *u8x8, uint8_t msg, U8X8_UNUSED uint8_t arg_int, U8X8_UNUSED void *arg_ptr) {
-    switch (msg) {
-        case U8X8_MSG_GPIO_AND_DELAY_INIT:
-            break;
-
-        case U8X8_MSG_GPIO_DC:
-            if (arg_int) {
-                set_pin_lcd_dc();
-            } else {
-                reset_pin_lcd_dc();
-            }
-            break;
-
-        case U8X8_MSG_GPIO_RESET:
-            if (arg_int) {
-                set_pin_lcd_rst();
-            } else {
-                reset_pin_lcd_rst();
-            }
-            break;
-
-        case U8X8_MSG_DELAY_MILLI:
-            vTaskDelay(arg_int);
-            break;
-
-        default:
-            while (1);
-    }
-    return 1;
-}
 
 #include "ff.h"
 
@@ -105,10 +50,20 @@ static void task_up_down_button (void *p) {
     u8g2_SetFont(&gui, u8g2_font_ncenB08_tr);
     u8g2_DrawStr(&gui, 0, 10, "Hello World!");
     u8g2_SendBuffer(&gui);
-
-
-
 */
+int rv = 0;
+
+    if ((rv = init_sr()) != 0) {
+        while(1);
+    }
+
+    if ((rv = init_aym_hardware()) != 0) {
+        while(1);
+    }
+
+    if ((rv = ltc6903_init()) != 0) {
+        while(1);
+    }
 
 
     fr = f_mount(&f, "0", 1);
@@ -140,7 +95,7 @@ static void task_up_down_button (void *p) {
     aym_psg_reset();
 
 
-    while  (1) {
+    while (1) {
         fr = f_open(&fa, f_info.fname, FA_READ);
 
         if (fr != FR_OK) {
@@ -190,56 +145,7 @@ static void task_up_down_button (void *p) {
 
 int main () {
     int rv = 0;
-
-    if ((rv = init_core()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_gpio()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_rcc()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_uart()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_spi_board()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_spi_lcd()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_sr()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_tim_int_ay()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_tim_lcd_pwm()) != 0) {
-        return rv;
-    }
-
-    if ((rv = set_tim_lcd_pwm_duty(0.5)) != 0) {
-        return rv;
-    }
-
-    if ((rv = start_tim_lcd_pwm()) != 0) {
-        return rv;
-    }
-
-    if ((rv = init_aym_hardware()) != 0) {
-        return rv;
-    }
-
-    if ((rv = ltc6903_init()) != 0) {
+    if ((rv = init_mc_hardware()) != 0) {
         return rv;
     }
 

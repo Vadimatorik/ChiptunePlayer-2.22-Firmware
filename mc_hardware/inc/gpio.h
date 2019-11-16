@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef AYM_HARDWARE
 #define BAT_STDBY GPIO_PIN_13
 #define BAT_STDBY_GPIO_Port GPIOC
 #define OSC32_IN GPIO_PIN_14
@@ -102,3 +103,4 @@
 #define BAT_CHRG_GPIO_Port GPIOB
 #define DOWN GPIO_PIN_9
 #define DOWN_GPIO_Port GPIOB
+#endif

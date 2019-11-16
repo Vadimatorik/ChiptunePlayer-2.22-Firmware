@@ -1,11 +1,14 @@
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_sd.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
 #include "freertos_headers.h"
 #include "mc_hardware.h"
+#endif
 
 #include <errno.h>
 
+#ifdef AYM_HARDWARE
 SD_HandleTypeDef sdio = {0};
 DMA_HandleTypeDef sdio_tx = {0};
 DMA_HandleTypeDef sdio_rx = {0};
@@ -15,8 +18,11 @@ static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
 static SemaphoreHandle_t tx_msg_semaphore = NULL;
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
+#endif
 
 int sdio_is_detected () {
+#ifdef AYM_HARDWARE
+#endif
     return 0;
 }
 
@@ -25,6 +31,7 @@ int init_sdio () {
         return EIO;
     }
 
+#ifdef AYM_HARDWARE
     rx_msg_semaphore = xSemaphoreCreateBinaryStatic(&rx_msg_semaphore_str);
     tx_msg_semaphore = xSemaphoreCreateBinaryStatic(&tx_msg_semaphore_str);
 
@@ -96,12 +103,12 @@ int init_sdio () {
 
     HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
-
-
+#endif
 
     return 0;
 }
 
+#ifdef AYM_HARDWARE
 int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
     xSemaphoreTake(rx_msg_semaphore, 0);
 
@@ -174,8 +181,6 @@ void DMA2_Stream6_IRQHandler () {
     HAL_DMA_IRQHandler(&sdio_tx);
 }
 
-
-
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd) {
     xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
 }
@@ -183,3 +188,4 @@ void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd) {
 void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd) {
     xSemaphoreGiveFromISR(tx_msg_semaphore, NULL);
 }
+#endif

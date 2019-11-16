@@ -1,10 +1,13 @@
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_pwr.h"
 #include "stm32f4xx_hal_flash.h"
+#endif
 
 #include <errno.h>
 
 int init_rcc () {
+#ifdef AYM_HARDWARE
     RCC_OscInitTypeDef osc_cfg = {0};
     RCC_ClkInitTypeDef clk_cfg = {0};
 
@@ -33,6 +36,7 @@ int init_rcc () {
     if (HAL_RCC_ClockConfig(&clk_cfg, FLASH_LATENCY_0) != HAL_OK) {
         return EIO;
     }
+#endif
 
     return 0;
 }

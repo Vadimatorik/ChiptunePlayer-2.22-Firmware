@@ -9,6 +9,8 @@ typedef enum {
     SPI_BOARD_DEVICE_LTC6903 = 3
 } SPI_BOARD_DEVICE;
 
+int init_mc_hardware ();
+
 int init_core ();
 int init_gpio ();
 int init_rcc ();

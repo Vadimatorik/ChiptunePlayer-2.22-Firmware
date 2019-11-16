@@ -1,66 +1,37 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.15.3)
 
-SET(CMAKE_SYSTEM_NAME Generic)
-SET(CMAKE_SYSTEM_VERSION 1)
-SET(CMAKE_C_COMPILER_WORKS 1)
-SET(CMAKE_CXX_COMPILER_WORKS 1)
+include(CMakeToolchain.cmake)
 
-SET(TOOLCHAIN_BIN_PATH /opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin/arm-none-eabi)
-SET(CMAKE_C_COMPILER ${TOOLCHAIN_BIN_PATH}-gcc)
-SET(CMAKE_CXX_COMPILER ${TOOLCHAIN_BIN_PATH}-g++)
-SET(ARM_SIZE "${TOOLCHAIN_BIN_PATH}-size")
-SET(ARM_OBJDUMP "${TOOLCHAIN_BIN_PATH}-objdump")
-SET(ARM_OBJCOPY "${TOOLCHAIN_BIN_PATH}-objcopy")
-
-SET(MC_HARDWARE_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16")
-
-SET(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/mem.ld")
-SET(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/sections.ld")
-
-SET(C_COMPILER_FLAGS "-std=gnu99 -fshort-enums")
-SET(MC_LD_FLAGS "--specs=nano.specs -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD} -nostartfiles")
-
-SET(COMPILER_OPTIMIZATION "-O0 -g3")
-
-SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
-SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
+add_definitions(-D${BUILD_TYPE})
 
 project(aym C)
 
 file(GLOB SOURCES
-        "*.c"
-
-        "lua/src/*.c"
-
-        "startup/src/*.c"
-
-        "lib/st/device/src/*.c"
-        "lib/st/hal/src/*.c"
-        "lib/freertos/src/*.c"
+        "lib/freertos/core/src/*.c"
+        "lib/freertos/dummy/src/*.c"
         "lib/lua/src/*.c"
         "lib/u8g2/csrc/*.c"
-        "lib/fatfs/src/*.c"
 
+        "lua/src/*.c"
         "mc_hardware/src/*.c"
         "pcb_hardware/*/src/*.c"
-        "logic/*/src/*.c"
+        "logic/aym_psg_parser/src/*.c"
+        "startup/src/*.c"
 
-        )
+        "main.c")
 
 include_directories(
         "cfg"
 
-        "lua/inc"
-
-        "startup/inc"
-
+        "lib/fatfs/inc"
+        "lib/freertos/core/inc"
+        "lib/freertos/port/inc"
+        "lib/lua/inc"
         "lib/st/hal/inc"
         "lib/st/hal/inc/legacy"
         "lib/st/cmsis"
         "lib/st/device/inc"
-        "lib/freertos/inc"
-        "lib/lua/inc"
-        "lib/fatfs/inc"
+        "lib/u8g2/csrc"
 
         "mc_hardware/inc"
 
@@ -71,9 +42,28 @@ include_directories(
 
         "logic/aym_psg_parser/inc"
 
-        "lib/u8g2/csrc")
+        "lua/inc"
+
+        "startup/inc")
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
+
+if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
+    file(GLOB FATFS_SRC
+            "lib/fatfs/src/*.c")
+
+    target_sources(${PROJECT_NAME}.elf PRIVATE ${FATFS_SRC})
+
+    target_sources(${PROJECT_NAME}.elf PRIVATE
+            "lib/freertos/port/src/freertos_heap_4.c"
+            "lib/freertos/port/src/port_cortex_m4.c")
+
+    file(GLOB ST_SRC
+            "lib/st/device/src/*.c"
+            "lib/st/hal/src/*.c")
+
+    target_sources(${PROJECT_NAME}.elf PRIVATE ${ST_SRC})
+endif ()
 
 target_link_options(${PROJECT_NAME}.elf PRIVATE)
 target_link_libraries(${PROJECT_NAME}.elf "-lm")

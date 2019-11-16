@@ -1,5 +1,5 @@
 #include "stm32f4xx_hal.h"
-#include "FreeRTOS.h"
+#include "../../lib/freertos/core/inc/FreeRTOS.h"
 
 void __start ();
 extern void xPortSysTickHandler ();

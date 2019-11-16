@@ -1,6 +1,7 @@
-#include "mc_hardware.h"
-
+#ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_spi.h"
+
+#include "mc_hardware.h"
 
 extern SPI_BOARD_DEVICE spi_device;
 
@@ -24,3 +25,4 @@ void HAL_SPI_TxCpltCallback (SPI_HandleTypeDef *hspi) {
         }
     }
 }
+#endif
