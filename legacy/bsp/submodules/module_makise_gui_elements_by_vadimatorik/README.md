@@ -1,2 +1,0 @@
-# module_makise_gui_elements_by_vadimatorik
-Созданные мною элементы для MakiseGUI

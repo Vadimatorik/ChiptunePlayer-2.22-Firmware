@@ -9,17 +9,28 @@
 #include <errno.h>
 
 #ifdef AYM_HARDWARE
+#include "freertos_headers.h"
+
 SPI_HandleTypeDef s_lcd = {0};
 DMA_HandleTypeDef s_lcd_dma = {0};
+
+SemaphoreHandle_t spi_lcd_msg_semaphore = NULL;
+static StaticSemaphore_t spi_lcd_msg_semaphore_str = {0};
+
+SemaphoreHandle_t spi_lcd_mutex = NULL;
+StaticSemaphore_t spi_lcd_mutex_buf = {0};
 #endif
 
 int init_spi_lcd () {
 #ifdef AYM_HARDWARE
+    spi_lcd_msg_semaphore = xSemaphoreCreateBinaryStatic(&spi_lcd_msg_semaphore_str);
+    spi_lcd_mutex = xSemaphoreCreateMutexStatic(&spi_lcd_mutex_buf);
+
     __HAL_RCC_SPI1_CLK_ENABLE();
 
     s_lcd.Instance = SPI1;
     s_lcd.Init.Mode = SPI_MODE_MASTER;
-    s_lcd.Init.Direction = SPI_DIRECTION_2LINES;
+    s_lcd.Init.Direction = SPI_DIRECTION_1LINE;
     s_lcd.Init.DataSize = SPI_DATASIZE_8BIT;
     s_lcd.Init.CLKPolarity = SPI_POLARITY_HIGH;
     s_lcd.Init.CLKPhase = SPI_PHASE_2EDGE;
@@ -68,9 +79,22 @@ void DMA2_Stream5_IRQHandler () {
 
 int spi_lcd_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE
+    xSemaphoreTake(spi_lcd_mutex, portMAX_DELAY);
+    xSemaphoreTake(spi_lcd_msg_semaphore, 0);
     reset_pin_lcd_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_DMA(&s_lcd, d, len);
-    return (rv == HAL_OK)?0:EIO;
+    if (rv != HAL_OK) {
+        xSemaphoreGive(spi_lcd_mutex);
+        return EIO;
+    }
+
+    if (xSemaphoreTake(spi_lcd_msg_semaphore, 100) == pdTRUE) {
+        xSemaphoreGive(spi_lcd_mutex);
+        return 0;
+    } else {
+        xSemaphoreGive(spi_lcd_mutex);
+        return EIO;
+    }
 #else
     return 0;
 #endif

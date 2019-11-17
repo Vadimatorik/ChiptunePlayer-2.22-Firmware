@@ -6,12 +6,23 @@
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
 
+#include "freertos_headers.h"
+
 SPI_HandleTypeDef s_board = {0};
 SPI_BOARD_DEVICE spi_device = SPI_BOARD_DEVICE_NO_SET;
+
+SemaphoreHandle_t spi_board_tx_msg_semaphore = NULL;
+static StaticSemaphore_t spi_board_tx_msg_semaphore_str = {0};
+
+SemaphoreHandle_t spi_board_mutex = NULL;
+StaticSemaphore_t spi_board_mutex_buf = {0};
 #endif
 
 int init_spi_board () {
 #ifdef AYM_HARDWARE
+    spi_board_tx_msg_semaphore = xSemaphoreCreateBinaryStatic(&spi_board_tx_msg_semaphore_str);
+    spi_board_mutex = xSemaphoreCreateMutexStatic(&spi_board_mutex_buf);
+
     __HAL_RCC_SPI2_CLK_ENABLE();
 
     s_board.Instance = SPI2;
@@ -45,10 +56,23 @@ void SPI2_IRQHandler () {
 
 int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE
+    xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
+    xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_LTC6903;
     reset_pin_ltc_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
-    return (rv == HAL_OK)?0:EIO;
+    if (rv != HAL_OK) {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
+
+    if (xSemaphoreTake(spi_board_tx_msg_semaphore, 100) == pdTRUE) {
+        xSemaphoreGive(spi_board_mutex);
+        return 0;
+    } else {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
 #else
     return 0;
 #endif
@@ -56,10 +80,23 @@ int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
 
 int spi_board_device_ad5204_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE
+    xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
+    xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_AD5204;
     reset_pin_ad5204_cs();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
-    return (rv == HAL_OK)?0:EIO;
+    if (rv != HAL_OK) {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
+
+    if (xSemaphoreTake(spi_board_tx_msg_semaphore, 100) == pdTRUE) {
+        xSemaphoreGive(spi_board_mutex);
+        return 0;
+    } else {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
 #else
     return 0;
 #endif
@@ -67,10 +104,23 @@ int spi_board_device_ad5204_tx (void *d, uint32_t len) {
 
 int spi_board_device_sr_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE
+    xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
+    xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_SR;
     reset_pin_sr_strob();
     HAL_StatusTypeDef rv = HAL_SPI_Transmit_IT(&s_board, d, len);
-    return (rv == HAL_OK)?0:EIO;
+    if (rv != HAL_OK) {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
+
+    if (xSemaphoreTake(spi_board_tx_msg_semaphore, 100) == pdTRUE) {
+        xSemaphoreGive(spi_board_mutex);
+        return 0;
+    } else {
+        xSemaphoreGive(spi_board_mutex);
+        return EIO;
+    }
 #else
     return 0;
 #endif

@@ -35,7 +35,7 @@ FIL fa = {0};
 
 static FATFS f = {0};
 
-uint8_t read_psg_test[1024*5];
+uint8_t read_psg_test[1024*1];
 
 static void task_up_down_button (void *p) {
     p = p;
@@ -51,11 +51,18 @@ static void task_up_down_button (void *p) {
     u8g2_DrawStr(&gui, 0, 10, "Hello World!");
     u8g2_SendBuffer(&gui);
 */
+
 int rv = 0;
+
+    if ((rv = init_dp()) != 0) {
+        return rv;
+    }
 
     if ((rv = init_sr()) != 0) {
         while(1);
     }
+
+
 
     if ((rv = init_aym_hardware()) != 0) {
         while(1);
@@ -84,8 +91,7 @@ int rv = 0;
     sr_set_pin_pwr_ay_1_on();
     sr_reset_pin_ay_1_res();
     clear_aym_hardware();
-
-    reset_shdn();
+    dp_reset_shdn();
 
     ltc6903_start();
     ltc6903_set_requency(1.77e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
@@ -108,6 +114,38 @@ int rv = 0;
 
 
         while (1) {
+            if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
+                while(1);
+            }
+
+            if ((rv = dp_set_b1(255)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_c1(255)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_a2(0)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_b2(0)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_c2(0)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_l(255)) != 0) {
+                while(1);
+            }
+
+            if ((rv = dp_set_r(255)) != 0) {
+                while(1);
+            }
+
             UINT rlen = 0;
             fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
 
@@ -120,6 +158,8 @@ int rv = 0;
             if (rlen < sizeof(read_psg_test)) {
                 break;
             }
+
+
         }
         aym_psg_reset();
 

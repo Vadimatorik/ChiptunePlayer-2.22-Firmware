@@ -10,3 +10,4 @@ typedef enum {
 int ltc6903_init ();
 int ltc6903_start ();
 int ltc6903_set_requency (float freq, LTC6903_OUTPUT_MODE mode);
+
