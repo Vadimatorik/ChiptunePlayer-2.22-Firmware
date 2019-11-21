@@ -9,10 +9,10 @@
 extern "C" {
 #endif
 
-#include "../../core/inc/FreeRTOS.h"
-#include "../../core/inc/queue.h"
-#include "../../core/inc/semphr.h"
-#include "../../core/inc/timers.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+#include "timers.h"
 
 #ifdef __cplusplus
 }

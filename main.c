@@ -25,7 +25,7 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 
 u8g2_t gui;
 
-
+/*
 #include "ff.h"
 
 FRESULT fr = 0;
@@ -36,7 +36,7 @@ FIL fa = {0};
 static FATFS f = {0};
 
 uint8_t read_psg_test[1024*1];
-
+*/
 static void task_up_down_button (void *p) {
     p = p;
 /*
@@ -53,7 +53,7 @@ static void task_up_down_button (void *p) {
 */
 
 int rv = 0;
-
+/*
     if ((rv = init_dp()) != 0) {
         return rv;
     }
@@ -99,10 +99,10 @@ int rv = 0;
     start_tim_int_ay();
 
     aym_psg_reset();
-
+*/
 
     while (1) {
-        fr = f_open(&fa, f_info.fname, FA_READ);
+      /*  fr = f_open(&fa, f_info.fname, FA_READ);
 
         if (fr != FR_OK) {
             while (1);
@@ -178,7 +178,7 @@ int rv = 0;
 
         if (f_info.fname[0] == 0) {
             while (1);
-        }
+        }*/
 
     }
 }

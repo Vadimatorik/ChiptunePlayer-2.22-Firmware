@@ -1,14 +1,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.15.3)
 
+project(aym)
+
 include(CMakeToolchain.cmake)
 
 add_definitions(-D${BUILD_TYPE})
 
-project(aym C)
-
 file(GLOB SOURCES
-        "lib/freertos/core/src/*.c"
-        "lib/freertos/dummy/src/*.c"
         "lib/lua/src/*.c"
         "lib/u8g2/csrc/*.c"
 
@@ -16,16 +14,15 @@ file(GLOB SOURCES
         "mc_hardware/src/*.c"
         "pcb_hardware/*/src/*.c"
         "logic/aym_psg_parser/src/*.c"
-        "startup/src/*.c"
 
-        "main.c")
+
+        "main.c"
+        )
+
 
 include_directories(
         "cfg"
 
-        "lib/fatfs/inc"
-        "lib/freertos/core/inc"
-        "lib/freertos/port/inc"
         "lib/lua/inc"
         "lib/st/hal/inc"
         "lib/st/hal/inc/legacy"
@@ -46,29 +43,64 @@ include_directories(
 
         "startup/inc")
 
-add_executable(${PROJECT_NAME}.elf ${SOURCES})
-
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
-    file(GLOB FATFS_SRC
-            "lib/fatfs/src/*.c")
-
-    target_sources(${PROJECT_NAME}.elf PRIVATE ${FATFS_SRC})
-
-    target_sources(${PROJECT_NAME}.elf PRIVATE
-            "lib/freertos/port/src/freertos_heap_4.c"
-            "lib/freertos/port/src/port_cortex_m4.c")
-
-    file(GLOB ST_SRC
-            "lib/st/device/src/*.c"
-            "lib/st/hal/src/*.c")
-
-    target_sources(${PROJECT_NAME}.elf PRIVATE ${ST_SRC})
+    SET(OUT_FILE "${PROJECT_NAME}.elf")
+elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
+    SET(OUT_FILE "${PROJECT_NAME}")
 endif ()
 
-target_link_options(${PROJECT_NAME}.elf PRIVATE)
-target_link_libraries(${PROJECT_NAME}.elf "-lm")
+add_executable(${OUT_FILE} ${SOURCES})
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        DEPENDS ${PROJECT_NAME}.elf
-        COMMENT "${PROJECT_NAME} size information:"
-        COMMAND ${ARM_SIZE} ${PROJECT_NAME}.elf -t)
+if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
+    target_include_directories(${OUT_FILE} PUBLIC
+            "lib/freertos/core/inc"
+            "lib/freertos/port/inc"
+            "lib/fatfs/inc"
+            )
+
+    file(GLOB BUILD_MODE_SRC_SRC
+            "lib/st/device/src/*.c"
+            "lib/st/hal/src/*.c"
+            "startup/src/*.c"
+            "lib/freertos/port/src/*.c"
+            "lib/freertos/dummy/src/*.c"
+            "lib/freertos/core/src/*.c"
+            "lib/fatfs/src/*.c")
+elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
+    find_package(Threads)
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_gfx REQUIRED)
+    find_package(SDL2_image REQUIRED)
+    find_package(SDL2_mixer REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+
+    target_include_directories(${OUT_FILE} PUBLIC
+            ${SDL2_INCLUDE_DIRS}
+            ${SDL2_GFX_INCLUDE_DIRS}
+            ${SDL2_IMAGE_INCLUDE_DIRS}
+            ${SDL2_MIXER_INCLUDE_DIRS}
+            ${SDL2_TTF_INCLUDE_DIRS}
+            lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/include
+            lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/GCC/Posix
+            lib/FreeRTOS-Emulator/include
+            lib/FreeRTOS-Emulator/lib/Gfx/include
+            lib/FreeRTOS-Emulator/lib/tracer/include)
+
+    file(GLOB BUILD_MODE_SRC_SRC
+            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/*.c"
+            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/GCC/Posix/*.c"
+            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/MemMang/*.c"
+            "lib/FreeRTOS-Emulator/lib/Gfx/*.c"
+            )
+endif ()
+
+target_sources(${OUT_FILE} PRIVATE ${BUILD_MODE_SRC_SRC})
+target_link_libraries(${OUT_FILE} "-lm")
+add_custom_command(TARGET ${OUT_FILE} POST_BUILD
+        DEPENDS ${OUT_FILE}
+        COMMENT "${OUT_FILE} size information:"
+        COMMAND ${SIZE} ${OUT_FILE} -t)
+
+target_link_libraries(${OUT_FILE} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES}
+        m ${CMAKE_THREAD_LIBS_INIT})

@@ -240,6 +240,6 @@ int add_aym_element (aym_reg_data_t *item) {
 
 void aym_hardware_irq_handler () {
     xSemaphoreGiveFromISR(tim_irq_request, NULL);
-    portYIELD_FROM_ISR(pdTRUE);
+  //  portYIELD_FROM_ISR(pdTRUE);
 }
 
