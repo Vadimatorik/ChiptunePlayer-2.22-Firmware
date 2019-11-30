@@ -15,10 +15,11 @@ file(GLOB SOURCES
         "pcb_hardware/*/src/*.c"
         "logic/aym_psg_parser/src/*.c"
 
+        "lib/freertos/dummy/src/*.c"
+        "lib/freertos/core/src/*.c"
 
         "main.c"
         )
-
 
 include_directories(
         "cfg"
@@ -39,6 +40,8 @@ include_directories(
 
         "logic/aym_psg_parser/inc"
 
+        "lib/freertos/core/inc"
+
         "lua/inc"
 
         "startup/inc")
@@ -53,8 +56,7 @@ add_executable(${OUT_FILE} ${SOURCES})
 
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     target_include_directories(${OUT_FILE} PUBLIC
-            "lib/freertos/core/inc"
-            "lib/freertos/port/inc"
+            "lib/freertos/port/mc/inc"
             "lib/fatfs/inc"
             )
 
@@ -62,45 +64,25 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
             "lib/st/device/src/*.c"
             "lib/st/hal/src/*.c"
             "startup/src/*.c"
-            "lib/freertos/port/src/*.c"
-            "lib/freertos/dummy/src/*.c"
-            "lib/freertos/core/src/*.c"
+            "lib/freertos/port/mc/src/*.c"
             "lib/fatfs/src/*.c")
 elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     find_package(Threads)
-    find_package(SDL2 REQUIRED)
-    find_package(SDL2_gfx REQUIRED)
-    find_package(SDL2_image REQUIRED)
-    find_package(SDL2_mixer REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
 
     target_include_directories(${OUT_FILE} PUBLIC
-            ${SDL2_INCLUDE_DIRS}
-            ${SDL2_GFX_INCLUDE_DIRS}
-            ${SDL2_IMAGE_INCLUDE_DIRS}
-            ${SDL2_MIXER_INCLUDE_DIRS}
-            ${SDL2_TTF_INCLUDE_DIRS}
-            lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/include
-            lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/GCC/Posix
-            lib/FreeRTOS-Emulator/include
-            lib/FreeRTOS-Emulator/lib/Gfx/include
-            lib/FreeRTOS-Emulator/lib/tracer/include)
+            "lib/freertos/port/posix/inc")
 
     file(GLOB BUILD_MODE_SRC_SRC
-            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/*.c"
-            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/GCC/Posix/*.c"
-            "lib/FreeRTOS-Emulator/lib/FreeRTOS_Kernel/portable/MemMang/*.c"
-            "lib/FreeRTOS-Emulator/lib/Gfx/*.c"
+            "lib/freertos/port/posix/src/*.c"
             )
+
+    target_link_libraries(${OUT_FILE} ${CMAKE_THREAD_LIBS_INIT})
 endif ()
 
 target_sources(${OUT_FILE} PRIVATE ${BUILD_MODE_SRC_SRC})
 target_link_libraries(${OUT_FILE} "-lm")
+
 add_custom_command(TARGET ${OUT_FILE} POST_BUILD
         DEPENDS ${OUT_FILE}
-        COMMENT "${OUT_FILE} size information:"
+        COMMENT "${PROJECT_NAME} size information:"
         COMMAND ${SIZE} ${OUT_FILE} -t)
-
-target_link_libraries(${OUT_FILE} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES}
-        ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES}
-        m ${CMAKE_THREAD_LIBS_INIT})

@@ -54,7 +54,9 @@ static const char *get_prompt (int firstline) {
 static void lua_readline (char *b, const char *p) {
     fputs(p, stdout);
     fflush(stdout);
-    fgets(b, LUA_STRING_MAX_LEN - 1, stdin);
+    while (fgets(b, LUA_STRING_MAX_LEN - 1, stdin) == NULL) {
+        vTaskDelay(100);
+    }
 }
 
 static int pushline (int firstline) {
