@@ -77,6 +77,8 @@ void DMA2_Stream5_IRQHandler () {
 }
 #endif
 
+#include <stdio.h>
+
 int spi_lcd_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(spi_lcd_mutex, portMAX_DELAY);
@@ -96,6 +98,21 @@ int spi_lcd_tx (void *d, uint32_t len) {
         return EIO;
     }
 #else
+    if (len == 128) {
+        uint8_t *lcd_array = (uint8_t*)d;
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 128; x++) {
+                int byte_num = ((y / 8) * 128) + x;
+                int bit_num = y % 8;
+                if (lcd_array[byte_num] & (1 << bit_num)) {
+                    printf("0");
+                } else {
+                    printf(" ");
+                }
+            }
+            printf("\n\r");
+        }
+    }
     return 0;
 #endif
 }

@@ -2,11 +2,12 @@
 #include "lualib.h"
 #include "lua.h"
 
-#include <errno.h>
 #include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <signal.h>
+
+#include "l.h"
 
 #include "freertos_headers.h"
 
@@ -31,6 +32,10 @@ static int add_lua_libs () {
     }
 
     if (luaopen_string(L) != 1) {
+        return -1;
+    }
+
+    if (luaopen_lcd(L) != 1) {
         return -1;
     }
 
@@ -60,7 +65,7 @@ static void lua_readline (char *b, const char *p) {
 }
 
 static int pushline (int firstline) {
-    char *b = malloc(sizeof(char) * LUA_STRING_MAX_LEN);
+    char *b = malloc(sizeof(char)*LUA_STRING_MAX_LEN);
     size_t l = 0;
     const char *prmt = get_prompt(firstline);
     lua_readline(b, prmt);
@@ -113,8 +118,8 @@ static void lua_print () {
     }
 }
 
-#define EOFMARK	"<eof>"
-#define marklen	(sizeof(EOFMARK)/sizeof(char) - 1)
+#define EOFMARK    "<eof>"
+#define marklen    (sizeof(EOFMARK)/sizeof(char) - 1)
 
 static int incomplete (int status) {
     if (status == LUA_ERRSYNTAX) {
@@ -205,6 +210,13 @@ static int lua_report (int status) {
     return status;
 }
 
+#include "u8g2.h"
+
+
+extern u8g2_t u8g2;
+#include "aym_hardware.h"
+#include "lcd_driver.h"
+
 void task_lua_interactive (void *p) {
     p = p;
 
@@ -220,6 +232,18 @@ void task_lua_interactive (void *p) {
             vTaskDelay(1000);
         }
     }
+
+    luaL_openlibs(L);
+
+    luaL_requiref(L, "lcd", luaopen_lcd, 1);
+    lua_pop(L, 1);
+
+    u8g2_Setup_st7565_ea_dogm128_f(&u8g2, U8G2_R0, u8x8_byte_send, u8x8_io);
+    u8g2_InitDisplay(&u8g2);
+    u8g2_ClearBuffer(&u8g2);
+    u8g2_SendBuffer(&u8g2);
+    u8g2_SetContrast(&u8g2, 4);
+    u8g2_SetPowerSave(&u8g2, 0);
 
     while (1) {
         int status;

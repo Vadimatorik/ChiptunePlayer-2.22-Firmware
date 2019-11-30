@@ -1,14 +1,14 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
-#include "lua.h"
+
 #include "dp.h"
 #include "sr.h"
-#include "l.h"
-#include "aym_hardware.h"
+
+
 #include <errno.h>
 #include "ltc6903.h"
 #include "aym_psg_parser.h"
-#include "u8g2.h"
+#include "l.h"
 
 #define TASK_LUA_STACK_SIZE 1000
 
@@ -23,7 +23,7 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 #define AY_DIP_28_PIN_INDEX 0
 #define AY_DIP_40_PIN_INDEX 1
 
-u8g2_t gui;
+//
 
 /*
 #include "ff.h"
@@ -40,12 +40,7 @@ uint8_t read_psg_test[1024*1];
 static void task_up_down_button (void *p) {
     p = p;
 /*
-    u8g2_Setup_st7565_ea_dogm128_f(&gui, U8G2_R0, u8x8_byte_send, u8x8_io);
-    u8g2_InitDisplay(&gui);
-    u8g2_ClearBuffer(&gui);
-    u8g2_SendBuffer(&gui);
-    u8g2_SetContrast(&gui, 4);
-    u8g2_SetPowerSave(&gui, 0);
+
 
     u8g2_SetFont(&gui, u8g2_font_ncenB08_tr);
     u8g2_DrawStr(&gui, 0, 10, "Hello World!");

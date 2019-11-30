@@ -5,6 +5,7 @@ project(aym)
 include(CMakeToolchain.cmake)
 
 add_definitions(-D${BUILD_TYPE})
+add_definitions(-DLUA_USERCONFIG="lua/inc/l")
 
 file(GLOB SOURCES
         "lib/lua/src/*.c"
@@ -37,6 +38,7 @@ include_directories(
         "pcb_hardware/shift_register/inc"
         "pcb_hardware/aym/inc"
         "pcb_hardware/ltc6903/inc"
+        "pcb_hardware/lcd/inc"
 
         "logic/aym_psg_parser/inc"
 
