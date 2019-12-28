@@ -44,7 +44,7 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     SET(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/mem.ld")
     SET(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/sections.ld")
 
-    SET(MC_LD_FLAGS "--specs=nano.specs -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD} -nostartfiles")
+    SET(MC_LD_FLAGS "--specs=nano.specs -specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD} -nostartfiles")
 
     SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
     SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")

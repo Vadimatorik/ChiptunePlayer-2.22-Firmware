@@ -5,7 +5,6 @@ project(aym)
 include(CMakeToolchain.cmake)
 
 add_definitions(-D${BUILD_TYPE})
-add_definitions(-DLUA_USERCONFIG="lua/inc/l")
 
 file(GLOB SOURCES
         "lib/lua/src/*.c"
@@ -79,7 +78,13 @@ elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
             )
 
     target_link_libraries(${OUT_FILE} ${CMAKE_THREAD_LIBS_INIT})
+
+
+    add_definitions(-DLUA_USE_LINUX)
+    target_link_libraries(${OUT_FILE} dl)
 endif ()
+
+
 
 target_sources(${OUT_FILE} PRIVATE ${BUILD_MODE_SRC_SRC})
 target_link_libraries(${OUT_FILE} "-lm")
