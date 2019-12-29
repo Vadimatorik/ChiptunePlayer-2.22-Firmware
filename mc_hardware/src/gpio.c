@@ -6,8 +6,16 @@
 #include "stm32f4xx_hal_rcc.h"
 #endif
 
+#ifdef AYM_SOFT
+#include "socket_emul_layer.h"
+
+static int fd_pin_lcd_rst = -1;
+static int fd_pin_lcd_dc = -1;
+static int fd_pin_lcd_cs = -1;
+#endif
+
 int init_gpio () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     GPIO_InitTypeDef cfg = {0};
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -110,6 +118,19 @@ int init_gpio () {
     cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     cfg.Alternate = GPIO_AF12_SDIO;
     HAL_GPIO_Init(SD_CMD_GPIO_Port, &cfg);
+#elif defined(AYM_SOFT)
+    if ((fd_pin_lcd_rst = get_socket_fd(SOCKET_PORT_PIN_LCD_RST)) < 0) {
+        return -1;
+    }
+
+    if ((fd_pin_lcd_dc = get_socket_fd(SOCKET_PORT_PIN_LCD_DC)) < 0) {
+        return -1;
+    }
+
+
+    if ((fd_pin_lcd_cs = get_socket_fd(SOCKET_PORT_PIN_LCD_CS)) < 0) {
+        return -1;
+    }
 #endif
 
     return 0;
@@ -156,20 +177,26 @@ void set_pin_sr_strob () {
 }
 
 void set_pin_lcd_cs () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
+#elif defined(AYM_SOFT)
+    socket_gpio_set(fd_pin_lcd_cs);
 #endif
 }
 
 void set_pin_lcd_dc () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_SET);
+#elif defined(AYM_SOFT)
+    socket_gpio_set(fd_pin_lcd_dc);
 #endif
 }
 
 void set_pin_lcd_rst () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_SET);
+#elif defined(AYM_SOFT)
+    socket_gpio_set(fd_pin_lcd_rst);
 #endif
 }
 
@@ -204,20 +231,26 @@ void reset_pin_sr_strob () {
 }
 
 void reset_pin_lcd_cs () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_RESET);
+#elif defined(AYM_SOFT)
+    socket_gpio_reset(fd_pin_lcd_cs);
 #endif
 }
 
 void reset_pin_lcd_dc () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_RESET);
+#elif defined(AYM_SOFT)
+    socket_gpio_reset(fd_pin_lcd_dc);
 #endif
 }
 
 void reset_pin_lcd_rst () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_RESET);
+#elif defined(AYM_SOFT)
+    socket_gpio_reset(fd_pin_lcd_rst);
 #endif
 }
 

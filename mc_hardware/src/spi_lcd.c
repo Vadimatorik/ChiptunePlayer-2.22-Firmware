@@ -21,8 +21,15 @@ SemaphoreHandle_t spi_lcd_mutex = NULL;
 StaticSemaphore_t spi_lcd_mutex_buf = {0};
 #endif
 
+#ifdef AYM_SOFT
+#include "socket_emul_layer.h"
+
+static int fd_spi_lcd = -1;
+#endif
+
+
 int init_spi_lcd () {
-#ifdef AYM_HARDWARE
+#if defined(AYM_HARDWARE)
     spi_lcd_msg_semaphore = xSemaphoreCreateBinaryStatic(&spi_lcd_msg_semaphore_str);
     spi_lcd_mutex = xSemaphoreCreateMutexStatic(&spi_lcd_mutex_buf);
 
@@ -66,9 +73,15 @@ int init_spi_lcd () {
     HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
     __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
-#endif
 
     return 0;
+#elif defined(AYM_SOFT)
+    if ((fd_spi_lcd = get_socket_fd(SOCKET_SPI_LCD)) < 0) {
+        return -1;
+    }
+
+    return 0;
+#endif
 }
 
 #ifdef AYM_HARDWARE
@@ -98,21 +111,8 @@ int spi_lcd_tx (void *d, uint32_t len) {
         return EIO;
     }
 #else
-    if (len == 128) {
-        uint8_t *lcd_array = (uint8_t*)d;
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 128; x++) {
-                int byte_num = ((y / 8) * 128) + x;
-                int bit_num = y % 8;
-                if (lcd_array[byte_num] & (1 << bit_num)) {
-                    printf("0");
-                } else {
-                    printf(" ");
-                }
-            }
-            printf("\n\r");
-        }
-    }
+    socket_spi_tx(fd_spi_lcd, d, len);
+
     return 0;
 #endif
 }

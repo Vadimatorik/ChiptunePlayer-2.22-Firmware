@@ -71,14 +71,15 @@ elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     find_package(Threads)
 
     target_include_directories(${OUT_FILE} PUBLIC
-            "lib/freertos/port/posix/inc")
+            "lib/freertos/port/posix/inc"
+            "socket_emul_layer/inc")
 
     file(GLOB BUILD_MODE_SRC_SRC
             "lib/freertos/port/posix/src/*.c"
+            "socket_emul_layer/src/*.c"
             )
 
     target_link_libraries(${OUT_FILE} ${CMAKE_THREAD_LIBS_INIT})
-
 
     add_definitions(-DLUA_USE_LINUX)
     target_link_libraries(${OUT_FILE} dl)
