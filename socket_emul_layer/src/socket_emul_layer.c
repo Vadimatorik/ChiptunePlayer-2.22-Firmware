@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 int get_socket_fd (uint16_t port) {
-    int s = socket(AF_INET, SOCK_STREAM, 0);
+    int s = socket(AF_INET, SOCK_DGRAM, 0);
     if (s < 0) {
         perror("Error calling socket");
         return -1;

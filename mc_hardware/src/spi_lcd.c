@@ -80,6 +80,8 @@ int init_spi_lcd () {
         return -1;
     }
 
+    set_pin_lcd_cs();
+
     return 0;
 #endif
 }
@@ -111,8 +113,9 @@ int spi_lcd_tx (void *d, uint32_t len) {
         return EIO;
     }
 #else
+    reset_pin_lcd_cs();
     socket_spi_tx(fd_spi_lcd, d, len);
-
+    set_pin_lcd_cs();
     return 0;
 #endif
 }
