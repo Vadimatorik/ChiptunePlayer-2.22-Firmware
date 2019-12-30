@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 int get_socket_fd (uint16_t port) {
-    int s = socket(AF_INET, SOCK_DGRAM, 0);
+    int s = socket(AF_INET, SOCK_STREAM, 0);
     if (s < 0) {
         perror("Error calling socket");
         return -1;
@@ -29,14 +29,14 @@ int get_socket_fd (uint16_t port) {
 
 void socket_gpio_set (int fd) {
     static uint8_t state = 0xFF;
-    while (send(fd, &state, 1, MSG_CONFIRM) != 1);
+    while (send(fd, &state, 1, 0) != 1);
 }
 
 void socket_gpio_reset (int fd) {
     static uint8_t state = 0;
-    while (send(fd, &state, 1, MSG_CONFIRM) != 1);
+    while (send(fd, &state, 1, 0) != 1);
 }
 
 void socket_spi_tx (int fd, void *d, uint32_t len) {
-    while (send(fd, d, len, MSG_CONFIRM) != 1);
+    while (send(fd, d, len, 0) != 1);
 }
