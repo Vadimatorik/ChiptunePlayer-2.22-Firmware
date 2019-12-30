@@ -47,7 +47,7 @@ static void task_up_down_button (void *p) {
     u8g2_SendBuffer(&gui);
 */
 
-int rv = 0;
+    int rv = 0;
 /*
     if ((rv = init_dp()) != 0) {
         return rv;
@@ -97,89 +97,98 @@ int rv = 0;
 */
 
     while (1) {
-      /*  fr = f_open(&fa, f_info.fname, FA_READ);
+        /*  fr = f_open(&fa, f_info.fname, FA_READ);
 
-        if (fr != FR_OK) {
-            while (1);
-        };
+          if (fr != FR_OK) {
+              while (1);
+          };
 
-        if (f_info.fname[0] == 0) {
-            while (1);
-        }
-
-
-        while (1) {
-            if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
-                while(1);
-            }
-
-            if ((rv = dp_set_b1(255)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_c1(255)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_a2(0)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_b2(0)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_c2(0)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_l(255)) != 0) {
-                while(1);
-            }
-
-            if ((rv = dp_set_r(255)) != 0) {
-                while(1);
-            }
-
-            UINT rlen = 0;
-            fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
-
-            if (fr != FR_OK) {
-                while (1);
-            };
-
-            aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
-
-            if (rlen < sizeof(read_psg_test)) {
-                break;
-            }
+          if (f_info.fname[0] == 0) {
+              while (1);
+          }
 
 
-        }
-        aym_psg_reset();
+          while (1) {
+              if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
+                  while(1);
+              }
+
+              if ((rv = dp_set_b1(255)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_c1(255)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_a2(0)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_b2(0)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_c2(0)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_l(255)) != 0) {
+                  while(1);
+              }
+
+              if ((rv = dp_set_r(255)) != 0) {
+                  while(1);
+              }
+
+              UINT rlen = 0;
+              fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
+
+              if (fr != FR_OK) {
+                  while (1);
+              };
+
+              aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
+
+              if (rlen < sizeof(read_psg_test)) {
+                  break;
+              }
 
 
-        fr = f_close(&fa);
+          }
+          aym_psg_reset();
 
-        if (fr != FR_OK) {
-            while (1);
-        };
 
-        fr = f_findnext(&d, &f_info);
+          fr = f_close(&fa);
 
-        if (fr != FR_OK) {
-            while (1);
-        };
+          if (fr != FR_OK) {
+              while (1);
+          };
 
-        if (f_info.fname[0] == 0) {
-            while (1);
-        }*/
+          fr = f_findnext(&d, &f_info);
+
+          if (fr != FR_OK) {
+              while (1);
+          };
+
+          if (f_info.fname[0] == 0) {
+              while (1);
+          }*/
 
     }
 }
 
+#include "socket_emul_layer.h"
+
 int main () {
     int rv = 0;
+
+#ifdef AYM_SOFT
+    if ((rv = init_sockets()) != 0) {
+        return rv;
+    }
+#endif
+
     if ((rv = init_mc_hardware()) != 0) {
         return rv;
     }

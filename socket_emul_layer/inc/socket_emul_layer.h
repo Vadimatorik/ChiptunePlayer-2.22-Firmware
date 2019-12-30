@@ -3,15 +3,10 @@
 #include <stdint.h>
 #include "socket_emul_layer_struct.h"
 
-#define SOCKET_PORT_PIN_LCD_RST 50000
-#define SOCKET_PORT_PIN_LCD_DC 50001
-#define SOCKET_PORT_PIN_LCD_CS 50002
+int init_sockets ();
 
-#define SOCKET_SPI_LCD 50100
+void socket_gpio_lcd_cs_set  (uint8_t state);
+void socket_gpio_lcd_dc_set (uint8_t state);
+void socket_gpio_lcd_rst_set (uint8_t state);
 
-int get_socket_fd (uint16_t port);
-
-void socket_gpio_set (int fd);
-void socket_gpio_reset (int fd);
-
-void socket_spi_tx (int fd, void *d, uint32_t len);
+void socket_spi_lcd_tx (void *d, uint32_t len);

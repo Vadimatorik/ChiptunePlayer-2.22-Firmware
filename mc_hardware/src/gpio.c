@@ -8,10 +8,6 @@
 
 #ifdef AYM_SOFT
 #include "socket_emul_layer.h"
-
-static int fd_pin_lcd_rst = -1;
-static int fd_pin_lcd_dc = -1;
-static int fd_pin_lcd_cs = -1;
 #endif
 
 int init_gpio () {
@@ -119,18 +115,6 @@ int init_gpio () {
     cfg.Alternate = GPIO_AF12_SDIO;
     HAL_GPIO_Init(SD_CMD_GPIO_Port, &cfg);
 #elif defined(AYM_SOFT)
-    if ((fd_pin_lcd_rst = get_socket_fd(SOCKET_PORT_PIN_LCD_RST)) < 0) {
-        return -1;
-    }
-
-    if ((fd_pin_lcd_dc = get_socket_fd(SOCKET_PORT_PIN_LCD_DC)) < 0) {
-        return -1;
-    }
-
-
-    if ((fd_pin_lcd_cs = get_socket_fd(SOCKET_PORT_PIN_LCD_CS)) < 0) {
-        return -1;
-    }
 #endif
 
     return 0;
@@ -180,7 +164,7 @@ void set_pin_lcd_cs () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_SET);
 #elif defined(AYM_SOFT)
-    socket_gpio_set(fd_pin_lcd_cs);
+    socket_gpio_lcd_cs_set(0xFF);
 #endif
 }
 
@@ -188,7 +172,7 @@ void set_pin_lcd_dc () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_SET);
 #elif defined(AYM_SOFT)
-    socket_gpio_set(fd_pin_lcd_dc);
+    socket_gpio_lcd_dc_set(0xFF);
 #endif
 }
 
@@ -196,7 +180,7 @@ void set_pin_lcd_rst () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_SET);
 #elif defined(AYM_SOFT)
-    socket_gpio_set(fd_pin_lcd_rst);
+    socket_gpio_lcd_rst_set(0xFF);
 #endif
 }
 
@@ -234,7 +218,7 @@ void reset_pin_lcd_cs () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_CS_GPIO, LCD_CS, GPIO_PIN_RESET);
 #elif defined(AYM_SOFT)
-    socket_gpio_reset(fd_pin_lcd_cs);
+    socket_gpio_lcd_cs_set(0);
 #endif
 }
 
@@ -242,7 +226,7 @@ void reset_pin_lcd_dc () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_A0_GPIO, LCD_A0, GPIO_PIN_RESET);
 #elif defined(AYM_SOFT)
-    socket_gpio_reset(fd_pin_lcd_dc);
+    socket_gpio_lcd_dc_set(0);
 #endif
 }
 
@@ -250,7 +234,7 @@ void reset_pin_lcd_rst () {
 #if defined(AYM_HARDWARE)
     HAL_GPIO_WritePin(LCD_RES_GPIO, LCD_RES, GPIO_PIN_RESET);
 #elif defined(AYM_SOFT)
-    socket_gpio_reset(fd_pin_lcd_rst);
+    socket_gpio_lcd_rst_set(0);
 #endif
 }
 

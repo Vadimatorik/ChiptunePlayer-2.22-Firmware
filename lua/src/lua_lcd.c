@@ -9,7 +9,7 @@
 
 u8g2_t u8g2 = {0};
 
-static int lua_u8g2_clear_buf (lua_State *L) {
+static int lua_u8g2_clean (lua_State *L) {
     u8g2_ClearBuffer(&u8g2);
     return 0;
 }
@@ -404,7 +404,7 @@ static int lua_u8g2_update_area (lua_State *L) {
 }
 
 static const luaL_Reg lcd_lib[] = {
-    {"clear_buf",                         lua_u8g2_clear_buf},
+    {"clean",                             lua_u8g2_clean},
     {"send_buf",                          lua_u8g2_send_buf},
     {"set_pwr_save",                      lua_u8g2_set_pwr_save},
     {"draw_box",                          lua_u8g2_draw_box},

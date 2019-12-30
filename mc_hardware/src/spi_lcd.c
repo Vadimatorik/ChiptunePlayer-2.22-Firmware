@@ -23,8 +23,6 @@ StaticSemaphore_t spi_lcd_mutex_buf = {0};
 
 #ifdef AYM_SOFT
 #include "socket_emul_layer.h"
-
-static int fd_spi_lcd = -1;
 #endif
 
 
@@ -76,10 +74,6 @@ int init_spi_lcd () {
 
     return 0;
 #elif defined(AYM_SOFT)
-    if ((fd_spi_lcd = get_socket_fd(SOCKET_SPI_LCD)) < 0) {
-        return -1;
-    }
-
     set_pin_lcd_cs();
 
     return 0;
@@ -114,7 +108,7 @@ int spi_lcd_tx (void *d, uint32_t len) {
     }
 #else
     reset_pin_lcd_cs();
-    socket_spi_tx(fd_spi_lcd, d, len);
+    socket_spi_lcd_tx(d, len);
     set_pin_lcd_cs();
     return 0;
 #endif
