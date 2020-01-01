@@ -7,6 +7,8 @@
 #include "l.h"
 #include "lua.h"
 
+#include <string.h>
+
 u8g2_t u8g2 = {0};
 
 static int lua_u8g2_clean (lua_State *L) {
@@ -403,6 +405,32 @@ static int lua_u8g2_update_area (lua_State *L) {
     return 0;
 }
 
+typedef struct {
+    const char *name;
+    const uint8_t *data;
+} font_item;
+
+static font_item fonts[] = {
+    {"u8g2_font_5x7_tf", u8g2_font_5x7_tf}
+};
+
+static int lua_u8g2_set_font (lua_State *L) {
+    int stack = 1;
+
+    const char *font_name = luaL_checklstring(L, stack, NULL);
+
+    for (int i = 0; i < sizeof(fonts)/sizeof(fonts[0]); i++) {
+        if (strcmp(fonts[i].name, font_name) == 0) {
+            u8g2_SetFont(&u8g2, fonts[i].data);
+            return 0;
+        }
+    }
+
+    luaL_argcheck( L, 0, stack, "invalid font" );
+
+    return 0;
+}
+
 static const luaL_Reg lcd_lib[] = {
     {"clean",                             lua_u8g2_clean},
     {"send_buf",                          lua_u8g2_send_buf},
@@ -433,6 +461,7 @@ static const luaL_Reg lcd_lib[] = {
     {"set_display_rotation",              lua_u8g2_set_display_rotation},
     {"set_draw_color",                    lua_u8g2_set_draw_color},
     {"set_flip_mode",                     lua_u8g2_set_flip_mode},
+    {"set_font",                          lua_u8g2_set_font},
     {"set_font_direction",                lua_u8g2_set_font_direction},
     {"set_font_mode",                     lua_u8g2_set_font_mode},
     {"set_font_pos_baseline",             lua_u8g2_set_font_pos_baseline},
