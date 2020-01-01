@@ -415,9 +415,9 @@ static font_item fonts[] = {
 };
 
 static int lua_u8g2_set_font (lua_State *L) {
-    int stack = 1;
+    int stack = 0;
 
-    const char *font_name = luaL_checklstring(L, stack, NULL);
+    const char *font_name = luaL_checklstring(L, ++stack, NULL);
 
     for (int i = 0; i < sizeof(fonts)/sizeof(fonts[0]); i++) {
         if (strcmp(fonts[i].name, font_name) == 0) {

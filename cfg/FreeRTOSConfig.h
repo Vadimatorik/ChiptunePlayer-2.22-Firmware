@@ -5,8 +5,17 @@
 
 #define configUSE_PREEMPTION						1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION		0
-#define configCPU_CLOCK_HZ							16000000
-#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 80 * 1024 ) )
+#define configCPU_CLOCK_HZ							168000000
+
+#ifdef AYM_SOFT
+#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 1024 * 1024 * 5 ) )
+#endif
+
+#ifdef AYM_HARDWARE
+#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 60 * 1024 ) )
+#endif
+
+
 #define configTICK_RATE_HZ							( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES						( 5 )
 #define configMINIMAL_STACK_SIZE					( ( unsigned short ) 300 )

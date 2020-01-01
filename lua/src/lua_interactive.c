@@ -39,6 +39,10 @@ static int add_lua_libs () {
         return -1;
     }
 
+    if (luaopen_os(L) != 1) {
+        return -1;
+    }
+
     return 0;
 }
 
@@ -212,10 +216,23 @@ static int lua_report (int status) {
 
 #include "u8g2.h"
 
-
-extern u8g2_t u8g2;
 #include "aym_hardware.h"
 #include "lcd_driver.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+extern u8g2_t u8g2;
+
+
+int load_start_scripts () {
+    if (luaL_loadfile(L, "../scripts/init.lua") || lua_pcall(L, 0, 0, 0)) {
+        return -1;
+    }
+
+    return 0;
+}
 
 void task_lua_interactive (void *p) {
     p = p;
@@ -237,6 +254,11 @@ void task_lua_interactive (void *p) {
 
     luaL_requiref(L, "lcd", luaopen_lcd, 1);
     lua_pop(L, 1);
+
+    luaL_requiref(L, "os", luaopen_os, 1);
+    lua_pop(L, 1);
+
+    while (load_start_scripts() != 0);
 
     u8g2_Setup_st7565_ea_dogm128_f(&u8g2, U8G2_R0, u8x8_byte_send, u8x8_io);
     u8g2_InitDisplay(&u8g2);

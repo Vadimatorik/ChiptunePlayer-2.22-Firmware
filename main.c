@@ -10,7 +10,7 @@
 #include "aym_psg_parser.h"
 #include "l.h"
 
-#define TASK_LUA_STACK_SIZE 1000
+#define TASK_LUA_STACK_SIZE 5000
 
 static StaticTask_t task_lua_buf;
 static StackType_t task_lua_stack[TASK_LUA_STACK_SIZE];

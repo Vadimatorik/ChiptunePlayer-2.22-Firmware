@@ -60,3 +60,21 @@ function play_time:draw ()
 	lcd.set_font(self.font)
 	lcd.draw_utf8(self.pos.x, self.pos.y, self.s.data)
 end
+
+function play_time:inc ()
+	self.time.sec = self.time.sec + 1
+	self.s.data = self:get_s_time(self.time.sec)
+	self.s.width = lcd.get_str_width(self.s.data)
+end
+
+function play_time:set (time)
+	self.time.sec = time
+	self.s.data = self:get_s_time(self.time.sec)
+	self.s.width = lcd.get_str_width(self.s.data)
+end
+
+function play_time:reset ()
+	self.time.sec = 0
+	self.s.data = self:get_s_time(self.time.sec)
+	self.s.width = lcd.get_str_width(self.s.data)
+end

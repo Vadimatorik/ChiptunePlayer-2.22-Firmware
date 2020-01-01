@@ -2,6 +2,7 @@ percent_line = {}
 
 function percent_line:new (x, y, w, h, percent)
 	local o = {}
+	o.percent = percent
 	o.frame = {}
 	o.frame.pos = {}
 	o.frame.pos.x = x
@@ -21,5 +22,16 @@ end
 
 function percent_line:draw ()
 	lcd.draw_frame(self.frame.pos.x, self.frame.pos.y, self.frame.pos.w, self.frame.pos.h)
-	lcd.draw_box(self.box.pos.x, self.box.pos.y, self.box.pos.w, self.box.pos.h)
+
+	if self.percent ~= 0 then
+		lcd.draw_box(self.box.pos.x, self.box.pos.y, math.floor(self.box.pos.w * (self.percent / 100)), self.box.pos.h)
+	end
+end
+
+function percent_line:set (percent)
+	self.percent = percent
+end
+
+function percent_line:reset ()
+	self:set(0)
 end
