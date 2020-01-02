@@ -123,20 +123,7 @@ static void task_up_down_button (void *p) {
 
 
     fr = f_close(&fa);
-
-    if (fr != FR_OK) {
-        while (1);
-    };
-
-    fr = f_findnext(&d, &f_info);
-
-    if (fr != FR_OK) {
-        while (1);
-    };
-
-    if (f_info.fname[0] == 0) {
-        while (1);
-    }*/
+*/
 
     }
 }

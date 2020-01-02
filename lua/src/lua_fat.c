@@ -79,6 +79,25 @@ static int lua_fat_dir_findfirst (lua_State *L) {
     return 1;
 }
 
+static int lua_fat_dir_findnext (lua_State *L) {
+    DIR *d = (DIR *)luaL_checkudata(L, 1, "fat.dir");
+    FRESULT fr = 0;
+
+    FILINFO *filinfo = (FILINFO *)lua_newuserdata(L, sizeof(FILINFO));
+    luaL_getmetatable(L, "fat.filinfo");
+    lua_setmetatable(L, -2);
+
+    memset(filinfo, 0, sizeof(FILINFO));
+
+    fr = f_findnext(d, filinfo);
+
+    if (fr != FR_OK) {
+        luaL_error(L, "error findnext in dir, code %lu", fr);
+    };
+
+    return 1;
+}
+
 static int lua_fat_new_file (lua_State *L) {
     FILE *f = (FILE *)lua_newuserdata(L, sizeof(FILE));
     memset(f, 0, sizeof(FILE));
@@ -118,9 +137,7 @@ static int lua_fat_file_open (lua_State *L) {
     return 0;
 }
 
-
-
-static int lua_fat_filinfo_fname (lua_State *L) {
+static int lua_fat_filinfo_name (lua_State *L) {
     FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
 
     lua_pushstring(L, f_info->fname);
@@ -128,6 +145,21 @@ static int lua_fat_filinfo_fname (lua_State *L) {
     return 1;
 }
 
+static int lua_fat_filinfo_size (lua_State *L) {
+    FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
+
+    lua_pushinteger(L, f_info->fsize);
+
+    return 1;
+}
+
+static int lua_fat_filinfo_is_dir (lua_State *L) {
+    FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
+
+    lua_pushboolean(L, f_info->fattrib & AM_DIR);
+
+    return 1;
+}
 
 static const luaL_Reg fat_fat[] = {
     {"mount", lua_fat_fat_mount},
@@ -137,11 +169,14 @@ static const luaL_Reg fat_fat[] = {
 static const luaL_Reg fat_dir[] = {
     {"open",      lua_fat_dir_open},
     {"findfirst", lua_fat_dir_findfirst},
+    {"findnext", lua_fat_dir_findnext},
     {NULL, NULL}
 };
 
 static const luaL_Reg lua_fat_filinfo[] = {
-    {"fname", lua_fat_filinfo_fname},
+    {"name", lua_fat_filinfo_name},
+    {"size", lua_fat_filinfo_size},
+    {"is_dir", lua_fat_filinfo_is_dir},
     {NULL, NULL}
 };
 
