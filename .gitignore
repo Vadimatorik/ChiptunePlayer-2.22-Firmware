@@ -2,3 +2,5 @@ build/
 *.png
 cmake-*
 .idea*
+img/
+microsd/
