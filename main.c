@@ -70,17 +70,7 @@ static void task_up_down_button (void *p) {
 
     while (1) {
         /*
-          fr = f_open(&fa, f_info.fname, FA_READ);
-
-          if (fr != FR_OK) {
-              while (1);
-          };
-
-          if (f_info.fname[0] == 0) {
-              while (1);
-          }
-
-              if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
+         * if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
                   while(1);
               }
 

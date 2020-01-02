@@ -79,6 +79,47 @@ static int lua_fat_dir_findfirst (lua_State *L) {
     return 1;
 }
 
+static int lua_fat_new_file (lua_State *L) {
+    FILE *f = (FILE *)lua_newuserdata(L, sizeof(FILE));
+    memset(f, 0, sizeof(FILE));
+
+    luaL_getmetatable(L, "fat.fil");
+    lua_setmetatable(L, -2);
+
+    return 1;
+}
+
+static int lua_fat_file_open (lua_State *L) {
+    FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
+    FRESULT fr = 0;
+    const char *path = luaL_checkstring(L, 2);
+    const char *flags = luaL_checkstring(L, 3);
+
+    BYTE mode = 0;
+
+    while (*flags != 0) {
+        if (*flags == 'w') {
+            mode |= FA_WRITE;
+        }
+
+        if (*flags == 'r') {
+            mode |= FA_READ;
+        }
+
+        flags++;
+    }
+
+    fr = f_open(f, path, mode);
+
+    if (fr != FR_OK) {
+        luaL_error(L, "error open file, code %lu", fr);
+    };
+
+    return 0;
+}
+
+
+
 static int lua_fat_filinfo_fname (lua_State *L) {
     FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
 
@@ -94,7 +135,7 @@ static const luaL_Reg fat_fat[] = {
 };
 
 static const luaL_Reg fat_dir[] = {
-    {"open", lua_fat_dir_open},
+    {"open",      lua_fat_dir_open},
     {"findfirst", lua_fat_dir_findfirst},
     {NULL, NULL}
 };
@@ -104,9 +145,15 @@ static const luaL_Reg lua_fat_filinfo[] = {
     {NULL, NULL}
 };
 
+static const luaL_Reg fat_file[] = {
+    {"open",      lua_fat_file_open},
+    {NULL, NULL}
+};
+
 static const luaL_Reg fat_lib[] = {
-    {"new_fat", lua_fat_new_fat},
-    {"new_dir", lua_fat_new_dir},
+    {"new_fat",  lua_fat_new_fat},
+    {"new_dir",  lua_fat_new_dir},
+    {"new_file", lua_fat_new_file},
     {NULL, NULL}
 };
 
@@ -120,6 +167,11 @@ LUAMOD_API int luaopen_fat (lua_State *L) {
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
     luaL_setfuncs(L, lua_fat_filinfo, 0);
+
+    luaL_newmetatable(L, "fat.fil");
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -2, "__index");
+    luaL_setfuncs(L, fat_file, 0);
 
     luaL_newmetatable(L, "fat.fat");
     lua_pushvalue(L, -1);
