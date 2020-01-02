@@ -7,6 +7,7 @@ include(CMakeToolchain.cmake)
 add_definitions(-D${BUILD_TYPE})
 
 file(GLOB SOURCES
+        "lib/fatfs/src/*.c"
         "lib/lua/src/*.c"
         "lib/u8g2/csrc/*.c"
 
@@ -24,6 +25,8 @@ file(GLOB SOURCES
 include_directories(
         "cfg"
 
+
+        "lib/fatfs/inc"
         "lib/lua/inc"
         "lib/st/hal/inc"
         "lib/st/hal/inc/legacy"
@@ -58,15 +61,13 @@ add_executable(${OUT_FILE} ${SOURCES})
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     target_include_directories(${OUT_FILE} PUBLIC
             "lib/freertos/port/mc/inc"
-            "lib/fatfs/inc"
             )
 
     file(GLOB BUILD_MODE_SRC_SRC
             "lib/st/device/src/*.c"
             "lib/st/hal/src/*.c"
             "startup/src/*.c"
-            "lib/freertos/port/mc/src/*.c"
-            "lib/fatfs/src/*.c")
+            "lib/freertos/port/mc/src/*.c")
 elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     find_package(Threads)
 

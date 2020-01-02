@@ -11,7 +11,6 @@ typedef struct _aym_reg_data {
 } aym_reg_data_t;
 
 int init_aym_hardware ();
-void aym_hardware_irq_handler ();
 int add_aym_element (aym_reg_data_t *item);
 int clear_aym_hardware ();
 void queue_clear ();

@@ -18,11 +18,9 @@ int init_uart ();
 int init_spi_board ();
 int init_spi_lcd ();
 int init_tim_lcd_pwm ();
-int init_tim_int_ay ();
 int init_sdio ();
-int start_tim_lcd_pwm ();
-int start_tim_int_ay ();
 
+int start_tim_lcd_pwm ();
 
 int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block);
 int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block);

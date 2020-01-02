@@ -1,12 +1,17 @@
+#include "mc_hardware.h"
+
 #ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_sd.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
 #include "freertos_headers.h"
-#include "mc_hardware.h"
-#endif
-
+#elif defined(AYM_SOFT)
+#include <stdio.h>
+#include <fcntl.h>
 #include <errno.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef AYM_HARDWARE
 SD_HandleTypeDef sdio = {0};
@@ -18,6 +23,9 @@ static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
 static SemaphoreHandle_t tx_msg_semaphore = NULL;
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
+#elif defined(AYM_SOFT)
+#define SD_BLOCK_SIZE 512
+static FILE *sd = NULL;
 #endif
 
 int sdio_is_detected () {
@@ -103,13 +111,20 @@ int init_sdio () {
 
     HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
-#endif
 
     return 0;
+#elif defined(AYM_SOFT)
+    sd = fopen("/home/vadimatorik/proj/ChiptunePlayer-2.22-Firmware/img/microsd.img", "r");
+    if (sd == NULL) {
+        return -1;
+    } else {
+        return 0;
+    }
+#endif
 }
 
-#ifdef AYM_HARDWARE
 int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
+#ifdef AYM_HARDWARE
     xSemaphoreTake(rx_msg_semaphore, 0);
 
     if (HAL_SD_ReadBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) != HAL_OK) {
@@ -121,9 +136,21 @@ int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
     } else {
         return EIO;
     }
+#elif defined(AYM_SOFT)
+    if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
+        return -1;
+    }
+
+    if (fread(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
+        return 0;
+    } else {
+        return -1;
+    }
+#endif
 }
 
 int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
+#ifdef AYM_HARDWARE
     xSemaphoreTake(tx_msg_semaphore, 0);
 
     if ((HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) == HAL_OK) != HAL_OK) {
@@ -135,40 +162,70 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
     } else {
         return EIO;
     }
+#elif defined(AYM_SOFT)
+    if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
+        return -1;
+    }
+
+    if (fwrite(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
+        return 0;
+    } else {
+        return -1;
+    }
+#endif
 }
 
+
 int sdio_get_status () {
+#ifdef AYM_HARDWARE
     HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
 
-    if ((s == HAL_SD_CARD_READY) || (s == HAL_SD_CARD_TRANSFER) ) {
+    if ((s == HAL_SD_CARD_READY) || (s == HAL_SD_CARD_TRANSFER)) {
         return 0;
     }
 
-    return EADDRNOTAVAIL;
+    return -1;
+#elif defined(AYM_SOFT)
+    if (sd != NULL) {
+        return 0;
+    } else {
+        return -1;
+    }
+#endif
 }
 
 int sdio_get_sector_count (uint32_t *count) {
+#ifdef AYM_HARDWARE
     HAL_SD_CardInfoTypeDef info;
     if (HAL_SD_GetCardInfo(&sdio, &info) != HAL_OK) {
         return EIO;
     }
 
     *count = info.BlockNbr;
+#elif defined(AYM_SOFT)
+    fseek(sd, 0, SEEK_END);
+    *count = ftell(sd) / SD_BLOCK_SIZE;
+#endif
 
     return 0;
 }
 
 int sdio_get_block_size (uint32_t *size) {
+#ifdef AYM_HARDWARE
     HAL_SD_CardInfoTypeDef info;
     if (HAL_SD_GetCardInfo(&sdio, &info) != HAL_OK) {
         return EIO;
     }
 
     *size = info.BlockSize;
+#elif defined(AYM_SOFT)
+    *size = SD_BLOCK_SIZE;
+#endif
 
     return 0;
 }
 
+#ifdef AYM_HARDWARE
 void SDIO_IRQHandler () {
     HAL_SD_IRQHandler(&sdio);
 }

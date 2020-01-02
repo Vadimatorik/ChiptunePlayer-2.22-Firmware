@@ -27,10 +27,6 @@ int init_mc_hardware () {
         return rv;
     }
 
-    if ((rv = init_tim_int_ay()) != 0) {
-        return rv;
-    }
-
     if ((rv = init_tim_lcd_pwm()) != 0) {
         return rv;
     }

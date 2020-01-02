@@ -1,21 +1,21 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
+#include "aym_hardware.h"
 
 #include "dp.h"
 #include "sr.h"
-
 
 #include <errno.h>
 #include "ltc6903.h"
 #include "aym_psg_parser.h"
 #include "l.h"
 
-#define TASK_LUA_STACK_SIZE 5000
+#define TASK_LUA_STACK_SIZE 1000
 
 static StaticTask_t task_lua_buf;
 static StackType_t task_lua_stack[TASK_LUA_STACK_SIZE];
 
-#define TASK_UP_DOWN_BUTTON 2000
+#define TASK_UP_DOWN_BUTTON 1000
 
 static StaticTask_t task_up_down_button_buf;
 static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
@@ -23,9 +23,7 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 #define AY_DIP_28_PIN_INDEX 0
 #define AY_DIP_40_PIN_INDEX 1
 
-//
 
-/*
 #include "ff.h"
 
 FRESULT fr = 0;
@@ -36,28 +34,17 @@ FIL fa = {0};
 static FATFS f = {0};
 
 uint8_t read_psg_test[1024*1];
-*/
 static void task_up_down_button (void *p) {
     p = p;
-/*
-
-
-    u8g2_SetFont(&gui, u8g2_font_ncenB08_tr);
-    u8g2_DrawStr(&gui, 0, 10, "Hello World!");
-    u8g2_SendBuffer(&gui);
-*/
-
     int rv = 0;
-/*
+
     if ((rv = init_dp()) != 0) {
-        return rv;
+        while(1);
     }
 
     if ((rv = init_sr()) != 0) {
         while(1);
     }
-
-
 
     if ((rv = init_aym_hardware()) != 0) {
         while(1);
@@ -66,7 +53,6 @@ static void task_up_down_button (void *p) {
     if ((rv = ltc6903_init()) != 0) {
         while(1);
     }
-
 
     fr = f_mount(&f, "0", 1);
 
@@ -91,13 +77,10 @@ static void task_up_down_button (void *p) {
     ltc6903_start();
     ltc6903_set_requency(1.77e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
 
-    start_tim_int_ay();
-
     aym_psg_reset();
-*/
 
     while (1) {
-        /*  fr = f_open(&fa, f_info.fname, FA_READ);
+          fr = f_open(&fa, f_info.fname, FA_READ);
 
           if (fr != FR_OK) {
               while (1);
@@ -109,6 +92,7 @@ static void task_up_down_button (void *p) {
 
 
           while (1) {
+              /*
               if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
                   while(1);
               }
@@ -139,7 +123,7 @@ static void task_up_down_button (void *p) {
 
               if ((rv = dp_set_r(255)) != 0) {
                   while(1);
-              }
+              }*/
 
               UINT rlen = 0;
               fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
@@ -173,7 +157,7 @@ static void task_up_down_button (void *p) {
 
           if (f_info.fname[0] == 0) {
               while (1);
-          }*/
+          }
 
     }
 }

@@ -38,6 +38,8 @@ chip_reg_data aym_data[AY_NUM] = {0};
 static SemaphoreHandle_t tim_irq_request = NULL;
 static StaticSemaphore_t tim_irq_request_buf = {0};
 
+TimerHandle_t irq_timer = NULL;
+
 typedef struct _aym_out_data {
     uint8_t reg;
     uint8_t data;
@@ -147,7 +149,7 @@ int clear_aym_hardware () {
     return update_all_reg();
 }
 
-int flags_is_set (uint8_t* flags) {
+int flags_is_set (uint8_t *flags) {
     for (int i = 0; i < AY_NUM; i++) {
         if (flags[i] == 0) {
             return -1;
@@ -161,6 +163,7 @@ static void task_aym (void *p) {
     p = p;
 
     aym_out_data q_data_buf[AY_NUM] = {0};
+    xTimerStart(irq_timer, 0);
 
     while (1) {
         xSemaphoreTake (tim_irq_request, portMAX_DELAY);
@@ -214,14 +217,24 @@ static void task_aym (void *p) {
     }
 }
 
+
+static void tim_irq_handler (TimerHandle_t tim) {
+    xSemaphoreGive(tim_irq_request);
+}
+
 int init_aym_hardware () {
     tim_irq_request = xSemaphoreCreateBinaryStatic(&tim_irq_request_buf);
+
+    irq_timer = xTimerCreate("aym_timer", 20, pdTRUE, NULL, tim_irq_handler);
+
     xTaskCreateStatic(task_aym, "aym_hardware", TASK_AYM_HARDWARE_STACK_SIZE, NULL, TASK_AYM_HARDWARE_PRIO,
                       tb, &ts);
     for (int i = 0; i < AY_NUM; i++) {
         aym_reg_data_queue[i] = xQueueCreateStatic(YM_REG_DATA_QUEUE_LEN, sizeof(aym_reg_data_t),
                                                    &aym_reg_data_queue_buf[i][0], &aym_reg_data_str[i]);
     }
+
+
     return 0;
 }
 
@@ -237,9 +250,4 @@ int add_aym_element (aym_reg_data_t *item) {
     }
 }
 
-
-void aym_hardware_irq_handler () {
-    xSemaphoreGiveFromISR(tim_irq_request, NULL);
-  //  portYIELD_FROM_ISR(pdTRUE);
-}
 
