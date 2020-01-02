@@ -46,7 +46,6 @@ int aym_psg_play (uint8_t chip_num, const uint8_t *data, uint32_t len) {
     }
 
 
-
     while (pos < len) {
         if (reg_got == 1) {
             reg_got = 0;

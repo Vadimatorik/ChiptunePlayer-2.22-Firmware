@@ -26,45 +26,34 @@ static StackType_t task_up_down_button_stack[TASK_UP_DOWN_BUTTON];
 
 #include "ff.h"
 
-FRESULT fr = 0;
+/*
+
 DIR d = {0};
 FILINFO f_info = {0};
-FIL fa = {0};
+FIL fa = {0};*/
 
-static FATFS f = {0};
+//uint8_t read_psg_test[1024*1];
 
-uint8_t read_psg_test[1024*1];
 static void task_up_down_button (void *p) {
     p = p;
     int rv = 0;
 
     if ((rv = init_dp()) != 0) {
-        while(1);
+        while (1);
     }
 
     if ((rv = init_sr()) != 0) {
-        while(1);
+        while (1);
     }
 
     if ((rv = init_aym_hardware()) != 0) {
-        while(1);
+        while (1);
     }
 
     if ((rv = ltc6903_init()) != 0) {
-        while(1);
+        while (1);
     }
 
-    fr = f_mount(&f, "0", 1);
-
-    if (fr != FR_OK) {
-        while (1);
-    };
-
-    fr = f_findfirst(&d, &f_info, ".", "*.psg");
-
-    if (fr != FR_OK) {
-        while (1);
-    };
 
     sr_set_pin_ay_1_res();
     sr_reset_pin_pwr_ay_1_on();
@@ -80,6 +69,7 @@ static void task_up_down_button (void *p) {
     aym_psg_reset();
 
     while (1) {
+        /*
           fr = f_open(&fa, f_info.fname, FA_READ);
 
           if (fr != FR_OK) {
@@ -90,9 +80,6 @@ static void task_up_down_button (void *p) {
               while (1);
           }
 
-
-          while (1) {
-              /*
               if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.
                   while(1);
               }
@@ -125,39 +112,41 @@ static void task_up_down_button (void *p) {
                   while(1);
               }*/
 
-              UINT rlen = 0;
-              fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
 
-              if (fr != FR_OK) {
-                  while (1);
-              };
+        /*
+        UINT rlen = 0;
+        fr = f_read(&fa, read_psg_test, sizeof(read_psg_test), &rlen);
 
-              aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
+        if (fr != FR_OK) {
+            while (1);
+        };
 
-              if (rlen < sizeof(read_psg_test)) {
-                  break;
-              }
+        aym_psg_play(AY_DIP_28_PIN_INDEX, read_psg_test, rlen);
 
-
-          }
-          aym_psg_reset();
+        if (rlen < sizeof(read_psg_test)) {
+            break;
+        }
 
 
-          fr = f_close(&fa);
+    }
+    aym_psg_reset();
 
-          if (fr != FR_OK) {
-              while (1);
-          };
 
-          fr = f_findnext(&d, &f_info);
+    fr = f_close(&fa);
 
-          if (fr != FR_OK) {
-              while (1);
-          };
+    if (fr != FR_OK) {
+        while (1);
+    };
 
-          if (f_info.fname[0] == 0) {
-              while (1);
-          }
+    fr = f_findnext(&d, &f_info);
+
+    if (fr != FR_OK) {
+        while (1);
+    };
+
+    if (f_info.fname[0] == 0) {
+        while (1);
+    }*/
 
     }
 }

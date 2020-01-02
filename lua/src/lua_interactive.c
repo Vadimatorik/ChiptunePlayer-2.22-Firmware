@@ -43,6 +43,10 @@ static int add_lua_libs () {
         return -1;
     }
 
+    if (luaopen_fat(L) != 1) {
+        return -1;
+    }
+
     return 0;
 }
 
@@ -256,6 +260,9 @@ void task_lua_interactive (void *p) {
     lua_pop(L, 1);
 
     luaL_requiref(L, "os", luaopen_os, 1);
+    lua_pop(L, 1);
+
+    luaL_requiref(L, "fat", luaopen_fat, 1);
     lua_pop(L, 1);
 
     while (load_start_scripts() != 0);
