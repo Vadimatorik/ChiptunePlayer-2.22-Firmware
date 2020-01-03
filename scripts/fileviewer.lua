@@ -38,7 +38,7 @@ end
 function fileviewer:_new_line (gui_line_num, item_num)
 	self.gui_lines[gui_line_num] = {}
 	local x_start = self.frame.pos.x + 1 + self.space.icon
-	local y = self.frame.pos.y + 1 + self.space.icon + (self.font.h + self.space.icon * 2 + 2) * (gui_line_num - 1)
+	local y = self.frame.pos.y + 1 + self.space.icon + (self.font.h + self.space.icon * 2 + 1) * (gui_line_num - 1)
 	self.gui_lines[gui_line_num].icon = file_icon:new(self.items[item_num].type, x_start, y)
 
 	local time_w = 0
@@ -51,8 +51,12 @@ function fileviewer:_new_line (gui_line_num, item_num)
 		self.gui_lines[gui_line_num].time:set_pos(x_time, y)
 	end
 
-	local lin_w = self.frame.pos.w - (self.space.icon + self.icon.w * 2 + 2 + self.space.scroll + time_w)
-	self.gui_lines[gui_line_num].s = shift_string:new(self.items[item_num].name, self.font.data, x_start, y, lin_w,self.font.h)
+	local lin_w = self.frame.pos.w - (self.space.icon + 1 + self.icon.w + 2 + self.space.scroll + time_w)
+	self.gui_lines[gui_line_num].s = shift_string:new(self.items[item_num].name, self.font.data, x_start, y, lin_w, self.font.h)
+
+	if self.cur_pos == gui_line_num then
+		self.gui_lines[gui_line_num].s:set_mode(true)
+	end
 end 
 
 function fileviewer:add_item (type, name, time)
@@ -94,7 +98,7 @@ function fileviewer:draw ()
 		local l_x = self.frame.pos.x + 1 + self.space.icon * 2 + self.icon.w
 		local l_w = self.frame.pos.w - (self.space.icon * 2 + self.icon.w) - self.space.scroll - 1
 
-		lcd.draw_h_line(l_x, self.frame.pos.y + ((self.font.h + self.space.string.y * 2) + 2) * i, l_w)
+		lcd.draw_h_line(l_x, self.frame.pos.y + ((self.font.h + self.space.string.y * 2) + 1) * i, l_w)
 	end
 
 	self.scroll:draw()

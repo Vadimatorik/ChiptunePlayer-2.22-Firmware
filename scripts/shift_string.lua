@@ -14,7 +14,8 @@ function shift_string:new (s, font, x, y, w, h)
 	o.pos.x = {}
 	o.pos.x.cur = x
 	o.pos.x.start = x
-	
+	o.mode = false
+
 	if o.s.width < w then
 		o.pos.x.min = o.pos.x.cur
 	else
@@ -33,9 +34,23 @@ function shift_string:left ()
 	end
 end
 
+function shift_string:set_mode (mode)
+	self.mode = mode
+end
+
 function shift_string:draw ()
 	lcd.set_font(self.font)
 	lcd.set_clip_window(self.pos.x.start, self.pos.y, self.pos.x.start + self.w, self.pos.y + self.h);
-	lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
-	lcd.set_clip_window(1, 1, 128, 64)
+
+	if self.mode then
+		lcd.draw_box(self.pos.x.start, self.pos.y, self.w, self.h)
+		lcd.set_draw_color(0)
+		lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
+		lcd.set_draw_color(1)
+	else
+		lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
+	end
+	
+	lcd.set_clip_window(1, 1, 128 + 1, 64 + 1)
+
 end
