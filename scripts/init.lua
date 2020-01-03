@@ -1,4 +1,6 @@
 dofile("../scripts/play_bar.lua")
 dofile("../scripts/percent_line.lua")
 dofile("../scripts/play_time.lua")
-dofile("../scripts/playlist_item_string.lua")
+dofile("../scripts/shift_string.lua")
+dofile("../scripts/file_icon.lua")
+dofile("../scripts/scroll.lua")

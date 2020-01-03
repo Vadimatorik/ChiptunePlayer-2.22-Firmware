@@ -10,7 +10,7 @@ function play_bar:new ()
 	o.end_time = play_time:new(o.font, o.time.ed, 127 - o.cur_time.s.width, 63 + 1)
 	o.percent_line = percent_line:new(o.cur_time.pos.x + 1 + o.end_time.s.width, 63 - 6 + 1, 127 - o.end_time.s.width - 1 - (o.cur_time.pos.x + 1 + o.end_time.s.width), 6, 0)
 	setmetatable(o, self)
-    self.__index = self; 
+    self.__index = self
     return o
 end
 

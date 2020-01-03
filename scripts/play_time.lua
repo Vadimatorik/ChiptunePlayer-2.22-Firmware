@@ -52,7 +52,7 @@ function play_time:new (font, time_sec, x, y)
 	o.s.data = self:get_s_time(o.time.sec)
 	o.s.width = lcd.get_str_width(o.s.data)
 	setmetatable(o, self)
-    self.__index = self; 
+    self.__index = self
     return o
 end
 

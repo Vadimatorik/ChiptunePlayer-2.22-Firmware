@@ -16,7 +16,7 @@ function percent_line:new (x, y, w, h, percent)
 	o.box.pos.w = w - 4
 	o.box.pos.h = h - 4
 	setmetatable(o, self)
-    self.__index = self; 
+    self.__index = self
     return o
 end
 
