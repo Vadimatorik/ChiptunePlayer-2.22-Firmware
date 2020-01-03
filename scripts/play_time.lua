@@ -39,10 +39,12 @@ function play_time:get_s_time (time_sec)
 	return s_time
 end
 
-function play_time:new (font, time_sec, x, y)
+function play_time:new (font, h, time_sec, x, y)
 	local o = {}
 	lcd.set_font(font)
-	o.font = font	
+	o.font = {}
+	o.font.data = font
+	o.font.h = h
 	o.time = {}
 	o.time.sec = time_sec
 	o.pos = {}
@@ -56,9 +58,14 @@ function play_time:new (font, time_sec, x, y)
     return o
 end
 
+function play_time:set_pos (x, y)
+	self.pos.x = x
+	self.pos.y = y
+end
+
 function play_time:draw ()
-	lcd.set_font(self.font)
-	lcd.draw_utf8(self.pos.x, self.pos.y, self.s.data)
+	lcd.set_font(self.font.data)
+	lcd.draw_utf8(self.pos.x, self.pos.y + self.font.h, self.s.data)
 end
 
 function play_time:inc ()

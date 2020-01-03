@@ -37,16 +37,18 @@ end
 function scroll:draw ()
 	lcd.draw_frame(self.frame.pos.x, self.frame.pos.y, self.frame.pos.w, self.frame.pos.h)
 
-	local box_x = self.frame.pos.x + self.space.x
-	local box_h = (self.frame.pos.h - self.space.y * 2) / (self.num_item)
-	local box_y = self.frame.pos.y + self.space.y + box_h * (self.cur_item - 1)
-	local box_w = self.frame.pos.w - self.space.x * 2
+	if self.num_item ~= 0 then
+		local box_x = self.frame.pos.x + self.space.x
+		local box_h = (self.frame.pos.h - self.space.y * 2) / (self.num_item)
+		local box_y = self.frame.pos.y + self.space.y + box_h * (self.cur_item - 1)
+		local box_w = self.frame.pos.w - self.space.x * 2
 
-	if box_h == 1 then
-		box_h = 1
+		if box_h == 1 then
+			box_h = 1
+		end
+
+		lcd.draw_box(math.floor(box_x), math.floor(box_y), math.floor(box_w), math.floor(box_h))
 	end
-
-	lcd.draw_box(math.floor(box_x), math.floor(box_y), math.floor(box_w), math.floor(box_h))
 end
 
 

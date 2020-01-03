@@ -1,13 +1,13 @@
 file_icon = {}
 
-function file_icon:new (fil_type, x, y, w, h)
+function file_icon:new (fil_type, x, y)
 	local o = {}
 	o.t = fil_type
 	o.pos = {}
 	o.pos.x = x
 	o.pos.y = y
-	o.pos.w = w
-	o.pos.h = h
+	o.pos.w = 7
+	o.pos.h = 7
 
 	setmetatable(o, self)
     self.__index = self

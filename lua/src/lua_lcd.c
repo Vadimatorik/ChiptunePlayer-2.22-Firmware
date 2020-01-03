@@ -11,18 +11,18 @@
 
 u8g2_t u8g2 = {0};
 
+#define LIB_POS_FIX 1
+
 static int lua_u8g2_clean (lua_State *L) {
     u8g2_ClearBuffer(&u8g2);
     return 0;
 }
 
 static int lua_u8g2_draw_box (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
 
     u8g2_DrawBox(&u8g2, x, y, w, h);
 
@@ -30,12 +30,10 @@ static int lua_u8g2_draw_box (lua_State *L) {
 }
 
 static int lua_u8g2_draw_circle (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int rad = luaL_checkinteger(L, ++stack);
-    int opt = luaL_optinteger(L, ++stack, U8G2_DRAW_ALL);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int rad = luaL_checkinteger(L, 3);
+    int opt = luaL_optinteger(L, 4, U8G2_DRAW_ALL);
 
     u8g2_DrawCircle(&u8g2, x0, y0, rad, opt);
 
@@ -43,12 +41,10 @@ static int lua_u8g2_draw_circle (lua_State *L) {
 }
 
 static int lua_u8g2_draw_disc (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int rad = luaL_checkinteger(L, ++stack);
-    int opt = luaL_optinteger(L, ++stack, U8G2_DRAW_ALL);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int rad = luaL_checkinteger(L, 3);
+    int opt = luaL_optinteger(L, 4, U8G2_DRAW_ALL);
 
     u8g2_DrawDisc(&u8g2, x0, y0, rad, opt);
 
@@ -56,13 +52,11 @@ static int lua_u8g2_draw_disc (lua_State *L) {
 }
 
 static int lua_u8g2_draw_ellipse (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int rx = luaL_checkinteger(L, ++stack);
-    int ry = luaL_checkinteger(L, ++stack);
-    int opt = luaL_optinteger(L, ++stack, U8G2_DRAW_ALL);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int rx = luaL_checkinteger(L, 3);
+    int ry = luaL_checkinteger(L, 4);
+    int opt = luaL_optinteger(L, 5, U8G2_DRAW_ALL);
 
     u8g2_DrawEllipse(&u8g2, x0, y0, rx, ry, opt);
 
@@ -70,13 +64,11 @@ static int lua_u8g2_draw_ellipse (lua_State *L) {
 }
 
 static int lua_u8g2_draw_filled_ellipse (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int rx = luaL_checkinteger(L, ++stack);
-    int ry = luaL_checkinteger(L, ++stack);
-    int opt = luaL_optinteger(L, ++stack, U8G2_DRAW_ALL);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int rx = luaL_checkinteger(L, 3);
+    int ry = luaL_checkinteger(L, 4);
+    int opt = luaL_optinteger(L, 5, U8G2_DRAW_ALL);
 
     u8g2_DrawFilledEllipse(&u8g2, x0, y0, rx, ry, opt);
 
@@ -84,12 +76,10 @@ static int lua_u8g2_draw_filled_ellipse (lua_State *L) {
 }
 
 static int lua_u8g2_draw_frame (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
 
     u8g2_DrawFrame(&u8g2, x, y, w, h);
 
@@ -97,11 +87,9 @@ static int lua_u8g2_draw_frame (lua_State *L) {
 }
 
 static int lua_u8g2_draw_glyph (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int enc = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int enc = luaL_checkinteger(L, 3);
 
     u8g2_DrawGlyph(&u8g2, x, y, enc);
 
@@ -109,11 +97,9 @@ static int lua_u8g2_draw_glyph (lua_State *L) {
 }
 
 static int lua_u8g2_draw_h_line (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
 
     u8g2_DrawHLine(&u8g2, x, y, w);
 
@@ -121,12 +107,10 @@ static int lua_u8g2_draw_h_line (lua_State *L) {
 }
 
 static int lua_u8g2_draw_line (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int x1 = luaL_checkinteger(L, ++stack);
-    int y1 = luaL_checkinteger(L, ++stack);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int x1 = luaL_checkinteger(L, 3) - LIB_POS_FIX;
+    int y1 = luaL_checkinteger(L, 4) - LIB_POS_FIX;
 
     u8g2_DrawLine(&u8g2, x0, y0, x1, y1);
 
@@ -134,10 +118,10 @@ static int lua_u8g2_draw_line (lua_State *L) {
 }
 
 static int lua_u8g2_draw_pixel (lua_State *L) {
-    int stack = 0;
 
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
+
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
 
     u8g2_DrawPixel(&u8g2, x, y);
 
@@ -145,13 +129,11 @@ static int lua_u8g2_draw_pixel (lua_State *L) {
 }
 
 static int lua_u8g2_draw_r_box (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
-    int r = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
+    int r = luaL_checkinteger(L, 5);
 
     u8g2_DrawRBox(&u8g2, x, y, w, h, r);
 
@@ -159,13 +141,11 @@ static int lua_u8g2_draw_r_box (lua_State *L) {
 }
 
 static int lua_u8g2_draw_r_frame (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
-    int r = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
+    int r = luaL_checkinteger(L, 5);
 
     u8g2_DrawRFrame(&u8g2, x, y, w, h, r);
 
@@ -173,11 +153,9 @@ static int lua_u8g2_draw_r_frame (lua_State *L) {
 }
 
 static int lua_u8g2_draw_str (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    const char *str = luaL_checkstring(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    const char *str = luaL_checkstring(L, 3);
 
     u8g2_DrawStr(&u8g2, x, y, str);
 
@@ -185,14 +163,12 @@ static int lua_u8g2_draw_str (lua_State *L) {
 }
 
 static int lua_u8g2_draw_triangle (lua_State *L) {
-    int stack = 0;
-
-    int x0 = luaL_checkinteger(L, ++stack);
-    int y0 = luaL_checkinteger(L, ++stack);
-    int x1 = luaL_checkinteger(L, ++stack);
-    int y1 = luaL_checkinteger(L, ++stack);
-    int x2 = luaL_checkinteger(L, ++stack);
-    int y2 = luaL_checkinteger(L, ++stack);
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int x1 = luaL_checkinteger(L, 3) - LIB_POS_FIX;
+    int y1 = luaL_checkinteger(L, 4) - LIB_POS_FIX;
+    int x2 = luaL_checkinteger(L, 5) - LIB_POS_FIX;
+    int y2 = luaL_checkinteger(L, 6) - LIB_POS_FIX;
 
     u8g2_DrawTriangle(&u8g2, x0, y0, x1, y1, x2, y2);
 
@@ -200,11 +176,9 @@ static int lua_u8g2_draw_triangle (lua_State *L) {
 }
 
 static int lua_u8g2_draw_utf8 (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    const char *str = luaL_checkstring(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    const char *str = luaL_checkstring(L, 3);
 
     u8g2_DrawUTF8(&u8g2, x, y, str);
 
@@ -212,11 +186,9 @@ static int lua_u8g2_draw_utf8 (lua_State *L) {
 }
 
 static int lua_u8g2_draw_v_line (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int h = luaL_checkinteger(L, 3);
 
     u8g2_DrawVLine(&u8g2, x, y, h);
 
@@ -224,14 +196,12 @@ static int lua_u8g2_draw_v_line (lua_State *L) {
 }
 
 static int lua_u8g2_draw_xbm (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
     size_t len;
-    const char *bitmap = luaL_checklstring(L, ++stack, &len);
+    const char *bitmap = luaL_checklstring(L, 5, &len);
 
     u8g2_DrawXBM(&u8g2, x, y, w, h, (uint8_t *)bitmap);
 
@@ -249,18 +219,14 @@ static int lua_u8g2_get_descent (lua_State *L) {
 }
 
 static int lua_u8g2_get_str_width (lua_State *L) {
-    int stack = 0;
-
-    const char *s = luaL_checkstring(L, ++stack);
+    const char *s = luaL_checkstring(L, 1);
 
     lua_pushinteger(L, u8g2_GetStrWidth(&u8g2, s));
     return 1;
 }
 
 static int lua_u8g2_get_utf8_width (lua_State *L) {
-    int stack = 0;
-
-    const char *s = luaL_checkstring(L, ++stack);
+    const char *s = luaL_checkstring(L, 1);
 
     lua_pushinteger(L, u8g2_GetUTF8Width(&u8g2, s));
     return 1;
@@ -273,9 +239,7 @@ static int lua_u8g2_send_buf (lua_State *L) {
 }
 
 static int lua_u8g2_set_bitmap_mode (lua_State *L) {
-    int stack = 0;
-
-    int is_transparent = luaL_checkinteger(L, ++stack);
+    int is_transparent = luaL_checkinteger(L, 1);
 
     u8g2_SetBitmapMode(&u8g2, is_transparent);
 
@@ -283,9 +247,7 @@ static int lua_u8g2_set_bitmap_mode (lua_State *L) {
 }
 
 static int lua_u8g2_set_contrast (lua_State *L) {
-    int stack = 0;
-
-    int value = luaL_checkinteger(L, ++stack);
+    int value = luaL_checkinteger(L, 1);
 
     u8g2_SetContrast(&u8g2, value);
 
@@ -293,9 +255,7 @@ static int lua_u8g2_set_contrast (lua_State *L) {
 }
 
 static int lua_u8g2_set_display_rotation (lua_State *L) {
-    int stack = 0;
-
-    const u8g2_cb_t *u8g2_cb = (u8g2_cb_t *)lua_touserdata(L, ++stack);
+    const u8g2_cb_t *u8g2_cb = (u8g2_cb_t *)lua_touserdata(L, 1);
 
     u8g2_SetDisplayRotation(&u8g2, u8g2_cb);
 
@@ -303,9 +263,7 @@ static int lua_u8g2_set_display_rotation (lua_State *L) {
 }
 
 static int lua_u8g2_set_draw_color (lua_State *L) {
-    int stack = 0;
-
-    int col = luaL_checkinteger(L, ++stack);
+    int col = luaL_checkinteger(L, 1);
 
     u8g2_SetDrawColor(&u8g2, col);
 
@@ -313,9 +271,7 @@ static int lua_u8g2_set_draw_color (lua_State *L) {
 }
 
 static int lua_u8g2_set_flip_mode (lua_State *L) {
-    int stack = 0;
-
-    int is_enable = luaL_checkinteger(L, ++stack);
+    int is_enable = luaL_checkinteger(L, 1);
 
     u8g2_SetFlipMode(&u8g2, is_enable);
 
@@ -323,9 +279,7 @@ static int lua_u8g2_set_flip_mode (lua_State *L) {
 }
 
 static int lua_u8g2_set_font_direction (lua_State *L) {
-    int stack = 0;
-
-    int dir = luaL_checkinteger(L, ++stack);
+    int dir = luaL_checkinteger(L, 1);
 
     u8g2_SetFontDirection(&u8g2, dir);
 
@@ -333,9 +287,7 @@ static int lua_u8g2_set_font_direction (lua_State *L) {
 }
 
 static int lua_u8g2_set_font_mode (lua_State *L) {
-    int stack = 0;
-
-    int is_transparent = luaL_checkinteger(L, ++stack);
+    int is_transparent = luaL_checkinteger(L, 1);
 
     u8g2_SetFontMode(&u8g2, is_transparent);
 
@@ -378,9 +330,7 @@ static int lua_u8g2_set_font_ref_height_text (lua_State *L) {
 }
 
 static int lua_u8g2_set_pwr_save (lua_State *L) {
-    int stack = 0;
-
-    int is_enable = luaL_checkinteger(L, ++stack);
+    int is_enable = luaL_checkinteger(L, 1);
 
     u8g2_SetPowerSave(&u8g2, is_enable);
 
@@ -393,12 +343,10 @@ static int lua_u8g2_update (lua_State *L) {
 }
 
 static int lua_u8g2_update_area (lua_State *L) {
-    int stack = 0;
-
-    int x = luaL_checkinteger(L, ++stack);
-    int y = luaL_checkinteger(L, ++stack);
-    int w = luaL_checkinteger(L, ++stack);
-    int h = luaL_checkinteger(L, ++stack);
+    int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int w = luaL_checkinteger(L, 3);
+    int h = luaL_checkinteger(L, 4);
 
     u8g2_UpdateDisplayArea(&u8g2, x, y, w, h);
 
@@ -415,9 +363,7 @@ static font_item fonts[] = {
 };
 
 static int lua_u8g2_set_font (lua_State *L) {
-    int stack = 0;
-
-    const char *font_name = luaL_checklstring(L, ++stack, NULL);
+    const char *font_name = luaL_checklstring(L, 1, NULL);
 
     for (int i = 0; i < sizeof(fonts)/sizeof(fonts[0]); i++) {
         if (strcmp(fonts[i].name, font_name) == 0) {
@@ -426,7 +372,7 @@ static int lua_u8g2_set_font (lua_State *L) {
         }
     }
 
-    luaL_argcheck( L, 0, stack, "invalid font" );
+    luaL_argcheck(L, 0, 1, "invalid font");
 
     return 0;
 }
