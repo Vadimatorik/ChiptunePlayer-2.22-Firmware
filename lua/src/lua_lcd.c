@@ -270,6 +270,17 @@ static int lua_u8g2_set_draw_color (lua_State *L) {
     return 0;
 }
 
+static int lua_u8g2_set_clip_window (lua_State *L) {
+    int x0 = luaL_checkinteger(L, 1) - LIB_POS_FIX;
+    int y0 = luaL_checkinteger(L, 2) - LIB_POS_FIX;
+    int x1 = luaL_checkinteger(L, 3) - LIB_POS_FIX;
+    int y1 = luaL_checkinteger(L, 4) - LIB_POS_FIX;
+
+    u8g2_SetClipWindow(&u8g2, x0, y0, x1, y1);
+
+    return 0;
+}
+
 static int lua_u8g2_set_flip_mode (lua_State *L) {
     int is_enable = luaL_checkinteger(L, 1);
 
@@ -378,47 +389,48 @@ static int lua_u8g2_set_font (lua_State *L) {
 }
 
 static const luaL_Reg lcd_lib[] = {
-    {"clean",                             lua_u8g2_clean},
-    {"send_buf",                          lua_u8g2_send_buf},
-    {"set_pwr_save",                      lua_u8g2_set_pwr_save},
-    {"draw_box",                          lua_u8g2_draw_box},
-    {"draw_circle",                       lua_u8g2_draw_circle},
-    {"draw_disc",                         lua_u8g2_draw_disc},
-    {"draw_ellipse",                      lua_u8g2_draw_ellipse},
-    {"draw_filled_ellipse",               lua_u8g2_draw_filled_ellipse},
-    {"draw_frame",                        lua_u8g2_draw_frame},
-    {"draw_glyph",                        lua_u8g2_draw_glyph},
-    {"draw_h_line",                       lua_u8g2_draw_h_line},
-    {"draw_line",                         lua_u8g2_draw_line},
-    {"draw_pixel",                        lua_u8g2_draw_pixel},
-    {"draw_r_box",                        lua_u8g2_draw_r_box},
-    {"draw_r_frame",                      lua_u8g2_draw_r_frame},
-    {"draw_str",                          lua_u8g2_draw_str},
-    {"draw_triangle",                     lua_u8g2_draw_triangle},
-    {"draw_utf8",                         lua_u8g2_draw_utf8},
-    {"draw_v_line",                       lua_u8g2_draw_v_line},
-    {"draw_xbm",                          lua_u8g2_draw_xbm},
-    {"get_ascent",                        lua_u8g2_get_ascent},
-    {"get_descent",                       lua_u8g2_get_descent},
-    {"get_str_width",                     lua_u8g2_get_str_width},
-    {"get_utf8_width",                    lua_u8g2_get_utf8_width},
-    {"set_bitmap_mode",                   lua_u8g2_set_bitmap_mode},
-    {"set_contrast",                      lua_u8g2_set_contrast},
-    {"set_display_rotation",              lua_u8g2_set_display_rotation},
-    {"set_draw_color",                    lua_u8g2_set_draw_color},
-    {"set_flip_mode",                     lua_u8g2_set_flip_mode},
-    {"set_font",                          lua_u8g2_set_font},
-    {"set_font_direction",                lua_u8g2_set_font_direction},
-    {"set_font_mode",                     lua_u8g2_set_font_mode},
-    {"set_font_pos_baseline",             lua_u8g2_set_font_pos_baseline},
-    {"set_font_pos_bottom",               lua_u8g2_set_font_pos_bottom},
-    {"set_font_pos_top",                  lua_u8g2_set_font_pos_top},
-    {"set_font_pos_center",               lua_u8g2_set_font_pos_center},
-    {"set_font_ref_height_all",           lua_u8g2_set_font_ref_height_all},
+    {"clean", lua_u8g2_clean},
+    {"send_buf", lua_u8g2_send_buf},
+    {"set_pwr_save", lua_u8g2_set_pwr_save},
+    {"draw_box", lua_u8g2_draw_box},
+    {"draw_circle", lua_u8g2_draw_circle},
+    {"draw_disc", lua_u8g2_draw_disc},
+    {"draw_ellipse", lua_u8g2_draw_ellipse},
+    {"draw_filled_ellipse", lua_u8g2_draw_filled_ellipse},
+    {"draw_frame", lua_u8g2_draw_frame},
+    {"draw_glyph", lua_u8g2_draw_glyph},
+    {"draw_h_line", lua_u8g2_draw_h_line},
+    {"draw_line", lua_u8g2_draw_line},
+    {"draw_pixel", lua_u8g2_draw_pixel},
+    {"draw_r_box", lua_u8g2_draw_r_box},
+    {"draw_r_frame", lua_u8g2_draw_r_frame},
+    {"draw_str", lua_u8g2_draw_str},
+    {"draw_triangle", lua_u8g2_draw_triangle},
+    {"draw_utf8", lua_u8g2_draw_utf8},
+    {"draw_v_line", lua_u8g2_draw_v_line},
+    {"draw_xbm", lua_u8g2_draw_xbm},
+    {"get_ascent", lua_u8g2_get_ascent},
+    {"get_descent", lua_u8g2_get_descent},
+    {"get_str_width", lua_u8g2_get_str_width},
+    {"get_utf8_width", lua_u8g2_get_utf8_width},
+    {"set_bitmap_mode", lua_u8g2_set_bitmap_mode},
+    {"set_contrast", lua_u8g2_set_contrast},
+    {"set_display_rotation", lua_u8g2_set_display_rotation},
+    {"set_draw_color", lua_u8g2_set_draw_color},
+    {"set_clip_window", lua_u8g2_set_clip_window},
+    {"set_flip_mode", lua_u8g2_set_flip_mode},
+    {"set_font", lua_u8g2_set_font},
+    {"set_font_direction", lua_u8g2_set_font_direction},
+    {"set_font_mode", lua_u8g2_set_font_mode},
+    {"set_font_pos_baseline", lua_u8g2_set_font_pos_baseline},
+    {"set_font_pos_bottom", lua_u8g2_set_font_pos_bottom},
+    {"set_font_pos_top", lua_u8g2_set_font_pos_top},
+    {"set_font_pos_center", lua_u8g2_set_font_pos_center},
+    {"set_font_ref_height_all", lua_u8g2_set_font_ref_height_all},
     {"set_font_ref_height_extended_text", lua_u8g2_set_font_ref_height_extended_text},
-    {"set_font_ref_height_text",          lua_u8g2_set_font_ref_height_text},
-    {"update",                            lua_u8g2_update},
-    {"update_area",                       lua_u8g2_update_area},
+    {"set_font_ref_height_text", lua_u8g2_set_font_ref_height_text},
+    {"update", lua_u8g2_update},
+    {"update_area", lua_u8g2_update_area},
     {NULL, NULL}
 };
 

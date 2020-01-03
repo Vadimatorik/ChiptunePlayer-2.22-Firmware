@@ -35,9 +35,7 @@ end
 
 function shift_string:draw ()
 	lcd.set_font(self.font)
+	lcd.set_clip_window(self.pos.x.start, self.pos.y, self.pos.x.start + self.w, self.pos.y + self.h);
 	lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
-	lcd.set_draw_color(0)
-	lcd.draw_box(0, self.pos.y, self.pos.x.start, self.h + 2)
-	lcd.draw_box(self.pos.x.start + self.w, self.pos.y, 128 - self.pos.x.start + self.w, self.h + 1)
-	lcd.set_draw_color(1)
+	lcd.set_clip_window(1, 1, 128, 64)
 end
