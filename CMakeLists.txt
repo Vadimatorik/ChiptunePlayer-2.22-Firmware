@@ -48,7 +48,9 @@ include_directories(
 
         "lua/inc"
 
-        "startup/inc")
+        "startup/inc"
+
+        "res/img")
 
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     SET(OUT_FILE "${PROJECT_NAME}.elf")

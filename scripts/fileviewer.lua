@@ -153,8 +153,6 @@ function fileviewer:left_active_line ()
 end
 
 function fileviewer:down ()
-    print(self.state.cur_item)
-
     if self.state.cur_item >= self.state.num_item then
         return
     end
@@ -217,5 +215,3 @@ function fileviewer:up ()
 
     collectgarbage("collect")
 end
-
-
