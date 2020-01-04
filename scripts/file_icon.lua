@@ -26,7 +26,5 @@ function file_icon:draw ()
 		lcd.draw_box(self.pos.x, math.floor(self.pos.y + self.pos.w / 5), self.pos.w, self.pos.h - math.floor(self.pos.h / 6))
 	end
 
-	print(math.floor(self.pos.h / 6 * 2))
-
 	lcd.set_clip_window(1, 1, 128 + 1, 64 + 1)
 end

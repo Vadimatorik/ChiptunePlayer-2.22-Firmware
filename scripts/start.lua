@@ -47,10 +47,19 @@ table.sort(fil_list, function(a, b)
 end)
 for _, fil_info in ipairs(fil_list) do
     fv:add_item("fil", fil_info.name, fil_info.time);
+    print(fil_info.name)
 end
 fil_list = nil
 
 -- На главном окне будет перечень папок и валидных файлов категории
-lcd.clean();
-fv:draw();
+lcd.clean()
+fv:draw()
 lcd.update()
+
+function inc_test()
+    for i = 1, 105 do
+        lcd.clean();fv:down();fv:draw();lcd.update()
+    end
+end
+
+inc_test()

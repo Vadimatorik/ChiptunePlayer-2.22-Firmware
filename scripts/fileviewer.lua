@@ -9,7 +9,7 @@ function fileviewer:new (x, y, w, h, font, f_h)
         },
         space = {
             frame = 1,
-            str = { x = { left = 1, right = 1, time = 4 }, y = 1 },
+            str = { x = { left = 1, right = 1, time = 2 }, y = 1 },
             icon = {
                 x = { left = 1, w = 7, right = 1 },
                 y = { up = 1, h = 7, down = 1 }
@@ -17,8 +17,9 @@ function fileviewer:new (x, y, w, h, font, f_h)
             scroll = 4
         },
         state = {
-            cur_pos = 1,
-            num_item = 1,
+            cur_item = 1,
+            num_item = 0,
+            cur_gui_pos = 1,
             items = {},
             gui_lines = {}
         }
@@ -36,6 +37,8 @@ end
 function fileviewer:_new_line (gui_line_num, item_num)
     local x_start = self.frame.pos.x + self.space.frame + self.space.icon.x.left
 
+
+
     local y_start = self.frame.pos.y + self.space.frame + self.space.str.y
     local y = self.font.h + self.space.str.y + self.space.frame + self.space.str.y
     y = y * (gui_line_num - 1)
@@ -43,10 +46,10 @@ function fileviewer:_new_line (gui_line_num, item_num)
 
     local i_type = self.state.items[item_num].type
 
-	local str_win_h = self.space.icon.y.h
-	if gui_line_num == self.line_num then
+    local str_win_h = self.space.icon.y.h
+    if gui_line_num == self.line_num then
         str_win_h = (self.frame.pos.y + self.frame.h) - y - self.space.frame - self.space.str.y
-	end
+    end
 
     self.state.gui_lines[gui_line_num] = {}
     self.state.gui_lines[gui_line_num].icon = file_icon:new(i_type, x_start, y, str_win_h)
@@ -72,14 +75,16 @@ function fileviewer:_new_line (gui_line_num, item_num)
     local i_name = self.state.items[item_num].name
     x_start = x_start + self.space.icon.x.w + self.space.icon.x.right
 
-	self.state.gui_lines[gui_line_num].s = shift_string:new(i_name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
+    self.state.gui_lines[gui_line_num].s = shift_string:new(i_name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
 
-    if self.state.cur_pos == gui_line_num then
+    if self.state.cur_gui_pos == gui_line_num then
         self.state.gui_lines[gui_line_num].s:set_mode(true)
     end
 end
 
 function fileviewer:add_item (type, name, time)
+    self.state.num_item = self.state.num_item + 1
+
     self.state.items[self.state.num_item] = {}
     self.state.items[self.state.num_item].type = type
     self.state.items[self.state.num_item].name = name
@@ -91,7 +96,6 @@ function fileviewer:add_item (type, name, time)
         end
     end
 
-    self.state.num_item = self.state.num_item + 1
     self.scroll:set_num_item(self.state.num_item)
 end
 
@@ -132,12 +136,49 @@ function fileviewer:draw ()
     end
 end
 
-function fileviewer:left ()
+function fileviewer:left_active_line ()
     for i = 1, self.line_num do
         if self.state.gui_lines[i] == nil then
-            break
+            return
         end
 
         self.state.gui_lines[i].s:left()
     end
 end
+
+function fileviewer:down ()
+    if self.state.cur_item >= self.state.num_item then
+        return
+    end
+
+    self.state.cur_item = self.state.cur_item + 1
+
+    self.scroll:set_item(self.state.cur_item)
+
+    if self.state.cur_gui_pos < self.line_num - 1 then
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(false)
+        self.state.cur_gui_pos = self.state.cur_gui_pos + 1
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(true)
+        return
+    end
+
+    if self.state.cur_item == self.state.num_item then
+        self.view_mode_down = true
+    end
+
+    if self.view_mode_down ~= true then
+        for i = 1, self.line_num do
+            self:_new_line(i, self.state.cur_item - (self.line_num - 2) + i - 1)
+        end
+    else
+        for i = 1, self.line_num do
+            self:_new_line(i, self.state.cur_item - (self.line_num - 1) + i - 1)
+        end
+
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(false)
+        self.state.cur_gui_pos = self.state.cur_gui_pos + 1
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(true)
+    end
+end
+
+
