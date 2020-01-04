@@ -1,10 +1,14 @@
 --[[
     Отображаем элементы главного окна.
 --]]
-fv = fileviewer:new(1, 10, 128, 46, "u8g2_font_5x7_tf", 7, data)
-lcd.clean()
-fv:draw()
-lcd.update()
+w_main = {}
+w_main.fv = fileviewer:new(1, 11, 128, 44, "u8g2_font_5x7_tf", 7, data)
+w_main.pb = play_bar:new("u8g2_font_5x7_tf", 7, 1, 54, 128, 11)
+
+function w_main:draw ()
+    self.fv:draw()
+    self.pb:draw()
+end
 
 --[[
     Открываем флешку и ищем первый элемент в корне
@@ -38,7 +42,7 @@ end
 -- Сортируем папки и выводим их на главный экран.
 table.sort(dir_list)
 for _, dir_name in ipairs(dir_list) do
-    fv:add_item("dir", dir_name);
+    w_main.fv:add_item("dir", dir_name);
 end
 dir_list = nil
 
@@ -46,11 +50,10 @@ table.sort(fil_list, function(a, b)
     return a.name < b.name
 end)
 for _, fil_info in ipairs(fil_list) do
-    fv:add_item("fil", fil_info.name, fil_info.time)
+    w_main.fv:add_item("file", fil_info.name, fil_info.time)
 end
 fil_list = nil
 
--- На главном окне будет перечень папок и валидных файлов категории
 lcd.clean()
-fv:draw()
+w_main:draw()
 lcd.update()

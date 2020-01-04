@@ -56,7 +56,7 @@ function fileviewer:_new_line (gui_line_num, item_num)
     self.state.gui_lines[gui_line_num].icon = file_icon:new(i_type, x_start, y, str_win_h)
 
     local time_w = 0
-    if i_type == "fil" then
+    if i_type == "file" then
         self.state.gui_lines[gui_line_num].time = play_time:new(self.font.d, self.font.h, self.state.items[item_num].time, 0, y, str_win_h)
         time_w = self.state.gui_lines[gui_line_num].time.s.width
         local x_time = self.frame.pos.x + self.frame.w - self.space.scroll - time_w - self.space.frame

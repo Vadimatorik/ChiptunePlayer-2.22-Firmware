@@ -26,6 +26,29 @@ u8g2_t u8g2 = {0};
 
 #define LIB_POS_FIX 1
 
+typedef struct {
+    const char *name;
+    const uint8_t *data;
+    uint32_t w;
+    uint32_t h;
+} xbm_item;
+
+static xbm_item xbms[] = {
+    {"img_file", img_file_bits, IMG_FILE_WIDTH, IMG_FILE_HEIGHT},
+    {"img_dir", img_dir_bits, IMG_DIR_WIDTH, IMG_DIR_HEIGHT},
+    {"img_bat_0", img_bat_0_bits, IMG_BAT_0_WIDTH, IMG_BAT_0_HEIGHT},
+    {"img_bat_1", img_bat_1_bits, IMG_BAT_1_WIDTH, IMG_BAT_1_HEIGHT},
+    {"img_bat_2", img_bat_2_bits, IMG_BAT_2_WIDTH, IMG_BAT_2_HEIGHT},
+    {"img_bat_3", img_bat_3_bits, IMG_BAT_3_WIDTH, IMG_BAT_3_HEIGHT},
+    {"img_bat_4", img_bat_4_bits, IMG_BAT_4_WIDTH, IMG_BAT_4_HEIGHT},
+    {"img_bat_5", img_bat_5_bits, IMG_BAT_5_WIDTH, IMG_BAT_5_HEIGHT},
+    {"img_bat_worn", img_bat_worn_bits, IMG_BAT_WORN_WIDTH, IMG_BAT_WORN_HEIGHT},
+    {"img_pause", img_pause_bits, IMG_PAUSE_WIDTH, IMG_PAUSE_HEIGHT},
+    {"img_play", img_play_bits, IMG_PLAY_WIDTH, IMG_PLAY_HEIGHT},
+    {"img_stop", img_stop_bits, IMG_STOP_WIDTH, IMG_STOP_HEIGHT}
+};
+
+
 static int lua_u8g2_clean (lua_State *L) {
     u8g2_ClearBuffer(&u8g2);
     return 0;
@@ -207,29 +230,6 @@ static int lua_u8g2_draw_v_line (lua_State *L) {
 
     return 0;
 }
-
-typedef struct {
-    const char *name;
-    const uint8_t *data;
-    uint32_t w;
-    uint32_t h;
-} xbm_item;
-
-
-static xbm_item xbms[] = {
-    {"img_file", img_file_bits, IMG_FILE_WIDTH, IMG_FILE_HEIGHT},
-    {"img_dir", img_dir_bits, IMG_DIR_WIDTH, IMG_DIR_HEIGHT},
-    {"img_bat_0", img_bat_0_bits, IMG_BAT_0_WIDTH, IMG_BAT_0_HEIGHT},
-    {"img_bat_1", img_bat_1_bits, IMG_BAT_1_WIDTH, IMG_BAT_1_HEIGHT},
-    {"img_bat_2", img_bat_2_bits, IMG_BAT_2_WIDTH, IMG_BAT_2_HEIGHT},
-    {"img_bat_3", img_bat_3_bits, IMG_BAT_3_WIDTH, IMG_BAT_3_HEIGHT},
-    {"img_bat_4", img_bat_4_bits, IMG_BAT_4_WIDTH, IMG_BAT_4_HEIGHT},
-    {"img_bat_5", img_bat_5_bits, IMG_BAT_5_WIDTH, IMG_BAT_5_HEIGHT},
-    {"img_bat_worn", img_bat_worn_bits, IMG_BAT_WORN_WIDTH, IMG_BAT_WORN_HEIGHT},
-    {"img_pause", img_pause_bits, IMG_PAUSE_WIDTH, IMG_PAUSE_HEIGHT},
-    {"img_play", img_play_bits, IMG_PLAY_WIDTH, IMG_PLAY_HEIGHT},
-    {"img_stop", img_stop_bits, IMG_STOP_WIDTH, IMG_STOP_HEIGHT}
-};
 
 static int lua_u8g2_draw_xbm (lua_State *L) {
     int x = luaL_checkinteger(L, 1) - LIB_POS_FIX;
