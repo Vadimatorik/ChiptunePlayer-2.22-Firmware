@@ -39,7 +39,7 @@ function play_time:get_s_time (time_sec)
 	return s_time
 end
 
-function play_time:new (font, h, time_sec, x, y)
+function play_time:new (font, h, time_sec, x, y, win_h)
 	local o = {}
 	lcd.set_font(font)
 	o.font = {}
@@ -50,6 +50,8 @@ function play_time:new (font, h, time_sec, x, y)
 	o.pos = {}
 	o.pos.x = x
 	o.pos.y = y
+	o.win = {}
+	o.win.h = win_h
 	o.s = {}
 	o.s.data = self:get_s_time(o.time.sec)
 	o.s.width = lcd.get_str_width(o.s.data)
@@ -64,8 +66,10 @@ function play_time:set_pos (x, y)
 end
 
 function play_time:draw ()
+	lcd.set_clip_window(self.pos.x, self.pos.y, self.pos.x + self.s.width, self.pos.y + self.win.h);
 	lcd.set_font(self.font.data)
 	lcd.draw_utf8(self.pos.x, self.pos.y + self.font.h, self.s.data)
+	lcd.set_clip_window(1, 1, 128 + 1, 64 + 1)
 end
 
 function play_time:inc ()

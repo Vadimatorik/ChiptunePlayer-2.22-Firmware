@@ -1,117 +1,143 @@
 fileviewer = {}
 
 function fileviewer:new (x, y, w, h, font, f_h)
-	local o = {}
-	o.font = {}
-	o.font.data = font
-	o.font.h = f_h
-	o.frame = {}
-	o.frame.pos = {}
-	o.frame.pos.x = x
-	o.frame.pos.y = y
-	o.frame.pos.w = w
-	o.frame.pos.h = h
-	o.space = {}
-	o.space.string = {}
-	o.space.string.x = 1
-	o.space.string.y = 1
-	o.space.icon = 1
-	o.space.scroll = 4
-	o.line_num = math.floor(h / (o.font.h + o.space.string.y * 2 + 2))
-	o.cur_pos = 1
-	o.num_item = 1
-	o.icon = {}
-	o.icon.w = 7
+    local o = {
+        font = { d = font, h = f_h },
+        frame = {
+            pos = { x = x, y = y },
+            w = w, h = h
+        },
+        space = {
+            frame = 1,
+            str = { x = { left = 1, right = 1, time = 4 }, y = 1 },
+            icon = {
+                x = { left = 1, w = 7, right = 1 },
+                y = { up = 1, h = 7, down = 1 }
+            },
+            scroll = 4
+        },
+        state = {
+            cur_pos = 1,
+            num_item = 1,
+            items = {},
+            gui_lines = {}
+        }
+    }
 
-	o.items = {}
-	o.gui_lines = {}
+    o.line_num = math.ceil(h / (f_h + o.space.str.y * 2 + o.space.str.y * 2))
+    o.scroll = scroll:new(x + w - o.space.scroll, y, o.space.scroll, h, 0, 1, 0)
 
-	o.scroll = scroll:new(x + w - o.space.scroll, y, o.space.scroll, h, 0, 1, 0)
-
-	setmetatable(o, self)
+    setmetatable(o, self)
     self.__index = self
 
     return o
 end
 
-
 function fileviewer:_new_line (gui_line_num, item_num)
-	self.gui_lines[gui_line_num] = {}
-	local x_start = self.frame.pos.x + 1 + self.space.icon
-	local y = self.frame.pos.y + 1 + self.space.icon + (self.font.h + self.space.icon * 2 + 1) * (gui_line_num - 1)
-	self.gui_lines[gui_line_num].icon = file_icon:new(self.items[item_num].type, x_start, y)
+    local x_start = self.frame.pos.x + self.space.frame + self.space.icon.x.left
 
-	local time_w = 0
-	x_start = x_start + self.icon.w + 1
+    local y_start = self.frame.pos.y + self.space.frame + self.space.str.y
+    local y = self.font.h + self.space.str.y + self.space.frame + self.space.str.y
+    y = y * (gui_line_num - 1)
+    y = y_start + y
 
-	if self.items[item_num].type == "fil" then
-		self.gui_lines[gui_line_num].time = play_time:new(self.font.data, self.font.h, self.items[item_num].time, 0, y)
-		time_w = self.gui_lines[gui_line_num].time.s.width
-		local x_time = self.frame.pos.x + self.frame.pos.w - self.space.scroll - time_w - 1
-		self.gui_lines[gui_line_num].time:set_pos(x_time, y)
+    local i_type = self.state.items[item_num].type
+
+	local str_win_h = self.space.icon.y.h
+	if gui_line_num == self.line_num then
+        str_win_h = (self.frame.pos.y + self.frame.h) - y - self.space.frame - self.space.str.y
 	end
 
-	local lin_w = self.frame.pos.w - (self.space.icon + 1 + self.icon.w + 2 + self.space.scroll + time_w)
-	self.gui_lines[gui_line_num].s = shift_string:new(self.items[item_num].name, self.font.data, x_start, y, lin_w, self.font.h)
+    self.state.gui_lines[gui_line_num] = {}
+    self.state.gui_lines[gui_line_num].icon = file_icon:new(i_type, x_start, y, str_win_h)
 
-	if self.cur_pos == gui_line_num then
-		self.gui_lines[gui_line_num].s:set_mode(true)
-	end
-end 
+    local time_w = 0
+    if i_type == "fil" then
+        self.state.gui_lines[gui_line_num].time = play_time:new(self.font.d, self.font.h, self.state.items[item_num].time, 0, y, str_win_h)
+        time_w = self.state.gui_lines[gui_line_num].time.s.width
+        local x_time = self.frame.pos.x + self.frame.w - self.space.scroll - time_w - self.space.frame
+        self.state.gui_lines[gui_line_num].time:set_pos(x_time, y)
+    end
 
-function fileviewer:add_item (type, name, time)
-	self.items[self.num_item] = {}
-	self.items[self.num_item].type = type
-	self.items[self.num_item].name = name
-	self.items[self.num_item].time = time
+    local lin_w = self.frame.w - self.space.frame
+    lin_w = lin_w - self.space.icon.x.left - self.space.icon.x.w - self.space.icon.x.right
+    lin_w = lin_w - time_w - self.space.scroll
 
-	if self.num_item <= self.line_num then
-		if self.gui_lines[self.num_item] == nil then
-			self:_new_line(self.num_item, self.num_item)
-		end
-	end
+    if time_w ~= 0 then
+        lin_w = lin_w - self.space.str.x.time
+    end
 
-	self.num_item = self.num_item + 1
-	self.scroll:set_num_item(self.num_item)
+    lin_w = lin_w - self.space.frame
+
+    local i_name = self.state.items[item_num].name
+    x_start = x_start + self.space.icon.x.w + self.space.icon.x.right
+
+	self.state.gui_lines[gui_line_num].s = shift_string:new(i_name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
+
+    if self.state.cur_pos == gui_line_num then
+        self.state.gui_lines[gui_line_num].s:set_mode(true)
+    end
 end
 
+function fileviewer:add_item (type, name, time)
+    self.state.items[self.state.num_item] = {}
+    self.state.items[self.state.num_item].type = type
+    self.state.items[self.state.num_item].name = name
+    self.state.items[self.state.num_item].time = time
 
+    if self.state.num_item <= self.line_num then
+        if self.state.gui_lines[self.state.num_item] == nil then
+            self:_new_line(self.state.num_item, self.state.num_item)
+        end
+    end
+
+    self.state.num_item = self.state.num_item + 1
+    self.scroll:set_num_item(self.state.num_item)
+end
 
 function fileviewer:draw ()
-	for i = 1, self.line_num do		
-		if self.gui_lines[i] == nil then
-			break
-		end
+    lcd.draw_frame(self.frame.pos.x, self.frame.pos.y, self.frame.w, self.frame.h)
+    self.scroll:draw()
 
-		self.gui_lines[i].s:draw()
-		self.gui_lines[i].icon:draw()
-		if self.gui_lines[i].time ~= nil then
-			self.gui_lines[i].time:draw()
-		end
-	end
+    for i = 1, self.line_num do
+        if self.state.gui_lines[i] == nil then
+            break
+        end
 
-	for i = 1, self.line_num - 1 do
-		if self.gui_lines[i] == nil then
-			break
-		end
+        self.state.gui_lines[i].s:draw()
+        self.state.gui_lines[i].icon:draw()
+        if self.state.gui_lines[i].time ~= nil then
+            self.state.gui_lines[i].time:draw()
+        end
+    end
 
-		local l_x = self.frame.pos.x + 1 + self.space.icon * 2 + self.icon.w
-		local l_w = self.frame.pos.w - (self.space.icon * 2 + self.icon.w) - self.space.scroll - 1
+    for i = 1, self.line_num - 1 do
+        if self.state.gui_lines[i] == nil then
+            break
+        end
 
-		lcd.draw_h_line(l_x, self.frame.pos.y + ((self.font.h + self.space.string.y * 2) + 1) * i, l_w)
-	end
+        local l_x = self.frame.pos.x + self.space.frame
+        l_x = l_x + self.space.icon.x.left + self.space.icon.x.w + self.space.icon.x.right
 
-	self.scroll:draw()
+        local l_y = self.frame.pos.y
+        l_y = l_y + (self.font.h + self.space.str.y + self.space.frame + self.space.str.y) * i
 
-	lcd.draw_frame(self.frame.pos.x, self.frame.pos.y, self.frame.pos.w, self.frame.pos.h)
+        local l_w = self.frame.w - self.space.frame
+        l_w = l_w - self.space.icon.x.left - self.space.icon.x.w - self.space.icon.x.right
+        l_w = l_w - self.space.scroll
+
+        l_w = l_w - self.space.frame
+
+        lcd.draw_h_line(l_x, l_y, l_w)
+    end
 end
 
 function fileviewer:left ()
-	for i = 1, self.line_num - 1 do
-		if self.gui_lines[i] == nil then
-			break
-		end
+    for i = 1, self.line_num do
+        if self.state.gui_lines[i] == nil then
+            break
+        end
 
-		self.gui_lines[i].s:left()
-	end
+        self.state.gui_lines[i].s:left()
+    end
 end

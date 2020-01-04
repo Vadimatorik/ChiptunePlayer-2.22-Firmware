@@ -1,11 +1,12 @@
 shift_string = {}
 
-function shift_string:new (s, font, x, y, w, h)
+function shift_string:new (s, font, x, y, w, h, win_h)
 	local o = {}
 	lcd.set_font(font)
 	o.font = font	
 	o.h = h
 	o.w = w
+	o.win_h = win_h
 	o.s = {}
 	o.s.data = s
 	o.s.width = lcd.get_str_width(o.s.data)
@@ -40,7 +41,7 @@ end
 
 function shift_string:draw ()
 	lcd.set_font(self.font)
-	lcd.set_clip_window(self.pos.x.start, self.pos.y, self.pos.x.start + self.w, self.pos.y + self.h);
+	lcd.set_clip_window(self.pos.x.start, self.pos.y, self.pos.x.start + self.w, self.pos.y + self.win_h);
 
 	if self.mode then
 		lcd.draw_box(self.pos.x.start, self.pos.y, self.w, self.h)

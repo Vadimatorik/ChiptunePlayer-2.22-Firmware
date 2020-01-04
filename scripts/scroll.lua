@@ -43,7 +43,7 @@ function scroll:draw ()
 		local box_y = self.frame.pos.y + self.space.y + box_h * (self.cur_item - 1)
 		local box_w = self.frame.pos.w - self.space.x * 2
 
-		if box_h == 1 then
+		if box_h < 1 then
 			box_h = 1
 		end
 
