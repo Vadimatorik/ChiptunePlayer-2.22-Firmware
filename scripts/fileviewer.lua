@@ -22,7 +22,8 @@ function fileviewer:new (x, y, w, h, font, f_h)
             cur_gui_pos = 1,
             items = {},
             gui_lines = {}
-        }
+        },
+        view_mode_down = false
     }
 
     o.line_num = math.ceil(h / (f_h + o.space.str.y * 2 + o.space.str.y * 2))
@@ -30,6 +31,8 @@ function fileviewer:new (x, y, w, h, font, f_h)
 
     setmetatable(o, self)
     self.__index = self
+
+    collectgarbage("collect")
 
     return o
 end
@@ -78,6 +81,8 @@ function fileviewer:_new_line (gui_line_num, item_num)
     if self.state.cur_gui_pos == gui_line_num then
         self.state.gui_lines[gui_line_num].s:set_mode(true)
     end
+
+    collectgarbage("collect")
 end
 
 function fileviewer:add_item (type, name, time)
@@ -95,6 +100,7 @@ function fileviewer:add_item (type, name, time)
     end
 
     self.scroll:set_num_item(self.state.num_item)
+    collectgarbage("collect")
 end
 
 function fileviewer:draw ()
@@ -132,6 +138,8 @@ function fileviewer:draw ()
 
         lcd.draw_h_line(l_x, l_y, l_w)
     end
+
+    collectgarbage("collect")
 end
 
 function fileviewer:left_active_line ()
@@ -145,6 +153,8 @@ function fileviewer:left_active_line ()
 end
 
 function fileviewer:down ()
+    print(self.state.cur_item)
+
     if self.state.cur_item >= self.state.num_item then
         return
     end
@@ -157,6 +167,7 @@ function fileviewer:down ()
         self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(false)
         self.state.cur_gui_pos = self.state.cur_gui_pos + 1
         self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(true)
+        collectgarbage("collect")
         return
     end
 
@@ -175,6 +186,36 @@ function fileviewer:down ()
 
         self.state.gui_lines[self.line_num] = nil
     end
+
+    collectgarbage("collect")
+end
+
+function fileviewer:up ()
+    print(self.state.cur_item)
+
+    if self.state.cur_item == 1 then
+        return
+    end
+
+    self.state.cur_item = self.state.cur_item - 1
+
+    self.scroll:set_item(self.state.cur_item)
+
+    if self.state.cur_gui_pos > 1 then
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(false)
+        self.state.cur_gui_pos = self.state.cur_gui_pos - 1
+        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(true)
+        collectgarbage("collect")
+        return
+    end
+
+    self.view_mode_down = false
+
+    for i = 1, self.line_num do
+        self:_new_line(i, self.state.cur_item + i - 1)
+    end
+
+    collectgarbage("collect")
 end
 
 

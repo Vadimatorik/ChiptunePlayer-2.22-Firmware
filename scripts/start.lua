@@ -46,8 +46,7 @@ table.sort(fil_list, function(a, b)
     return a.name < b.name
 end)
 for _, fil_info in ipairs(fil_list) do
-    fv:add_item("fil", fil_info.name, fil_info.time);
-    print(fil_info.name)
+    fv:add_item("fil", fil_info.name, fil_info.time)
 end
 fil_list = nil
 
@@ -55,11 +54,3 @@ fil_list = nil
 lcd.clean()
 fv:draw()
 lcd.update()
-
-function inc_test()
-    for i = 1, 105 do
-        lcd.clean();fv:down();fv:draw();lcd.update()
-    end
-end
-
-inc_test()
