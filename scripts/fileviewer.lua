@@ -37,8 +37,6 @@ end
 function fileviewer:_new_line (gui_line_num, item_num)
     local x_start = self.frame.pos.x + self.space.frame + self.space.icon.x.left
 
-
-
     local y_start = self.frame.pos.y + self.space.frame + self.space.str.y
     local y = self.font.h + self.space.str.y + self.space.frame + self.space.str.y
     y = y * (gui_line_num - 1)
@@ -116,7 +114,7 @@ function fileviewer:draw ()
     end
 
     for i = 1, self.line_num - 1 do
-        if self.state.gui_lines[i] == nil then
+        if self.state.gui_lines[i + 1] == nil then
             break
         end
 
@@ -171,13 +169,11 @@ function fileviewer:down ()
             self:_new_line(i, self.state.cur_item - (self.line_num - 2) + i - 1)
         end
     else
-        for i = 1, self.line_num do
-            self:_new_line(i, self.state.cur_item - (self.line_num - 1) + i - 1)
+        for i = 1, self.line_num - 1 do
+            self:_new_line(i, self.state.cur_item - (self.line_num - 2) + i - 1)
         end
 
-        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(false)
-        self.state.cur_gui_pos = self.state.cur_gui_pos + 1
-        self.state.gui_lines[self.state.cur_gui_pos].s:set_mode(true)
+        self.state.gui_lines[self.line_num] = nil
     end
 end
 

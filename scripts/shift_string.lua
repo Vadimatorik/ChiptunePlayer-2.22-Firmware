@@ -46,7 +46,7 @@ function shift_string:draw ()
 	if self.mode then
 		lcd.draw_box(self.pos.x.start, self.pos.y, self.w, self.h)
 		lcd.set_draw_color(0)
-		lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
+		lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h - 1, self.s.data)
 		lcd.set_draw_color(1)
 	else
 		lcd.draw_utf8(self.pos.x.cur, self.pos.y + self.h, self.s.data)
