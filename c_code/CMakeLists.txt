@@ -11,9 +11,10 @@ file(GLOB SOURCES
         "lib/lua/src/*.c"
         "lib/u8g2/csrc/*.c"
 
-        "lua/src/*.c"
-        "mc_hardware/src/*.c"
-        "pcb_hardware/*/src/*.c"
+        "bsp/mc_hardware/src/*.c"
+        "bsp/pcb_hardware/*/src/*.c"
+
+        "logic/lua_lib/src/*.c"
         "logic/aym_psg_parser/src/*.c"
 
         "lib/freertos/dummy/src/*.c"
@@ -25,7 +26,6 @@ file(GLOB SOURCES
 include_directories(
         "cfg"
 
-
         "lib/fatfs/inc"
         "lib/lua/inc"
         "lib/st/hal/inc"
@@ -34,23 +34,23 @@ include_directories(
         "lib/st/device/inc"
         "lib/u8g2/csrc"
 
-        "mc_hardware/inc"
+        "bsp/mc_hardware/inc"
 
-        "pcb_hardware/digital_potentiometer/inc"
-        "pcb_hardware/shift_register/inc"
-        "pcb_hardware/aym/inc"
-        "pcb_hardware/ltc6903/inc"
-        "pcb_hardware/lcd/inc"
+        "bsp/pcb_hardware/digital_potentiometer/inc"
+        "bsp/pcb_hardware/shift_register/inc"
+        "bsp/pcb_hardware/aym/inc"
+        "bsp/pcb_hardware/ltc6903/inc"
+        "bsp/pcb_hardware/lcd/inc"
 
         "logic/aym_psg_parser/inc"
 
         "lib/freertos/core/inc"
 
-        "lua/inc"
+        "logic/lua_lib/inc"
 
-        "startup/inc"
+        "bsp/mc_hardware/startup/inc"
 
-        "res/img")
+        "resurse/img")
 
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     SET(OUT_FILE "${PROJECT_NAME}.elf")
@@ -68,18 +68,20 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     file(GLOB BUILD_MODE_SRC_SRC
             "lib/st/device/src/*.c"
             "lib/st/hal/src/*.c"
-            "startup/src/*.c"
-            "lib/freertos/port/mc/src/*.c")
+            "lib/freertos/port/mc/src/*.c"
+            "bsp/mc_hardware/startup/src/*.c"
+            )
+
 elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     find_package(Threads)
 
     target_include_directories(${OUT_FILE} PUBLIC
             "lib/freertos/port/posix/inc"
-            "socket_emul_layer/inc")
+            "bsp/socket_emul_layer/inc")
 
     file(GLOB BUILD_MODE_SRC_SRC
             "lib/freertos/port/posix/src/*.c"
-            "socket_emul_layer/src/*.c"
+            "bsp/socket_emul_layer/src/*.c"
             )
 
     target_link_libraries(${OUT_FILE} ${CMAKE_THREAD_LIBS_INIT})

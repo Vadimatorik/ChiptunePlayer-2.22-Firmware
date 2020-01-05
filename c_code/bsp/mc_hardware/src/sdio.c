@@ -114,7 +114,7 @@ int init_sdio () {
 
     return 0;
 #elif defined(AYM_SOFT)
-    sd = fopen("/home/vadimatorik/proj/ChiptunePlayer-2.22-Firmware/img/microsd.img", "r");
+    sd = fopen("../ChiptunePlayer-2.22-Firmware/resurse/microsd.img", "r");
     if (sd == NULL) {
         return -1;
     } else {

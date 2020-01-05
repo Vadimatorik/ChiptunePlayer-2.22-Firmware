@@ -231,7 +231,11 @@ extern u8g2_t u8g2;
 
 
 int load_start_scripts () {
-    if (luaL_loadfile(L, "../scripts/init.lua") || lua_pcall(L, 0, 0, 0)) {
+    if (luaL_dostring(L, "_G.lua_scripts_path_dir = '../ChiptunePlayer-2.22-Firmware/lua_scripts/'") != 0) {
+        return -1;
+    }
+
+    if (luaL_dofile(L, "../ChiptunePlayer-2.22-Firmware/lua_scripts/init.lua")) {
         return -1;
     }
 
