@@ -7,42 +7,6 @@
 
 namespace AyPlayer {
 
-int Fat::initFatFs ( std::shared_ptr< char >	fatStartDir ) {
-	FRESULT	fr;
-
-	static FATFS				f;
-
-	fr = f_mount( &f, fatStartDir.get(), 1 );
-
-	if ( fr == FRESULT::FR_OK ) {
-		return EOK;
-	} else {
-		return EIO;
-	}
-}
-
-std::shared_ptr< DIR > Fat::openDir (	std::shared_ptr< char >		path,
-										int&						returnResult	) {
-	FRESULT					r;
-	std::shared_ptr< DIR >	d( new DIR );
-
-	if ( d.get() == nullptr ) {
-		returnResult	=	ENOMEM;
-		return d;
-	}
-
-	/// Открываем директорию.
-	r = f_opendir( d.get(), path.get() );
-
-	if ( r != FRESULT::FR_OK ) {
-		returnResult	=	EIO;
-		return std::shared_ptr< DIR >( nullptr );
-	} else {
-		returnResult	=	EOK;
-		return d;
-	}
-}
-
 int Fat::setCurrentDir ( const char* const path ) {
 	FRESULT	r;
 	r	=	f_chdir( path );
@@ -100,63 +64,6 @@ int Fat::closeDir(	std::shared_ptr< DIR >		dir	) {
 	} else {
 		return EIO;
 	}
-}
-
-
-std::shared_ptr< DIR >	Fat::openDirAndFindFirstFile	(	std::shared_ptr< char >		path,
-															std::shared_ptr< FILINFO >	returnFileInfo,
-															std::shared_ptr< char >		maskFind,
-															int&						returnResult	) {
-	FRESULT				r;
-	std::shared_ptr< DIR >	d( new DIR );
-	if ( d.get() == nullptr ) {
-		returnResult	=	ENOMEM;
-		return d;
-	}
-
-	/// Открываем директорию и ищем в ней файл по маске.
-	r = f_findfirst( d.get(), returnFileInfo.get(), path.get(), maskFind.get() );
-
-	/// Этим мы указываем на то, что с самой Fat и картой все нормально.
-	if ( r == FR_OK ) {
-		returnResult	=	EOK;
-	} else {
-		returnResult	=	EIO;
-		return std::shared_ptr< DIR >( nullptr );
-	}
-
-	/// Нет такого файла.
-	if ( returnFileInfo->fname[ 0 ] == 0 ) {
-		return std::shared_ptr< DIR >( nullptr );
-	}
-
-	return d;
-}
-
-std::shared_ptr< FILINFO >	Fat::findNextFileInDir (	std::shared_ptr< DIR >		dir,
-														int&						returnResult	) {
-	FRESULT						r;
-	std::shared_ptr< FILINFO >	f( new FILINFO );
-	if ( f.get() == nullptr ) {
-		returnResult	=	ENOMEM;
-		return f;
-	}
-
-	r = f_findnext( dir.get(), f.get() );
-
-	/// Этим мы указываем на то, что с самой Fat и картой все нормально.
-	if ( r == FR_OK ) {
-		returnResult	=	EOK;
-	} else {
-		returnResult	=	EIO;
-		return std::shared_ptr< FILINFO >( nullptr );
-	}
-
-	if ( f->fname[ 0 ] == 0 ) {
-		return std::shared_ptr< FILINFO >( nullptr );
-	}
-
-	return f;
 }
 
 std::shared_ptr< char > Fat::getFullPath(	std::shared_ptr< char >		path,
@@ -412,58 +319,6 @@ uint32_t Fat::getSizeTrackFromFile		(	std::shared_ptr< FIL >		listFile,
 
 	return r;
 }
-
-std::shared_ptr< ItemFileInFat > Fat::readItemFileList (	std::shared_ptr< FIL >				f,
-															uint32_t numberTrack,
-															int&						returnResult	) {
-	FRESULT				r;
-
-	std::shared_ptr< ItemFileInFat >	item( new ItemFileInFat );
-	if ( item.get() == nullptr ) {
-			returnResult	=	ENOMEM;
-			return item;
-		} else {
-			returnResult	=	EOK;
-		}
-
-	const uint32_t	lseek	=	sizeof( ItemFileInFat ) * numberTrack;
-	r	=	f_lseek( f.get(), lseek );
-
-	if ( r != FR_OK ) {
-		returnResult =  EIO;
-		std::shared_ptr< ItemFileInFat >	item( nullptr );
-	}
-
-	UINT		l;
-	r	=	f_read( f.get(), item.get(), sizeof( ItemFileInFat ), &l );
-
-	if ( ( r == FR_OK ) && ( l == sizeof( ItemFileInFat ) ) ) {
-		returnResult = EOK;
-		return item;
-	}
-
-	returnResult = EIO;
-	return std::shared_ptr< ItemFileInFat >( nullptr );
-}
-
-/// 1
-/*
-int Fat::checkingFileOrDir ( const char* path, const char* nameFile, FILINFO* fi, FRESULT& fatReturn ) {
-	FRESULT		r;
-
-	char* fullPath;
-	fullPath = Fat::getFullPath( path, nameFile );
-	r = f_stat( fullPath, fi );
-	vPortFree( fullPath );
-
-	switch( ( uint32_t )r ) {
-	case ( uint32_t )FR_OK:			return 1;
-	case ( uint32_t )FR_NO_FILE:	return 0;
-	default:
-		fatReturn = r;
-		return -1;
-	}
-}*/
 
 /// 0 - ок, 1 - нет файла, -1 флешка проблемная.
 int Fat::removeFile ( std::shared_ptr< char > path, const char* nameFile, FRESULT& fatReturn ) {
