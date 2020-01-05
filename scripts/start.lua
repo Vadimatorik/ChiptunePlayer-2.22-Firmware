@@ -57,3 +57,10 @@ fil_list = nil
 lcd.clean()
 w_main:draw()
 lcd.update()
+
+lcd.clean()
+--ps = play_status:new(3, 3, "stop")
+bs = bat_status:new("u8g2_font_5x7_tf", 7, 3, 3, 100)
+bs:draw()
+--ps:draw()
+lcd.update()

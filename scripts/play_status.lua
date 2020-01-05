@@ -16,6 +16,9 @@ function play_status:draw ()
     lcd.draw_xbm(self.pos.x, self.pos.y, "img_" .. self.status)
 end
 
+--[[
+    play, pause, stop
+--]]
 function play_status:set_status (status)
     self.status = status
 end
