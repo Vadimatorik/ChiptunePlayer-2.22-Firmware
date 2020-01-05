@@ -18,8 +18,8 @@ $ cd ChiptunePlayer-2.22-Firmware/c_code/
 
 Сборку можно произвести следующим способом:
 ```sh
-$ mkdir ../../build_aym_soft_r
-$ cmake ../../build_aym_soft_r -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="AYM_SOFT"
+$ mkdir ../../build_aym_soft_r &&  cd ../../build_aym_soft_r
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="AYM_SOFT"
 ```
 
 
