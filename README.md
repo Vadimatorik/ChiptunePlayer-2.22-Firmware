@@ -20,6 +20,7 @@ $ cd ChiptunePlayer-2.22-Firmware/c_code/
 ```sh
 $ mkdir ../../build_aym_soft_r &&  cd ../../build_aym_soft_r
 $ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="AYM_SOFT"
+$ make all -j
 ```
 
 
