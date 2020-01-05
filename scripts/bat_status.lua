@@ -37,3 +37,11 @@ function bat_status:draw ()
     lcd.draw_xbm(self.pos.x + self.s.w, self.pos.y, self.img.d)
 end
 
+function bat_status:get_width ()
+    return self.s.w + 5
+end
+
+function bat_status:set_pos (x, y)
+    self.pos.x = x
+    self.pos.y = y
+end

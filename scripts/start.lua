@@ -2,10 +2,12 @@
     Отображаем элементы главного окна.
 --]]
 w_main = {}
-w_main.fv = fileviewer:new(1, 11, 128, 44, "u8g2_font_5x7_tf", 7, data)
+w_main.fv = fileviewer:new("u8g2_font_5x7_tf", 7, 1, 11, 128, 44, data)
 w_main.pb = play_bar:new("u8g2_font_5x7_tf", 7, 1, 54, 128, 11)
+w_main.sb = status_bar:new("u8g2_font_5x7_tf", 7, 1, 1, 128, 11, "stop", 100)
 
 function w_main:draw ()
+    self.sb:draw()
     self.fv:draw()
     self.pb:draw()
 end
@@ -56,11 +58,4 @@ fil_list = nil
 
 lcd.clean()
 w_main:draw()
-lcd.update()
-
-lcd.clean()
---ps = play_status:new(3, 3, "stop")
-bs = bat_status:new("u8g2_font_5x7_tf", 7, 3, 3, 100)
-bs:draw()
---ps:draw()
 lcd.update()

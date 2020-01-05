@@ -1,6 +1,6 @@
 fileviewer = {}
 
-function fileviewer:new (x, y, w, h, font, f_h)
+function fileviewer:new (font, f_h, x, y, w, h)
     local o = {
         font = { d = font, h = f_h },
         frame = {
