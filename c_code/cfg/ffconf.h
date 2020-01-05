@@ -1,12 +1,4 @@
-/*---------------------------------------------------------------------------/
-/  FatFs Functional Configurations
-/---------------------------------------------------------------------------*/
-
-#define FFCONF_DEF	86606	/* Revision ID */
-
-/*---------------------------------------------------------------------------/
-/ Function Configurations
-/---------------------------------------------------------------------------*/
+#define FFCONF_DEF	86606
 
 #define FF_FS_READONLY	0
 /* This option switches read-only configuration. (0:Read/Write or 1:Read-only)

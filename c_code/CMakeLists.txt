@@ -88,8 +88,6 @@ elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     target_link_libraries(${OUT_FILE} dl)
 endif ()
 
-
-
 target_sources(${OUT_FILE} PRIVATE ${BUILD_MODE_SRC_SRC})
 target_link_libraries(${OUT_FILE} "-lm")
 
