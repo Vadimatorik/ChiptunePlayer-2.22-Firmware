@@ -7,13 +7,19 @@
 ```sh
 $ git clone git@github.com:Vadimatorik/ChiptunePlayer-2.22-Firmware.git
 $ git submodule update --init --recursive
+$ cd ChiptunePlayer-2.22-Firmware/c_code/
 ```
 ## Сборка проекта под аппаратное обеспечение
+
+
+## Сборка проекта как Linux-приложение
 Для сборки требуется:
 * GCC 7.4.0 или новее;
 * cmake 3.16.2 или новее;
-## Сборка проекта как Linux-приложение
-
+Сборку можно произвести следующим способом:
+'''sh
+$ cmake ../../build_aym_soft_r -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="AYM_SOFT"
+'''
 
 
 
