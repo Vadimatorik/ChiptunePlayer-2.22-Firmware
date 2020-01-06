@@ -11,44 +11,17 @@
 
 #include "freertos_headers.h"
 
+#include "aym_hardware.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 lua_State *L = NULL;
 
 static const char LUA_PROMPT[3] = "> ";
 static const char LUA_PROMPT2[4] = ">> ";
 
 static const uint32_t LUA_STRING_MAX_LEN = 1024;
-
-static int add_lua_libs () {
-    if (luaopen_base(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_coroutine(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_table(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_string(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_lcd(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_os(L) != 1) {
-        return -1;
-    }
-
-    if (luaopen_fat(L) != 1) {
-        return -1;
-    }
-
-    return 0;
-}
 
 static const char *get_prompt (int firstline) {
     const char *p = NULL;
@@ -218,18 +191,6 @@ static int lua_report (int status) {
     return status;
 }
 
-#include "u8g2.h"
-
-#include "aym_hardware.h"
-#include "lcd_driver.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-
-extern u8g2_t u8g2;
-
-
 int load_start_scripts () {
     if (luaL_dostring(L, "_G.lua_scripts_path_dir = '../ChiptunePlayer-2.22-Firmware/lua_scripts/'") != 0) {
         return -1;
@@ -252,24 +213,7 @@ void task_lua_interactive (void *p) {
         }
     }
 
-    if (add_lua_libs() != 0) {
-        while (1) {
-            vTaskDelay(1000);
-        }
-    }
-
-    luaL_openlibs(L);
-
-    luaL_requiref(L, "lcd", luaopen_lcd, 1);
-    lua_pop(L, 1);
-
-    luaL_requiref(L, "os", luaopen_os, 1);
-    lua_pop(L, 1);
-
-    luaL_requiref(L, "fat", luaopen_fat, 1);
-    lua_pop(L, 1);
-
-
+    lua_open_aym_libs(L);
 
     while (load_start_scripts() != 0);
 
