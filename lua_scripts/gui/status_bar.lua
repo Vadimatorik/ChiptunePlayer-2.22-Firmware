@@ -12,7 +12,7 @@ function status_bar:new (font, f_h, x, y, w, h, p_stat, percent)
     self.__index = self
 
     o.bs:set_pos(x + (w - o.bs:get_width() - 3), y + 2)
-
+    
     return o
 end
 

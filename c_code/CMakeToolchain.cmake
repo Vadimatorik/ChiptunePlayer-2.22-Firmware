@@ -32,8 +32,8 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
 
     SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
 
-    # SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
-    SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS} -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
+    SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS} -Wl,--print-memory-usage")
+    # SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS} -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     SET(CMAKE_C_FLAGS "-m32 ${COMPILER_OPTIMIZATION} -fdata-sections -ffunction-sections -Wl,--gc-sections  ${C_COMPILER_FLAGS}")
     SET(CMAKE_EXE_LINKER_FLAGS "-m32 -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION}")
