@@ -1,5 +1,6 @@
 #include "matrix_keyboard.h"
 #include "freertos_obj.h"
+#include "mc_hardware.h"
 
 // Флаги состояния  одной клавиши.
 typedef struct matrix_keyboard_status {
@@ -42,32 +43,32 @@ matrix_keyboard_key_status b_status[B_NUM] = {0};
 #if defined(AYM_HARDWARE)
 
 static uint8_t get_b_state (uint32_t id) {
-    keyboardStrings[0].set();
-    keyboardStrings[1].set();
-    keyboardStrings[2].set();
+    set_pin_br_0();
+    set_pin_br_1();
+    set_pin_br_2();
 
     switch (id) {
         case 0:
-            keyboardStrings[0].reset();
-            return !keyboardColumns[1].read();
+            reset_pin_br_0();
+            return !read_pin_bc_1();
         case 1:
-            keyboardStrings[2].reset();
-            return !keyboardColumns[1].read();
+            reset_pin_br_2();
+            return !read_pin_bc_1();
         case 2:
-            keyboardStrings[1].reset();
-            return !keyboardColumns[0].read();
+            reset_pin_br_1();
+            return !read_pin_bc_0();
         case 3:
-            keyboardStrings[1].reset();
-            return !keyboardColumns[2].read();
+            reset_pin_br_1();
+            return !read_pin_bc_2();
         case 4:
-            keyboardStrings[1].reset();
-            return !keyboardColumns[1].read();
+            reset_pin_br_1();
+            return !read_pin_bc_1();
         case 5:
-            keyboardStrings[0].reset();
-            return !keyboardColumns[2].read();
+            reset_pin_br_0();
+            return !read_pin_bc_2();
         case 6:
-            keyboardStrings[0].reset();
-            return !keyboardColumns[0].read();
+            reset_pin_br_0();
+            return !read_pin_bc_0();
     }
 
     return 0;
@@ -157,7 +158,7 @@ static void process_not_press (uint32_t b_number) {
 }
 
 static void matrix_keyboard_thread (__attribute__((unused)) void *obj) {
-    TickType_t last_wake_time =  xTaskGetTickCount();
+    TickType_t last_wake_time = xTaskGetTickCount();
 
     while (1) {
         for (uint32_t i = 0; i < sizeof(b_cfg)/sizeof(b_cfg[0]); i++) {

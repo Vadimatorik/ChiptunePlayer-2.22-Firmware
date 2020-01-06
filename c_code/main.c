@@ -111,7 +111,9 @@ static void task_up_down_button (void *p) {
     }
 }
 
+#ifdef AYM_SOFT
 #include "socket_emul_layer.h"
+#endif
 
 int main () {
     int rv = 0;

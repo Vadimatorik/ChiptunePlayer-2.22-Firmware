@@ -25,8 +25,8 @@ SET(COMPILER_OPTIMIZATION "-O0 -g3")
 if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     SET(MC_HARDWARE_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 
-    SET(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/mem.ld")
-    SET(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/startup/ld/sections.ld")
+    SET(MEM_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/mc_hardware/startup/ld/mem.ld")
+    SET(SECTIONS_LD "${CMAKE_CURRENT_SOURCE_DIR}/bsp/mc_hardware/startup/ld/sections.ld")
 
     SET(MC_LD_FLAGS "--specs=nano.specs -specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD} -nostartfiles")
 

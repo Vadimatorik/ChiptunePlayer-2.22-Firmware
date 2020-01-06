@@ -14,9 +14,9 @@
 #define BOARD_GPIO_1 GPIO_PIN_0
 #define BOARD_GPIO_1_GPIO_Port GPIOC
 #define BOARD_GPIO_2 GPIO_PIN_1
-#define BOARD_GPIO_2_GPIO_Port GPIOC
+#define BOARD_GPIO_2_GPIO GPIOC
 #define BOARD_GPIO_3 GPIO_PIN_2
-#define BOARD_GPIO_3_GPIO_Port GPIOC
+#define BOARD_GPIO_3_GPIO GPIOC
 #define BOARD_TX GPIO_PIN_3
 #define BOARD_TX_GPIO GPIOC
 #define ADC_BAT GPIO_PIN_0
@@ -28,7 +28,7 @@
 #define PWR_5V_ON GPIO_PIN_3
 #define PWR_5V_ON_GPIO GPIOA
 #define BOARD_GPIO_4 GPIO_PIN_4
-#define BOARD_GPIO_4_GPIO_Port GPIOA
+#define BOARD_GPIO_4_GPIO GPIOA
 #define LCD_CLK GPIO_PIN_5
 #define LCD_CLK_GPIO_Port GPIOA
 #define BC0 GPIO_PIN_6
@@ -54,11 +54,11 @@
 #define SD_CD1 GPIO_PIN_13
 #define SD_CD1_GPIO_Port GPIOB
 #define BR2 GPIO_PIN_14
-#define BR2_GPIO_Port GPIOB
+#define BR2_GPIO GPIOB
 #define BR1 GPIO_PIN_15
-#define BR1_GPIO_Port GPIOB
+#define BR1_GPIO GPIOB
 #define BR0 GPIO_PIN_6
-#define BR0_GPIO_Port GPIOC
+#define BR0_GPIO GPIOC
 #define UP GPIO_PIN_7
 #define UP_GPIO_Port GPIOC
 #define SD_D0 GPIO_PIN_8
@@ -88,7 +88,7 @@
 #define SD_CLK GPIO_PIN_12
 #define SD_CLK_GPIO_Port GPIOC
 #define SD_CMD GPIO_PIN_2
-#define SD_CMD_GPIO_Port GPIOD
+#define SD_CMD_GPIO GPIOD
 #define JT_DO GPIO_PIN_3
 #define JT_DO_GPIO_Port GPIOB
 #define JT_RST GPIO_PIN_4

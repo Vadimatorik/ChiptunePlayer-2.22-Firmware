@@ -1,5 +1,7 @@
 #include "mc_hardware.h"
 
+#include <errno.h>
+
 #ifdef AYM_HARDWARE
 #include "stm32f4xx_hal_sd.h"
 #include "stm32f4xx_hal_rcc.h"
@@ -8,7 +10,6 @@
 #elif defined(AYM_SOFT)
 #include <stdio.h>
 #include <fcntl.h>
-#include <errno.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #endif

@@ -43,6 +43,9 @@ void set_pin_sr_strob ();
 void set_pin_lcd_cs ();
 void set_pin_lcd_dc ();
 void set_pin_lcd_rst ();
+void set_pin_br_0 ();
+void set_pin_br_1 ();
+void set_pin_br_2 ();
 
 void reset_pin_pwr_5_v ();
 void reset_pin_pwr_3_v_3 ();
@@ -52,3 +55,10 @@ void reset_pin_sr_strob ();
 void reset_pin_lcd_cs ();
 void reset_pin_lcd_dc ();
 void reset_pin_lcd_rst ();
+void reset_pin_br_0 ();
+void reset_pin_br_1 ();
+void reset_pin_br_2 ();
+
+uint8_t read_pin_bc_0 ();
+uint8_t read_pin_bc_1 ();
+uint8_t read_pin_bc_2 ();

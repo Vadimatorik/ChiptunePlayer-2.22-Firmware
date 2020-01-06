@@ -113,7 +113,7 @@ int init_gpio () {
     cfg.Pull = GPIO_NOPULL;
     cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     cfg.Alternate = GPIO_AF12_SDIO;
-    HAL_GPIO_Init(SD_CMD_GPIO_Port, &cfg);
+    HAL_GPIO_Init(SD_CMD_GPIO, &cfg);
 #elif defined(AYM_SOFT)
 #endif
 
@@ -121,9 +121,9 @@ int init_gpio () {
 }
 
 #ifdef AYM_HARDWARE
-#define LTC_CS_GPIO BOARD_GPIO_4_GPIO_Port
-#define AD5204_CS_GPIO BOARD_GPIO_3_GPIO_Port
-#define SH_STROB_GPIO BOARD_GPIO_2_GPIO_Port
+#define LTC_CS_GPIO BOARD_GPIO_4_GPIO
+#define AD5204_CS_GPIO BOARD_GPIO_3_GPIO
+#define SH_STROB_GPIO BOARD_GPIO_2_GPIO
 
 #define LTC_CS BOARD_GPIO_4
 #define AD5204_CS BOARD_GPIO_3
@@ -184,6 +184,24 @@ void set_pin_lcd_rst () {
 #endif
 }
 
+void set_pin_br_0 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR0_GPIO, BR0, GPIO_PIN_SET);
+#endif
+}
+
+void set_pin_br_1 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR1_GPIO, BR1, GPIO_PIN_SET);
+#endif
+}
+
+void set_pin_br_2 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR2_GPIO, BR2, GPIO_PIN_SET);
+#endif
+}
+
 void reset_pin_pwr_5_v () {
 #ifdef AYM_HARDWARE
     HAL_GPIO_WritePin(PWR_5V_ON_GPIO, PWR_5V_ON, GPIO_PIN_RESET);
@@ -238,3 +256,38 @@ void reset_pin_lcd_rst () {
 #endif
 }
 
+void reset_pin_br_0 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR0_GPIO, BR0, GPIO_PIN_RESET);
+#endif
+}
+
+void reset_pin_br_1 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR1_GPIO, BR0, GPIO_PIN_RESET);
+#endif
+}
+
+void reset_pin_br_2 () {
+#if defined(AYM_HARDWARE)
+    HAL_GPIO_WritePin(BR2_GPIO, BR0, GPIO_PIN_RESET);
+#endif
+}
+
+uint8_t read_pin_bc_0 () {
+#if defined(AYM_HARDWARE)
+    return HAL_GPIO_ReadPin(BC0_GPIO, BC0);
+#endif
+}
+
+uint8_t read_pin_bc_1 () {
+#if defined(AYM_HARDWARE)
+    return HAL_GPIO_ReadPin(BC0_GPIO, BC0);
+#endif
+}
+
+uint8_t read_pin_bc_2 () {
+#if defined(AYM_HARDWARE)
+    return HAL_GPIO_ReadPin(BC0_GPIO, BC0);
+#endif
+}
