@@ -189,8 +189,6 @@ function fileviewer:down ()
 end
 
 function fileviewer:up ()
-    print(self.state.cur_item)
-
     if self.state.cur_item == 1 then
         return
     end

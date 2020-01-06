@@ -1,17 +1,62 @@
+os.init()
 lcd.driver_init()
+
+cmd = {
+    keyboard = {
+        type = {
+            press = 0,
+            click = 1,
+            long_press = 2,
+            long_click = 3
+        },
+        num = {
+            up = 0,
+            down = 1,
+            left = 2,
+            right = 3,
+            enter = 4,
+            ret = 5,
+            menu = 6
+        }
+    }
+}
 
 --[[
     Отображаем элементы главного окна.
 --]]
 w_main = {}
-w_main.fv = fileviewer:new("u8g2_font_5x7_tf", 7, 1, 11, 128, 44, data)
+w_main.fv = fileviewer:new("u8g2_font_5x7_tf", 7, 1, 11, 128, 44)
 w_main.pb = play_bar:new("u8g2_font_5x7_tf", 7, 1, 54, 128, 11)
 w_main.sb = status_bar:new("u8g2_font_5x7_tf", 7, 1, 1, 128, 11, "stop", 100)
 
 function w_main:draw ()
+    lcd.clean()
     self.sb:draw()
     self.fv:draw()
     self.pb:draw()
+    lcd.update()
+end
+
+function w_main:keyboard_click (key)
+    
+    if key == cmd.keyboard.num.up then
+        self.fv:up()
+        self:draw()
+    elseif key == cmd.keyboard.num.down then
+        self.fv:down()
+        self:draw()
+    end
+end
+
+function w_main:start ()
+    self:draw()
+
+    while true do
+        local cmd_type, cmd_code = os.get_cmd()
+        if cmd_type == cmd.keyboard.type.click then
+            self:keyboard_click(cmd_code)
+        end
+    end
 end
 
 --[[
@@ -58,6 +103,4 @@ for _, fil_info in ipairs(fil_list) do
 end
 fil_list = nil
 
-lcd.clean()
-w_main:draw()
-lcd.update()
+w_main:start()

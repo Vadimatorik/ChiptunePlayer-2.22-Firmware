@@ -5,6 +5,10 @@
 #include <arpa/inet.h>
 #include <memory.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 static int s_lcd = 0;
 static int s_keyboard = 0;
@@ -14,7 +18,7 @@ static const uint8_t CODE_PIN_DC = 1;
 static const uint8_t CODE_PIN_RST = 2;
 static const uint8_t CODE_BYTE_SPI = 3;
 
-static int init_socket (int *retrun_fd, uint16_t port, const char* name_port) {
+static int init_socket (int *retrun_fd, uint16_t port, const char *name_port) {
     int s = socket(AF_INET, SOCK_STREAM, 0);
     if (s < 0) {
         printf("Error calling socket %s", name_port);
@@ -49,12 +53,12 @@ int init_sockets () {
     return 0;
 }
 
-void socket_gpio_lcd_cs_set  (uint8_t state) {
+void socket_gpio_lcd_cs_set (uint8_t state) {
     uint8_t msg[2] = {0};
     msg[0] = CODE_PIN_CS;
     msg[1] = state;
 
-    send(s_lcd, &msg, sizeof(msg), 0);
+    write(s_lcd, &msg, sizeof(msg));
 }
 
 void socket_gpio_lcd_dc_set (uint8_t state) {
@@ -62,7 +66,7 @@ void socket_gpio_lcd_dc_set (uint8_t state) {
     msg[0] = CODE_PIN_DC;
     msg[1] = state;
 
-    send(s_lcd, &msg, sizeof(msg), 0);
+    write(s_lcd, &msg, sizeof(msg));
 }
 
 void socket_gpio_lcd_rst_set (uint8_t state) {
@@ -70,7 +74,7 @@ void socket_gpio_lcd_rst_set (uint8_t state) {
     msg[0] = CODE_PIN_RST;
     msg[1] = state;
 
-    send(s_lcd, &msg, sizeof(msg), 0);
+    write(s_lcd, &msg, sizeof(msg));
 }
 
 void socket_spi_lcd_tx (void *d, uint32_t len) {
@@ -83,13 +87,13 @@ void socket_spi_lcd_tx (void *d, uint32_t len) {
         msg[1] = *data;
         data++;
 
-        send(s_lcd, &msg, sizeof(msg), 0);
+        write(s_lcd, &msg, sizeof(msg));
     }
 }
 
 uint8_t socket_get_button_state (uint8_t i) {
-    send(s_keyboard, &i, sizeof(i), 0);
+    write(s_keyboard, &i, sizeof(i));
     uint8_t state = 0;
-    recv(s_keyboard, &state, sizeof(state), 0);
+    while (read(s_keyboard, &state, sizeof(state)) != 1);
     return state;
 }
