@@ -8,7 +8,7 @@
 #define configCPU_CLOCK_HZ							16000000
 
 #ifdef AYM_SOFT
-#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 1024 * 1024 * 5 ) )
+#define configTOTAL_HEAP_SIZE						( ( size_t ) ( 1024 * 120 ) )
 #endif
 
 #ifdef AYM_HARDWARE

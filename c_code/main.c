@@ -1,6 +1,5 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
-#include "pcb_hardware.h"
 #include "l.h"
 
 #ifdef AYM_SOFT

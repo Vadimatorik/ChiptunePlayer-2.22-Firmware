@@ -80,10 +80,22 @@ static int lua_init (lua_State *L) {
     return 0;
 }
 
+static int lua_get_free_ram_bytes (lua_State *L) {
+    lua_pushinteger(L, xPortGetFreeHeapSize());
+    return 1;
+}
+
+static int lua_get_free_ram_kb (lua_State *L) {
+    lua_pushinteger(L, xPortGetFreeHeapSize() / 1024);
+    return 1;
+}
+
 static const luaL_Reg os_lib[] = {
-    {"init",     lua_init},
-    {"delay_ms", lua_delay_ms},
-    {"get_cmd",  lua_get_cmd},
+    {"init",               lua_init},
+    {"delay_ms",           lua_delay_ms},
+    {"get_cmd",            lua_get_cmd},
+    {"get_free_ram_bytes", lua_get_free_ram_bytes},
+    {"get_free_ram_kb",    lua_get_free_ram_kb},
     {NULL, NULL}
 };
 
