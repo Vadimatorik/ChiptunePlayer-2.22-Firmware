@@ -33,13 +33,13 @@ static StaticTask_t matrix_keyboard_thread_struct;
 #define B_NUM 7
 
 matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
-    {B_UP,    50, 1000},
-    {B_DOWN,  50, 1000},
-    {B_LEFT,  50, 1000},
-    {B_RIGHT, 50, 1000},
-    {B_ENTER, 50, 1000},
-    {B_BACK,  50, 1000},
-    {B_MENU,  50, 1000}
+    {B_UP,     50, 1000},
+    {B_DOWN,   50, 1000},
+    {B_LEFT,   50, 1000},
+    {B_RIGHT,  50, 1000},
+    {B_ENTER,  50, 1000},
+    {B_RETURN, 50, 1000},
+    {B_MENU,   50, 1000}
 };
 
 matrix_keyboard_key_status b_status[B_NUM] = {0};

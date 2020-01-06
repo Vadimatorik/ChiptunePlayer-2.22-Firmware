@@ -8,7 +8,7 @@ enum KEY_NUM {
     B_LEFT = 2,
     B_RIGHT = 3,
     B_ENTER = 4,
-    B_BACK = 5,
+    B_RETURN = 5,
     B_MENU = 6
 };
 
