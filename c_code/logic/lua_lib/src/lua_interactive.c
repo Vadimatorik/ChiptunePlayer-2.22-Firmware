@@ -12,11 +12,10 @@
 #include "freertos_headers.h"
 
 #include "aym_hardware.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-lua_State *L = NULL;
+#include "freertos_obj.h"
+
+static lua_State *L = NULL;
 
 static const char LUA_PROMPT[3] = "> ";
 static const char LUA_PROMPT2[4] = ">> ";
@@ -191,31 +190,10 @@ static int lua_report (int status) {
     return status;
 }
 
-int load_start_scripts () {
-    if (luaL_dostring(L, "_G.lua_scripts_path_dir = '../ChiptunePlayer-2.22-Firmware/lua_scripts/'") != 0) {
-        return -1;
-    }
-
-    if (luaL_dofile(L, "../ChiptunePlayer-2.22-Firmware/lua_scripts/init.lua")) {
-        return -1;
-    }
-
-    return 0;
-}
-
-void task_lua_interactive (void *p) {
-    p = p;
-
+static void task_lua_interactive (void *p) {
     L = luaL_newstate();
-    if (L == NULL) {
-        while (1) {
-            vTaskDelay(1000);
-        }
-    }
 
     lua_open_aym_libs(L);
-
-    while (load_start_scripts() != 0);
 
     while (1) {
         int status;
@@ -229,4 +207,15 @@ void task_lua_interactive (void *p) {
             }
         }
     }
+}
+
+
+static StaticTask_t lua_interactive_thread_buffer;
+static StackType_t lua_interactive_thread_stack[LUA_INTERACTIVE_THREAD_STACK_SIZE];
+
+int init_lua_interactive () {
+    xTaskCreateStatic(task_lua_interactive, "lua_interactive",
+                      LUA_INTERACTIVE_THREAD_STACK_SIZE, NULL, LUA_INTERACTIVE_THREAD_PRIO,
+                      lua_interactive_thread_stack, &lua_interactive_thread_buffer);
+    return 0;
 }

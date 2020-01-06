@@ -8,4 +8,5 @@ LUAMOD_API int luaopen_fat (lua_State *L);
 
 void lua_open_aym_libs (lua_State *L);
 
-void task_lua_interactive (void *p);
+int init_lua_interactive ();
+int init_lua_main_thread ();

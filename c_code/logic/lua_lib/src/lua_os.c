@@ -4,6 +4,7 @@
 
 #include "freertos_obj.h"
 #include "freertos_headers.h"
+#include "pcb_hardware.h"
 
 enum LUA_OS_CMD_TYPE {
     LUA_OS_CMD_TYPE_KEYBOARD_PRESS = 0,
@@ -71,6 +72,11 @@ static int lua_get_cmd (lua_State *L) {
 static int lua_init (lua_State *L) {
     lua_os_cmd_queue = xQueueCreateStatic(LUA_OS_CMD_QUEUE_SIZE, sizeof(lua_os_cmd_t),
                                           lua_os_cmd_queue_storage_area, &lua_os_cmd_queue_str);
+
+    if (init_pcb_hardware() != 0) {
+        while (1);
+    }
+
     return 0;
 }
 

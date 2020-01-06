@@ -183,4 +183,5 @@ int init_matrix_keyboard () {
     xTaskCreateStatic(matrix_keyboard_thread, "matrix_keyboard",
                       MATRIX_KEYBOARD_THREAD_STACK_SIZE, NULL, MATRIX_KEYBOARD_THREAD_PRIO,
                       matrix_keyboard_thread_stack, &matrix_keyboard_thread_struct);
+    return 0;
 }
