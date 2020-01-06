@@ -1,10 +1,16 @@
 #include "lua.h"
 
+#include <stdlib.h>
+
 #include "lauxlib.h"
 
 #include "freertos_obj.h"
 #include "freertos_headers.h"
 #include "pcb_hardware.h"
+
+#if defined(AYM_HARDWARE)
+#include "stm32f4xx_hal_conf.h"
+#endif
 
 enum LUA_OS_CMD_TYPE {
     LUA_OS_CMD_TYPE_KEYBOARD_PRESS = 0,
@@ -95,12 +101,23 @@ static int lua_get_free_ram_kb (lua_State *L) {
     return 1;
 }
 
+static int lua_exit (lua_State *L) {
+#ifdef AYM_SOFT
+    exit(0);
+#elif AYM_HARDWARE
+    NVIC_SystemReset();
+#endif
+}
+
+
+
 static const luaL_Reg os_lib[] = {
     {"init",               lua_init},
     {"delay_ms",           lua_delay_ms},
     {"get_cmd",            lua_get_cmd},
     {"get_free_ram_bytes", lua_get_free_ram_bytes},
     {"get_free_ram_kb",    lua_get_free_ram_kb},
+    {"exit",                lua_exit},
     {NULL, NULL}
 };
 
