@@ -21,5 +21,6 @@ end
 --]]
 function play_status:set_status (status)
     self.status = status
+    collectgarbage("collect")
 end
 

@@ -1,18 +1,17 @@
 play_bar = {}
 
 function play_bar:new (font, f_h, x, y, w, h)
-    local o = {}
-	o.frame = {
-		pos = {x = x, y = y},
-		w = w, h = h
-	}
-
-    o.time = {
-        cur = 0, ed = 0
+    local o = {
+        frame = {
+            pos = { x = x, y = y },
+            w = w, h = h
+        },
+        time = { cur = 0, ed = 0 },
+        space = {
+            frame = 1,
+            obj = 1
+        }
     }
-    o.space = {}
-    o.space.frame = 1
-    o.space.obj = 1
 
 	local y_in = y + o.space.frame + o.space.obj
     o.cur_time = play_time:new(font, f_h, o.time.cur, x + o.space.frame, y_in , f_h)
@@ -22,8 +21,12 @@ function play_bar:new (font, f_h, x, y, w, h)
     local pl_x = x + o.space.frame + o.cur_time.s.width + 1
     local pl_w = w - o.cur_time.s.width - o.end_time.s.width - o.space.frame * 2 - o.space.obj * 2
     o.percent_line = percent_line:new(pl_x, y_in, pl_w, f_h, 0)
+
+    collectgarbage("collect")
+
     setmetatable(o, self)
     self.__index = self
+
     return o
 end
 
@@ -46,6 +49,8 @@ function play_bar:inc ()
     self.time.cur = self.time.cur + 1
     self.cur_time:inc()
     self.percent_line:set(100 / self.time.ed * self.time.cur)
+
+    collectgarbage("collect")
 end
 
 function play_bar:set (cur_t, end_t)
@@ -56,6 +61,8 @@ function play_bar:set (cur_t, end_t)
     self.end_time:set(self.time.ed)
 
     self.percent_line:reset()
+
+    collectgarbage("collect")
 end
 
 function play_bar:reset ()

@@ -10,6 +10,7 @@ function bat_status:set_percent (percent)
     self.img.d = self:_get_img(percent)
     self.s.d = "%" .. tostring(percent)
     self.s.w = lcd.get_str_width(self.s.d)
+    collectgarbage("collect")
 end
 
 function bat_status:new (font, f_h, x, y, percent)
@@ -28,6 +29,8 @@ function bat_status:new (font, f_h, x, y, percent)
 
     o:set_percent(percent)
 
+    collectgarbage("collect")
+
     return o
 end
 
@@ -44,4 +47,6 @@ end
 function bat_status:set_pos (x, y)
     self.pos.x = x
     self.pos.y = y
+
+    collectgarbage("collect")
 end

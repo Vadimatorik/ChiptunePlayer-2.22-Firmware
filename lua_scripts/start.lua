@@ -103,4 +103,6 @@ for _, fil_info in ipairs(fil_list) do
 end
 fil_list = nil
 
+collectgarbage("collect")
+
 w_main:start()

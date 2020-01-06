@@ -32,8 +32,6 @@ function fileviewer:new (font, f_h, x, y, w, h)
     setmetatable(o, self)
     self.__index = self
 
-    collectgarbage("collect")
-
     return o
 end
 
@@ -143,13 +141,11 @@ function fileviewer:draw ()
 end
 
 function fileviewer:left_active_line ()
-    for i = 1, self.line_num do
-        if self.state.gui_lines[i] == nil then
-            return
-        end
-
-        self.state.gui_lines[i].s:left()
+    if self.state.gui_lines[self.cur_gui_pos] == nil then
+        return
     end
+
+    self.state.gui_lines[self.cur_gui_pos].s:left()
 end
 
 function fileviewer:down ()

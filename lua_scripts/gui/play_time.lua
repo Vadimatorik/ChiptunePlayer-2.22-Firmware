@@ -40,29 +40,37 @@ function play_time:get_s_time (time_sec)
 end
 
 function play_time:new (font, h, time_sec, x, y, win_h)
-	local o = {}
 	lcd.set_font(font)
-	o.font = {}
-	o.font.data = font
-	o.font.h = h
-	o.time = {}
-	o.time.sec = time_sec
-	o.pos = {}
-	o.pos.x = x
-	o.pos.y = y
-	o.win = {}
-	o.win.h = win_h
-	o.s = {}
-	o.s.data = self:get_s_time(o.time.sec)
-	o.s.width = lcd.get_str_width(o.s.data)
+
+	local o = {
+		font = {
+			data = font,
+			h = h
+		},
+		time = {
+			sec = time_sec
+		},
+		pos = { x = x, y = y },
+		win = { h = win_h },
+		s = {}
+	}
+
 	setmetatable(o, self)
     self.__index = self
+
+	o.s.data = o:get_s_time(time_sec)
+	o.s.width = lcd.get_str_width(o.s.data)
+
+	collectgarbage("collect")	
+
     return o
 end
 
 function play_time:set_pos (x, y)
 	self.pos.x = x
 	self.pos.y = y
+
+	collectgarbage("collect")
 end
 
 function play_time:draw ()
@@ -76,16 +84,22 @@ function play_time:inc ()
 	self.time.sec = self.time.sec + 1
 	self.s.data = self:get_s_time(self.time.sec)
 	self.s.width = lcd.get_str_width(self.s.data)
+
+	collectgarbage("collect")
 end
 
 function play_time:set (time)
 	self.time.sec = time
 	self.s.data = self:get_s_time(self.time.sec)
 	self.s.width = lcd.get_str_width(self.s.data)
+
+	collectgarbage("collect")
 end
 
 function play_time:reset ()
 	self.time.sec = 0
 	self.s.data = self:get_s_time(self.time.sec)
 	self.s.width = lcd.get_str_width(self.s.data)
+
+	collectgarbage("collect")
 end
