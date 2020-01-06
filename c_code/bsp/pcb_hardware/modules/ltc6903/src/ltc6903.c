@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <math.h>
 
-int ltc6903_init () {
+int init_ltc6903 () {
     set_pin_ltc_cs();
     return 0;
 }

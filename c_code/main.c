@@ -1,12 +1,8 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
-#include "aym_hardware.h"
-
-#include "dp.h"
-#include "sr.h"
+#include "pcb_hardware.h"
 
 #include <errno.h>
-#include "ltc6903.h"
 #include "aym_psg_parser.h"
 #include "l.h"
 
@@ -38,23 +34,10 @@ static void task_up_down_button (void *p) {
     p = p;
     int rv = 0;
 
-    if ((rv = init_dp()) != 0) {
+    if ((rv = init_pcb_hardware()) != 0) {
         while (1);
     }
-
-    if ((rv = init_sr()) != 0) {
-        while (1);
-    }
-
-    if ((rv = init_aym_hardware()) != 0) {
-        while (1);
-    }
-
-    if ((rv = ltc6903_init()) != 0) {
-        while (1);
-    }
-
-
+/*
     sr_set_pin_ay_1_res();
     sr_reset_pin_pwr_ay_1_on();
     set_pin_pwr_5_v();
@@ -67,7 +50,7 @@ static void task_up_down_button (void *p) {
     ltc6903_set_requency(1.77e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
 
     aym_psg_reset();
-
+*/
     while (1) {
         /*
          * if ((rv = dp_set_a1(255)) != 0) { // 0 - отключить звук.

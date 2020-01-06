@@ -7,7 +7,7 @@ typedef enum {
     LTC6903_OUTPUT_MODE_CLK_OFF_INV_OFF = 3
 } LTC6903_OUTPUT_MODE;
 
-int ltc6903_init ();
+int init_ltc6903 ();
 int ltc6903_start ();
 int ltc6903_set_requency (float freq, LTC6903_OUTPUT_MODE mode);
 

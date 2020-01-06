@@ -12,7 +12,8 @@ file(GLOB SOURCES
         "lib/u8g2/csrc/*.c"
 
         "bsp/mc_hardware/src/*.c"
-        "bsp/pcb_hardware/*/src/*.c"
+        "bsp/pcb_hardware/modules/*/src/*.c"
+        "bsp/pcb_hardware/src/*.c"
 
         "logic/lua_lib/src/*.c"
         "logic/aym_psg_parser/src/*.c"
@@ -35,12 +36,14 @@ include_directories(
         "lib/u8g2/csrc"
 
         "bsp/mc_hardware/inc"
+        "bsp/pcb_hardware/inc"
 
-        "bsp/pcb_hardware/digital_potentiometer/inc"
-        "bsp/pcb_hardware/shift_register/inc"
-        "bsp/pcb_hardware/aym/inc"
-        "bsp/pcb_hardware/ltc6903/inc"
-        "bsp/pcb_hardware/lcd/inc"
+        "bsp/pcb_hardware/modules/digital_potentiometer/inc"
+        "bsp/pcb_hardware/modules/shift_register/inc"
+        "bsp/pcb_hardware/modules/aym/inc"
+        "bsp/pcb_hardware/modules/ltc6903/inc"
+        "bsp/pcb_hardware/modules/lcd/inc"
+        "bsp/pcb_hardware/modules/matrix_keyboard/inc"
 
         "logic/aym_psg_parser/inc"
 

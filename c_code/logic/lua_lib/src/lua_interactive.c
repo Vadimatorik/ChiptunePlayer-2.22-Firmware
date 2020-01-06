@@ -269,12 +269,7 @@ void task_lua_interactive (void *p) {
     luaL_requiref(L, "fat", luaopen_fat, 1);
     lua_pop(L, 1);
 
-    u8g2_Setup_st7565_ea_dogm128_f(&u8g2, U8G2_R0, u8x8_byte_send, u8x8_io);
-    u8g2_InitDisplay(&u8g2);
-    u8g2_ClearBuffer(&u8g2);
-    u8g2_SendBuffer(&u8g2);
-    u8g2_SetContrast(&u8g2, 4);
-    u8g2_SetPowerSave(&u8g2, 0);
+
 
     while (load_start_scripts() != 0);
 

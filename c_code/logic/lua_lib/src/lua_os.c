@@ -17,6 +17,22 @@ static int lua_delay_ms (lua_State *L) {
     return 0;
 }
 
+void matrix_keyboard_event_press (uint32_t key) {
+
+}
+
+void matrix_keyboard_event_click (uint32_t key) {
+
+}
+
+void matrix_keyboard_event_long_press (uint32_t key) {
+
+}
+
+void matrix_keyboard_event_long_click (uint32_t key) {
+
+}
+
 static const luaL_Reg os_lib[] = {
     {"delay_ms", lua_delay_ms},
     {NULL, NULL}

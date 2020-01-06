@@ -1,11 +1,8 @@
 #include "lua.h"
 
 #include "lauxlib.h"
-#include "lualib.h"
 
 #include "u8g2.h"
-#include "l.h"
-#include "lua.h"
 
 #include "img_file.h"
 #include "img_dir.h"
@@ -22,7 +19,9 @@
 
 #include <string.h>
 
-u8g2_t u8g2 = {0};
+#include "lcd_driver.h"
+
+static u8g2_t u8g2 = {0};
 
 #define LIB_POS_FIX 1
 
@@ -429,7 +428,19 @@ static int lua_u8g2_set_font (lua_State *L) {
     return 0;
 }
 
+static int lua_u8g2_driver_init (lua_State *L) {
+    u8g2_Setup_st7565_ea_dogm128_f(&u8g2, U8G2_R0, u8x8_byte_send, u8x8_io);
+    u8g2_InitDisplay(&u8g2);
+    u8g2_ClearBuffer(&u8g2);
+    u8g2_SendBuffer(&u8g2);
+    u8g2_SetContrast(&u8g2, 4);
+    u8g2_SetPowerSave(&u8g2, 0);
+
+    return 0;
+}
+
 static const luaL_Reg lcd_lib[] = {
+    {"driver_init",                       lua_u8g2_driver_init},
     {"clean",                             lua_u8g2_clean},
     {"send_buf",                          lua_u8g2_send_buf},
     {"set_pwr_save",                      lua_u8g2_set_pwr_save},
