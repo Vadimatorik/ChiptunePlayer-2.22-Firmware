@@ -73,3 +73,7 @@ void socket_spi_lcd_tx (void *d, uint32_t len) {
         send(s_lcd, &msg, sizeof(msg), 0);
     }
 }
+
+uint8_t socket_get_button_state (uint8_t i) {
+    return 0;
+}

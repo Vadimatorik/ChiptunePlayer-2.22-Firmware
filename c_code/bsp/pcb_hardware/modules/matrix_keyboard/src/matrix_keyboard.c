@@ -2,6 +2,10 @@
 #include "freertos_obj.h"
 #include "mc_hardware.h"
 
+#if defined(AYM_SOFT)
+#include "socket_emul_layer.h"
+#endif
+
 // Флаги состояния  одной клавиши.
 typedef struct matrix_keyboard_status {
     // Флаг состояния нажатия до текущей проверки (окончание предыдущей).
@@ -42,7 +46,7 @@ matrix_keyboard_key_status b_status[B_NUM] = {0};
 
 #if defined(AYM_HARDWARE)
 
-static uint8_t get_b_state (uint32_t id) {
+static uint8_t get_b_state (uint8_t id) {
     set_pin_br_0();
     set_pin_br_1();
     set_pin_br_2();
@@ -76,8 +80,8 @@ static uint8_t get_b_state (uint32_t id) {
 
 #elif defined(AYM_SOFT)
 
-static uint8_t get_b_state (uint32_t id) {
-    return 0;
+static uint8_t get_b_state (uint8_t id) {
+    return socket_get_button_state(id);
 }
 
 #endif
