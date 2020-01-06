@@ -1,4 +1,4 @@
-#include "stm32f4xx.h"
+#include "stm32f4xx_hal_conf.h"
 
 #if !defined  (HSE_VALUE)
 #define HSE_VALUE    ((uint32_t)16000000) /*!< Default value of the External oscillator in Hz */
@@ -47,4 +47,6 @@ void SystemInit () {
 
 
     SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+
+    __HAL_RCC_CCMDATARAMEN_CLK_ENABLE(); // Включаем CCM RAM.
 }

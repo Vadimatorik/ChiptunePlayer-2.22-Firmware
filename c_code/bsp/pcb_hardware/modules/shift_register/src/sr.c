@@ -2,7 +2,8 @@
 
 #define SR_NUM 3
 
-uint8_t sr_data[SR_NUM] = {0};
+__attribute__ ((section (".bss_ccm")))
+static uint8_t sr_data[SR_NUM] = {0};
 
 
 int sr_read_byte (uint32_t byte_num, uint8_t *return_byte) {

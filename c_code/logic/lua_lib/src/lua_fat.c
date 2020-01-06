@@ -1,12 +1,6 @@
 #include "lua.h"
 
 #include "lauxlib.h"
-#include "lualib.h"
-
-#include "u8g2.h"
-#include "l.h"
-#include "lua.h"
-
 #include <string.h>
 #include "ff.h"
 

@@ -10,16 +10,21 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#define TASK_UART_STACK_SIZE 400
-#define TASK_UART_PRIO 2
+#include "freertos_obj.h"
 
-static StaticTask_t task_uart_buf;
-static StackType_t task_uart_stack[TASK_UART_STACK_SIZE];
+__attribute__ ((section (".bss_ccm")))
+static StaticTask_t task_uart_buf = {0};
 
+__attribute__ ((section (".bss_ccm")))
+static StackType_t task_uart_stack[UART_THREAD_STACK_SIZE] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t rx_msg_semaphore = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
-#define UART_TX_QUEUE_LEN 10
+
 typedef struct _tx_msg_cfg {
     union data {
         uint8_t *p;
@@ -29,20 +34,34 @@ typedef struct _tx_msg_cfg {
     uint32_t len;
 } tx_msg_cfg_t;
 
+__attribute__ ((section (".bss_ccm")))
 static QueueHandle_t tx_points_queue = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticQueue_t tx_points_queue_str = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0};
 
+__attribute__ ((section (".bss_ccm")))
 SemaphoreHandle_t rx_buffer_mutex = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 StaticSemaphore_t rx_buffer_mutex_buf = {0};
 
-
+__attribute__ ((section (".bss_ccm")))
 static UART_HandleTypeDef u = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static DMA_HandleTypeDef u_dma = {0};
 
+__attribute__ ((section (".bss_ccm")))
 static uint8_t u_rx_byte = 0;
 
-char u_rx_buffer[1024] = {0};
+__attribute__ ((section (".bss_ccm")))
+static char u_rx_buffer[1024] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 volatile int u_rx_pointer = 0;
 
 static void task_uart (void *p) {
@@ -111,7 +130,7 @@ static int init_mc_uart_os () {
     tx_points_queue = xQueueCreateStatic(UART_TX_QUEUE_LEN, sizeof(tx_msg_cfg_t),
                                          &tx_points_queue_buf[0], &tx_points_queue_str);
 
-    if (xTaskCreateStatic(task_uart, "uart", TASK_UART_STACK_SIZE, NULL, TASK_UART_PRIO,
+    if (xTaskCreateStatic(task_uart, "uart", UART_THREAD_STACK_SIZE, NULL, UART_THREAD_PRIO,
                           task_uart_stack, &task_uart_buf) == NULL) {
         return ENOMEM;
     }
@@ -229,4 +248,5 @@ int _read (int fd, void *buf, size_t count) {
     xSemaphoreGive(rx_buffer_mutex);
     return rv;
 }
+
 #endif

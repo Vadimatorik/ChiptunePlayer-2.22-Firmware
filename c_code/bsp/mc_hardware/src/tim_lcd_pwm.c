@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #ifdef AYM_HARDWARE
+__attribute__ ((section (".bss_ccm")))
 TIM_HandleTypeDef tim_lcd_pwm = {0};
 #endif
 

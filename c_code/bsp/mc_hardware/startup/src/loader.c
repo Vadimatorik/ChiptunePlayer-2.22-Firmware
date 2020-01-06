@@ -1,36 +1,42 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-/*!
+/*
  * Следующие поля импортируются из linker скрипта.
  */
 
-/*! Список методов, вызываемых перед конструкторами. */
+/* Список методов, вызываемых перед конструкторами. */
 extern void (*__preinit_array_start[]) () __attribute__((weak));
 extern void (*__preinit_array_end[]) () __attribute__((weak));
 
-/*! Вызов конструкторов глобальных объектов. */
+/* Вызов конструкторов глобальных объектов. */
 extern void (*__init_array_start[]) () __attribute__((weak));
 extern void (*__init_array_end[]) () __attribute__((weak));
 
-/*! Вызов деструкторов глобальных объектов. */
+/* Вызов деструкторов глобальных объектов. */
 extern void (*__fini_array_start[]) () __attribute__((weak));
 extern void (*__fini_array_end[]) () __attribute__((weak));
 
-/*!
+/*
  * BSS.
  */
 extern uint32_t __bss_start;
 extern uint32_t __bss_end;
 
-/*!
+/*
  * DATA
  */
 extern uint32_t __data_in_rom_start;
 extern uint32_t __data_start;
 extern uint32_t __data_end;
 
-/// Метод инициализирует data область (заданную).
+/*
+ * CCM_BSS.
+ */
+extern uint32_t __bss_ccm_start;
+extern uint32_t __bss_ccm_end;
+
+// Метод инициализирует data область (заданную).
 inline void __attribute__((always_inline))
 __initialize_data (uint32_t *from, uint32_t *section_begin, uint32_t *section_end) {
     uint32_t *p = section_begin;
@@ -38,7 +44,7 @@ __initialize_data (uint32_t *from, uint32_t *section_begin, uint32_t *section_en
         *p++ = *from++;
 }
 
-/// Метод заполняет 0-ми bss область (заданную).
+// Метод заполняет 0-ми bss область (заданную).
 inline void __attribute__((always_inline))
 __initialize_bss (uint32_t *section_begin, uint32_t *section_end) {
     uint32_t *p = section_begin;
@@ -85,17 +91,18 @@ void *__dso_handle;
 /// запуск main и последующая "уборка"
 /// (вызов деструкторов глобальных объектов).
 void __start () {
+    /// Сбрасываем периферию в приемлемое состояние по умолчанию.
+    SystemInit();
+
     /// BSS.
     __initialize_bss(&__bss_start, &__bss_end);
-    
+    __initialize_bss(&__bss_ccm_start, &__bss_ccm_end);
+
     /// DATA.
     __initialize_data(&__data_in_rom_start, &__data_start, &__data_end);
     
     /// Начальная инициализация глобальных объектов.
     __run_init_array();
-    
-    /// Сбрасываем периферию в приемлемое состояние по умолчанию.
-    SystemInit();
     
     /// Начинаем выполнение основной программы.
     int code = main();

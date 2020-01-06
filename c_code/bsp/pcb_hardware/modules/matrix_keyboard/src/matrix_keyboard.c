@@ -27,12 +27,15 @@ typedef struct matrix_keyboard_status {
     uint32_t button_long_click_time;
 } matrix_keyboard_key_status;
 
-static StackType_t matrix_keyboard_thread_stack[MATRIX_KEYBOARD_THREAD_STACK_SIZE];
-static StaticTask_t matrix_keyboard_thread_struct;
+__attribute__ ((section (".bss_ccm")))
+static StackType_t matrix_keyboard_thread_stack[MATRIX_KEYBOARD_THREAD_STACK_SIZE] = {0};
+
+__attribute__ ((section (".bss_ccm")))
+static StaticTask_t matrix_keyboard_thread_struct = {0};
 
 #define B_NUM 7
 
-matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
+static const matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
     {B_UP,     50, 1000},
     {B_DOWN,   50, 1000},
     {B_LEFT,   50, 1000},
@@ -42,6 +45,7 @@ matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
     {B_MENU,   50, 1000}
 };
 
+__attribute__ ((section (".bss_ccm")))
 matrix_keyboard_key_status b_status[B_NUM] = {0};
 
 #if defined(AYM_HARDWARE)
@@ -88,7 +92,7 @@ static uint8_t get_b_state (uint8_t id) {
 
 static void process_press (uint32_t b_number) {
     matrix_keyboard_key_status *s = &b_status[b_number];
-    matrix_keyboard_one_button_cfg *p_st = &b_cfg[b_number];
+    const matrix_keyboard_one_button_cfg *p_st = &b_cfg[b_number];
 
     //. Если до этого момента кнопка была сброшена.
     if (!s->press) {
@@ -135,7 +139,7 @@ static void process_press (uint32_t b_number) {
 
 static void process_not_press (uint32_t b_number) {
     matrix_keyboard_key_status *s = &b_status[b_number];
-    matrix_keyboard_one_button_cfg *p_st = &b_cfg[b_number];
+    const matrix_keyboard_one_button_cfg *p_st = &b_cfg[b_number];
 
     if (s->press == 0) {
         return; // Если она и до этого была отпущена - выходим.

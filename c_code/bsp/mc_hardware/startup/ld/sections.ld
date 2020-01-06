@@ -77,6 +77,13 @@ SECTIONS
     .ARM.exidx : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >FLASH
     __exidx_end = .;
 
+    .bss_ccm : ALIGN(4)
+    {
+        . = ALIGN(4); __bss_ccm_start__ = .;    __bss_ccm_start = .;
+        *(.bss_ccm .bss_ccm.*)
+        . = ALIGN(4); __bss_ccm_end__ = .;    __bss_ccm_end = .;
+    } >CCM_RAM
+
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
     .stabstr       0 : { *(.stabstr) }

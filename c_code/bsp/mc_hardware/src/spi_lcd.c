@@ -11,13 +11,22 @@
 #ifdef AYM_HARDWARE
 #include "freertos_headers.h"
 
+__attribute__ ((section (".bss_ccm")))
 SPI_HandleTypeDef s_lcd = {0};
+
+__attribute__ ((section (".bss_ccm")))
 DMA_HandleTypeDef s_lcd_dma = {0};
 
+__attribute__ ((section (".bss_ccm")))
 SemaphoreHandle_t spi_lcd_msg_semaphore = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t spi_lcd_msg_semaphore_str = {0};
 
+__attribute__ ((section (".bss_ccm")))
 SemaphoreHandle_t spi_lcd_mutex = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 StaticSemaphore_t spi_lcd_mutex_buf = {0};
 #endif
 

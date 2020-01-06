@@ -18,8 +18,13 @@ typedef struct _lua_os_cmd {
     uint8_t cmd;
 } lua_os_cmd_t;
 
+__attribute__ ((section (".bss_ccm")))
 static QueueHandle_t lua_os_cmd_queue = NULL;
-static uint8_t lua_os_cmd_queue_storage_area[LUA_OS_CMD_QUEUE_SIZE*sizeof(lua_os_cmd_t)] = {0};
+
+__attribute__ ((section (".bss_ccm")))
+static uint8_t lua_os_cmd_queue_storage_area[LUA_OS_CMD_QUEUE_LEN*sizeof(lua_os_cmd_t)] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static StaticQueue_t lua_os_cmd_queue_str = {0};
 
 static int lua_delay_ms (lua_State *L) {
@@ -70,7 +75,7 @@ static int lua_get_cmd (lua_State *L) {
 }
 
 static int lua_init (lua_State *L) {
-    lua_os_cmd_queue = xQueueCreateStatic(LUA_OS_CMD_QUEUE_SIZE, sizeof(lua_os_cmd_t),
+    lua_os_cmd_queue = xQueueCreateStatic(LUA_OS_CMD_QUEUE_LEN, sizeof(lua_os_cmd_t),
                                           lua_os_cmd_queue_storage_area, &lua_os_cmd_queue_str);
 
     if (init_pcb_hardware() != 0) {

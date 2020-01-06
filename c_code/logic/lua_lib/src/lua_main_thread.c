@@ -5,8 +5,11 @@
 #include "lauxlib.h"
 #include "lua.h"
 
-static StaticTask_t lua_main_thread_buffer;
-static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE];
+__attribute__ ((section (".bss_ccm")))
+static StaticTask_t lua_main_thread_buffer = {0};
+
+__attribute__ ((section (".bss_ccm")))
+static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE] = {0};
 
 static int load_start_scripts (lua_State *L) {
     if (luaL_dostring(L, "_G.lua_scripts_path_dir = '../ChiptunePlayer-2.22-Firmware/lua_scripts/'") != 0) {

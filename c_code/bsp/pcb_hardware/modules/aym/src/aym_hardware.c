@@ -1,11 +1,7 @@
 #include "aym_hardware.h"
-
 #include "freertos_headers.h"
-
-#include "mc_hardware.h"
 #include "sr.h"
-#include "ltc6903.h"
-#include "dp.h"
+#include "freertos_obj.h"
 
 #include <errno.h>
 
@@ -19,12 +15,12 @@ typedef enum {
     QUEUE_STATE_NOT_EMPTY = 0xFF
 } QUEUE_STATE;
 
-static uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
+static const uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
 
-#define TASK_AYM_HARDWARE_STACK_SIZE 2000
-#define TASK_AYM_HARDWARE_PRIO 4
+__attribute__ ((section (".bss_ccm")))
+static StackType_t tb[AYM_HARDWARE_THREAD_STACK_SIZE] = {0};
 
-static StackType_t tb[TASK_AYM_HARDWARE_STACK_SIZE] = {0};
+__attribute__ ((section (".bss_ccm")))
 static StaticTask_t ts = {0};
 
 #define AYM_REG_R7_DEFAULT_VALUE 0b111111
@@ -33,11 +29,16 @@ typedef struct __attribute__((packed)) _chip_reg_data {
     uint8_t reg[16];
 } chip_reg_data;
 
+__attribute__ ((section (".bss_ccm")))
 chip_reg_data aym_data[AY_NUM] = {0};
 
+__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t tim_irq_request = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tim_irq_request_buf = {0};
 
+__attribute__ ((section (".bss_ccm")))
 TimerHandle_t irq_timer = NULL;
 
 typedef struct _aym_out_data {
@@ -45,13 +46,18 @@ typedef struct _aym_out_data {
     uint8_t data;
 } aym_out_data;
 
-#define YM_REG_DATA_QUEUE_LEN 32
 
-static QueueHandle_t aym_reg_data_queue[AY_NUM] = {NULL};
+__attribute__ ((section (".bss_ccm")))
+static QueueHandle_t aym_reg_data_queue[AY_NUM] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static StaticQueue_t aym_reg_data_str[AY_NUM] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_reg_data_t)] = {0};
 
-uint32_t tic_ff = 0;
+__attribute__ ((section (".bss_ccm")))
+static uint32_t tic_ff = 0;
 
 static int set_reg () {
     int rv = 0;
@@ -227,7 +233,7 @@ int init_aym_hardware () {
 
     irq_timer = xTimerCreate("aym_timer", 20, pdTRUE, NULL, tim_irq_handler);
 
-    xTaskCreateStatic(task_aym, "aym_hardware", TASK_AYM_HARDWARE_STACK_SIZE, NULL, TASK_AYM_HARDWARE_PRIO,
+    xTaskCreateStatic(task_aym, "aym_hardware", AYM_HARDWARE_THREAD_STACK_SIZE, NULL, AYM_HARDWARE_THREAD_PRIO,
                       tb, &ts);
     for (int i = 0; i < AY_NUM; i++) {
         aym_reg_data_queue[i] = xQueueCreateStatic(YM_REG_DATA_QUEUE_LEN, sizeof(aym_reg_data_t),

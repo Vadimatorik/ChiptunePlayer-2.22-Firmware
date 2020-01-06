@@ -15,14 +15,25 @@
 #endif
 
 #ifdef AYM_HARDWARE
+__attribute__ ((section (".bss_ccm")))
 SD_HandleTypeDef sdio = {0};
+
+__attribute__ ((section (".bss_ccm")))
 DMA_HandleTypeDef sdio_tx = {0};
+
+__attribute__ ((section (".bss_ccm")))
 DMA_HandleTypeDef sdio_rx = {0};
 
+__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t rx_msg_semaphore = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
+__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t tx_msg_semaphore = NULL;
+
+__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
 #elif defined(AYM_SOFT)
 #define SD_BLOCK_SIZE 512
@@ -79,11 +90,11 @@ int init_sdio () {
     sdio_rx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
     sdio_rx.Init.MemBurst = DMA_MBURST_INC4;
     sdio_rx.Init.PeriphBurst = DMA_PBURST_INC4;
-    if (HAL_DMA_Init(&sdio_rx) != HAL_OK){
+    if (HAL_DMA_Init(&sdio_rx) != HAL_OK) {
         return EIO;
     }
 
-    __HAL_LINKDMA(&sdio,hdmarx,sdio_rx);
+    __HAL_LINKDMA(&sdio, hdmarx, sdio_rx);
 
     sdio_tx.Instance = DMA2_Stream6;
     sdio_tx.Init.Channel = DMA_CHANNEL_4;
@@ -98,11 +109,11 @@ int init_sdio () {
     sdio_tx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
     sdio_tx.Init.MemBurst = DMA_MBURST_INC4;
     sdio_tx.Init.PeriphBurst = DMA_PBURST_INC4;
-    if (HAL_DMA_Init(&sdio_tx) != HAL_OK){
+    if (HAL_DMA_Init(&sdio_tx) != HAL_OK) {
         return EIO;
     }
 
-    __HAL_LINKDMA(&sdio,hdmatx,sdio_tx);
+    __HAL_LINKDMA(&sdio, hdmatx, sdio_tx);
 
     HAL_NVIC_SetPriority(SDIO_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(SDIO_IRQn);
@@ -239,11 +250,11 @@ void DMA2_Stream6_IRQHandler () {
     HAL_DMA_IRQHandler(&sdio_tx);
 }
 
-void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd) {
+void HAL_SD_RxCpltCallback (SD_HandleTypeDef *hsd) {
     xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
 }
 
-void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd) {
+void HAL_SD_TxCpltCallback (SD_HandleTypeDef *hsd) {
     xSemaphoreGiveFromISR(tx_msg_semaphore, NULL);
 }
 #endif

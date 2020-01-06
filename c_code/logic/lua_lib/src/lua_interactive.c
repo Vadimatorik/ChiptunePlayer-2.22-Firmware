@@ -209,8 +209,10 @@ static void task_lua_interactive (void *p) {
     }
 }
 
-
+__attribute__ ((section (".bss_ccm")))
 static StaticTask_t lua_interactive_thread_buffer;
+
+__attribute__ ((section (".bss_ccm")))
 static StackType_t lua_interactive_thread_stack[LUA_INTERACTIVE_THREAD_STACK_SIZE];
 
 int init_lua_interactive () {

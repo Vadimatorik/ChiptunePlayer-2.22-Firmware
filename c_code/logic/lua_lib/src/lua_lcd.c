@@ -21,6 +21,7 @@
 
 #include "lcd_driver.h"
 
+__attribute__ ((section (".bss_ccm")))
 static u8g2_t u8g2 = {0};
 
 #define LIB_POS_FIX 1
@@ -409,7 +410,7 @@ typedef struct {
     const uint8_t *data;
 } font_item;
 
-static font_item fonts[] = {
+static const font_item fonts[] = {
     {"u8g2_font_5x7_tf", u8g2_font_5x7_tf}
 };
 

@@ -4,7 +4,10 @@
 
 #include <stdio.h>
 
+__attribute__ ((section (".bss_ccm")))
 static char stdout_buffer[BUFSIZ] = {0};
+
+__attribute__ ((section (".bss_ccm")))
 static char stdin_buffer[BUFSIZ] = {0};
 
 int init_core () {

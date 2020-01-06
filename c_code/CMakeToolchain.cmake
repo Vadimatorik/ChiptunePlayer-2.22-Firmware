@@ -31,7 +31,9 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
     SET(MC_LD_FLAGS "--specs=nano.specs -specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-u,vfprintf -lm -u _printf_float -u _scanf_float -T ${MEM_LD} -T ${SECTIONS_LD} -nostartfiles")
 
     SET(CMAKE_C_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${C_COMPILER_FLAGS}")
-    SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
+
+    # SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS}")
+    SET(CMAKE_EXE_LINKER_FLAGS "${MC_HARDWARE_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION} ${MC_LD_FLAGS} -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map")
 elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
     SET(CMAKE_C_FLAGS "-m32 ${COMPILER_OPTIMIZATION} -fdata-sections -ffunction-sections -Wl,--gc-sections  ${C_COMPILER_FLAGS}")
     SET(CMAKE_EXE_LINKER_FLAGS "-m32 -fdata-sections -ffunction-sections -Wl,--gc-sections ${COMPILER_OPTIMIZATION}")
