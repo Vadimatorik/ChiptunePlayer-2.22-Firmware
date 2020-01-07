@@ -1,4 +1,5 @@
 sudo dd if=/dev/zero of=microsd.img bs=1M count=8
 sudo mkfs.msdos microsd.img
 sudo chmod 777 microsd.img
-sudo mount -t auto img/microsd.img microsd
+mkdir microsd
+sudo mount -t auto microsd.img microsd
