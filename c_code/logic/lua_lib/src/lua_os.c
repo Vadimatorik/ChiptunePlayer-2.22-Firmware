@@ -8,6 +8,12 @@
 #include "freertos_headers.h"
 #include "pcb_hardware.h"
 
+#include <errno.h>
+
+#include <string.h>
+
+#include "lua_ext_func.h"
+
 #if defined(AYM_HARDWARE)
 #include "stm32f4xx_hal_conf.h"
 #endif
@@ -97,9 +103,24 @@ static int lua_get_free_ram_bytes (lua_State *L) {
 }
 
 static int lua_get_free_ram_kb (lua_State *L) {
-    lua_pushinteger(L, xPortGetFreeHeapSize() / 1024);
+    lua_pushinteger(L, xPortGetFreeHeapSize()/1024);
     return 1;
 }
+
+static int dofilecont (lua_State *L, int d1, lua_KContext d2) {
+    (void)d1;  (void)d2;  /* only to match 'lua_Kfunction' prototype */
+    return lua_gettop(L) - 1;
+}
+
+static int lua_dofile (lua_State *L) {
+    const char *fname = luaL_optstring(L, 1, NULL);
+    lua_settop(L, 1);
+    if (lua_fatfs_loadfilex(L, fname) != LUA_OK)
+        return lua_error(L);
+    lua_callk(L, 0, LUA_MULTRET, 0, dofilecont);
+    return dofilecont(L, 0, 0);
+}
+
 
 static int lua_exit (lua_State *L) {
 #ifdef AYM_SOFT
@@ -115,7 +136,8 @@ static const luaL_Reg os_lib[] = {
     {"get_cmd",            lua_get_cmd},
     {"get_free_ram_bytes", lua_get_free_ram_bytes},
     {"get_free_ram_kb",    lua_get_free_ram_kb},
-    {"exit",                lua_exit},
+    {"exit",               lua_exit},
+    {"dofile",             lua_dofile},
     {NULL, NULL}
 };
 
