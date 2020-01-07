@@ -2,8 +2,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <stdio.h>
+
 #include <unistd.h>
+#include <stdio.h>
 
 static int s_lcd = 0;
 static int s_keyboard = 0;

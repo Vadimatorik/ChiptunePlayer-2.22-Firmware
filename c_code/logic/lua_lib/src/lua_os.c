@@ -109,8 +109,6 @@ static int lua_exit (lua_State *L) {
 #endif
 }
 
-
-
 static const luaL_Reg os_lib[] = {
     {"init",               lua_init},
     {"delay_ms",           lua_delay_ms},

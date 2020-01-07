@@ -95,7 +95,7 @@ void DMA2_Stream5_IRQHandler () {
 }
 #endif
 
-#include <stdio.h>
+
 
 int spi_lcd_tx (void *d, uint32_t len) {
 #ifdef AYM_HARDWARE

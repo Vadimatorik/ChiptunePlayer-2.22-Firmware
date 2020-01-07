@@ -8,9 +8,7 @@
 #include "stm32f4xx_hal_cortex.h"
 #include "freertos_headers.h"
 #elif defined(AYM_SOFT)
-#include <stdio.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #endif
 
@@ -36,6 +34,7 @@ static SemaphoreHandle_t tx_msg_semaphore = NULL;
 __attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
 #elif defined(AYM_SOFT)
+#include <stdio.h>
 #define SD_BLOCK_SIZE 512
 static FILE *sd = NULL;
 #endif

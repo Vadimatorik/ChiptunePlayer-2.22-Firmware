@@ -2,7 +2,7 @@
 #include "lualib.h"
 #include "lua.h"
 
-#include <stdio.h>
+
 #include <memory.h>
 #include <stdlib.h>
 #include <signal.h>

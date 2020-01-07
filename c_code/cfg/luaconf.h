@@ -9,6 +9,7 @@
 #define luaconf_h
 
 #include <limits.h>
+#include <stdio.h>
 #include <stddef.h>
 
 #define LUA_32BITS

@@ -8,7 +8,7 @@
 #define ltests_h
 
 
-#include <stdio.h>
+
 #include <stdlib.h>
 
 /* test Lua with compatibility code */
