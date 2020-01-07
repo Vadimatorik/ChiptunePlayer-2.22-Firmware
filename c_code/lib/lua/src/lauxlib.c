@@ -690,7 +690,8 @@ static const char *getF (lua_State *L, void *ud, size_t *size) {
             return NULL;
         }
 
-        f_read(lf->f, lf->buff, sizeof(lf->buff), size);  /* read block */
+        f_gets(lf->buff, sizeof(lf->buff), lf->f);  /* read block */
+        *size = strlen(lf->buff);
     }
     return lf->buff;
 }
@@ -757,43 +758,54 @@ static int skipcomment (LoadF *lf, int *cp) {
 
 LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
                                const char *mode) {
-    LoadF lf;
+    LoadF *lf = malloc(sizeof(LoadF));
+
+    if (lf == NULL) {
+        return ENOMEM;
+    }
+
     int status, readstatus;
     int c;
     int fnameindex = lua_gettop(L) + 1;  /* index of filename on the stack */
     if (filename == NULL) {
+        free(lf);
         return -1;
     }
 
     lua_pushfstring(L, "@%s", filename);
 
-    lf.f = malloc(sizeof(*lf.f));
-    if (lf.f == NULL) {
+    lf->f = malloc(sizeof(*lf->f));
+    if (lf->f == NULL) {
+        free(lf);
         return errfile(L, "malloc", fnameindex);
     }
 
-    if (f_open(lf.f, filename, FA_READ) != FR_OK) {
-        free(lf.f);
+    if (f_open(lf->f, filename, FA_READ) != FR_OK) {
+        free(lf->f);
+        free(lf);
         return errfile(L, "open", fnameindex);
     }
 
-    if (skipcomment(&lf, &c))  /* read initial portion */
-        lf.buff[lf.n++] = '\n';  /* add line to correct line numbers */
+    if (skipcomment(lf, &c))  /* read initial portion */
+        lf->buff[lf->n++] = '\n';  /* add line to correct line numbers */
     if (c == LUA_SIGNATURE[0] && filename) {  /* binary file? */
-        skipcomment(&lf, &c);  /* re-read initial portion */
+        skipcomment(lf, &c);  /* re-read initial portion */
     }
     if (c != EOF)
-        lf.buff[lf.n++] = c;  /* 'c' is the first character of the stream */
-    status = lua_load(L, getF, &lf, lua_tostring(L, -1), mode);
-    readstatus = f_error(lf.f);
-    f_close(lf.f);  /* close file (even in case of errors) */
-    free(lf.f);
+        lf->buff[lf->n++] = c;  /* 'c' is the first character of the stream */
+    status = lua_load(L, getF, lf, lua_tostring(L, -1), mode);
+    readstatus = f_error(lf->f);
+    f_close(lf->f);  /* close file (even in case of errors) */
+    free(lf->f);
 
     if (readstatus) {
+        free(lf);
         lua_settop(L, fnameindex);  /* ignore results from 'lua_load' */
         return errfile(L, "read", fnameindex);
     }
     lua_remove(L, fnameindex);
+
+    free(lf);
     return status;
 }
 

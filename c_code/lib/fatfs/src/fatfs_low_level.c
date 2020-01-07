@@ -2,6 +2,9 @@
 #include "mc_hardware.h"
 #include "freertos_headers.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 void *ff_memalloc (UINT msize) {
     return pvPortMalloc(msize);
 }
@@ -26,22 +29,50 @@ DRESULT disk_read (__attribute__((unused)) BYTE pdrv,
                    BYTE *buff,
                    LBA_t sector,
                    UINT count) {
-    if (((uint32_t)buff)%4 != 0) {
-        while (1);
-    }
+    if (((uint32_t)buff)%4 == 0) {
+        return (sdio_read((uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+    } else {
+        uint32_t s_size = 0;
+        if (sdio_get_block_size(&s_size) != 0) {
+            return RES_ERROR;
+        }
+        uint8_t *p = malloc(s_size * count);
+        if (p == NULL) {
+            return RES_ERROR;
+        }
 
-    return (sdio_read((uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+        DRESULT r = (sdio_read((uint32_t*)p, sector, count) == 0)?0:STA_NOINIT;
+        memcpy(buff, p, s_size * count);
+
+        free(p);
+
+        return r;
+    }
 }
 
 DRESULT disk_write (__attribute__((unused))    BYTE pdrv,
                     const BYTE *buff,
                     LBA_t sector,
                     UINT count) {
-    if (((uint32_t)buff)%4 != 0) {
-        while (1);
-    }
+    if (((uint32_t)buff)%4 == 0) {
+        return (sdio_write((const uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+    } else {
+        uint32_t s_size = 0;
+        if (sdio_get_block_size(&s_size) != 0) {
+            return RES_ERROR;
+        }
+        uint8_t *p = malloc(s_size * count);
+        if (p == NULL) {
+            return RES_ERROR;
+        }
 
-    return (sdio_write((const uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+        memcpy(p, buff, sector * count);
+        DRESULT r = (sdio_write((const uint32_t*)p, sector, count) == 0)?0:STA_NOINIT;
+
+        free(p);
+
+        return r;
+    }
 }
 
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff) {

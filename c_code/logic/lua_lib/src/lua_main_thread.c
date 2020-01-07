@@ -2,6 +2,9 @@
 #include "freertos_obj.h"
 #include "freertos_headers.h"
 
+#include <stdlib.h>
+#include <errno.h>
+
 #include "lauxlib.h"
 #include "lua.h"
 
@@ -12,11 +15,26 @@ __attribute__ ((section (".bss_ccm")))
 static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE] = {0};
 
 static int load_start_scripts (lua_State *L) {
-    if (luaL_dostring(L, "_G.lua_scripts_path_dir = '../ChiptunePlayer-2.22-Firmware/lua_scripts/'") != 0) {
+    FATFS *fat = malloc(sizeof(FATFS));
+    if (fat == NULL) {
+        return ENOMEM;
+    }
+
+    if (f_mount(fat, "0:", 1) != FR_OK) {
+        free(fat);
+        return EIO;
+    }
+
+    if (luaL_dofile(L, "lua_scripts/init.lua") != 0) {
+        f_unmount("0:");
+        free(fat);
         return -1;
     }
 
-    if (luaL_dofile(L, "../ChiptunePlayer-2.22-Firmware/lua_scripts/init.lua")) {
+    f_unmount("0:");
+    free(fat);
+
+    if (luaL_dostring(L, "win:start()") != 0) {
         return -1;
     }
 

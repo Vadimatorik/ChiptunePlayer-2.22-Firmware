@@ -1,5 +1,11 @@
+Создать:
 sudo dd if=/dev/zero of=microsd.img bs=1M count=8
 sudo mkfs.msdos microsd.img
 sudo chmod 777 microsd.img
 mkdir microsd
-sudo mount -t auto microsd.img microsd
+
+Монтировать и открыть:
+sudo mount -t auto microsd.img microsd && sudo nautilus microsd
+
+Отсоединить:
+sudo umount microsd
