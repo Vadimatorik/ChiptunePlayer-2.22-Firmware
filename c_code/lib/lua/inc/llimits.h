@@ -1,5 +1,5 @@
 /*
-** $Id: llimits.h $
+** $Id: llimits.h,v 1.141.1.1 2017/04/19 17:20:42 roberto Exp $
 ** Limits, basic types, and some other 'installation-dependent' definitions
 ** See Copyright Notice in lua.h
 */
@@ -33,7 +33,6 @@ typedef long l_mem;
 
 /* chars used as small naturals (so that 'char' is reserved for characters) */
 typedef unsigned char lu_byte;
-typedef signed char ls_byte;
 
 
 /* maximum value for size_t */
@@ -53,24 +52,26 @@ typedef signed char ls_byte;
 
 
 /*
-** floor of the log2 of the maximum signed value for integral type 't'.
-** (That is, maximum 'n' such that '2^n' fits in the given signed type.)
-*/
-#define log2maxs(t)	(sizeof(t) * 8 - 2)
-
-
-/*
-** test whether an unsigned value is a power of 2 (or zero)
-*/
-#define ispow2(x)	(((x) & ((x) - 1)) == 0)
-
-
-/*
 ** conversion of pointer to unsigned integer:
 ** this is for hashing only; there is no problem if the integer
 ** cannot hold the whole pointer value
 */
 #define point2uint(p)	((unsigned int)((size_t)(p) & UINT_MAX))
+
+
+
+/* type to ensure maximum alignment */
+#if defined(LUAI_USER_ALIGNMENT_T)
+typedef LUAI_USER_ALIGNMENT_T L_Umaxalign;
+#else
+typedef union {
+  lua_Number n;
+  double u;
+  void *s;
+  lua_Integer i;
+  long l;
+} L_Umaxalign;
+#endif
 
 
 
@@ -110,15 +111,10 @@ typedef LUAI_UACINT l_uacInt;
 #define cast(t, exp)	((t)(exp))
 
 #define cast_void(i)	cast(void, (i))
-#define cast_voidp(i)	cast(void *, (i))
+#define cast_byte(i)	cast(lu_byte, (i))
 #define cast_num(i)	cast(lua_Number, (i))
 #define cast_int(i)	cast(int, (i))
-#define cast_uint(i)	cast(unsigned int, (i))
-#define cast_byte(i)	cast(lu_byte, (i))
 #define cast_uchar(i)	cast(unsigned char, (i))
-#define cast_char(i)	cast(char, (i))
-#define cast_charp(i)	cast(char *, (i))
-#define cast_sizet(i)	cast(size_t, (i))
 
 
 /* cast a signed lua_Integer to lua_Unsigned */
@@ -137,26 +133,8 @@ typedef LUAI_UACINT l_uacInt;
 
 
 /*
-** macros to improve jump prediction (used mainly for error handling)
-*/
-#if !defined(likely)
-
-#if defined(__GNUC__)
-#define likely(x)	(__builtin_expect(((x) != 0), 1))
-#define unlikely(x)	(__builtin_expect(((x) != 0), 0))
-#else
-#define likely(x)	(x)
-#define unlikely(x)	(x)
-#endif
-
-#endif
-
-
-/*
 ** non-return type
 */
-#if !defined(l_noret)
-
 #if defined(__GNUC__)
 #define l_noret		void __attribute__((noreturn))
 #elif defined(_MSC_VER) && _MSC_VER >= 1200
@@ -165,16 +143,14 @@ typedef LUAI_UACINT l_uacInt;
 #define l_noret		void
 #endif
 
-#endif
 
 
 /*
 ** maximum depth for nested C calls and syntactical nested non-terminals
-** in a program. (Value must fit in an unsigned short int. It must also
-** be compatible with the size of the C stack.)
+** in a program. (Value must fit in an unsigned short int.)
 */
 #if !defined(LUAI_MAXCCALLS)
-#define LUAI_MAXCCALLS		2200
+#define LUAI_MAXCCALLS		200
 #endif
 
 
@@ -184,12 +160,10 @@ typedef LUAI_UACINT l_uacInt;
 ** must be an unsigned with (at least) 4 bytes (see details in lopcodes.h)
 */
 #if LUAI_BITSINT >= 32
-typedef unsigned int l_uint32;
+typedef unsigned int Instruction;
 #else
-typedef unsigned long l_uint32;
+typedef unsigned long Instruction;
 #endif
-
-typedef l_uint32 Instruction;
 
 
 
@@ -251,7 +225,8 @@ typedef l_uint32 Instruction;
 
 
 /*
-** these macros allow user-specific actions when a thread is
+** these macros allow user-specific actions on threads when you defined
+** LUAI_EXTRASPACE and need to do something extra when a thread is
 ** created/deleted/resumed/yielded.
 */
 #if !defined(luai_userstateopen)
@@ -295,20 +270,15 @@ typedef l_uint32 Instruction;
 #endif
 
 /*
-** modulo: defined as 'a - floor(a/b)*b'; the direct computation
-** using this definition has several problems with rounding errors,
-** so it is better to use 'fmod'. 'fmod' gives the result of
-** 'a - trunc(a/b)*b', and therefore must be corrected when
-** 'trunc(a/b) ~= floor(a/b)'. That happens when the division has a
-** non-integer negative result: non-integer result is equivalent to
-** a non-zero remainder 'm'; negative result is equivalent to 'a' and
-** 'b' with different signs, or 'm' and 'b' with different signs
-** (as the result 'm' of 'fmod' has the same sign of 'a').
+** modulo: defined as 'a - floor(a/b)*b'; this definition gives NaN when
+** 'b' is huge, but the result should be 'a'. 'fmod' gives the result of
+** 'a - trunc(a/b)*b', and therefore must be corrected when 'trunc(a/b)
+** ~= floor(a/b)'. That happens when the division has a non-integer
+** negative result, which is equivalent to the test below.
 */
 #if !defined(luai_nummod)
 #define luai_nummod(L,a,b,m)  \
-  { (void)L; (m) = l_mathop(fmod)(a,b); \
-    if (((m) > 0) ? (b) < 0 : ((m) < 0 && (b) > 0)) (m) += (b); }
+  { (m) = l_mathop(fmod)(a,b); if ((m)*(b) < 0) (m) += (b); }
 #endif
 
 /* exponentiation */
@@ -340,7 +310,7 @@ typedef l_uint32 Instruction;
 #else
 /* realloc stack keeping its size */
 #define condmovestack(L,pre,pos)  \
-  { int sz_ = (L)->stacksize; pre; luaD_reallocstack((L), sz_, 0); pos; }
+	{ int sz_ = (L)->stacksize; pre; luaD_reallocstack((L), sz_); pos; }
 #endif
 
 #if !defined(HARDMEMTESTS)

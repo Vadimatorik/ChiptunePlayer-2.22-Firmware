@@ -119,7 +119,7 @@ static const luaL_Reg os_lib[] = {
     {NULL, NULL}
 };
 
-LUAMOD_API int luaopen_os (lua_State *L) {
+LUAMOD_API int luaopen_freertos (lua_State *L) {
     luaL_newlib(L, os_lib);
     return 1;
 }

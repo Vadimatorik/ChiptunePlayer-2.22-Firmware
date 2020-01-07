@@ -1,5 +1,5 @@
 /*
-** $Id: lcorolib.c $
+** $Id: lcorolib.c,v 1.10.1.1 2017/04/19 17:20:42 roberto Exp $
 ** Coroutine Library
 ** See Copyright Notice in lua.h
 */
@@ -20,13 +20,13 @@
 
 static lua_State *getco (lua_State *L) {
   lua_State *co = lua_tothread(L, 1);
-  luaL_argexpected(L, co, 1, "thread");
+  luaL_argcheck(L, co, 1, "thread expected");
   return co;
 }
 
 
 static int auxresume (lua_State *L, lua_State *co, int narg) {
-  int status, nres;
+  int status;
   if (!lua_checkstack(co, narg)) {
     lua_pushliteral(L, "too many arguments to resume");
     return -1;  /* error flag */
@@ -36,8 +36,9 @@ static int auxresume (lua_State *L, lua_State *co, int narg) {
     return -1;  /* error flag */
   }
   lua_xmove(L, co, narg);
-  status = lua_resume(co, L, narg, &nres);
+  status = lua_resume(co, L, narg);
   if (status == LUA_OK || status == LUA_YIELD) {
+    int nres = lua_gettop(co);
     if (!lua_checkstack(L, nres + 1)) {
       lua_pop(co, nres);  /* remove results anyway */
       lua_pushliteral(L, "too many results to resume");
@@ -107,40 +108,29 @@ static int luaB_yield (lua_State *L) {
 }
 
 
-#define COS_RUN		0
-#define COS_DEAD	1
-#define COS_YIELD	2
-#define COS_NORM	3
-
-
-static const char *statname[] = {"running", "dead", "suspended", "normal"};
-
-
-static int auxstatus (lua_State *L, lua_State *co) {
-  if (L == co) return COS_RUN;
+static int luaB_costatus (lua_State *L) {
+  lua_State *co = getco(L);
+  if (L == co) lua_pushliteral(L, "running");
   else {
     switch (lua_status(co)) {
       case LUA_YIELD:
-        return COS_YIELD;
+        lua_pushliteral(L, "suspended");
+        break;
       case LUA_OK: {
         lua_Debug ar;
-        if (lua_getstack(co, 0, &ar))  /* does it have frames? */
-          return COS_NORM;  /* it is running */
+        if (lua_getstack(co, 0, &ar) > 0)  /* does it have frames? */
+          lua_pushliteral(L, "normal");  /* it is running */
         else if (lua_gettop(co) == 0)
-            return COS_DEAD;
+            lua_pushliteral(L, "dead");
         else
-          return COS_YIELD;  /* initial state */
+          lua_pushliteral(L, "suspended");  /* initial state */
+        break;
       }
       default:  /* some error occurred */
-        return COS_DEAD;
+        lua_pushliteral(L, "dead");
+        break;
     }
   }
-}
-
-
-static int luaB_costatus (lua_State *L) {
-  lua_State *co = getco(L);
-  lua_pushstring(L, statname[auxstatus(L, co)]);
   return 1;
 }
 
@@ -158,28 +148,6 @@ static int luaB_corunning (lua_State *L) {
 }
 
 
-static int luaB_kill (lua_State *L) {
-  lua_State *co = getco(L);
-  int status = auxstatus(L, co);
-  switch (status) {
-    case COS_DEAD: case COS_YIELD: {
-      status = lua_resetthread(co);
-      if (status == LUA_OK) {
-        lua_pushboolean(L, 1);
-        return 1;
-      }
-      else {
-        lua_pushboolean(L, 0);
-        lua_xmove(co, L, 1);  /* copy error message */
-        return 2;
-      }
-    }
-    default:  /* normal or running coroutine */
-      return luaL_error(L, "cannot kill a %s coroutine", statname[status]);
-  }
-}
-
-
 static const luaL_Reg co_funcs[] = {
   {"create", luaB_cocreate},
   {"resume", luaB_coresume},
@@ -188,7 +156,6 @@ static const luaL_Reg co_funcs[] = {
   {"wrap", luaB_cowrap},
   {"yield", luaB_yield},
   {"isyieldable", luaB_yieldable},
-  {"kill", luaB_kill},
   {NULL, NULL}
 };
 

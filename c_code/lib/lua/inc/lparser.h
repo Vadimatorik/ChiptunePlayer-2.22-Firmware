@@ -1,5 +1,5 @@
 /*
-** $Id: lparser.h $
+** $Id: lparser.h,v 1.76.1.1 2017/04/19 17:20:42 roberto Exp $
 ** Lua Parser
 ** See Copyright Notice in lua.h
 */
@@ -36,28 +36,19 @@ typedef enum {
   VLOCAL,  /* local variable; info = local register */
   VUPVAL,  /* upvalue variable; info = index of upvalue in 'upvalues' */
   VINDEXED,  /* indexed variable;
-                ind.t = table register;
-                ind.idx = key's R index */
-  VINDEXUP,  /* indexed upvalue;
-                ind.t = table upvalue;
-                ind.idx = key's K index */
-  VINDEXI, /* indexed variable with constant integer;
-                ind.t = table register;
-                ind.idx = key's value */
-  VINDEXSTR, /* indexed variable with literal string;
-                ind.t = table register;
-                ind.idx = key's K index */
+                ind.vt = whether 't' is register or upvalue;
+                ind.t = table register or upvalue;
+                ind.idx = key's R/K index */
   VJMP,  /* expression is a test/comparison;
             info = pc of corresponding jump instruction */
-  VRELOC,  /* expression can put result in any register;
-              info = instruction pc */
+  VRELOCABLE,  /* expression can put result in any register;
+                  info = instruction pc */
   VCALL,  /* expression is a function call; info = instruction pc */
   VVARARG  /* vararg expression; info = instruction pc */
 } expkind;
 
 
-#define vkisvar(k)	(VLOCAL <= (k) && (k) <= VINDEXSTR)
-#define vkisindexed(k)	(VINDEXED <= (k) && (k) <= VINDEXSTR)
+#define vkisvar(k)	(VLOCAL <= (k) && (k) <= VINDEXED)
 #define vkisinreg(k)	((k) == VNONRELOC || (k) == VLOCAL)
 
 typedef struct expdesc {
@@ -66,9 +57,10 @@ typedef struct expdesc {
     lua_Integer ival;    /* for VKINT */
     lua_Number nval;  /* for VKFLT */
     int info;  /* for generic use */
-    struct {  /* for indexed variables */
-      short idx;  /* index (R or "long" K) */
+    struct {  /* for indexed variables (VINDEXED) */
+      short idx;  /* index (R/K) */
       lu_byte t;  /* table (register or upvalue) */
+      lu_byte vt;  /* whether 't' is register (VLOCAL) or upvalue (VUPVAL) */
     } ind;
   } u;
   int t;  /* patch list of 'exit when true' */
@@ -78,7 +70,7 @@ typedef struct expdesc {
 
 /* description of active local variable */
 typedef struct Vardesc {
-  short idx;  /* index of the variable in the Proto's 'locvars' array */
+  short idx;  /* variable index in stack */
 } Vardesc;
 
 
@@ -88,7 +80,6 @@ typedef struct Labeldesc {
   int pc;  /* position in code */
   int line;  /* line where it appeared */
   lu_byte nactvar;  /* local level where it appears in current block */
-  lu_byte close;  /* goto that escapes upvalues */
 } Labeldesc;
 
 
@@ -124,18 +115,14 @@ typedef struct FuncState {
   struct BlockCnt *bl;  /* chain of current blocks */
   int pc;  /* next position to code (equivalent to 'ncode') */
   int lasttarget;   /* 'label' of last 'jump label' */
-  int previousline;  /* last line that was saved in 'lineinfo' */
+  int jpc;  /* list of pending jumps to 'pc' */
   int nk;  /* number of elements in 'k' */
   int np;  /* number of elements in 'p' */
-  int nabslineinfo;  /* number of elements in 'abslineinfo' */
   int firstlocal;  /* index of first local var (in Dyndata array) */
-  int firstlabel;  /* index of first label (in 'dyd->label->arr') */
   short nlocvars;  /* number of elements in 'f->locvars' */
   lu_byte nactvar;  /* number of active local variables */
   lu_byte nups;  /* number of upvalues */
   lu_byte freereg;  /* first free register */
-  lu_byte iwthabs;  /* instructions issued since last absolute line info */
-  lu_byte needclose;  /* function needs to close upvalues when returning */
 } FuncState;
 
 

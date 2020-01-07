@@ -1,5 +1,5 @@
 /*
-** $Id: lauxlib.h $
+** $Id: lauxlib.h,v 1.131.1.1 2017/04/19 17:20:42 roberto Exp $
 ** Auxiliary functions for building Lua libraries
 ** See Copyright Notice in lua.h
 */
@@ -13,10 +13,6 @@
 #include <stdio.h>
 
 #include "lua.h"
-#include "ff.h"
-
-/* global table */
-#define	LUA_GNAME	"_G"
 
 
 
@@ -48,7 +44,6 @@ LUALIB_API int (luaL_getmetafield) (lua_State *L, int obj, const char *e);
 LUALIB_API int (luaL_callmeta) (lua_State *L, int obj, const char *e);
 LUALIB_API const char *(luaL_tolstring) (lua_State *L, int idx, size_t *len);
 LUALIB_API int (luaL_argerror) (lua_State *L, int arg, const char *extramsg);
-LUALIB_API int (luaL_typeerror) (lua_State *L, int arg, const char *tname);
 LUALIB_API const char *(luaL_checklstring) (lua_State *L, int arg,
                                                           size_t *l);
 LUALIB_API const char *(luaL_optlstring) (lua_State *L, int arg,
@@ -77,7 +72,6 @@ LUALIB_API int (luaL_checkoption) (lua_State *L, int arg, const char *def,
 
 LUALIB_API int (luaL_fileresult) (lua_State *L, int stat, const char *fname);
 LUALIB_API int (luaL_execresult) (lua_State *L, int stat);
-
 
 /* predefined references */
 #define LUA_NOREF       (-2)
@@ -127,10 +121,6 @@ LUALIB_API void (luaL_requiref) (lua_State *L, const char *modname,
 
 #define luaL_argcheck(L, cond,arg,extramsg)	\
 		((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
-
-#define luaL_argexpected(L,cond,arg,tname)	\
-		((void)((cond) || luaL_typeerror(L, (arg), (tname))))
-
 #define luaL_checkstring(L,n)	(luaL_checklstring(L, (n), NULL))
 #define luaL_optstring(L,n,d)	(luaL_optlstring(L, (n), (d), NULL))
 
@@ -160,10 +150,7 @@ typedef struct luaL_Buffer {
   size_t size;  /* buffer size */
   size_t n;  /* number of characters in buffer */
   lua_State *L;
-  union {
-    LUAI_MAXALIGN;  /* ensure maximum alignment for buffer */
-    char b[LUAL_BUFFERSIZE];  /* initial buffer */
-  } init;
+  char initb[LUAL_BUFFERSIZE];  /* initial buffer */
 } luaL_Buffer;
 
 
@@ -194,7 +181,36 @@ LUALIB_API char *(luaL_buffinitsize) (lua_State *L, luaL_Buffer *B, size_t sz);
 ** =======================================================
 */
 
+/*
+** A file handle is a userdata with metatable 'LUA_FILEHANDLE' and
+** initial structure 'luaL_Stream' (it may contain other fields
+** after that initial structure).
+*/
+
+#define LUA_FILEHANDLE          "FILE*"
+
+
+typedef struct luaL_Stream {
+  FILE *f;  /* stream (NULL for incompletely created streams) */
+  lua_CFunction closef;  /* to close stream (NULL for closed streams) */
+} luaL_Stream;
+
 /* }====================================================== */
+
+
+
+/* compatibility with old module system */
+#if defined(LUA_COMPAT_MODULE)
+
+LUALIB_API void (luaL_pushmodule) (lua_State *L, const char *modname,
+                                   int sizehint);
+LUALIB_API void (luaL_openlib) (lua_State *L, const char *libname,
+                                const luaL_Reg *l, int nup);
+
+#define luaL_register(L,n,l)	(luaL_openlib(L,(n),(l),0))
+
+#endif
+
 
 /*
 ** {==================================================================

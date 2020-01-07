@@ -4,12 +4,12 @@
 #include "l.h"
 
 static const luaL_Reg loaded_aym_libs[] = {
-    {LUA_GNAME,       luaopen_base},
+    {"_G",            luaopen_base},
     {LUA_TABLIBNAME,  luaopen_table},
     {LUA_STRLIBNAME,  luaopen_string},
     {LUA_MATHLIBNAME, luaopen_math},
     {"lcd",           luaopen_lcd},
-    {"os",            luaopen_os},
+    {"os",            luaopen_freertos},
     {"fat",           luaopen_fat},
     {NULL, NULL}
 };

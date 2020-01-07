@@ -1,5 +1,5 @@
 /*
-** $Id: lbaselib.c $
+** $Id: lbaselib.c,v 1.314.1.1 2017/04/19 17:39:34 roberto Exp $
 ** Basic library
 ** See Copyright Notice in lua.h
 */
@@ -11,7 +11,7 @@
 
 
 #include <ctype.h>
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,20 +43,13 @@ static int luaB_print (lua_State *L) {
 }
 
 
-static int luaB_warn (lua_State *L) {
-  const char *msg = luaL_checkstring(L, 1);
-  lua_warning(L, msg);
-  return 0;
-}
-
-
 #define SPACECHARS	" \f\n\r\t\v"
 
 static const char *b_str2int (const char *s, int base, lua_Integer *pn) {
   lua_Unsigned n = 0;
   int neg = 0;
   s += strspn(s, SPACECHARS);  /* skip initial spaces */
-  if (*s == '-') { s++; neg = 1; }  /* handle sign */
+  if (*s == '-') { s++; neg = 1; }  /* handle signal */
   else if (*s == '+') s++;
   if (!isalnum((unsigned char)*s))  /* no digit? */
     return NULL;
@@ -75,6 +68,7 @@ static const char *b_str2int (const char *s, int base, lua_Integer *pn) {
 
 static int luaB_tonumber (lua_State *L) {
   if (lua_isnoneornil(L, 2)) {  /* standard conversion? */
+    luaL_checkany(L, 1);
     if (lua_type(L, 1) == LUA_TNUMBER) {  /* already a number? */
       lua_settop(L, 1);  /* yes; return it */
       return 1;
@@ -85,7 +79,6 @@ static int luaB_tonumber (lua_State *L) {
       if (s != NULL && lua_stringtonumber(L, s) == l + 1)
         return 1;  /* successful conversion to number */
       /* else not a number */
-      luaL_checkany(L, 1);  /* (but there must be some parameter) */
     }
   }
   else {
@@ -132,7 +125,8 @@ static int luaB_getmetatable (lua_State *L) {
 static int luaB_setmetatable (lua_State *L) {
   int t = lua_type(L, 2);
   luaL_checktype(L, 1, LUA_TTABLE);
-  luaL_argexpected(L, t == LUA_TNIL || t == LUA_TTABLE, 2, "nil or table");
+  luaL_argcheck(L, t == LUA_TNIL || t == LUA_TTABLE, 2,
+                    "nil or table expected");
   if (luaL_getmetafield(L, 1, "__metatable") != LUA_TNIL)
     return luaL_error(L, "cannot change a protected metatable");
   lua_settop(L, 2);
@@ -151,8 +145,8 @@ static int luaB_rawequal (lua_State *L) {
 
 static int luaB_rawlen (lua_State *L) {
   int t = lua_type(L, 1);
-  luaL_argexpected(L, t == LUA_TTABLE || t == LUA_TSTRING, 1,
-                      "table or string");
+  luaL_argcheck(L, t == LUA_TTABLE || t == LUA_TSTRING, 1,
+                   "table or string expected");
   lua_pushinteger(L, lua_rawlen(L, 1));
   return 1;
 }
@@ -176,58 +170,27 @@ static int luaB_rawset (lua_State *L) {
 }
 
 
-static int pushmode (lua_State *L, int oldmode) {
-  lua_pushstring(L, (oldmode == LUA_GCINC) ? "incremental" : "generational");
-  return 1;
-}
-
-
 static int luaB_collectgarbage (lua_State *L) {
   static const char *const opts[] = {"stop", "restart", "collect",
     "count", "step", "setpause", "setstepmul",
-    "isrunning", "generational", "incremental", NULL};
+    "isrunning", NULL};
   static const int optsnum[] = {LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
     LUA_GCCOUNT, LUA_GCSTEP, LUA_GCSETPAUSE, LUA_GCSETSTEPMUL,
-    LUA_GCISRUNNING, LUA_GCGEN, LUA_GCINC};
+    LUA_GCISRUNNING};
   int o = optsnum[luaL_checkoption(L, 1, "collect", opts)];
+  int ex = (int)luaL_optinteger(L, 2, 0);
+  int res = lua_gc(L, o, ex);
   switch (o) {
     case LUA_GCCOUNT: {
-      int k = lua_gc(L, o);
-      int b = lua_gc(L, LUA_GCCOUNTB);
-      lua_pushnumber(L, (lua_Number)k + ((lua_Number)b/1024));
+      int b = lua_gc(L, LUA_GCCOUNTB, 0);
+      lua_pushnumber(L, (lua_Number)res + ((lua_Number)b/1024));
       return 1;
     }
-    case LUA_GCSTEP: {
-      int step = (int)luaL_optinteger(L, 2, 0);
-      int res = lua_gc(L, o, step);
+    case LUA_GCSTEP: case LUA_GCISRUNNING: {
       lua_pushboolean(L, res);
       return 1;
-    }
-    case LUA_GCSETPAUSE:
-    case LUA_GCSETSTEPMUL: {
-      int p = (int)luaL_optinteger(L, 2, 0);
-      int previous = lua_gc(L, o, p);
-      lua_pushinteger(L, previous);
-      return 1;
-    }
-    case LUA_GCISRUNNING: {
-      int res = lua_gc(L, o);
-      lua_pushboolean(L, res);
-      return 1;
-    }
-    case LUA_GCGEN: {
-      int minormul = (int)luaL_optinteger(L, 2, 0);
-      int majormul = (int)luaL_optinteger(L, 3, 0);
-      return pushmode(L, lua_gc(L, o, minormul, majormul));
-    }
-    case LUA_GCINC: {
-      int pause = (int)luaL_optinteger(L, 2, 0);
-      int stepmul = (int)luaL_optinteger(L, 3, 0);
-      int stepsize = (int)luaL_optinteger(L, 4, 0);
-      return pushmode(L, lua_gc(L, o, pause, stepmul, stepsize));
     }
     default: {
-      int res = lua_gc(L, o);
       lua_pushinteger(L, res);
       return 1;
     }
@@ -240,6 +203,23 @@ static int luaB_type (lua_State *L) {
   luaL_argcheck(L, t != LUA_TNONE, 1, "value expected");
   lua_pushstring(L, lua_typename(L, t));
   return 1;
+}
+
+
+static int pairsmeta (lua_State *L, const char *method, int iszero,
+                      lua_CFunction iter) {
+  luaL_checkany(L, 1);
+  if (luaL_getmetafield(L, 1, method) == LUA_TNIL) {  /* no metamethod? */
+    lua_pushcfunction(L, iter);  /* will return generator, */
+    lua_pushvalue(L, 1);  /* state, */
+    if (iszero) lua_pushinteger(L, 0);  /* and initial value */
+    else lua_pushnil(L);
+  }
+  else {
+    lua_pushvalue(L, 1);  /* argument 'self' to metamethod */
+    lua_call(L, 1, 3);  /* get 3 values from metamethod */
+  }
+  return 3;
 }
 
 
@@ -256,17 +236,7 @@ static int luaB_next (lua_State *L) {
 
 
 static int luaB_pairs (lua_State *L) {
-  luaL_checkany(L, 1);
-  if (luaL_getmetafield(L, 1, "__pairs") == LUA_TNIL) {  /* no metamethod? */
-    lua_pushcfunction(L, luaB_next);  /* will return generator, */
-    lua_pushvalue(L, 1);  /* state, */
-    lua_pushnil(L);  /* and initial value */
-  }
-  else {
-    lua_pushvalue(L, 1);  /* argument 'self' to metamethod */
-    lua_call(L, 1, 3);  /* get 3 values from metamethod */
-  }
-  return 3;
+  return pairsmeta(L, "__pairs", 0, luaB_next);
 }
 
 
@@ -285,11 +255,15 @@ static int ipairsaux (lua_State *L) {
 ** (The given "table" may not be a table.)
 */
 static int luaB_ipairs (lua_State *L) {
+#if defined(LUA_COMPAT_IPAIRS)
+  return pairsmeta(L, "__ipairs", 1, ipairsaux);
+#else
   luaL_checkany(L, 1);
   lua_pushcfunction(L, ipairsaux);  /* iteration function */
   lua_pushvalue(L, 1);  /* state */
   lua_pushinteger(L, 0);  /* initial value */
   return 3;
+#endif
 }
 
 
@@ -485,11 +459,13 @@ static const luaL_Reg base_funcs[] = {
   {"ipairs", luaB_ipairs},
   {"loadfile", luaB_loadfile},
   {"load", luaB_load},
+#if defined(LUA_COMPAT_LOADSTRING)
+  {"loadstring", luaB_load},
+#endif
   {"next", luaB_next},
   {"pairs", luaB_pairs},
   {"pcall", luaB_pcall},
   {"print", luaB_print},
-  {"warn", luaB_warn},
   {"rawequal", luaB_rawequal},
   {"rawlen", luaB_rawlen},
   {"rawget", luaB_rawget},
@@ -501,7 +477,7 @@ static const luaL_Reg base_funcs[] = {
   {"type", luaB_type},
   {"xpcall", luaB_xpcall},
   /* placeholders */
-  {LUA_GNAME, NULL},
+  {"_G", NULL},
   {"_VERSION", NULL},
   {NULL, NULL}
 };
@@ -513,7 +489,7 @@ LUAMOD_API int luaopen_base (lua_State *L) {
   luaL_setfuncs(L, base_funcs, 0);
   /* set global _G */
   lua_pushvalue(L, -1);
-  lua_setfield(L, -2, LUA_GNAME);
+  lua_setfield(L, -2, "_G");
   /* set global _VERSION */
   lua_pushliteral(L, LUA_VERSION);
   lua_setfield(L, -2, "_VERSION");

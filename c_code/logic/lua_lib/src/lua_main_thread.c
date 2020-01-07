@@ -8,6 +8,8 @@
 #include "lauxlib.h"
 #include "lua.h"
 
+#include "ff.h"
+
 __attribute__ ((section (".bss_ccm")))
 static StaticTask_t lua_main_thread_buffer = {0};
 
