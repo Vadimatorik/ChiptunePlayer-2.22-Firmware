@@ -1,4 +1,4 @@
-#include "../../core/inc/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include <string.h>
 
 void *malloc (size_t size) {

@@ -1,4 +1,4 @@
-#include "../../core/inc/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include <stdint.h>
 

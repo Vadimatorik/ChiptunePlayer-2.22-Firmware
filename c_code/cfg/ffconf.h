@@ -35,7 +35,7 @@
 #define FF_NORTC_MDAY    1
 #define FF_NORTC_YEAR    2019
 #define FF_FS_NOFSINFO    0
-#define FF_FS_LOCK        1
+#define FF_FS_LOCK        5
 #define FF_FS_REENTRANT    0
 #define FF_FS_TIMEOUT    1000
 #define FF_SYNC_t        HANDLE

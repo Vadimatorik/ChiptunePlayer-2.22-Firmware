@@ -10,6 +10,8 @@
 #elif defined(AYM_SOFT)
 #include <fcntl.h>
 #include <sys/stat.h>
+
+#define FILE_MICROSD_PATH "../ChiptunePlayer-2.22-Firmware/resurse/microsd.img"
 #endif
 
 #ifdef AYM_HARDWARE
@@ -125,11 +127,11 @@ int init_sdio () {
 
     return 0;
 #elif defined(AYM_SOFT)
-    sd = fopen("../ChiptunePlayer-2.22-Firmware/resurse/microsd.img", "r");
+    sd = fopen(FILE_MICROSD_PATH, "r+b");
     if (sd == NULL) {
         return -1;
     } else {
-        return 0;
+        return fclose(sd);
     }
 #endif
 }
@@ -148,13 +150,20 @@ int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
         return EIO;
     }
 #elif defined(AYM_SOFT)
+    sd = fopen(FILE_MICROSD_PATH, "r+b");
+    if (sd == NULL) {
+        return -1;
+    };
+
     if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
+        fclose(sd);
         return -1;
     }
 
     if (fread(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
-        return 0;
+        return  fclose(sd);
     } else {
+         fclose(sd);
         return -1;
     }
 #endif
@@ -174,13 +183,20 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
         return EIO;
     }
 #elif defined(AYM_SOFT)
+    sd = fopen(FILE_MICROSD_PATH, "r+b");
+    if (sd == NULL) {
+        return -1;
+    };
+
     if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
+        fclose(sd);
         return -1;
     }
 
     if (fwrite(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
-        return 0;
+         return  fclose(sd);
     } else {
+        fclose(sd);
         return -1;
     }
 #endif

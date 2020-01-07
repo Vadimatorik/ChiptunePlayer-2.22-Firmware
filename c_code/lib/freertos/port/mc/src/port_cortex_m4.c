@@ -30,7 +30,7 @@
  *----------------------------------------------------------*/
 
 /* Scheduler includes. */
-#include "../../core/inc/FreeRTOS.h"
+#include "FreeRTOS.h"
 #include "../../core/inc/task.h"
 
 #ifndef __VFP_FP__
