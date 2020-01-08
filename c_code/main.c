@@ -19,10 +19,6 @@ int main () {
         return rv;
     }
 
-    if ((rv = init_lua_interactive()) != 0) {
-        return rv;
-    }
-
     if ((rv = init_lua_main_thread()) != 0) {
         return rv;
     }

@@ -76,7 +76,7 @@ int init_spi_lcd () {
         return EIO;
     }
 
-    HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
     __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);

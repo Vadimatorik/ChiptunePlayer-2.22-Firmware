@@ -24,7 +24,6 @@ static SemaphoreHandle_t rx_msg_semaphore = NULL;
 __attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
-
 typedef struct _tx_msg_cfg {
     union data {
         uint8_t *p;
@@ -54,9 +53,6 @@ static UART_HandleTypeDef u = {0};
 
 __attribute__ ((section (".bss_ccm")))
 static DMA_HandleTypeDef u_dma = {0};
-
-__attribute__ ((section (".bss_ccm")))
-static uint8_t u_rx_byte = 0;
 
 __attribute__ ((section (".bss_ccm")))
 static char u_rx_buffer[1024] = {0};
@@ -121,6 +117,9 @@ static int init_mc_uart_dma () {
 
     __HAL_LINKDMA(&u, hdmatx, u_dma);
 
+    HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 6, 0);
+    HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
+
     return 0;
 }
 
@@ -139,7 +138,9 @@ static int init_mc_uart_os () {
 }
 
 static int start_mc_uart () {
-    __HAL_UART_ENABLE_IT(&u, UART_IT_PE | UART_IT_ERR | UART_IT_RXNE);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_PE);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_ERR);
+    __HAL_UART_ENABLE_IT(&u, UART_IT_RXNE);
 
     NVIC_SetPriority(USART1_IRQn, 6);
     NVIC_EnableIRQ(USART1_IRQn);
@@ -208,35 +209,44 @@ size_t fwrite (const void *buf, size_t size, size_t count, FILE *stream) {
     return 0;
 }
 
-int _write (int fd, const void *buf, size_t count) {
-    if (add_transaction(buf, count) == 0) {
-        return count;
+int _write (int file, char *ptr, int len) {
+    if (add_transaction(ptr, len) == 0) {
+        return len;
     }
 
     return 0;
 }
 
-void USART1_IRQHandler () {
+static void rx_byte (uint8_t data) {
     if (u_rx_pointer == sizeof(u_rx_buffer)) {
         return;
     }
 
     xSemaphoreTakeFromISR(rx_buffer_mutex, NULL);
-    if (u_rx_byte == '\r') {
+    if (data == '\r') {
         u_rx_buffer[u_rx_pointer++] = '\n';
         xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
-        add_transaction_from_irq(u_rx_byte);
-    } else if (u_rx_byte == 127) {
+        add_transaction_from_irq(data);
+    } else if (data == 127) {
         if (u_rx_pointer > 0) {
             u_rx_pointer--;
             u_rx_buffer[u_rx_pointer] = 0;
-            add_transaction_from_irq(u_rx_byte);
+            add_transaction_from_irq(data);
         }
     } else {
-        u_rx_buffer[u_rx_pointer++] = u_rx_byte;
-        add_transaction_from_irq(u_rx_byte);
+        u_rx_buffer[u_rx_pointer++] = data;
+        add_transaction_from_irq(data);
     }
+
     xSemaphoreGiveFromISR(rx_buffer_mutex, NULL);
+}
+
+void USART1_IRQHandler () {
+    if (__HAL_UART_GET_FLAG(&u, UART_FLAG_RXNE)) {
+        rx_byte(u.Instance->DR);
+    }
+
+    HAL_UART_IRQHandler(&u);
 }
 
 int _read (int fd, void *buf, size_t count) {
@@ -247,6 +257,10 @@ int _read (int fd, void *buf, size_t count) {
     u_rx_pointer = 0;
     xSemaphoreGive(rx_buffer_mutex);
     return rv;
+}
+
+void DMA2_Stream7_IRQHandler () {
+    HAL_DMA_IRQHandler(&u_dma);
 }
 
 #endif
