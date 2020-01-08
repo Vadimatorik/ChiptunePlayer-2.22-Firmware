@@ -90,11 +90,11 @@ static int lua_init (lua_State *L) {
     lua_os_cmd_queue = xQueueCreateStatic(LUA_OS_CMD_QUEUE_LEN, sizeof(lua_os_cmd_t),
                                           lua_os_cmd_queue_storage_area, &lua_os_cmd_queue_str);
 
-    if (init_pcb_hardware() != 0) {
-        while (1);
-    }
+    int rv = init_pcb_hardware();
 
-    return 0;
+    lua_pushboolean(L, (rv == 0)?1:0);
+
+    return 1;
 }
 
 static int lua_get_free_ram_bytes (lua_State *L) {

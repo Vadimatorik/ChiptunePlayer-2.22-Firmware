@@ -9,6 +9,8 @@
 
 #define LOAD_F_SIZE 512
 
+#include "ff.h"
+
 typedef struct LoadF {
     FIL *f;  /* file being read */
     char buff[LOAD_F_SIZE];  /* area for reading file */

@@ -6,6 +6,7 @@
 static const luaL_Reg loaded_aym_libs[] = {
     {"_G",            luaopen_base},
     {LUA_TABLIBNAME,  luaopen_table},
+    {LUA_IOLIBNAME,   luaopen_io},
     {LUA_STRLIBNAME,  luaopen_string},
     {LUA_MATHLIBNAME, luaopen_math},
     {"lcd",           luaopen_lcd},

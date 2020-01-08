@@ -159,8 +159,15 @@ static int lua_fat_file_add_string (lua_State *L) {
     const char *s = luaL_checkstring(L, 2);
 
     int fr = f_puts(s, f);
+    if (fr == EOF) {
+        fr = 0;
+    } else if (fr == strlen(s) + 1) {
+        fr = 1;
+    } else {
+        fr = 0;
+    }
 
-    lua_pushnumber(L, fr);
+    lua_pushboolean(L, fr);
 
     return 1;
 }

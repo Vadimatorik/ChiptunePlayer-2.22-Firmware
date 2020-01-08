@@ -20,14 +20,25 @@ __attribute__ ((section (".bss_ccm")))
 static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE] = {0};
 
 static FRESULT fail_close (FATFS *fat) {
-    printf("[SYS] f_unmount start\r\n");
+    printf("[SYS] Start f_unmount\r\n");
     FRESULT fr = f_unmount("0:");
     if (fr != FR_OK) {
-        printf("[SYS] f_unmount fail. Code: %u\r\n", fr);
+        printf("[SYS] Fail f_unmount. Code: %u\r\n", fr);
     }
     free(fat);
 
     return fr;
+}
+
+static void lua_message (const char *pname, const char *msg) {
+    if (pname) lua_writestringerror("%s: ", pname);
+    lua_writestringerror("%s\n", msg);
+}
+
+static int lua_report (lua_State *L) {
+    const char *msg = lua_tostring(L, -1);
+    lua_message("lua", msg);
+    lua_pop(L, 1);  /* remove message */
 }
 
 static int load_start_scripts (lua_State *L) {
@@ -38,26 +49,27 @@ static int load_start_scripts (lua_State *L) {
     if (fat == NULL) {
         return -1;
     }
-    
+
     printf("\r");
-    printf("[SYS] f_mount start\r\n");
+    printf("[SYS] Start f_mount\r\n");
     FRESULT fr = f_mount(fat, "0:", 1);
     if (fr != FR_OK) {
-        printf("[SYS] f_mount fail. Code: %u\r\n", fr);
+        printf("[SYS] Fail f_mount. Code: %u\r\n", fr);
         free(fat);
         return -1;
     }
 
     printf("[SYS] start load lua_scripts\r\n");
     if ((rv = lua_fatfs_loadfilex(L, "lua_scripts/init.lua")) != 0) {
-        printf("[SYS] load lua_scripts fail. Code: %u\r\n", rv);
+        printf("[SYS] Fail load lua_scripts. Code: %u\r\n", rv);
         fail_close(fat);
         return -1;
     }
 
     printf("[SYS] start lua_pcall\r\n");
     if ((rv = lua_pcall(L, 0, LUA_MULTRET, 0)) != 0) {
-        printf("[SYS] lua_pcall fail. Code: %u\r\n", rv);
+        lua_report(L);
+        printf("[SYS] Fail lua_pcall. Code: %u\r\n", rv);
         fail_close(fat);
         return -1;
     }
@@ -68,7 +80,7 @@ static int load_start_scripts (lua_State *L) {
 
     printf("[SYS] start luaL_dostring('win:start()')\r\n");
     if ((rv = luaL_dostring(L, "win:start()")) != 0) {
-        printf("[SYS] luaL_dostring('win:start()') fail. Code: %u\r\n", rv);
+        printf("[SYS] Fail luaL_dostring('win:start()'). Code: %u\r\n", rv);
         return -1;
     }
 
