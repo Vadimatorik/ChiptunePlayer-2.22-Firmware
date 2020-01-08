@@ -29,24 +29,39 @@ DRESULT disk_read (__attribute__((unused)) BYTE pdrv,
                    BYTE *buff,
                    LBA_t sector,
                    UINT count) {
+    int rv = RES_OK;
+
     if (((uint32_t)buff)%4 == 0) {
-        return (sdio_read((uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+        for (int i = 0; i < 10; i++) {
+            if ((rv = sdio_read((uint32_t *)buff, sector, count)) == 0) {
+                break;
+            }
+        }
+
+        return (rv == 0)?0:STA_NOINIT;
     } else {
         uint32_t s_size = 0;
         if (sdio_get_block_size(&s_size) != 0) {
             return RES_ERROR;
         }
-        uint8_t *p = malloc(s_size * count);
+        uint8_t *p = malloc(s_size*count);
         if (p == NULL) {
             return RES_ERROR;
         }
 
-        DRESULT r = (sdio_read((uint32_t*)p, sector, count) == 0)?0:STA_NOINIT;
-        memcpy(buff, p, s_size * count);
+        for (int i = 0; i < 10; i++) {
+            if ((rv = sdio_read((uint32_t *)p, sector, count)) == 0) {
+                break;
+            }
+        }
+
+        if (rv == 0) {
+            memcpy(buff, p, s_size*count);
+        }
 
         free(p);
 
-        return r;
+        return (rv == 0)?0:STA_NOINIT;
     }
 }
 
@@ -54,28 +69,41 @@ DRESULT disk_write (__attribute__((unused))    BYTE pdrv,
                     const BYTE *buff,
                     LBA_t sector,
                     UINT count) {
+    int rv = RES_OK;
+
     if (((uint32_t)buff)%4 == 0) {
-        return (sdio_write((const uint32_t*)buff, sector, count) == 0)?0:STA_NOINIT;
+        for (int i = 0; i < 10; i++) {
+            if ((rv = sdio_write((const uint32_t *)buff, sector, count)) == 0) {
+                break;
+            }
+        }
+
+        return (rv == 0)?0:STA_NOINIT;
     } else {
         uint32_t s_size = 0;
         if (sdio_get_block_size(&s_size) != 0) {
             return RES_ERROR;
         }
-        uint8_t *p = malloc(s_size * count);
+
+        uint8_t *p = malloc(s_size*count);
         if (p == NULL) {
             return RES_ERROR;
         }
 
-        memcpy(p, buff, sector * count);
-        DRESULT r = (sdio_write((const uint32_t*)p, sector, count) == 0)?0:STA_NOINIT;
+        memcpy(p, buff, sector*count);
+        for (int i = 0; i < 10; i++) {
+            if ((rv = sdio_write((const uint32_t *)p, sector, count)) == 0) {
+                break;
+            }
+        }
 
         free(p);
 
-        return r;
+        return (rv == 0)?0:STA_NOINIT;
     }
 }
 
-DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff) {
+DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff) {
     DRESULT res;
 
     if (disk_status(pdrv) & STA_NOINIT) {

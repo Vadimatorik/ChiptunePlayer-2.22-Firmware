@@ -64,7 +64,7 @@ int init_sdio () {
     sdio.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     sdio.Init.BusWide = SDIO_BUS_WIDE_1B;
     sdio.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
-    sdio.Init.ClockDiv = 4;
+    sdio.Init.ClockDiv = 15;
 
     if (HAL_SD_DeInit(&sdio) != HAL_OK) {
         return EIO;
@@ -173,7 +173,7 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(tx_msg_semaphore, 0);
 
-    if ((HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) == HAL_OK) != HAL_OK) {
+    if (HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) != HAL_OK) {
         return EIO;
     }
 

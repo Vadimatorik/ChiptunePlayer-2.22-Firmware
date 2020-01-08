@@ -72,7 +72,9 @@ static void task_uart (void *p) {
                 continue;
             }
 
-            while (HAL_UART_Transmit_DMA(&u, msg.data_t.p, msg.len) != HAL_OK);
+            while (HAL_UART_Transmit_DMA(&u, msg.data_t.p, msg.len) != HAL_OK) {
+                vTaskDelay(10);
+            }
 
             free(msg.data_t.p);
         }
