@@ -20,10 +20,10 @@ __attribute__ ((section (".bss_ccm")))
 static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE] = {0};
 
 static FRESULT fail_close (FATFS *fat) {
-    printf("[SYS] f_unmount start\n\r");
+    printf("[SYS] f_unmount start\r\n");
     FRESULT fr = f_unmount("0:");
     if (fr != FR_OK) {
-        printf("[SYS] f_unmount fail. Code: %u\n\r", fr);
+        printf("[SYS] f_unmount fail. Code: %u\r\n", fr);
     }
     free(fat);
 
@@ -38,25 +38,26 @@ static int load_start_scripts (lua_State *L) {
     if (fat == NULL) {
         return -1;
     }
-
-    printf("[SYS] f_mount start\n\r");
+    
+    printf("\r");
+    printf("[SYS] f_mount start\r\n");
     FRESULT fr = f_mount(fat, "0:", 1);
     if (fr != FR_OK) {
-        printf("[SYS] f_mount fail. Code: %u\n\r", fr);
+        printf("[SYS] f_mount fail. Code: %u\r\n", fr);
         free(fat);
         return -1;
     }
 
-    printf("[SYS] start load lua_scripts\n\r");
+    printf("[SYS] start load lua_scripts\r\n");
     if ((rv = lua_fatfs_loadfilex(L, "lua_scripts/init.lua")) != 0) {
-        printf("[SYS] load lua_scripts fail. Code: %u\n\r", rv);
+        printf("[SYS] load lua_scripts fail. Code: %u\r\n", rv);
         fail_close(fat);
         return -1;
     }
 
-    printf("[SYS] start lua_pcall\n\r");
+    printf("[SYS] start lua_pcall\r\n");
     if ((rv = lua_pcall(L, 0, LUA_MULTRET, 0)) != 0) {
-        printf("[SYS] lua_pcall fail. Code: %u\n\r", rv);
+        printf("[SYS] lua_pcall fail. Code: %u\r\n", rv);
         fail_close(fat);
         return -1;
     }
@@ -65,9 +66,9 @@ static int load_start_scripts (lua_State *L) {
         return -1;
     }
 
-    printf("[SYS] start luaL_dostring('win:start()')\n\r");
+    printf("[SYS] start luaL_dostring('win:start()')\r\n");
     if ((rv = luaL_dostring(L, "win:start()")) != 0) {
-        printf("[SYS] luaL_dostring('win:start()') fail. Code: %u\n\r", rv);
+        printf("[SYS] luaL_dostring('win:start()') fail. Code: %u\r\n", rv);
         return -1;
     }
 
