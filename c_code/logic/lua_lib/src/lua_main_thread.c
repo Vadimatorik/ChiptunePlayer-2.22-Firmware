@@ -28,7 +28,8 @@ static int load_start_scripts (lua_State *L) {
         return ENOMEM;
     }
 
-    if (f_mount(fat, "0:", 1) != FR_OK) {
+    FRESULT fr = f_mount(fat, "0:", 1);
+    if (fr != FR_OK) {
         free(fat);
         return EIO;
     }

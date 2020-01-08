@@ -116,7 +116,7 @@ int init_sdio () {
 
     __HAL_LINKDMA(&sdio, hdmatx, sdio_tx);
 
-    HAL_NVIC_SetPriority(SDIO_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(SDIO_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(SDIO_IRQn);
 
     HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 6, 0);
