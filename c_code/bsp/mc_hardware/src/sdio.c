@@ -64,7 +64,7 @@ int init_sdio () {
     sdio.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
     sdio.Init.BusWide = SDIO_BUS_WIDE_1B;
     sdio.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
-    sdio.Init.ClockDiv = 15;
+    sdio.Init.ClockDiv = 48 - 1;
 
     if (HAL_SD_DeInit(&sdio) != HAL_OK) {
         return EIO;
@@ -136,16 +136,41 @@ int init_sdio () {
 #endif
 }
 
+static int sdio_preinit () {
+#ifdef AYM_HARDWARE
+    while (1) {
+        HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
+
+        if ((s == HAL_SD_CARD_TRANSFER) || (s == HAL_SD_CARD_READY)) {
+            return 0;
+        }
+
+        if ((s == HAL_SD_CARD_SENDING) || (s == HAL_SD_CARD_RECEIVING) || (s == HAL_SD_CARD_PROGRAMMING)) {
+            vTaskDelay(1);
+            continue;
+        }
+
+        if (HAL_SD_InitCard(&sdio) != HAL_OK) {
+            return EIO;
+        }
+
+        if (HAL_SD_ConfigWideBusOperation(&sdio, SDIO_BUS_WIDE_4B) != HAL_OK) {
+            return EIO;
+        }
+    }
+
+    return EIO;
+#elif defined(AYM_SOFT)
+    return 0;
+#endif
+}
+
 int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(rx_msg_semaphore, 0);
 
-    HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
-
-    if (s != HAL_SD_CARD_READY) {
-        if (HAL_SD_InitCard(&sdio) != HAL_OK) {
-            return EIO;
-        }
+    if (sdio_preinit() != 0) {
+        return EIO;
     }
 
     HAL_StatusTypeDef rv = HAL_SD_ReadBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
@@ -183,12 +208,8 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(tx_msg_semaphore, 0);
 
-    HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
-
-    if (s != HAL_SD_CARD_READY) {
-        if (HAL_SD_InitCard(&sdio) != HAL_OK) {
-            return EIO;
-        }
+    if (sdio_preinit() != 0) {
+        return EIO;
     }
 
     HAL_StatusTypeDef rv = HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
