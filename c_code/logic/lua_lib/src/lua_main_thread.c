@@ -31,14 +31,17 @@ static FRESULT fail_close (FATFS *fat) {
 }
 
 static void lua_message (const char *pname, const char *msg) {
-    if (pname) lua_writestringerror("%s: ", pname);
-    lua_writestringerror("%s\n", msg);
+    if (pname) {
+        printf("[SYS_LUA_ERR] %s: ", pname);
+    }
+
+    printf("%s\r\n", msg);
 }
 
 static int lua_report (lua_State *L) {
     const char *msg = lua_tostring(L, -1);
     lua_message("lua", msg);
-    lua_pop(L, 1);  /* remove message */
+    lua_pop(L, 1);
 }
 
 static int load_start_scripts (lua_State *L) {
@@ -80,6 +83,7 @@ static int load_start_scripts (lua_State *L) {
 
     printf("[SYS] Start luaL_dostring('win:start()')\r\n");
     if ((rv = luaL_dostring(L, "win:start()")) != 0) {
+        lua_report(L);
         printf("[SYS] Fail luaL_dostring('win:start()'). Code: %u\r\n", rv);
         return -1;
     }
