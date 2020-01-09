@@ -15,7 +15,6 @@ if microsd:mount("0") ~= 0 then
 	os.exit()
 end
 
---local r = create_dir_list("0:")
---io.write(tostring(r))
+create_dir_list("0:")
 
 win = w_main

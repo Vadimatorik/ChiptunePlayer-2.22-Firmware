@@ -78,7 +78,7 @@ static int load_start_scripts (lua_State *L) {
         return -1;
     }
 
-    printf("[SYS] start luaL_dostring('win:start()')\r\n");
+    printf("[SYS] Start luaL_dostring('win:start()')\r\n");
     if ((rv = luaL_dostring(L, "win:start()")) != 0) {
         printf("[SYS] Fail luaL_dostring('win:start()'). Code: %u\r\n", rv);
         return -1;
