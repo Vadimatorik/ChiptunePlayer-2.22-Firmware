@@ -43,10 +43,10 @@ __attribute__ ((section (".bss_ccm")))
 static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0};
 
 __attribute__ ((section (".bss_ccm")))
-SemaphoreHandle_t rx_buffer_mutex = NULL;
+SemaphoreHandle_t rx_buf_mutex = NULL;
 
 __attribute__ ((section (".bss_ccm")))
-StaticSemaphore_t rx_buffer_mutex_buf = {0};
+StaticSemaphore_t rx_buf_mutex_buf = {0};
 
 __attribute__ ((section (".bss_ccm")))
 static UART_HandleTypeDef u = {0};
@@ -60,11 +60,20 @@ static char u_rx_buffer[1024] = {0};
 __attribute__ ((section (".bss_ccm")))
 volatile int u_rx_pointer = 0;
 
+__attribute__ ((section (".bss_ccm")))
+QueueHandle_t tx_semaphore = NULL;
+
+__attribute__ ((section (".bss_ccm")))
+StaticSemaphore_t tx_semaphore_str = {0};
+
+
 static void task_uart (void *p) {
     tx_msg_cfg_t msg = {0};
 
     while (1) {
         xQueueReceive(tx_points_queue, &msg, portMAX_DELAY);
+        xSemaphoreTake(tx_semaphore, 0);
+
         if (msg.len <= 4) {
             while (HAL_UART_Transmit_DMA(&u, msg.data_t.data, msg.len) != HAL_OK);
         } else {
@@ -75,6 +84,8 @@ static void task_uart (void *p) {
             while (HAL_UART_Transmit_DMA(&u, msg.data_t.p, msg.len) != HAL_OK) {
                 vTaskDelay(10);
             }
+
+            xSemaphoreTake(tx_semaphore, portMAX_DELAY);
 
             free(msg.data_t.p);
         }
@@ -127,7 +138,8 @@ static int init_mc_uart_dma () {
 
 static int init_mc_uart_os () {
     rx_msg_semaphore = xSemaphoreCreateBinaryStatic(&rx_msg_semaphore_str);
-    rx_buffer_mutex = xSemaphoreCreateMutexStatic(&rx_buffer_mutex_buf);
+    rx_buf_mutex = xSemaphoreCreateMutexStatic(&rx_buf_mutex_buf);
+    tx_semaphore = xSemaphoreCreateBinaryStatic(&tx_semaphore_str);
     tx_points_queue = xQueueCreateStatic(UART_TX_QUEUE_LEN, sizeof(tx_msg_cfg_t),
                                          &tx_points_queue_buf[0], &tx_points_queue_str);
 
@@ -224,7 +236,7 @@ static void rx_byte (uint8_t data) {
         return;
     }
 
-    xSemaphoreTakeFromISR(rx_buffer_mutex, NULL);
+    xSemaphoreTakeFromISR(rx_buf_mutex, NULL);
     if (data == '\r') {
         u_rx_buffer[u_rx_pointer++] = '\n';
         xSemaphoreGiveFromISR(rx_msg_semaphore, NULL);
@@ -240,7 +252,11 @@ static void rx_byte (uint8_t data) {
         add_transaction_from_irq(data);
     }
 
-    xSemaphoreGiveFromISR(rx_buffer_mutex, NULL);
+    xSemaphoreGiveFromISR(rx_buf_mutex, NULL);
+}
+
+void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart) {
+    xSemaphoreGiveFromISR (tx_semaphore, NULL);
 }
 
 void USART1_IRQHandler () {
@@ -253,11 +269,11 @@ void USART1_IRQHandler () {
 
 int _read (int fd, void *buf, size_t count) {
     xSemaphoreTake(rx_msg_semaphore, portMAX_DELAY);
-    xSemaphoreTake(rx_buffer_mutex, portMAX_DELAY);
+    xSemaphoreTake(rx_buf_mutex, portMAX_DELAY);
     memcpy(buf, u_rx_buffer, u_rx_pointer);
     int rv = u_rx_pointer;
     u_rx_pointer = 0;
-    xSemaphoreGive(rx_buffer_mutex);
+    xSemaphoreGive(rx_buf_mutex);
     return rv;
 }
 
