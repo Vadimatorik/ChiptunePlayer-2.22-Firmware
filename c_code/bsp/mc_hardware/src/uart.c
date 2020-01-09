@@ -75,7 +75,11 @@ static void task_uart (void *p) {
         xSemaphoreTake(tx_semaphore, 0);
 
         if (msg.len <= 4) {
-            while (HAL_UART_Transmit_DMA(&u, msg.data_t.data, msg.len) != HAL_OK);
+            while (HAL_UART_Transmit_DMA(&u, msg.data_t.data, msg.len) != HAL_OK) {
+                vTaskDelay(10);
+            };
+
+            xSemaphoreTake(tx_semaphore, portMAX_DELAY);
         } else {
             if (msg.data_t.p == NULL) {
                 continue;
