@@ -140,7 +140,17 @@ int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(rx_msg_semaphore, 0);
 
-    if (HAL_SD_ReadBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) != HAL_OK) {
+    HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
+
+    if (s != HAL_SD_CARD_READY) {
+        if (HAL_SD_InitCard(&sdio) != HAL_OK) {
+            return EIO;
+        }
+    }
+
+    HAL_StatusTypeDef rv = HAL_SD_ReadBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
+
+    if (rv != HAL_OK) {
         return EIO;
     }
 
@@ -173,7 +183,17 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 #ifdef AYM_HARDWARE
     xSemaphoreTake(tx_msg_semaphore, 0);
 
-    if (HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block) != HAL_OK) {
+    HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
+
+    if (s != HAL_SD_CARD_READY) {
+        if (HAL_SD_InitCard(&sdio) != HAL_OK) {
+            return EIO;
+        }
+    }
+
+    HAL_StatusTypeDef rv = HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
+
+    if (rv != HAL_OK) {
         return EIO;
     }
 
@@ -205,13 +225,7 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
 
 int sdio_get_status () {
 #ifdef AYM_HARDWARE
-    HAL_SD_CardStateTypeDef s = HAL_SD_GetCardState(&sdio);
-
-    if ((s == HAL_SD_CARD_READY) || (s == HAL_SD_CARD_TRANSFER)) {
-        return 0;
-    }
-
-    return -1;
+    return 0;
 #elif defined(AYM_SOFT)
     if (sd != NULL) {
         return 0;
