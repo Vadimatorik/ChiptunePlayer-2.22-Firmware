@@ -41,6 +41,7 @@ int init_spi_lcd () {
     spi_lcd_mutex = xSemaphoreCreateMutexStatic(&spi_lcd_mutex_buf);
 
     __HAL_RCC_SPI1_CLK_ENABLE();
+    __HAL_RCC_DMA2_CLK_ENABLE();
 
     s_lcd.Instance = SPI1;
     s_lcd.Init.Mode = SPI_MODE_MASTER;
@@ -76,10 +77,13 @@ int init_spi_lcd () {
         return EIO;
     }
 
+    __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
+
     HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
-    __HAL_LINKDMA(&s_lcd, hdmatx, s_lcd_dma);
+    HAL_NVIC_SetPriority(SPI1_IRQn, 6, 0);
+    HAL_NVIC_EnableIRQ(SPI1_IRQn);
 
     return 0;
 #elif defined(AYM_SOFT)
@@ -93,6 +97,10 @@ int init_spi_lcd () {
 void DMA2_Stream5_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
 }
+
+void SPI1_IRQHandler () {
+    HAL_SPI_IRQHandler(&s_lcd);
+}
 #endif
 
 
@@ -102,11 +110,19 @@ int spi_lcd_tx (void *d, uint32_t len) {
     xSemaphoreTake(spi_lcd_mutex, portMAX_DELAY);
     xSemaphoreTake(spi_lcd_msg_semaphore, 0);
     reset_pin_lcd_cs();
-    HAL_StatusTypeDef rv = HAL_SPI_Transmit_DMA(&s_lcd, d, len);
+
+    HAL_StatusTypeDef rv;
+    if ((uint32_t)d % 4 == 0) {
+        rv = HAL_SPI_Transmit_DMA(&s_lcd, d, len);
+    } else {
+        rv = HAL_SPI_Transmit_IT(&s_lcd, d, len);
+    }
+
     if (rv != HAL_OK) {
         xSemaphoreGive(spi_lcd_mutex);
         return EIO;
     }
+
 
     if (xSemaphoreTake(spi_lcd_msg_semaphore, 100) == pdTRUE) {
         xSemaphoreGive(spi_lcd_mutex);
