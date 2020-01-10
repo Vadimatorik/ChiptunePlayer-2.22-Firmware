@@ -59,7 +59,8 @@ $ sudo mount -t auto microsd.img microsd
 После этого на карту можно положить требуемые файлы (файлы треков).
 Для закрытия карты следует сделать следующее:
 ```sh
-sudo umount microsd
+$ sudo umount microsd
+$ cd ../..
 ```
 
 ### Запуск проекта как Linux-приложения
