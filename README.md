@@ -7,6 +7,7 @@
 ```sh
 $ git clone git@github.com:Vadimatorik/ChiptunePlayer-2.22-Firmware.git
 $ cd ChiptunePlayer-2.22-Firmware
+$ git checkout dev
 $ git submodule update --init --recursive
 $ cd ..
 ```
