@@ -54,7 +54,7 @@ int init_sockets () {
 typedef struct _pin_msg {
     uint8_t pin_code;
     uint8_t state;
-} pin_msg_t;
+} __attribute__((packed)) pin_msg_t;
 
 static void send_msg (pin_msg_t *msg) {
     if (write(s_lcd, &msg, sizeof(pin_msg_t)) != sizeof(pin_msg_t)) {
