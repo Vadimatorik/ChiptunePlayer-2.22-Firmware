@@ -19,7 +19,7 @@ $ git submodule update --init --recursive
 Сборку можно произвести следующим способом (действия выполнять из корневого каталога проекта):
 ```sh
 $ cd .. && mkdir build_aym_hard_r &&  cd build_aym_hard_r
-$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="HARD" -DTOOLCHAIN_BIN_PATH=/opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin/
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=HARD -DTOOLCHAIN_BIN_PATH=/opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin/
 $ make all -j
 ```
 
@@ -45,7 +45,7 @@ $ STM32_Programmer_CLI -c port="SWD" -e all -w aym.elf -hardRst
 Сборку можно произвести следующим способом (действия выполнять из корневого каталога проекта):
 ```sh
 $ cd .. && mkdir build_aym_soft_r &&  cd build_aym_soft_r
-$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="SOFT" 
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE="SOFT" 
 $ make all -j
 $ cd ..
 ```
