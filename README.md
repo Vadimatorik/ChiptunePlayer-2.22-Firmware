@@ -18,12 +18,22 @@ $ cd ChiptunePlayer-2.22-Firmware/c_code/
 
 Сборку можно произвести следующим способом:
 ```sh
-$ mkdir ../../build_aym_soft_r &&  cd ../../build_aym_soft_r
-$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="AYM_SOFT"
+$ mkdir ../build_aym_soft_r &&  cd ../build_aym_soft_r
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="SOFT"
 $ make all -j
+$ cd ..
 ```
-
-
+Для работы так же потребуются следующие сопутствующие утилиты:
+* keyboarde
+* lcde
+```sh
+$ git clone git@github.com:Vadimatorik/lcde.git
+$ 
+$ 
+$ 
+$ 
+```
+Для их получения и сборки потребуется выполнить следующие действия:
 
 Требуется указать путь до компилятора:
 -DTOOLCHAIN_BIN_PATH=/opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin
