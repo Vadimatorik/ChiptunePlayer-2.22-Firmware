@@ -14,14 +14,15 @@ int init_rcc () {
     __HAL_RCC_PWR_CLK_ENABLE();
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
+    // 168 МГц.
     osc_cfg.OscillatorType = RCC_OSCILLATORTYPE_HSE;
     osc_cfg.HSEState = RCC_HSE_ON;
     osc_cfg.PLL.PLLState = RCC_PLL_ON;
     osc_cfg.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    osc_cfg.PLL.PLLM = 16;
-    osc_cfg.PLL.PLLN = 192;
+    osc_cfg.PLL.PLLM = 8;
+    osc_cfg.PLL.PLLN = 168;
     osc_cfg.PLL.PLLP = RCC_PLLP_DIV2;
-    osc_cfg.PLL.PLLQ = 4;
+    osc_cfg.PLL.PLLQ = 7;
     if (HAL_RCC_OscConfig(&osc_cfg) != HAL_OK) {
         return EIO;
     }
@@ -30,10 +31,10 @@ int init_rcc () {
                         | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
     clk_cfg.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
     clk_cfg.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    clk_cfg.APB1CLKDivider = RCC_HCLK_DIV1;
-    clk_cfg.APB2CLKDivider = RCC_HCLK_DIV1;
+    clk_cfg.APB1CLKDivider = RCC_HCLK_DIV4;
+    clk_cfg.APB2CLKDivider = RCC_HCLK_DIV2;
 
-    if (HAL_RCC_ClockConfig(&clk_cfg, FLASH_LATENCY_0) != HAL_OK) {
+    if (HAL_RCC_ClockConfig(&clk_cfg, FLASH_LATENCY_5) != HAL_OK) {
         return EIO;
     }
 #endif

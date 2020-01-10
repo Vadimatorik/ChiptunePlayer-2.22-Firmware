@@ -5,7 +5,7 @@
 
 #define configUSE_PREEMPTION                        1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION        0
-#define configCPU_CLOCK_HZ                            16000000
+#define configCPU_CLOCK_HZ                            168000000
 
 #define configTOTAL_HEAP_SIZE (120 * 1024)
 

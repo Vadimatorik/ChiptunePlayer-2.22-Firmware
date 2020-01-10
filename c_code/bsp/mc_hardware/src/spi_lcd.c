@@ -123,7 +123,6 @@ int spi_lcd_tx (void *d, uint32_t len) {
         return EIO;
     }
 
-
     if (xSemaphoreTake(spi_lcd_msg_semaphore, 100) == pdTRUE) {
         xSemaphoreGive(spi_lcd_mutex);
         return 0;
