@@ -103,7 +103,7 @@ uint8_t socket_get_button_state (uint8_t i) {
     if (write(s_keyboard, &i, sizeof(i)) != sizeof(i)) {
         exit(EIO);
     }
-    
+
     uint8_t state = 0;
     while (read(s_keyboard, &state, sizeof(state)) != 1);
     return state;

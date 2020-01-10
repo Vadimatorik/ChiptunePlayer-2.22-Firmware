@@ -1,11 +1,11 @@
 #!/bin/bash
-./../lcde/cmake-build-debug/lcde &
-./../build_keyboarde/keyboarde & 
+./../build_lcde_r/lcde &
+./../build_keyboarde_r/keyboarde & 
 
 sudo mount -t auto resurse/microsd.img resurse/microsd
-sleep 3
+sleep 2
 sudo cp -r lua_scripts resurse/microsd
 sudo umount resurse/microsd
 
 sleep 1
-./../build_aym_soft_d/aym
+./../build_aym_soft_r/aym
