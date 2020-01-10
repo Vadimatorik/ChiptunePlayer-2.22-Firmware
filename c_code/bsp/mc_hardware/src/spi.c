@@ -1,4 +1,4 @@
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_spi.h"
 
 #include "mc_hardware.h"

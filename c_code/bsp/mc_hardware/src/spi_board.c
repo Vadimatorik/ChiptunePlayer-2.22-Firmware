@@ -1,7 +1,7 @@
 #include "mc_hardware.h"
 #include <errno.h>
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
@@ -28,7 +28,7 @@ StaticSemaphore_t spi_board_mutex_buf = {0};
 #endif
 
 int init_spi_board () {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     spi_board_tx_msg_semaphore = xSemaphoreCreateBinaryStatic(&spi_board_tx_msg_semaphore_str);
     spi_board_mutex = xSemaphoreCreateMutexStatic(&spi_board_mutex_buf);
 
@@ -57,14 +57,14 @@ int init_spi_board () {
     return 0;
 }
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 void SPI2_IRQHandler () {
     HAL_SPI_IRQHandler(&s_board);
 }
 #endif
 
 int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
     xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_LTC6903;
@@ -88,7 +88,7 @@ int spi_board_device_ltc6903_tx (void *d, uint32_t len) {
 }
 
 int spi_board_device_ad5204_tx (void *d, uint32_t len) {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
     xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_AD5204;
@@ -112,7 +112,7 @@ int spi_board_device_ad5204_tx (void *d, uint32_t len) {
 }
 
 int spi_board_device_sr_tx (void *d, uint32_t len) {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     xSemaphoreTake(spi_board_mutex, portMAX_DELAY);
     xSemaphoreTake(spi_board_tx_msg_semaphore, 0);
     spi_device = SPI_BOARD_DEVICE_SR;

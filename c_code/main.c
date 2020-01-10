@@ -2,14 +2,14 @@
 #include "mc_hardware.h"
 #include "l.h"
 
-#ifdef AYM_SOFT
+#ifdef SOFT
 #include "socket_emul_layer.h"
 #endif
 
 int main () {
     int rv = 0;
 
-#ifdef AYM_SOFT
+#ifdef SOFT
     if ((rv = init_sockets()) != 0) {
         return rv;
     }

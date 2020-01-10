@@ -1,4 +1,4 @@
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_tim.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
@@ -6,13 +6,13 @@
 
 #include <errno.h>
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 __attribute__ ((section (".bss_ccm")))
 TIM_HandleTypeDef tim_lcd_pwm = {0};
 #endif
 
 int init_tim_lcd_pwm () {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     __HAL_RCC_TIM1_CLK_ENABLE();
 
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
@@ -77,7 +77,7 @@ int set_tim_lcd_pwm_duty (float duty) {
         return EINVAL;
     }
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
     __HAL_TIM_SET_COMPARE(&tim_lcd_pwm, TIM_CHANNEL_1, (1000 - 1)*duty);
 #endif
 
@@ -85,7 +85,7 @@ int set_tim_lcd_pwm_duty (float duty) {
 }
 
 int start_tim_lcd_pwm () {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     return (HAL_TIM_PWM_Start(&tim_lcd_pwm, TIM_CHANNEL_1) == HAL_OK)?0:EIO;
 #else
     return 0;

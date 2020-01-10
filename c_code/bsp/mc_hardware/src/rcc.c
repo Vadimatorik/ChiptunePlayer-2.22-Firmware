@@ -1,4 +1,4 @@
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_pwr.h"
 #include "stm32f4xx_hal_flash.h"
@@ -7,7 +7,7 @@
 #include <errno.h>
 
 int init_rcc () {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     RCC_OscInitTypeDef osc_cfg = {0};
     RCC_ClkInitTypeDef clk_cfg = {0};
 

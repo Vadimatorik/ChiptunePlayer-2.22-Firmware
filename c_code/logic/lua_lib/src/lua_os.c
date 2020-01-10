@@ -14,7 +14,7 @@
 
 #include "lua_ext_func.h"
 
-#if defined(AYM_HARDWARE)
+#if defined(HARD)
 #include "stm32f4xx_hal_conf.h"
 #endif
 
@@ -123,9 +123,9 @@ static int lua_dofile (lua_State *L) {
 
 
 static int lua_exit (lua_State *L) {
-#ifdef AYM_SOFT
+#ifdef SOFT
     exit(0);
-#elif AYM_HARDWARE
+#elif HARD
     NVIC_SystemReset();
 #endif
 }

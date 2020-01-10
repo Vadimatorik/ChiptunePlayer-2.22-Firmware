@@ -55,15 +55,15 @@ include_directories(
 
         "resurse/img")
 
-if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
+if (BUILD_TYPE STREQUAL "HARD")
     SET(OUT_FILE "${PROJECT_NAME}.elf")
-elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
+elseif (BUILD_TYPE STREQUAL "SOFT")
     SET(OUT_FILE "${PROJECT_NAME}")
 endif ()
 
 add_executable(${OUT_FILE} ${SOURCES})
 
-if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
+if (BUILD_TYPE STREQUAL "HARD")
     target_include_directories(${OUT_FILE} PUBLIC
             "lib/freertos/port/mc/inc"
             )
@@ -75,7 +75,7 @@ if (BUILD_TYPE STREQUAL "AYM_HARDWARE")
             "bsp/mc_hardware/startup/src/*.c"
             )
 
-elseif (BUILD_TYPE STREQUAL "AYM_SOFT")
+elseif (BUILD_TYPE STREQUAL "SOFT")
     find_package(Threads)
 
     target_include_directories(${OUT_FILE} PUBLIC

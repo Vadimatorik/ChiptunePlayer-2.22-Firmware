@@ -18,7 +18,7 @@ typedef enum {
 static const uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
 
 __attribute__ ((section (".bss_ccm")))
-static StackType_t tb[AYM_HARDWARE_THREAD_STACK_SIZE] = {0};
+static StackType_t tb[HARD_THREAD_STACK_SIZE] = {0};
 
 __attribute__ ((section (".bss_ccm")))
 static StaticTask_t ts = {0};
@@ -233,7 +233,7 @@ int init_aym_hardware () {
 
     irq_timer = xTimerCreate("aym_timer", 20, pdTRUE, NULL, tim_irq_handler);
 
-    xTaskCreateStatic(task_aym, "aym_hardware", AYM_HARDWARE_THREAD_STACK_SIZE, NULL, AYM_HARDWARE_THREAD_PRIO,
+    xTaskCreateStatic(task_aym, "aym_hardware", HARD_THREAD_STACK_SIZE, NULL, HARD_THREAD_PRIO,
                       tb, &ts);
     for (int i = 0; i < AY_NUM; i++) {
         aym_reg_data_queue[i] = xQueueCreateStatic(YM_REG_DATA_QUEUE_LEN, sizeof(aym_reg_data_t),

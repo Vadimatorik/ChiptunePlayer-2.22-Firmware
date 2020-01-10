@@ -1,4 +1,4 @@
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_spi.h"
 #include "stm32f4xx_hal_dma.h"
@@ -8,7 +8,7 @@
 #include "mc_hardware.h"
 #include <errno.h>
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "freertos_headers.h"
 
 __attribute__ ((section (".bss_ccm")))
@@ -30,13 +30,13 @@ __attribute__ ((section (".bss_ccm")))
 StaticSemaphore_t spi_lcd_mutex_buf = {0};
 #endif
 
-#ifdef AYM_SOFT
+#ifdef SOFT
 #include "socket_emul_layer.h"
 #endif
 
 
 int init_spi_lcd () {
-#if defined(AYM_HARDWARE)
+#if defined(HARD)
     spi_lcd_msg_semaphore = xSemaphoreCreateBinaryStatic(&spi_lcd_msg_semaphore_str);
     spi_lcd_mutex = xSemaphoreCreateMutexStatic(&spi_lcd_mutex_buf);
 
@@ -86,14 +86,14 @@ int init_spi_lcd () {
     HAL_NVIC_EnableIRQ(SPI1_IRQn);
 
     return 0;
-#elif defined(AYM_SOFT)
+#elif defined(SOFT)
     set_pin_lcd_cs();
 
     return 0;
 #endif
 }
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 void DMA2_Stream5_IRQHandler () {
     HAL_DMA_IRQHandler(&s_lcd_dma);
 }
@@ -106,7 +106,7 @@ void SPI1_IRQHandler () {
 
 
 int spi_lcd_tx (void *d, uint32_t len) {
-#ifdef AYM_HARDWARE
+#ifdef HARD
     xSemaphoreTake(spi_lcd_mutex, portMAX_DELAY);
     xSemaphoreTake(spi_lcd_msg_semaphore, 0);
     reset_pin_lcd_cs();

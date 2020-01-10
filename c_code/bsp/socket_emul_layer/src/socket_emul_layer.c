@@ -3,8 +3,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <errno.h>
 
 static int s_lcd = 0;
 static int s_keyboard = 0;
@@ -49,28 +51,36 @@ int init_sockets () {
     return 0;
 }
 
-void socket_gpio_lcd_cs_set (uint8_t state) {
-    uint8_t msg[2] = {0};
-    msg[0] = CODE_PIN_CS;
-    msg[1] = state;
+typedef struct _pin_msg {
+    uint8_t pin_code;
+    uint8_t state;
+} pin_msg_t;
 
-    write(s_lcd, &msg, sizeof(msg));
+static void send_msg (pin_msg_t *msg) {
+    if (write(s_lcd, &msg, sizeof(pin_msg_t)) != sizeof(pin_msg_t)) {
+        exit(EIO);
+    }
+}
+
+void socket_gpio_lcd_cs_set (uint8_t state) {
+    pin_msg_t msg = {0};
+    msg.pin_code = CODE_PIN_CS;
+    msg.state = state;
+    send_msg(&msg);
 }
 
 void socket_gpio_lcd_dc_set (uint8_t state) {
-    uint8_t msg[2] = {0};
-    msg[0] = CODE_PIN_DC;
-    msg[1] = state;
-
-    write(s_lcd, &msg, sizeof(msg));
+    pin_msg_t msg = {0};
+    msg.pin_code = CODE_PIN_DC;
+    msg.state = state;
+    send_msg(&msg);
 }
 
 void socket_gpio_lcd_rst_set (uint8_t state) {
-    uint8_t msg[2] = {0};
-    msg[0] = CODE_PIN_RST;
-    msg[1] = state;
-
-    write(s_lcd, &msg, sizeof(msg));
+    pin_msg_t msg = {0};
+    msg.pin_code = CODE_PIN_RST;
+    msg.state = state;
+    send_msg(&msg);
 }
 
 void socket_spi_lcd_tx (void *d, uint32_t len) {
@@ -83,12 +93,17 @@ void socket_spi_lcd_tx (void *d, uint32_t len) {
         msg[1] = *data;
         data++;
 
-        write(s_lcd, &msg, sizeof(msg));
+        if (write(s_lcd, &msg, sizeof(msg)) != sizeof(msg)) {
+            exit(EIO);
+        }
     }
 }
 
 uint8_t socket_get_button_state (uint8_t i) {
-    write(s_keyboard, &i, sizeof(i));
+    if (write(s_keyboard, &i, sizeof(i)) != sizeof(i)) {
+        exit(EIO);
+    }
+    
     uint8_t state = 0;
     while (read(s_keyboard, &state, sizeof(state)) != 1);
     return state;

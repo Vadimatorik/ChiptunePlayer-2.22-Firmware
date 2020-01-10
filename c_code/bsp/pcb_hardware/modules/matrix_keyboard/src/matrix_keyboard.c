@@ -2,7 +2,7 @@
 #include "freertos_obj.h"
 #include "mc_hardware.h"
 
-#if defined(AYM_SOFT)
+#if defined(SOFT)
 #include "socket_emul_layer.h"
 #endif
 
@@ -48,7 +48,7 @@ static const matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
 __attribute__ ((section (".bss_ccm")))
 matrix_keyboard_key_status b_status[B_NUM] = {0};
 
-#if defined(AYM_HARDWARE)
+#if defined(HARD)
 
 static uint8_t get_b_state (uint8_t id) {
     set_pin_br_0();
@@ -82,7 +82,7 @@ static uint8_t get_b_state (uint8_t id) {
     return 0;
 }
 
-#elif defined(AYM_SOFT)
+#elif defined(SOFT)
 
 static uint8_t get_b_state (uint8_t id) {
     return socket_get_button_state(id);

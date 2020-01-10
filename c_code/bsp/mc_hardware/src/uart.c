@@ -1,4 +1,4 @@
-#ifdef AYM_HARDWARE
+#ifdef HARD
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_uart.h"
 #include "stm32f4xx_hal_cortex.h"
@@ -170,7 +170,7 @@ static int start_mc_uart () {
 int init_uart () {
     int rv = 0;
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
     if ((rv = init_mc_uart()) != 0) {
         return rv;
     }
@@ -191,7 +191,7 @@ int init_uart () {
     return rv;
 }
 
-#ifdef AYM_HARDWARE
+#ifdef HARD
 static int add_transaction (const void *p, uint32_t len) {
     tx_msg_cfg_t msg;
     msg.len = len;
