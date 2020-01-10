@@ -49,7 +49,7 @@ $ cd ..
 Так же потребуется образ microsd карты, на которой будут Lua-скрипты и файлы пользователя. Для его создания и подключения как съемного диска следует сделать следующие действия:
 ```sh
 $ cd ChiptunePlayer-2.22-Firmware
-$ mkdir resurse && cd resurse && microsd
+$ mkdir resurse && cd resurse && mkdir microsd
 $ sudo dd if=/dev/zero of=microsd.img bs=256M count=1
 $ sudo mkfs.vfat microsd.img 
 $ sudo chmod 777 microsd.img
