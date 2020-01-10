@@ -31,7 +31,7 @@ $ make all -j
 
 Прошить микроконтроллер средствами утилиты st-flash программатором st-link v2 можно введя следующие команды:
 ```sh
-$ STM32_Programmer_CLI -c port="SWD" -e all -w aym.elf -R
+$ STM32_Programmer_CLI -c port="SWD" -e all -w aym.elf -hardRst
 ```
 
 ## Подготовка карты памяти (micro-sd)
