@@ -1,7 +1,7 @@
 log("Start os.init()")
 
 if os.init() ~= true then
-	log("Fail os.init()")
+	log_err("Fail os.init()")
 	is.exit()
 end
 
@@ -11,10 +11,10 @@ lcd.driver_init()
 microsd = fat.new_fat()
 log("Start microsd mount")
 if microsd:mount("0") ~= 0 then
-	log("Fail microsd mount")
+	log_err("Fail microsd mount")
 	os.exit()
 end
 
-create_dir_list("0:")
+create_dir_and_file_list("0:")
 
 win = w_main
