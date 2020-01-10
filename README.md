@@ -9,10 +9,20 @@ $ git clone git@github.com:Vadimatorik/ChiptunePlayer-2.22-Firmware.git
 $ cd ChiptunePlayer-2.22-Firmware
 $ git checkout dev
 $ git submodule update --init --recursive
-$ cd ..
 ```
 
 ## Сборка проекта под аппаратное обеспечение
+Для сборки требуется:
+* gcc-arm-none-eabi-9-2019-q4-major или новее
+* cmake 3.16.2 или новее
+
+Сборку можно произвести следующим способом (действия выполнять из корневого каталога проекта):
+```sh
+$ cd .. && mkdir build_aym_hard_r &&  cd build_aym_hard_r
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="HARD" 
+$ make all -j
+$ cd ..
+```
 
 ## Сборка проекта как Linux-приложение
 Для сборки требуется:
@@ -21,8 +31,8 @@ $ cd ..
 
 Сборку можно произвести следующим способом (действия выполнять из корневого каталога проекта):
 ```sh
-$ mkdir build_aym_soft_r &&  cd build_aym_soft_r
-$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="SOFT"
+$ cd .. && mkdir build_aym_soft_r &&  cd build_aym_soft_r
+$ cmake ../ChiptunePlayer-2.22-Firmware/c_code -DCMAKE_BUILD_TYPE=Release -DBUILD_TYPE="SOFT" -DTOOLCHAIN_BIN_PATH=/opt/arm/gcc-arm-none-eabi-8-2018-q4-major/bin
 $ make all -j
 $ cd ..
 ```
