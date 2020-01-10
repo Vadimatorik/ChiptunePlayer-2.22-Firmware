@@ -175,25 +175,34 @@ static int lua_fat_file_add_string (lua_State *L) {
 static int lua_fat_filinfo_name (lua_State *L) {
     FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
 
-    lua_pushstring(L, f_info->fname);
-
-    return 1;
+    if (strlen(f_info->fname)) {
+        lua_pushstring(L, f_info->fname);
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 static int lua_fat_filinfo_size (lua_State *L) {
     FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
 
-    lua_pushinteger(L, f_info->fsize);
-
-    return 1;
+    if (strlen(f_info->fname)) {
+        lua_pushinteger(L, f_info->fsize);
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 static int lua_fat_filinfo_is_dir (lua_State *L) {
     FILINFO *f_info = (FILINFO *)luaL_checkudata(L, 1, "fat.filinfo");
 
-    lua_pushboolean(L, f_info->fattrib & AM_DIR);
-
-    return 1;
+    if (strlen(f_info->fname)) {
+        lua_pushboolean(L, f_info->fattrib & AM_DIR);
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 static const luaL_Reg fat_fat[] = {
