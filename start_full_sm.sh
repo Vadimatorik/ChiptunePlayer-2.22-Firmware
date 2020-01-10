@@ -7,5 +7,5 @@ sleep 2
 sudo cp -r lua_scripts resurse/microsd
 sudo umount resurse/microsd
 
-sleep 1
+sleep 3
 ./../build_aym_soft_r/aym
