@@ -68,5 +68,5 @@ $ cd ../..
 Для его запуска введите следующее:
 ```sh
 $ cd ChiptunePlayer-2.22-Firmware
-$ sudo ./start_full_sm.sh
+$ ./start_full_sm.sh
 ```
