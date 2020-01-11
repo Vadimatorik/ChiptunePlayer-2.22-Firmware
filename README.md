@@ -74,7 +74,7 @@ $ cd ..
 $ cd ChiptunePlayer-2.22-Firmware
 $ mkdir resurse && cd resurse && mkdir microsd
 $ sudo dd if=/dev/zero of=microsd.img bs=256M count=1
-$ sudo mkfs.vfat microsd.img 
+$ sudo mkfs.fat -F32 -v -I microsd.img
 $ sudo chmod 777 microsd.img
 $ sudo mount -t auto microsd.img microsd
 ```
