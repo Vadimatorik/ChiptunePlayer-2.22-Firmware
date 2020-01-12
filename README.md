@@ -73,7 +73,7 @@ $ cd ..
 ```sh
 $ cd ChiptunePlayer-2.22-Firmware
 $ mkdir resurse && cd resurse && mkdir microsd
-$ sudo dd if=/dev/zero of=microsd.img bs=256M count=1
+$ sudo dd if=/dev/zero of=microsd.img bs=512 count=524288
 $ sudo mkfs.fat -F32 -v -I microsd.img
 $ sudo chmod 777 microsd.img
 $ chown user_name:user_name microsd.img
