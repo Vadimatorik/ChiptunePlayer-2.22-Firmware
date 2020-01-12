@@ -107,6 +107,16 @@ static int lua_fat_file_open (lua_State *L) {
     return 1;
 }
 
+static int lua_fat_file_get_size (lua_State *L) {
+    FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
+
+    int size = f_size(f);
+
+    lua_pushnumber(L, size);
+    return 1;
+}
+
+
 // CLOSE
 static int lua_fat_dir_close (lua_State *L) {
     DIR *d = (DIR *)luaL_checkudata(L, 1, "fat.dir");
@@ -149,26 +159,38 @@ static int lua_fat_dir_findnext (lua_State *L) {
     FRESULT fr = f_findnext(d, fi);
 
     lua_pushnumber(L, fr);
-
     return 1;
 }
 
-static int lua_fat_file_add_string (lua_State *L) {
+static int lua_fat_file_write_string (lua_State *L) {
     FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
-
     const char *s = luaL_checkstring(L, 2);
 
-    int fr = f_puts(s, f);
-    if (fr == EOF) {
-        fr = 0;
-    } else if (fr == strlen(s) + 1) {
-        fr = 1;
-    } else {
-        fr = 0;
-    }
+    uint32_t r_w_size = 0;
+    int fr = f_write(f, s, strlen(s) + 1, &r_w_size);
 
-    lua_pushboolean(L, fr);
+    lua_pushinteger(L, fr);
+    return 1;
+}
 
+static int lua_fat_file_write_int (lua_State *L) {
+    FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
+    int data = luaL_checkinteger(L, 2);
+
+    uint32_t r_w_size = 0;
+    int fr = f_write(f, &data, sizeof(data), &r_w_size);
+
+    lua_pushinteger(L, fr);
+    return 1;
+}
+
+static int lua_fat_file_lseek (lua_State *L) {
+    FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
+    int seek = luaL_checkinteger(L, 2);
+
+    int fr = f_lseek(f, seek);
+
+    lua_pushinteger(L, fr);
     return 1;
 }
 
@@ -219,16 +241,19 @@ static const luaL_Reg fat_dir[] = {
 };
 
 static const luaL_Reg lua_fat_filinfo[] = {
-    {"name",   lua_fat_filinfo_name},
-    {"size",   lua_fat_filinfo_size},
-    {"is_dir", lua_fat_filinfo_is_dir},
+    {"name",     lua_fat_filinfo_name},
+    {"get_size", lua_fat_filinfo_size},
+    {"is_dir",   lua_fat_filinfo_is_dir},
     {NULL, NULL}
 };
 
 static const luaL_Reg fat_file[] = {
-    {"open",       lua_fat_file_open},
-    {"close",      lua_fat_file_close},
-    {"add_string", lua_fat_file_add_string},
+    {"open",         lua_fat_file_open},
+    {"close",        lua_fat_file_close},
+    {"get_size",     lua_fat_file_get_size},
+    {"write_string", lua_fat_file_write_string},
+    {"write_int",    lua_fat_file_write_int},
+    {"lseek",        lua_fat_file_lseek},
     {NULL, NULL}
 };
 
