@@ -2,16 +2,17 @@
 
 #include <errno.h>
 
+#include "freertos_headers.h"
+
 #ifdef HARD
 #include "stm32f4xx_hal_sd.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
-#include "freertos_headers.h"
 #elif defined(SOFT)
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#define FILE_MICROSD_PATH "../ChiptunePlayer-2.22-Firmware/resurse/microsd.img"
+const char FILE_MICROSD_PATH[] = "../ChiptunePlayer-2.22-Firmware/resurse/microsd.img";
 #endif
 
 #ifdef HARD
@@ -49,7 +50,7 @@ int sdio_is_detected () {
 
 int init_sdio () {
     if (sdio_is_detected() != 0) {
-        return EIO;
+        return -1;
     }
 
 #ifdef HARD
@@ -67,15 +68,15 @@ int init_sdio () {
     sdio.Init.ClockDiv = 48 - 1;
 
     if (HAL_SD_DeInit(&sdio) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     if (HAL_SD_Init(&sdio) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     if (HAL_SD_ConfigWideBusOperation(&sdio, SDIO_BUS_WIDE_4B) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     sdio_rx.Instance = DMA2_Stream3;
@@ -92,7 +93,7 @@ int init_sdio () {
     sdio_rx.Init.MemBurst = DMA_MBURST_INC4;
     sdio_rx.Init.PeriphBurst = DMA_PBURST_INC4;
     if (HAL_DMA_Init(&sdio_rx) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     __HAL_LINKDMA(&sdio, hdmarx, sdio_rx);
@@ -111,7 +112,7 @@ int init_sdio () {
     sdio_tx.Init.MemBurst = DMA_MBURST_INC4;
     sdio_tx.Init.PeriphBurst = DMA_PBURST_INC4;
     if (HAL_DMA_Init(&sdio_tx) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     __HAL_LINKDMA(&sdio, hdmatx, sdio_tx);
@@ -131,7 +132,9 @@ int init_sdio () {
     if (sd == NULL) {
         return -1;
     } else {
-        return fclose(sd);
+        int rv = fclose(sd);
+        sd = NULL;
+        return rv;
     }
 #endif
 }
@@ -151,15 +154,15 @@ static int sdio_preinit () {
         }
 
         if (HAL_SD_InitCard(&sdio) != HAL_OK) {
-            return EIO;
+            return -1;
         }
 
         if (HAL_SD_ConfigWideBusOperation(&sdio, SDIO_BUS_WIDE_4B) != HAL_OK) {
-            return EIO;
+            return -1;
         }
     }
 
-    return EIO;
+    return -1;
 #elif defined(SOFT)
     return 0;
 #endif
@@ -170,37 +173,43 @@ int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
     xSemaphoreTake(rx_msg_semaphore, 0);
 
     if (sdio_preinit() != 0) {
-        return EIO;
+        return -1;
     }
 
     HAL_StatusTypeDef rv = HAL_SD_ReadBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
 
     if (rv != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     if (xSemaphoreTake(rx_msg_semaphore, 100) == pdTRUE) {
         return 0;
     } else {
-        return EIO;
+        return -1;
     }
 #elif defined(SOFT)
-    sd = fopen(FILE_MICROSD_PATH, "r+b");
-    if (sd == NULL) {
+
+
+    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
         return -1;
     };
 
     if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
         fclose(sd);
+        sd = NULL;
         return -1;
     }
 
-    if (fread(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
-        return  fclose(sd);
-    } else {
-         fclose(sd);
+    if (fread(buf, SD_BLOCK_SIZE, num_block, sd) != num_block) {
+        fclose(sd);
+        sd = NULL;
         return -1;
-    }
+    };
+
+    int rv = fclose(sd);
+    sd = NULL;
+
+    return rv;
 #endif
 }
 
@@ -209,37 +218,40 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
     xSemaphoreTake(tx_msg_semaphore, 0);
 
     if (sdio_preinit() != 0) {
-        return EIO;
+        return -1;
     }
 
     HAL_StatusTypeDef rv = HAL_SD_WriteBlocks_DMA(&sdio, (uint8_t *)buf, block_num, num_block);
 
     if (rv != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     if (xSemaphoreTake(tx_msg_semaphore, 100) == pdTRUE) {
         return 0;
     } else {
-        return EIO;
+        return -1;
     }
 #elif defined(SOFT)
-    sd = fopen(FILE_MICROSD_PATH, "r+b");
-    if (sd == NULL) {
+    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
         return -1;
     };
 
     if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
         fclose(sd);
+        sd = NULL;
         return -1;
     }
 
-    if (fwrite(buf, SD_BLOCK_SIZE, num_block, sd) == num_block) {
-         return  fclose(sd);
-    } else {
+    if (fwrite(buf, SD_BLOCK_SIZE, num_block, sd) != num_block) {
         fclose(sd);
+        sd = NULL;
         return -1;
-    }
+    };
+
+    int rv = fclose(sd);
+    sd = NULL;
+    return rv;
 #endif
 }
 
@@ -248,11 +260,7 @@ int sdio_get_status () {
 #ifdef HARD
     return 0;
 #elif defined(SOFT)
-    if (sd != NULL) {
-        return 0;
-    } else {
-        return -1;
-    }
+    return 0;
 #endif
 }
 
@@ -260,23 +268,35 @@ int sdio_get_sector_count (uint32_t *count) {
 #ifdef HARD
     HAL_SD_CardInfoTypeDef info;
     if (HAL_SD_GetCardInfo(&sdio, &info) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     *count = info.BlockNbr;
 #elif defined(SOFT)
-    fseek(sd, 0, SEEK_END);
-    *count = ftell(sd) / SD_BLOCK_SIZE;
-#endif
+    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
+        return -1;
+    };
 
-    return 0;
+    if (fseek(sd, 0, SEEK_END) != 0) {
+        fclose(sd);
+        sd = NULL;
+        return -1;
+    }
+
+    *count = ftell(sd)/SD_BLOCK_SIZE;
+
+    int rv = fclose(sd);
+    sd = NULL;
+
+    return rv;
+#endif
 }
 
 int sdio_get_block_size (uint32_t *size) {
 #ifdef HARD
     HAL_SD_CardInfoTypeDef info;
     if (HAL_SD_GetCardInfo(&sdio, &info) != HAL_OK) {
-        return EIO;
+        return -1;
     }
 
     *size = info.BlockSize;

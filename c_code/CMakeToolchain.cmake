@@ -20,7 +20,7 @@ else ()
 endif ()
 
 SET(C_COMPILER_FLAGS "-std=gnu99")
-SET(COMPILER_OPTIMIZATION "-O2 -g3")
+SET(COMPILER_OPTIMIZATION "-O0 -g3")
 
 if (CMAKE_BUILD_TYPE STREQUAL "HARD")
     SET(MC_HARDWARE_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16")
