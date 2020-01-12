@@ -1,16 +1,17 @@
 #include "mc_hardware.h"
 
-#include <errno.h>
-
-#include "freertos_headers.h"
-
 #ifdef HARD
 #include "stm32f4xx_hal_sd.h"
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_cortex.h"
+#include "freertos_headers.h"
 #elif defined(SOFT)
 #include <fcntl.h>
-#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <stdio.h>
+#define SD_BLOCK_SIZE 512
 
 const char FILE_MICROSD_PATH[] = "../ChiptunePlayer-2.22-Firmware/resurse/microsd.img";
 #endif
@@ -36,10 +37,6 @@ static SemaphoreHandle_t tx_msg_semaphore = NULL;
 
 __attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
-#elif defined(SOFT)
-#include <stdio.h>
-#define SD_BLOCK_SIZE 512
-static FILE *sd = NULL;
 #endif
 
 int sdio_is_detected () {
@@ -128,14 +125,17 @@ int init_sdio () {
 
     return 0;
 #elif defined(SOFT)
-    sd = fopen(FILE_MICROSD_PATH, "r+b");
-    if (sd == NULL) {
+    int sd = open(FILE_MICROSD_PATH, O_RDWR);
+    if (sd == -1) {
         return -1;
-    } else {
-        int rv = fclose(sd);
-        sd = NULL;
-        return rv;
-    }
+    };
+
+    int rv = close(sd);
+    if (rv != 0) {
+        return -1;
+    };
+
+    return 0;
 #endif
 }
 
@@ -188,27 +188,29 @@ int sdio_read (uint32_t *buf, uint32_t block_num, uint32_t num_block) {
         return -1;
     }
 #elif defined(SOFT)
-
-
-    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
+    int sd = open(FILE_MICROSD_PATH, O_RDONLY);
+    if (sd == -1) {
         return -1;
     };
 
-    if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
-        fclose(sd);
-        sd = NULL;
+    int rv = lseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET);
+    if (rv != block_num*SD_BLOCK_SIZE) {
+        close(sd);
         return -1;
     }
 
-    if (fread(buf, SD_BLOCK_SIZE, num_block, sd) != num_block) {
-        fclose(sd);
-        sd = NULL;
-        return -1;
-    };
+    ssize_t read_byte_num = 0;
+    while (read_byte_num != SD_BLOCK_SIZE*num_block) {
+        ssize_t real_read_byte_num = read(sd, &buf[read_byte_num], SD_BLOCK_SIZE*num_block - read_byte_num);
+        if (real_read_byte_num == -1) {
+            close(sd);
+            return -1;
+        }
 
-    int rv = fclose(sd);
-    sd = NULL;
+        read_byte_num += real_read_byte_num;
+    }
 
+    rv = close(sd);
     return rv;
 #endif
 }
@@ -233,24 +235,29 @@ int sdio_write (const uint32_t *buf, uint32_t block_num, uint32_t num_block) {
         return -1;
     }
 #elif defined(SOFT)
-    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
+    int sd = open(FILE_MICROSD_PATH, O_WRONLY);
+    if (sd == -1) {
         return -1;
     };
 
-    if (fseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET) != 0) {
-        fclose(sd);
-        sd = NULL;
+    int rv = lseek(sd, block_num*SD_BLOCK_SIZE, SEEK_SET);
+    if (rv != block_num*SD_BLOCK_SIZE) {
+        close(sd);
         return -1;
     }
 
-    if (fwrite(buf, SD_BLOCK_SIZE, num_block, sd) != num_block) {
-        fclose(sd);
-        sd = NULL;
-        return -1;
-    };
+    ssize_t write_byte_num = 0;
+    while (write_byte_num != SD_BLOCK_SIZE*num_block) {
+        ssize_t real_write_byte_num = write(sd, &buf[write_byte_num], SD_BLOCK_SIZE*num_block - write_byte_num);
+        if (real_write_byte_num == -1) {
+            close(sd);
+            return -1;
+        }
 
-    int rv = fclose(sd);
-    sd = NULL;
+        write_byte_num += real_write_byte_num;
+    }
+
+    rv = close(sd);
     return rv;
 #endif
 }
@@ -273,22 +280,20 @@ int sdio_get_sector_count (uint32_t *count) {
 
     *count = info.BlockNbr;
 #elif defined(SOFT)
-    if ((sd = fopen(FILE_MICROSD_PATH, "r+b")) == NULL) {
+    FILE *sd = fopen(FILE_MICROSD_PATH, "r");
+    if (sd == NULL) {
         return -1;
     };
 
     if (fseek(sd, 0, SEEK_END) != 0) {
         fclose(sd);
-        sd = NULL;
         return -1;
     }
 
     *count = ftell(sd)/SD_BLOCK_SIZE;
 
     int rv = fclose(sd);
-    sd = NULL;
-
-    return rv;
+    return (rv)?-1:0;
 #endif
 }
 
