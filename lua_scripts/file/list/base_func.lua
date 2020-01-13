@@ -1,20 +1,53 @@
+-- Тут надо сделать умнее. Общая структура методов, которая берет имя из структуры при создании объекта.
+-- Чтобы писать максимально мало.
+
 function create_no_sort_dir_list_file (path_to_dir, fat_fs_file_obj)
-    local rv = open_file(path_to_dir, ".dir_list", fat_fs_file_obj, "wrC")
+    local rv = open_file(path_to_dir, ".no_sort_dir_list", fat_fs_file_obj, "wrC")
+    return rv
+end
+
+function create_sort_name_dir_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = open_file(path_to_dir, ".sort_name_dir_list", fat_fs_file_obj, "wrC")
     return rv
 end
 
 function create_no_sort_fil_list_file (path_to_dir, fat_fs_file_obj)
-    local rv = open_file(path_to_dir, ".fil_list", fat_fs_file_obj, "wrC")
+    local rv = open_file(path_to_dir, ".no_sort_fil_list", fat_fs_file_obj, "wrC")
+    return rv
+end
+
+function create_sort_name_fil_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = open_file(path_to_dir, ".sort_name_fil_list", fat_fs_file_obj, "wrC")
+    return rv
+end
+
+function create_sort_len_fil_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = open_file(path_to_dir, ".sort_len_fil_list", fat_fs_file_obj, "wrC")
     return rv
 end
 
 function close_no_sort_dir_list_file (path_to_dir, fat_fs_file_obj)
-    local rv = close_file(path_to_dir, ".dir_list", fat_fs_file_obj)
+    local rv = close_file(path_to_dir, ".no_sort_dir_list", fat_fs_file_obj)
+    return rv
+end
+
+function close_sort_name_dir_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = close_file(path_to_dir, ".sort_name_dir_list", fat_fs_file_obj)
     return rv
 end
 
 function close_no_sort_fil_list_file (path_to_dir, fat_fs_file_obj)
-    local rv = close_file(path_to_dir, ".fil_list", fat_fs_file_obj)
+    local rv = close_file(path_to_dir, ".no_sort_fil_list", fat_fs_file_obj)
+    return rv
+end
+
+function close_sort_name_fil_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = close_file(path_to_dir, ".sort_name_fil_list", fat_fs_file_obj)
+    return rv
+end
+
+function close_sort_len_fil_list_file (path_to_dir, fat_fs_file_obj)
+    local rv = close_file(path_to_dir, ".sort_len_fil_list", fat_fs_file_obj)
     return rv
 end
 
@@ -87,12 +120,27 @@ function read_fil_list_item (path_to_dir, file_name, fat_fs_file_obj, fil_item_n
 end
 
 function write_no_sort_dir_list_item (path_to_dir, fat_fs_file_obj, dir_item_number, dir_name)
-    local rv = write_dir_list_item(path_to_dir, ".dir_list", fat_fs_file_obj, dir_item_number, dir_name)
+    local rv = write_dir_list_item(path_to_dir, ".no_sort_dir_list", fat_fs_file_obj, dir_item_number, dir_name)
+    return rv
+end
+
+function write_sort_name_dir_list_item (path_to_dir, fat_fs_file_obj, dir_item_number, dir_name)
+    local rv = write_dir_list_item(path_to_dir, ".sort_name_dir_list", fat_fs_file_obj, dir_item_number, dir_name)
     return rv
 end
 
 function write_no_sort_fil_list_item (path_to_dir, fat_fs_file_obj, fil_item_number, file_data)
-    local rv = write_fil_list_item(path_to_dir, ".fil_list", fat_fs_file_obj, fil_item_number, file_data)
+    local rv = write_fil_list_item(path_to_dir, ".no_sort_fil_list", fat_fs_file_obj, fil_item_number, file_data)
+    return rv
+end
+
+function write_sort_name_fil_list_item (path_to_dir, fat_fs_file_obj, fil_item_number, file_data)
+    local rv = write_fil_list_item(path_to_dir, ".sort_name_fil_list", fat_fs_file_obj, fil_item_number, file_data)
+    return rv
+end
+
+function write_sort_len_fil_list_item (path_to_dir, fat_fs_file_obj, fil_item_number, file_data)
+    local rv = write_fil_list_item(path_to_dir, ".sort_len_fil_list", fat_fs_file_obj, fil_item_number, file_data)
     return rv
 end
 
