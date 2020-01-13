@@ -3,6 +3,9 @@
 #include "lauxlib.h"
 #include <string.h>
 #include "ff.h"
+#include <stdlib.h>
+
+#define ERR_OS_MALLOC_FAIL 20
 
 // NEW
 static int lua_fat_new_fat (lua_State *L) {
@@ -169,7 +172,7 @@ static int lua_fat_file_write_string (lua_State *L) {
     uint32_t r_w_size = 0;
     int fr = f_write(f, s, strlen(s) + 1, &r_w_size);
 
-    lua_pushinteger(L, fr);
+    lua_pushinteger(L, -fr);
     return 1;
 }
 
@@ -180,7 +183,43 @@ static int lua_fat_file_write_int (lua_State *L) {
     uint32_t r_w_size = 0;
     int fr = f_write(f, &data, sizeof(data), &r_w_size);
 
-    lua_pushinteger(L, fr);
+    lua_pushinteger(L, -fr);
+    return 1;
+}
+
+static int lua_fat_file_read_string (lua_State *L) {
+    FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
+    TCHAR *s_buf = malloc(sizeof(TCHAR)*FF_MAX_LFN);
+
+    if (s_buf == NULL) {
+        lua_pushinteger(L, -ERR_OS_MALLOC_FAIL);
+        return 1;
+    }
+
+    char *str = f_gets(s_buf, FF_MAX_LFN, f);
+    if (str == NULL) {
+        free(s_buf);
+        lua_pushinteger(L, -f_error(f));
+        return 1;
+    }
+
+    lua_pushstring(L, s_buf);
+    free(s_buf);
+    return 1;
+}
+
+static int lua_fat_file_read_int (lua_State *L) {
+    FIL *f = luaL_checkudata(L, 1, "fat.fil");
+
+    int data;
+    uint32_t r_w_size = 0;
+    int fr = f_read(f, &data, sizeof(data), &r_w_size);
+    if (fr != 0) {
+        lua_pushinteger(L, -fr);
+    } else {
+        lua_pushinteger(L, data);
+    }
+
     return 1;
 }
 
@@ -190,7 +229,7 @@ static int lua_fat_file_lseek (lua_State *L) {
 
     int fr = f_lseek(f, seek);
 
-    lua_pushinteger(L, fr);
+    lua_pushinteger(L, -fr);
     return 1;
 }
 
@@ -253,6 +292,8 @@ static const luaL_Reg fat_file[] = {
     {"get_size",     lua_fat_file_get_size},
     {"write_string", lua_fat_file_write_string},
     {"write_int",    lua_fat_file_write_int},
+    {"read_string",  lua_fat_file_read_string},
+    {"read_int",     lua_fat_file_read_int},
     {"lseek",        lua_fat_file_lseek},
     {NULL, NULL}
 };
