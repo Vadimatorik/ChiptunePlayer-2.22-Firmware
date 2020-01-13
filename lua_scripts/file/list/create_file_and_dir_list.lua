@@ -1,17 +1,28 @@
+function get_item_type (item)
+    if item:is_dir() then
+        return "dir"
+    else
+        return "file"
+    end
+end
+
 function create_dir_and_file_list (path_to_dir)
     log("Start create dir and file list")
     local cur_dir = fat.new_dir()
     local cur_dir_item = fat.new_filinfo()
-    local dir_list = fat.new_file()
-    local file_list = fat.new_file()
+    local fat_dir_list_obj = fat.new_file()
+    local fat_file_list_obj = fat.new_file()
 
-    local rv = create_no_sort_dir_list_file(path_to_dir, dir_list)
+    dl = dir_list:new(path_to_dir, ".dir_no_sort_list.txt", fat_dir_list_obj)
+    fl = file_list:new(path_to_dir, ".fil_no_sort_list.txt", fat_file_list_obj)
+
+    local rv = dl:create()
 
     if rv ~= 0 then
         return rv
     end
 
-    rv = create_no_sort_fil_list_file(path_to_dir, file_list)
+    rv = fl:create()
 
     if rv ~= 0 then
         return rv
@@ -32,21 +43,26 @@ function create_dir_and_file_list (path_to_dir)
     while item_name do
         local item_type = get_item_type(cur_dir_item)
 
-        log("Found item. Name: " .. item_name .. ". Type: " .. item_type)
-
         if cur_dir_item:is_dir() then
-            rv = write_no_sort_dir_list_item(path_to_dir, dir_list, dir_counter, item_name)
+            log("Found item. Name: " .. item_name .. ". Type: dir")
+
+            rv = dl:write_item(dir_counter, item_name)
             if rv ~= 0 then
                 return rv
             end
 
             dir_counter = dir_counter + 1
         else
-            if string.find(item_name, "[.]psg$") then
+            local item_format = item_name:sub(-4, -1)
+            item_format = item_format:lower()
+
+            log("Found item. Name: " .. item_name .. ". Type: fil. Format: " .. item_format)
+
+            if item_format == ".psg" then
                 local file_data = {}
                 file_data.name = item_name
                 file_data.len = 0
-                rv = write_no_sort_fil_list_item(path_to_dir, file_list, fil_counter, file_data)
+                rv = fl:write_item(fil_counter, file_data)
                 if rv ~= 0 then
                     return rv
                 end
@@ -65,11 +81,11 @@ function create_dir_and_file_list (path_to_dir)
         item_name = cur_dir_item:name()
     end
 
-	rv = close_no_sort_dir_list_file(path_to_dir, file_list)
+	rv = dl:close()
 	if rv ~= 0 then
 		return rv
 	end
 
-	rv = close_no_sort_fil_list_file(path_to_dir, dir_list)
+	rv = fl:close()
 	return rv
 end

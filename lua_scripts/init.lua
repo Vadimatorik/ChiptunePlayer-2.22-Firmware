@@ -12,11 +12,11 @@ os.dofile("lua_scripts/gui/status_bar.lua")
 os.dofile("lua_scripts/data.lua")
 os.dofile("lua_scripts/log.lua")
 
-os.dofile("lua_scripts/file/base.lua")
-os.dofile("lua_scripts/file/base_func.lua")
-os.dofile("lua_scripts/file/list/cfg.lua")
-os.dofile("lua_scripts/file/list/base_func.lua")
-os.dofile("lua_scripts/file/list/base_list.lua")
+os.dofile("lua_scripts/file/err.lua")
+os.dofile("lua_scripts/file/io.lua")
+
+os.dofile("lua_scripts/file/list/dir_list.lua")
+os.dofile("lua_scripts/file/list/file_list.lua")
 
 os.dofile("lua_scripts/file/list/create_file_and_dir_list.lua")
 

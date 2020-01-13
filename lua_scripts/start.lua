@@ -17,6 +17,4 @@ end
 
 create_dir_and_file_list("0:")
 
-
-
 win = w_main
