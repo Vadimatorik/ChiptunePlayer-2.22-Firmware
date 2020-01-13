@@ -58,7 +58,7 @@ function file_list:write_item (number, file_data)
     return rv
 end
 
-function read_fil_list_item (number, ret_file_data)
+function file_list:read_item (number, ret_file_data)
     -- Name
     local lseek_byte = number * self.item.size.all
     local rv = lseek_file(self.path_to_dir, self.name, self.fat_fs_file_obj, lseek_byte)
