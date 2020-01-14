@@ -19,7 +19,10 @@ os.dofile("lua_scripts/file/list/dir_list.lua")
 os.dofile("lua_scripts/file/list/file_list.lua")
 
 os.dofile("lua_scripts/file/list/create_file_and_dir_list.lua")
+os.dofile("lua_scripts/file/list/create_dir_name_sort_list.lua")
 
 os.dofile("lua_scripts/win/main.lua")
 
 os.dofile("lua_scripts/start.lua")
+
+collectgarbage("collect")

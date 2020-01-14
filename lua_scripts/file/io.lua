@@ -1,3 +1,5 @@
+sd_err = 0
+
 function open_file (path_to_dir, file_name, fat_fs_file_obj, open_flags)
     local path = path_to_dir .. file_name
     log("Start open file. Path file: " .. path)
@@ -41,31 +43,31 @@ function write_file_string (path_to_dir, file_name, fat_fs_file_obj, str)
     local path = path_to_dir .. file_name
     log("Start write string to file. Str: " .. str .. ". Path file: " .. path)
     local rv = fat_fs_file_obj:write_string(str)
-	if rv ~= 0 then
-		local err_str = "Fail write string to file. Str: " .. str .. ". "
+    if rv ~= 0 then
+        local err_str = "Fail write string to file. Str: " .. str .. ". "
         err_str = err_str .. "Err: " .. get_fat_fs_err_str(rv) .. ". "
-		err_str = err_str .. "Path file: " .. path
-		log_err(err_str)
+        err_str = err_str .. "Path file: " .. path
+        log_err(err_str)
     end
 
     return rv
 end
 
 function write_file_int (path_to_dir, file_name, fat_fs_file_obj, var)
-	local path = path_to_dir .. file_name
-	log("Start write int to file. Path file: " .. path)
-	local rv = fat_fs_file_obj:write_int(var)
-	if rv ~= 0 then
-		local err_str = "Fail write int to file. Var: " .. tostring(var) .. ". "
+    local path = path_to_dir .. file_name
+    log("Start write int to file. Path file: " .. path)
+    local rv = fat_fs_file_obj:write_int(var)
+    if rv ~= 0 then
+        local err_str = "Fail write int to file. Var: " .. tostring(var) .. ". "
         err_str = err_str .. "Err: " .. get_fat_fs_err_str(rv) .. ". "
-		err_str = err_str .. "Path file: " .. path
-		log_err(err_str)
-	end
+        err_str = err_str .. "Path file: " .. path
+        log_err(err_str)
+    end
 
-	return rv
+    return rv
 end
 
-function read_file_string (path_to_dir, file_name, fat_fs_file_obj, ret_str)
+function read_file_string (path_to_dir, file_name, fat_fs_file_obj)
     local path = path_to_dir .. file_name
     log("Start read string from file. Path file: " .. path)
     local rv = fat_fs_file_obj:read_string()
@@ -74,14 +76,12 @@ function read_file_string (path_to_dir, file_name, fat_fs_file_obj, ret_str)
         err_str = err_str .. "Err: " .. get_fat_fs_err_str(rv) .. ". "
         err_str = err_str .. "Path file: " .. path
         log_err(err_str)
-        return rv
-    else
-        ret_str = rv
-        return 0
     end
+
+    return rv
 end
 
-function read_file_int (path_to_dir, file_name, fat_fs_file_obj, ret_var)
+function read_file_int (path_to_dir, file_name, fat_fs_file_obj)
     local path = path_to_dir .. file_name
     log("Start read int from file. Path file: " .. path)
     local rv = fat_fs_file_obj:read_int()
@@ -90,9 +90,21 @@ function read_file_int (path_to_dir, file_name, fat_fs_file_obj, ret_var)
         err_str = err_str .. "Err: " .. get_fat_fs_err_str(rv) .. ". "
         err_str = err_str .. "Path file: " .. path
         log_err(err_str)
-        return rv
-    else
-        ret_var = rv
-        return 0
     end
+
+    return rv
+end
+
+function get_file_size (path_to_dir, file_name, fat_fs_file_obj)
+    local path = path_to_dir .. file_name
+    log("Start get file size. Path file: " .. path)
+    local rv = fat_fs_file_obj:get_size()
+    if rv < 0 then
+        local err_str = "Fail get file size. "
+        err_str = err_str .. "Err: " .. get_fat_fs_err_str(rv) .. ". "
+        err_str = err_str .. "Path file: " .. path
+        log_err(err_str)
+    end
+
+    return rv
 end

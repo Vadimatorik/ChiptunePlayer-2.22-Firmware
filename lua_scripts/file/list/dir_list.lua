@@ -34,7 +34,7 @@ function dir_list:close ()
 end
 
 function dir_list:write_item (number, name)
-    local lseek_byte = number * self.item.size.all
+    local lseek_byte = (number - 1) * self.item.size.all
     local rv = lseek_file(self.path_to_dir, self.name, self.fat_fs_file_obj, lseek_byte)
     if rv ~= 0 then
         return rv
@@ -43,12 +43,28 @@ function dir_list:write_item (number, name)
     return write_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj, name)
 end
 
-function dir_list:read_item (number, ret_name)
-    local lseek_byte = number * self.item.size.all
+function dir_list:read_item (number)
+    local lseek_byte = (number - 1) * self.item.size.all
     local rv = lseek_file(self.path_to_dir, self.name, self.fat_fs_file_obj, lseek_byte)
     if rv ~= 0 then
         return rv
     end
 
-    return read_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj, ret_name)
+    rv = read_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj)
+
+    if type(rv) ~= "number" then
+        log("Read str: " .. rv)
+    end
+
+    return rv
+end
+
+function dir_list:get_item_num ()
+    local rv = get_file_size(self.path_to_dir, self.name, self.fat_fs_file_obj)
+
+    if rv < 0 then
+        return rv
+    end
+
+    return math.ceil(rv / self.item.size.all)
 end

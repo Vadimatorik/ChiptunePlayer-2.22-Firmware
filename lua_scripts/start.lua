@@ -15,6 +15,16 @@ if microsd:mount("0") ~= 0 then
 	os.exit()
 end
 
+log_free_ram()
+collectgarbage("collect")
+
+log_free_ram()
 create_dir_and_file_list("0:")
+collectgarbage("collect")
+log_free_ram()
+
+create_dir_name_sort_list("0:")
+collectgarbage("collect")
+log_free_ram()
 
 win = w_main

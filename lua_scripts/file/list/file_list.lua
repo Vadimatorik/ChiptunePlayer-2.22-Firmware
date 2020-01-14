@@ -36,7 +36,7 @@ end
 
 function file_list:write_item (number, file_data)
     -- Name
-    local lseek_byte = number * self.item.size.all
+    local lseek_byte = (number - 1) * self.item.size.all
     local rv = lseek_file(self.path_to_dir, self.name, self.fat_fs_file_obj, lseek_byte)
     if rv ~= 0 then
         return rv
@@ -58,18 +58,22 @@ function file_list:write_item (number, file_data)
     return rv
 end
 
-function file_list:read_item (number, ret_file_data)
+function file_list:read_item (number)
+    local ret_file_data
+
     -- Name
-    local lseek_byte = number * self.item.size.all
+    local lseek_byte = (number - 1) * self.item.size.all
     local rv = lseek_file(self.path_to_dir, self.name, self.fat_fs_file_obj, lseek_byte)
     if rv ~= 0 then
         return rv
     end
 
-    rv = read_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj, ret_file_data.name)
-    if rv ~= 0 then
+    rv = read_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj)
+    if type(rv) == "number" then
         return rv
     end
+
+    ret_file_data.name = rv
 
     -- Len
     lseek_byte = lseek_byte + self.item.size.name
@@ -78,6 +82,13 @@ function file_list:read_item (number, ret_file_data)
         return rv
     end
 
-    rv = read_file_int(self.path_to_dir, self.name, self.fat_fs_file_obj, ret_file_data.len)
-    return rv
+    rv = read_file_int(self.path_to_dir, self.name, self.fat_fs_file_obj)
+    if rv < 0 then
+        return rv
+    end
+
+    ret_file_data.len = rv
+
+    return ret_file_data
 end
+

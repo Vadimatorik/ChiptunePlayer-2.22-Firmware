@@ -37,8 +37,8 @@ function create_dir_and_file_list (path_to_dir)
 
     local item_name = cur_dir_item:name()
 
-    local dir_counter = 0
-    local fil_counter = 0
+    local dir_counter = 1
+    local fil_counter = 1
 
     while item_name do
         local item_type = get_item_type(cur_dir_item)
@@ -79,6 +79,8 @@ function create_dir_and_file_list (path_to_dir)
         end
 
         item_name = cur_dir_item:name()
+
+        collectgarbage("collect")
     end
 
 	rv = dl:close()
