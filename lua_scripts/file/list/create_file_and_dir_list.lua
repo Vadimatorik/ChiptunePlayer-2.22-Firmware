@@ -14,7 +14,7 @@ function create_dir_and_file_list (path_to_dir)
     local fat_file_list_obj = fat.new_file()
 
     dl = dir_list:new(path_to_dir, ".dir_no_sort_list.txt", fat_dir_list_obj)
-    fl = file_list:new(path_to_dir, ".fil_no_sort_list.txt", fat_file_list_obj)
+    fl = file_list:new(path_to_dir, ".file_no_sort_list.txt", fat_file_list_obj)
 
     local rv = dl:create()
 

@@ -59,7 +59,7 @@ function file_list:write_item (number, file_data)
 end
 
 function file_list:read_item (number)
-    local ret_file_data
+    local ret_file_data = {}
 
     -- Name
     local lseek_byte = (number - 1) * self.item.size.all
@@ -92,3 +92,12 @@ function file_list:read_item (number)
     return ret_file_data
 end
 
+function file_list:get_item_num ()
+    local rv = get_file_size(self.path_to_dir, self.name, self.fat_fs_file_obj)
+
+    if rv < 0 then
+        return rv
+    end
+
+    return math.ceil(rv / self.item.size.all)
+end

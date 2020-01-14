@@ -27,4 +27,8 @@ create_dir_name_sort_list("0:")
 collectgarbage("collect")
 log_free_ram()
 
+create_file_name_sort_list("0:")
+collectgarbage("collect")
+log_free_ram()
+
 win = w_main

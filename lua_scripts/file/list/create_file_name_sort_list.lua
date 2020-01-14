@@ -1,10 +1,10 @@
-function create_dir_name_sort_list (path_to_dir)
-    log("Start create dir name sort list")
-    local fat_dir_no_sort_list_obj = fat.new_file()
-    local fat_dir_name_sort_list_obj = fat.new_file()
+function create_file_name_sort_list (path_to_dir)
+    log("Start create file name sort list")
+    local fat_file_no_sort_list_obj = fat.new_file()
+    local fat_file_name_sort_list_obj = fat.new_file()
 
-    dl = dir_list:new(path_to_dir, ".dir_no_sort_list.txt", fat_dir_no_sort_list_obj)
-    sl = dir_list:new(path_to_dir, ".dir_name_sort_list.txt", fat_dir_name_sort_list_obj)
+    dl = file_list:new(path_to_dir, ".file_no_sort_list.txt", fat_file_no_sort_list_obj)
+    sl = file_list:new(path_to_dir, ".file_name_sort_list.txt", fat_file_name_sort_list_obj)
 
     local rv = dl:open()
     if rv ~= 0 then
@@ -30,7 +30,7 @@ function create_dir_name_sort_list (path_to_dir)
         pos_items[i] = i
     end
 
-    local sort_dir_item_func = function(p1, p2)
+    local sort_file_item_func = function(p1, p2)
         if sd_err ~= 0 then
             return false
         end
@@ -43,7 +43,7 @@ function create_dir_name_sort_list (path_to_dir)
             return false
         end
 
-        local s1 = rv
+        local i1 = rv
 
         rv = dl:read_item(p2)
         if type(rv) == "number" then
@@ -51,13 +51,13 @@ function create_dir_name_sort_list (path_to_dir)
             return false
         end
 
-        local s2 = rv
+        local i2 = rv
 
-        return s1 < s2
+        return i1.name < i2.name
     end
 
     log("Start sort")
-    table.sort(pos_items, sort_dir_item_func)
+    table.sort(pos_items, sort_file_item_func)
 
     if sd_err ~= 0 then
         log_err("Fail sort")
@@ -66,7 +66,7 @@ function create_dir_name_sort_list (path_to_dir)
         return sd_err
     end
 
-    log("Write dir name sort list")
+    log("Write file name sort list")
     for sort_list_pos, no_sort_list_pos in pairs(pos_items) do
         collectgarbage("collect")
 
