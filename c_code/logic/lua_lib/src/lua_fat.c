@@ -169,7 +169,7 @@ static int lua_fat_file_write_string (lua_State *L) {
     FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
     const char *s = luaL_checkstring(L, 2);
 
-    uint32_t r_w_size = 0;
+    UINT r_w_size = 0;
     int fr = f_write(f, s, strlen(s) + 1, &r_w_size);
 
     lua_pushinteger(L, -fr);
@@ -180,7 +180,7 @@ static int lua_fat_file_write_int (lua_State *L) {
     FIL *f = (FIL *)luaL_checkudata(L, 1, "fat.fil");
     int data = luaL_checkinteger(L, 2);
 
-    uint32_t r_w_size = 0;
+    UINT r_w_size = 0;
     int fr = f_write(f, &data, sizeof(data), &r_w_size);
 
     lua_pushinteger(L, -fr);
@@ -212,7 +212,7 @@ static int lua_fat_file_read_int (lua_State *L) {
     FIL *f = luaL_checkudata(L, 1, "fat.fil");
 
     int data;
-    uint32_t r_w_size = 0;
+    UINT r_w_size = 0;
     int fr = f_read(f, &data, sizeof(data), &r_w_size);
     if (fr != 0) {
         lua_pushinteger(L, -fr);
