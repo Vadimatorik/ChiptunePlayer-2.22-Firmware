@@ -1,6 +1,6 @@
 fileviewer = {}
 
-function fileviewer:new (font, f_h, x, y, w, h)
+function fileviewer:new (font, f_h, x, y, w, h, path_to_dir, list_name)
     local o = {
         font = { d = font, h = f_h },
         frame = {
@@ -20,10 +20,11 @@ function fileviewer:new (font, f_h, x, y, w, h)
             cur_item = 1,
             num_item = 0,
             cur_gui_pos = 1,
-            items = {},
             gui_lines = {}
         },
-        view_mode_down = false
+        view_mode_down = false,
+        path_to_dir = path_to_dir,
+        list_name = list_name
     }
 
     o.line_num = math.ceil(h / (f_h + o.space.str.y * 2 + o.space.str.y * 2))
@@ -36,6 +37,13 @@ function fileviewer:new (font, f_h, x, y, w, h)
 end
 
 function fileviewer:_new_line (gui_line_num, item_num)
+    local rv =  self.fl:read_item(item_num)
+    if type(rv) == "number" then
+        return rv
+    end
+
+    local item = rv
+
     local x_start = self.frame.pos.x + self.space.frame + self.space.icon.x.left
 
     local y_start = self.frame.pos.y + self.space.frame + self.space.str.y
@@ -43,7 +51,7 @@ function fileviewer:_new_line (gui_line_num, item_num)
     y = y * (gui_line_num - 1)
     y = y_start + y
 
-    local i_type = self.state.items[item_num].type
+    local i_type = "file"-- self.state.items[item_num].type
 
     local str_win_h = self.space.icon.y.h
     if gui_line_num == self.line_num then
@@ -55,7 +63,7 @@ function fileviewer:_new_line (gui_line_num, item_num)
 
     local time_w = 0
     if i_type == "file" then
-        self.state.gui_lines[gui_line_num].time = play_time:new(self.font.d, self.font.h, self.state.items[item_num].time, 0, y, str_win_h)
+        self.state.gui_lines[gui_line_num].time = play_time:new(self.font.d, self.font.h, item.len, 0, y, str_win_h)
         time_w = self.state.gui_lines[gui_line_num].time.s.width
         local x_time = self.frame.pos.x + self.frame.w - self.space.scroll - time_w - self.space.frame
         self.state.gui_lines[gui_line_num].time:set_pos(x_time, y)
@@ -71,7 +79,7 @@ function fileviewer:_new_line (gui_line_num, item_num)
 
     lin_w = lin_w - self.space.frame
 
-    local i_name = self.state.items[item_num].name
+    local i_name = item.name
     x_start = x_start + self.space.icon.x.w + self.space.icon.x.right
 
     self.state.gui_lines[gui_line_num].s = shift_string:new(i_name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
@@ -81,24 +89,43 @@ function fileviewer:_new_line (gui_line_num, item_num)
     end
 
     collectgarbage("collect")
+    return rv
 end
 
-function fileviewer:add_item (type, name, time)
-    self.state.num_item = self.state.num_item + 1
+function fileviewer:init ()
+    log("Start fileviewer")
+    self.list_obj = fat.new_file()
+    self.fl = file_list:new(self.path_to_dir, self.list_name, self.list_obj)
 
-    self.state.items[self.state.num_item] = {}
-    self.state.items[self.state.num_item].type = type
-    self.state.items[self.state.num_item].name = name
-    self.state.items[self.state.num_item].time = time
+    local rv = self.fl:open()
+    if rv ~= 0 then
+        return rv
+    end
 
-    if self.state.num_item <= self.line_num then
-        if self.state.gui_lines[self.state.num_item] == nil then
-            self:_new_line(self.state.num_item, self.state.num_item)
-        end
+    log("Get num items")
+
+    rv = self.fl:get_item_num()
+    if rv < 0 then
+        return rv
+    end
+    self.state.num_item = rv
+    log("Find items: " .. tonumber(self.state.num_item))
+
+    gui_line = 1
+    if self.state.num_item < self.line_num then
+        gui_line = self.state.num_item
+    else
+        gui_line = self.line_num
+    end
+
+    for i = 1, gui_line do
+        self:_new_line(i, i)
     end
 
     self.scroll:set_num_item(self.state.num_item)
     collectgarbage("collect")
+
+    return 0
 end
 
 function fileviewer:draw ()

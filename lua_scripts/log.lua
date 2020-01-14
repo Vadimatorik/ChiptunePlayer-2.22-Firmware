@@ -8,8 +8,8 @@ function log (str)
     io.write(lua_msg .. str .. end_msg)
 end
 
-function log_free_ram ()
-    io.write(lua_msg .. "Free ram: " .. tostring(collectgarbage("count")*1024) .. end_msg)
+function log_used_ram ()
+    io.write(lua_msg .. "Used ram: " .. tostring(collectgarbage("count")*1024) .. end_msg)
 end
 
 function log_err (str)

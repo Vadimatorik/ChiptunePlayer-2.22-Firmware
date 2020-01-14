@@ -3,8 +3,8 @@ function create_dir_name_sort_list (path_to_dir)
     local fat_dir_no_sort_list_obj = fat.new_file()
     local fat_dir_name_sort_list_obj = fat.new_file()
 
-    dl = dir_list:new(path_to_dir, ".dir_no_sort_list.txt", fat_dir_no_sort_list_obj)
-    sl = dir_list:new(path_to_dir, ".dir_name_sort_list.txt", fat_dir_name_sort_list_obj)
+    local dl = dir_list:new(path_to_dir, ".dir_no_sort_list.txt", fat_dir_no_sort_list_obj)
+    local sl = dir_list:new(path_to_dir, ".dir_name_sort_list.txt", fat_dir_name_sort_list_obj)
 
     local rv = dl:open()
     if rv ~= 0 then

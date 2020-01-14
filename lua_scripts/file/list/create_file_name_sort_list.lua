@@ -3,8 +3,8 @@ function create_file_name_sort_list (path_to_dir)
     local fat_file_no_sort_list_obj = fat.new_file()
     local fat_file_name_sort_list_obj = fat.new_file()
 
-    dl = file_list:new(path_to_dir, ".file_no_sort_list.txt", fat_file_no_sort_list_obj)
-    sl = file_list:new(path_to_dir, ".file_name_sort_list.txt", fat_file_name_sort_list_obj)
+    local dl = file_list:new(path_to_dir, ".file_no_sort_list.txt", fat_file_no_sort_list_obj)
+    local sl = file_list:new(path_to_dir, ".file_name_sort_list.txt", fat_file_name_sort_list_obj)
 
     local rv = dl:open()
     if rv ~= 0 then
@@ -25,6 +25,7 @@ function create_file_name_sort_list (path_to_dir)
     local item_num = rv
     log("Find items: " .. tonumber(item_num))
 
+    collectgarbage("collect")
     pos_items = {}
     for i = 1, item_num do
         pos_items[i] = i

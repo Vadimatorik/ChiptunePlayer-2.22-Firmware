@@ -53,7 +53,7 @@ function dir_list:read_item (number)
     rv = read_file_string(self.path_to_dir, self.name, self.fat_fs_file_obj)
 
     if type(rv) ~= "number" then
-        log("Read str: " .. rv)
+        log("Read name: " .. rv)
     end
 
     return rv

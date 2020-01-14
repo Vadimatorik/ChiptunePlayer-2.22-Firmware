@@ -74,6 +74,7 @@ function file_list:read_item (number)
     end
 
     ret_file_data.name = rv
+    log("Read name: " .. ret_file_data.name)
 
     -- Len
     lseek_byte = lseek_byte + self.item.size.name
@@ -88,6 +89,7 @@ function file_list:read_item (number)
     end
 
     ret_file_data.len = rv
+    log("Read len: " .. tostring(ret_file_data.len))
 
     return ret_file_data
 end
