@@ -17,13 +17,16 @@ function w_main:draw ()
     self.gui.obj.fv:draw()
     self.gui.obj.pb:draw()
     lcd.update()
+    collectgarbage("collect")
 end
 
 function w_main:keyboard_click (key)
     if key == cmd.keyboard.num.up then
+        self.gui.obj.sb:up()
         self.gui.obj.fv:up()
         self:draw()
     elseif key == cmd.keyboard.num.down then
+        self.gui.obj.sb:down()
         self.gui.obj.fv:down()
         self:draw()
     end
@@ -65,20 +68,27 @@ function w_main:start ()
 
     self.gui.obj.fv = fileviewer:new(self.gui.font.data, self.gui.font.h, 1, 11, 128, 44, self.path, self.fv_dir_list_name, self.fv_file_list_name)
     self.gui.obj.pb = play_bar:new(self.gui.font.data, self.gui.font.h, 1, 54, 128, 11)
-    self.gui.obj.sb = status_bar:new(self.gui.font.data, self.gui.font.h, 1, 1, 128, 11, "stop", 100)
+    self.gui.obj.sb = status_bar:new(self.gui.font.data, self.gui.font.h, 1, 1, 128, 11, "stop", 100, self.path, self.fv_dir_list_name, self.fv_file_list_name)
 
     rv = self.gui.obj.fv:init()
     if rv ~= 0 then
         return rv
     end
 
+    rv = self.gui.obj.sb:init()
+    if rv ~= 0 then
+        return rv
+    end
+
     self:draw()
 
-
     while true do
-        local cmd_type, cmd_code = os.get_cmd()
+        local cmd_type, cmd_data = os.get_cmd()
         if cmd_type == cmd.keyboard.type.click then
-            self:keyboard_click(cmd_code)
+            self:keyboard_click(cmd_data)
         end
+
+        log_used_ram()
+        collectgarbage("collect")
     end
 end

@@ -7,7 +7,7 @@
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION        0
 #define configCPU_CLOCK_HZ                            168000000
 
-#define configTOTAL_HEAP_SIZE (120 * 1024)
+#define configTOTAL_HEAP_SIZE (122 * 1024)
 
 
 #define configTICK_RATE_HZ                            ( ( TickType_t ) 1000 )
