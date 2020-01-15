@@ -1,6 +1,6 @@
 fileviewer = {}
 
-function fileviewer:new (font, f_h, x, y, w, h, path_to_dir, list_name)
+function fileviewer:new (font, f_h, x, y, w, h, path_to_dir, list_dir, list_file)
     local o = {
         font = { d = font, h = f_h },
         frame = {
@@ -19,12 +19,15 @@ function fileviewer:new (font, f_h, x, y, w, h, path_to_dir, list_name)
         state = {
             cur_item = 1,
             num_item = 0,
+            num_item_dir = 0,
+            num_item_file = 0,
             cur_gui_pos = 1,
             gui_lines = {}
         },
         view_mode_down = false,
         path_to_dir = path_to_dir,
-        list_name = list_name
+        list_dir = list_dir,
+        list_file = list_file
     }
 
     o.line_num = math.ceil(h / (f_h + o.space.str.y * 2 + o.space.str.y * 2))
@@ -36,22 +39,51 @@ function fileviewer:new (font, f_h, x, y, w, h, path_to_dir, list_name)
     return o
 end
 
+function fileviewer:_get_fat_item (item_num)
+    log("Start get fat item for fileviewer. Number: ", tostring(item_num))
+
+    local item = {}
+
+    if item_num <= self.state.num_item_dir then
+        local rv = self.dl:read_item(item_num)
+        if type(rv) == "number" then
+            return rv
+        end
+        local dl_item = rv
+
+        item.type = "dir"
+        item.name = dl_item.name
+    else
+        local rv = self.fl:read_item(item_num - self.state.num_item_dir)
+        if type(rv) == "number" then
+            return rv
+        end
+        local fl_item = rv
+
+        item.type = "file"
+        item.name = fl_item.name
+        item.len = fl_item.len
+    end
+
+    return item
+end
+
 function fileviewer:_new_line (gui_line_num, item_num)
-    local rv =  self.fl:read_item(item_num)
+    local rv = self:_get_fat_item(item_num)
     if type(rv) == "number" then
         return rv
     end
 
     local item = rv
+    log("Received fileviewer item. Type: " .. item.type .. ". Name: " .. item.name .. ". Len: " .. tostring(item.len))
 
     local x_start = self.frame.pos.x + self.space.frame + self.space.icon.x.left
 
     local y_start = self.frame.pos.y + self.space.frame + self.space.str.y
     local y = self.font.h + self.space.str.y + self.space.frame + self.space.str.y
-    y = y * (gui_line_num - 1)
-    y = y_start + y
+    y = y_start + y * (gui_line_num - 1)
 
-    local i_type = "file"-- self.state.items[item_num].type
+    local i_type = item.type
 
     local str_win_h = self.space.icon.y.h
     if gui_line_num == self.line_num then
@@ -79,10 +111,9 @@ function fileviewer:_new_line (gui_line_num, item_num)
 
     lin_w = lin_w - self.space.frame
 
-    local i_name = item.name
     x_start = x_start + self.space.icon.x.w + self.space.icon.x.right
 
-    self.state.gui_lines[gui_line_num].s = shift_string:new(i_name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
+    self.state.gui_lines[gui_line_num].s = shift_string:new(item.name, self.font.d, x_start, y, lin_w, self.font.h, str_win_h)
 
     if self.state.cur_gui_pos == gui_line_num then
         self.state.gui_lines[gui_line_num].s:set_mode(true)
@@ -92,25 +123,55 @@ function fileviewer:_new_line (gui_line_num, item_num)
     return rv
 end
 
-function fileviewer:init ()
-    log("Start fileviewer")
-    self.list_obj = fat.new_file()
-    self.fl = file_list:new(self.path_to_dir, self.list_name, self.list_obj)
+function fileviewer:_init_fat ()
+    self.list_dir_obj = fat.new_file()
+    self.list_file_obj = fat.new_file()
+    self.dl = dir_list:new(self.path_to_dir, self.list_dir, self.list_dir_obj)
+    self.fl = file_list:new(self.path_to_dir, self.list_file, self.list_file_obj)
 
-    local rv = self.fl:open()
+    log("Start open dir list")
+    local rv = self.dl:open()
     if rv ~= 0 then
         return rv
     end
 
-    log("Get num items")
+    log("Start open file list")
+    rv = self.fl:open()
+    if rv ~= 0 then
+        return rv
+    end
 
+    log("Get num dir")
+    rv = self.dl:get_item_num()
+    if rv < 0 then
+        return rv
+    end
+    self.state.num_item_dir = rv
+    log("Find dir items: " .. tonumber(self.state.num_item_dir))
+
+    log("Get num file")
     rv = self.fl:get_item_num()
     if rv < 0 then
         return rv
     end
-    self.state.num_item = rv
-    log("Find items: " .. tonumber(self.state.num_item))
+    self.state.num_item_file = rv
+    log("Find file items: " .. tonumber(self.state.num_item_file))
 
+    self.state.num_item = self.state.num_item_dir + self.state.num_item_file
+
+    return 0
+end
+
+function fileviewer:init ()
+    log("Start init fileviewer")
+
+    log("Start init fat for fileviewer")
+    local rv = self:_init_fat()
+    if rv < 0 then
+        return rv
+    end
+
+    log("Start init gui line for fileviewer")
     gui_line = 1
     if self.state.num_item < self.line_num then
         gui_line = self.state.num_item

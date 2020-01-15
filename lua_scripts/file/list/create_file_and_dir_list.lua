@@ -45,8 +45,10 @@ function create_dir_and_file_list (path_to_dir)
 
         if cur_dir_item:is_dir() then
             log("Found item. Name: " .. item_name .. ". Type: dir")
+            local dir_item = {}
+            dir_item.name = item_name
 
-            rv = dl:write_item(dir_counter, item_name)
+            rv = dl:write_item(dir_counter, dir_item)
             if rv ~= 0 then
                 return rv
             end

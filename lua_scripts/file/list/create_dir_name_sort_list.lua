@@ -53,7 +53,7 @@ function create_dir_name_sort_list (path_to_dir)
 
         local s2 = rv
 
-        return s1 < s2
+        return s1.name < s2.name
     end
 
     log("Start sort")

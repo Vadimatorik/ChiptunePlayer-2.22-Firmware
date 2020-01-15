@@ -7,7 +7,8 @@ w_main = {
         }
     },
     path = "0:",
-    fv_list_name = ".file_name_sort_list.txt"
+    fv_file_list_name = ".file_name_sort_list.txt",
+    fv_dir_list_name = ".dir_name_sort_list.txt"
 }
 
 function w_main:draw ()
@@ -62,7 +63,7 @@ function w_main:start ()
     collectgarbage("collect")
     log_used_ram()
 
-    self.gui.obj.fv = fileviewer:new(self.gui.font.data, self.gui.font.h, 1, 11, 128, 44, self.path, self.fv_list_name)
+    self.gui.obj.fv = fileviewer:new(self.gui.font.data, self.gui.font.h, 1, 11, 128, 44, self.path, self.fv_dir_list_name, self.fv_file_list_name)
     self.gui.obj.pb = play_bar:new(self.gui.font.data, self.gui.font.h, 1, 54, 128, 11)
     self.gui.obj.sb = status_bar:new(self.gui.font.data, self.gui.font.h, 1, 1, 128, 11, "stop", 100)
 
