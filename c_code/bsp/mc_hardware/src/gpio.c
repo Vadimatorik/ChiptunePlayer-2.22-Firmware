@@ -12,108 +12,178 @@
 
 int init_gpio () {
 #if defined(HARD)
-    GPIO_InitTypeDef cfg = {0};
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+    /* GPIO Ports Clock Enable */
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
-    __HAL_RCC_GPIOH_CLK_ENABLE();
 
-    // Обычные выводы.
-    HAL_GPIO_WritePin(GPIOC, BOARD_GPIO_1 | BOARD_GPIO_2 | BOARD_GPIO_3 | BR0, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOA, PWR_5V_ON | BOARD_GPIO_4 | USB_ID, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOB, LCD_A0 | LCD_CS | LCD_RES | SD_CD1
-                             | BR2 | BR1 | PWR_ON, GPIO_PIN_RESET);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOC, BOARD_GPIO_1|BOARD_GPIO_2|BOARD_GPIO_3|BR0, GPIO_PIN_RESET);
 
-    cfg.Pin = BAT_STDBY | BC1 | BC2 | UP;
-    cfg.Mode = GPIO_MODE_INPUT;
-    cfg.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOC, &cfg);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOA, PWR_5V_ON|BOARD_GPIO_4|USB_ID, GPIO_PIN_RESET);
 
-    cfg.Pin = BOARD_GPIO_1 | BOARD_GPIO_2 | BOARD_GPIO_3 | BR0;
-    cfg.Mode = GPIO_MODE_OUTPUT_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOC, &cfg);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOB, LCD_A0|LCD_CS|LCD_RES|SD_CD1
+                             |BR2|BR1|PWR_ON, GPIO_PIN_RESET);
 
-    cfg.Pin = PWR_5V_ON | BOARD_GPIO_4 | USB_ID;
-    cfg.Mode = GPIO_MODE_OUTPUT_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOA, &cfg);
+    /*Configure GPIO pins : BAT_STDBY UP */
+    GPIO_InitStruct.Pin = BAT_STDBY|UP;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    cfg.Pin = BC0;
-    cfg.Mode = GPIO_MODE_INPUT;
-    cfg.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BC0_GPIO, &cfg);
+    /*Configure GPIO pins : BOARD_GPIO_1 BOARD_GPIO_2 BOARD_GPIO_3 */
+    GPIO_InitStruct.Pin = BOARD_GPIO_1|BOARD_GPIO_2|BOARD_GPIO_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    cfg.Pin = LCD_A0 | LCD_CS | LCD_RES | SD_CD1
-              | BR2 | BR1 | PWR_ON;
-    cfg.Mode = GPIO_MODE_OUTPUT_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    HAL_GPIO_Init(GPIOB, &cfg);
+    /*Configure GPIO pins : PWR_5V_ON BOARD_GPIO_4 USB_ID */
+    GPIO_InitStruct.Pin = PWR_5V_ON|BOARD_GPIO_4|USB_ID;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    cfg.Pin = SD_PUSH | NOT_USED | BAT_CHRG | DOWN;
-    cfg.Mode = GPIO_MODE_INPUT;
-    cfg.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOB, &cfg);
+    /*Configure GPIO pin : BC0 */
+    GPIO_InitStruct.Pin = BC0;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(BC0_GPIO, &GPIO_InitStruct);
 
-    // UART.
-    cfg.Pin = DEBUG_TX | DEBUG_RX;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_PULLUP;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(GPIOB, &cfg);
+    /*Configure GPIO pins : BC1 BC2 */
+    GPIO_InitStruct.Pin = BC1|BC2;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    // SPI_LCD.
-    cfg.Pin = LCD_CLK | LCD_TX;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF5_SPI1;
-    HAL_GPIO_Init(GPIOA, &cfg);
+    /*Configure GPIO pins : LCD_A0 LCD_CS LCD_RES SD_CD1 
+                             PWR_ON */
+    GPIO_InitStruct.Pin = LCD_A0|LCD_CS|LCD_RES|SD_CD1
+                          |PWR_ON;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    // SPI_BOARD.
-    cfg.Pin = BOARD_TX;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init(BOARD_TX_GPIO, &cfg);
+    /*Configure GPIO pins : SD_PUSH NOT_USED BAT_CHRG DOWN */
+    GPIO_InitStruct.Pin = SD_PUSH|NOT_USED|BAT_CHRG|DOWN;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    cfg.Pin = BOARD_CLK;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF5_SPI2;
-    HAL_GPIO_Init(BOARD_CLK_GPIO, &cfg);
+    /*Configure GPIO pins : BR2 BR1 */
+    GPIO_InitStruct.Pin = BR2|BR1;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    // TIM_LCD_PWM.
-    cfg.Pin = LCD_PWM;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF1_TIM1;
-    HAL_GPIO_Init(LCD_PWM_GPIO, &cfg);
+    /*Configure GPIO pin : BR0 */
+    GPIO_InitStruct.Pin = BR0;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(BR0_GPIO, &GPIO_InitStruct);
 
-    // SDIO.
-    cfg.Pin = SD_D0 | SD_D1 | SD_D2 | SD_D3
-              | SD_CLK;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF12_SDIO;
-    HAL_GPIO_Init(GPIOC, &cfg);
+    /**ADC1 GPIO Configuration
+    PA0-WKUP     ------> ADC1_IN0
+    */
+    GPIO_InitStruct.Pin = ADC_BAT;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(ADC_BAT_GPIO, &GPIO_InitStruct);
 
-    cfg.Pin = SD_CMD;
-    cfg.Mode = GPIO_MODE_AF_PP;
-    cfg.Pull = GPIO_NOPULL;
-    cfg.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    cfg.Alternate = GPIO_AF12_SDIO;
-    HAL_GPIO_Init(SD_CMD_GPIO, &cfg);
+    GPIO_InitStruct.Pin = AMPLIFIER_LEFT;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(AMPLIFIER_LEFT_GPIO, &GPIO_InitStruct);
+
+    /**SDIO GPIO Configuration    
+   PC8     ------> SDIO_D0
+   PC9     ------> SDIO_D1
+   PC10     ------> SDIO_D2
+   PC11     ------> SDIO_D3
+   PC12     ------> SDIO_CK
+   PD2     ------> SDIO_CMD 
+   */
+    GPIO_InitStruct.Pin = SD_D0|SD_D1|SD_D2|SD_D3;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = SD_CLK;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+    HAL_GPIO_Init(SD_CLK_GPIO, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = SD_CMD;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
+    HAL_GPIO_Init(SD_CMD_GPIO, &GPIO_InitStruct);
+
+    /**SPI1 GPIO Configuration
+        PA5     ------> SPI1_SCK
+        PA7     ------> SPI1_MOSI
+        */
+    GPIO_InitStruct.Pin = LCD_CLK|LCD_TX;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /**SPI2 GPIO Configuration
+   PC3     ------> SPI2_MOSI
+   PB10     ------> SPI2_SCK
+   */
+    GPIO_InitStruct.Pin = BOARD_TX;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(BOARD_TX_GPIO, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = BOARD_CLK;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(BOARD_CLK_GPIO, &GPIO_InitStruct);
+
+    /**TIM1 GPIO Configuration
+PA8     ------> TIM1_CH1
+*/
+    GPIO_InitStruct.Pin = LCD_PWM;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF1_TIM1;
+    HAL_GPIO_Init(LCD_PWM_GPIO, &GPIO_InitStruct);
+
+    /**USART1 GPIO Configuration
+PB6     ------> USART1_TX
+PB7     ------> USART1_RX
+*/
+    GPIO_InitStruct.Pin = DEBUG_TX|DEBUG_RX;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
 #elif defined(SOFT)
 #endif
 
@@ -264,13 +334,13 @@ void reset_pin_br_0 () {
 
 void reset_pin_br_1 () {
 #if defined(HARD)
-    HAL_GPIO_WritePin(BR1_GPIO, BR0, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BR1_GPIO, BR1, GPIO_PIN_RESET);
 #endif
 }
 
 void reset_pin_br_2 () {
 #if defined(HARD)
-    HAL_GPIO_WritePin(BR2_GPIO, BR0, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(BR2_GPIO, BR2, GPIO_PIN_RESET);
 #endif
 }
 
@@ -282,12 +352,12 @@ uint8_t read_pin_bc_0 () {
 
 uint8_t read_pin_bc_1 () {
 #if defined(HARD)
-    return HAL_GPIO_ReadPin(BC0_GPIO, BC0);
+    return HAL_GPIO_ReadPin(BC1_GPIO, BC1);
 #endif
 }
 
 uint8_t read_pin_bc_2 () {
 #if defined(HARD)
-    return HAL_GPIO_ReadPin(BC0_GPIO, BC0);
+    return HAL_GPIO_ReadPin(BC2_GPIO, BC2);
 #endif
 }

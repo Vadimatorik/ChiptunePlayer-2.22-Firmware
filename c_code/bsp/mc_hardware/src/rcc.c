@@ -29,7 +29,7 @@ int init_rcc () {
 
     clk_cfg.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
                         | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    clk_cfg.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
+    clk_cfg.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     clk_cfg.AHBCLKDivider = RCC_SYSCLK_DIV1;
     clk_cfg.APB1CLKDivider = RCC_HCLK_DIV4;
     clk_cfg.APB2CLKDivider = RCC_HCLK_DIV2;

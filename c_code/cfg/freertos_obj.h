@@ -1,12 +1,11 @@
 #pragma once
 
 #define MATRIX_KEYBOARD_THREAD_PRIO         2
-#define LUA_INTERACTIVE_THREAD_PRIO         2
 #define LUA_MAIN_THREAD_PRIO                3
 #define UART_THREAD_PRIO                    2
-#define HARD_THREAD_PRIO            4
+#define HARD_THREAD_PRIO                    4
 
-#define HARD_THREAD_STACK_SIZE      400
+#define HARD_THREAD_STACK_SIZE              400
 #define MATRIX_KEYBOARD_THREAD_STACK_SIZE   400
 #define LUA_MAIN_THREAD_STACK_SIZE          5000
 #define UART_THREAD_STACK_SIZE              200
