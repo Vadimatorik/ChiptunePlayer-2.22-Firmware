@@ -1,3 +1,5 @@
 
 void aym_psg_reset ();
-int aym_psg_play (uint8_t chip_num, const uint8_t *data, uint32_t len);
+
+int aym_psg_get_len_tick (const char *file_path, uint32_t *ret_len_tick);
+int aym_psg_get_len_sec (const char *file_path, uint32_t *ret_len_sec);
