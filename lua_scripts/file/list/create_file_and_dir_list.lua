@@ -63,7 +63,13 @@ function create_dir_and_file_list (path_to_dir)
             if item_format == ".psg" then
                 local file_data = {}
                 file_data.name = item_name
-                file_data.len = 0
+
+                rv = aym.get_sec_len(path_to_dir .. item_name)
+                if rv < 0 then
+                    return rv
+                end
+                file_data.len = rv
+
                 rv = fl:write_item(fil_counter, file_data)
                 if rv ~= 0 then
                     return rv
