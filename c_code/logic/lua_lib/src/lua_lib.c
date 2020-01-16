@@ -12,6 +12,7 @@ static const luaL_Reg loaded_aym_libs[] = {
     {"lcd",           luaopen_lcd},
     {"os",            luaopen_freertos},
     {"fat",           luaopen_fat},
+    {"aym",           luaopen_player},
     {NULL, NULL}
 };
 
