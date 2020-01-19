@@ -118,6 +118,10 @@ uint8_t socket_get_button_state (uint8_t i) {
     return state;
 }
 
+
+static const uint8_t CODE_AY_REG= 0;
+static const uint8_t CODE_AY_DATA = 1;
+
 typedef struct _socket_ay_msg {
     uint32_t time;
     uint8_t type;
@@ -129,9 +133,6 @@ static void send_ay_msg (int ay_fd, socket_ay_msg_t *msg) {
         exit(EIO);
     }
 }
-
-static const uint8_t CODE_AY_REG= 0;
-static const uint8_t CODE_AY_DATA = 1;
 
 void socket_ay_reg_set (uint8_t ay_num, uint8_t reg) {
     if (ay_num >= 2) {
