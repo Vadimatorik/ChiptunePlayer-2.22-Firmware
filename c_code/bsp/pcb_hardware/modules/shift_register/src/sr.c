@@ -2,7 +2,7 @@
 
 #define SR_NUM 3
 
-__attribute__ ((section (".bss_ccm")))
+
 static uint8_t sr_data[SR_NUM] = {0};
 
 

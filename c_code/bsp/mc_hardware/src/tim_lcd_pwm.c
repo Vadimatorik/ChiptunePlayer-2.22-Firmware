@@ -7,7 +7,7 @@
 #include <errno.h>
 
 #ifdef HARD
-__attribute__ ((section (".bss_ccm")))
+
 TIM_HandleTypeDef tim_lcd_pwm = {0};
 #endif
 

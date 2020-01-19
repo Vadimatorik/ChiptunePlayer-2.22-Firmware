@@ -8,22 +8,22 @@
 
 #include "freertos_headers.h"
 
-__attribute__ ((section (".bss_ccm")))
+
 SPI_HandleTypeDef s_board = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 SPI_BOARD_DEVICE spi_device = SPI_BOARD_DEVICE_NO_SET;
 
-__attribute__ ((section (".bss_ccm")))
+
 SemaphoreHandle_t spi_board_tx_msg_semaphore = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticSemaphore_t spi_board_tx_msg_semaphore_str = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 SemaphoreHandle_t spi_board_mutex = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 StaticSemaphore_t spi_board_mutex_buf = {0};
 #endif
 

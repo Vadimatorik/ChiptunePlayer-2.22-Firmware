@@ -13,10 +13,10 @@
 #include "ff.h"
 #include "lua_ext_func.h"
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticTask_t lua_main_thread_buffer = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StackType_t lua_main_thread_stack[LUA_MAIN_THREAD_STACK_SIZE] = {0};
 
 static FRESULT fail_close (FATFS *fat) {

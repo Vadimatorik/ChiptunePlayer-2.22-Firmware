@@ -27,10 +27,10 @@ typedef struct matrix_keyboard_status {
     uint32_t button_long_click_time;
 } matrix_keyboard_key_status;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StackType_t matrix_keyboard_thread_stack[MATRIX_KEYBOARD_THREAD_STACK_SIZE] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticTask_t matrix_keyboard_thread_struct = {0};
 
 #define B_NUM 7
@@ -45,7 +45,7 @@ static const matrix_keyboard_one_button_cfg b_cfg[B_NUM] = {
     {B_MENU,   50, 1000}
 };
 
-__attribute__ ((section (".bss_ccm")))
+
 matrix_keyboard_key_status b_status[B_NUM] = {0};
 
 #if defined(HARD)

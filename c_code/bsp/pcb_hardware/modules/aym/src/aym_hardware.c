@@ -17,10 +17,10 @@ typedef enum {
 
 static const uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StackType_t tb[HARD_THREAD_STACK_SIZE] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticTask_t ts = {0};
 
 #define AYM_REG_R7_DEFAULT_VALUE 0b111111
@@ -29,16 +29,12 @@ typedef struct __attribute__((packed)) _chip_reg_data {
     uint8_t reg[16];
 } chip_reg_data;
 
-__attribute__ ((section (".bss_ccm")))
+
 chip_reg_data aym_data[AY_NUM] = {0};
 
-__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t tim_irq_request = NULL;
-
-__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tim_irq_request_buf = {0};
 
-__attribute__ ((section (".bss_ccm")))
 TimerHandle_t irq_timer = NULL;
 
 typedef struct _aym_out_data {
@@ -46,20 +42,13 @@ typedef struct _aym_out_data {
     uint8_t data;
 } aym_out_data;
 
-
-__attribute__ ((section (".bss_ccm")))
 static QueueHandle_t aym_reg_data_queue[AY_NUM] = {0};
-
-__attribute__ ((section (".bss_ccm")))
 static StaticQueue_t aym_reg_data_str[AY_NUM] = {0};
-
-__attribute__ ((section (".bss_ccm")))
 static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_reg_data_t)] = {0};
 
-__attribute__ ((section (".bss_ccm")))
 static uint32_t tic_ff = 0;
 
-static int set_reg () {
+static int low_set_reg () {
     int rv = 0;
     if ((rv = sr_set_pin_bc1()) != 0) {
         return rv;
@@ -80,7 +69,7 @@ static int set_reg () {
     return 0;
 }
 
-static int set_data () {
+static int low_set_data () {
     int rv = 0;
 
     if ((rv = sr_set_pin_bdir()) != 0) {
@@ -92,6 +81,18 @@ static int set_data () {
     }
 
     return 0;
+}
+
+static int low_port_write (uint32_t port_num, uint8_t val) {
+    return sr_port_write(port_num, val);
+}
+
+static int low_write_byte (uint32_t byte_num, uint8_t val) {
+    return sr_write_byte(byte_num, val);
+}
+
+static int low_update () {
+    return sr_update();
 }
 
 void queue_clear () {
@@ -129,22 +130,22 @@ static int update_all_reg () {
 
     for (uint32_t reg_index = 0; reg_index < 16; reg_index++) {
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = sr_port_write(aym_port_index_array[ay_index], reg_index)) != 0) {
+            if ((rv = low_port_write(aym_port_index_array[ay_index], reg_index)) != 0) {
                 return rv;
             }
         }
 
-        if ((rv = set_reg()) != 0) {
+        if ((rv = low_set_reg()) != 0) {
             return rv;
         }
 
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = sr_port_write(aym_port_index_array[ay_index], aym_data[ay_index].reg[reg_index])) != 0) {
+            if ((rv = low_port_write(aym_port_index_array[ay_index], aym_data[ay_index].reg[reg_index])) != 0) {
                 return rv;
             }
         }
 
-        if ((rv = set_data()) != 0) {
+        if ((rv = low_set_data()) != 0) {
             return rv;
         }
     }
@@ -198,20 +199,20 @@ static void task_aym (void *p) {
             }
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+                low_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
             }
 
-            sr_update();
+            low_update();
 
-            set_reg();
+            low_set_reg();
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+                low_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
             }
 
-            sr_update();
+            low_update();
 
-            set_data();
+            low_set_data();
         }
 
         tic_ff++;

@@ -12,16 +12,16 @@
 
 #include "freertos_obj.h"
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticTask_t task_uart_buf = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StackType_t task_uart_stack[UART_THREAD_STACK_SIZE] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static SemaphoreHandle_t rx_msg_semaphore = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
 typedef struct _tx_msg_cfg {
@@ -33,37 +33,37 @@ typedef struct _tx_msg_cfg {
     uint32_t len;
 } tx_msg_cfg_t;
 
-__attribute__ ((section (".bss_ccm")))
+
 static QueueHandle_t tx_points_queue = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticQueue_t tx_points_queue_str = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 SemaphoreHandle_t rx_buf_mutex = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 StaticSemaphore_t rx_buf_mutex_buf = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static UART_HandleTypeDef u = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static DMA_HandleTypeDef u_dma = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static char u_rx_buffer[1024] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 volatile int u_rx_pointer = 0;
 
-__attribute__ ((section (".bss_ccm")))
+
 QueueHandle_t tx_semaphore = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 StaticSemaphore_t tx_semaphore_str = {0};
 
 

@@ -30,13 +30,13 @@ typedef struct _lua_os_cmd {
     uint8_t cmd;
 } lua_os_cmd_t;
 
-__attribute__ ((section (".bss_ccm")))
+
 static QueueHandle_t lua_os_cmd_queue = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static uint8_t lua_os_cmd_queue_storage_area[LUA_OS_CMD_QUEUE_LEN*sizeof(lua_os_cmd_t)] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticQueue_t lua_os_cmd_queue_str = {0};
 
 static int lua_delay_ms (lua_State *L) {
