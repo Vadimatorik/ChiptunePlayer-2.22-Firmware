@@ -16,11 +16,7 @@ typedef enum {
 } QUEUE_STATE;
 
 static const uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
-
-
 static StackType_t tb[HARD_THREAD_STACK_SIZE] = {0};
-
-
 static StaticTask_t ts = {0};
 
 #define AYM_REG_R7_DEFAULT_VALUE 0b111111
@@ -48,7 +44,12 @@ static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_r
 
 static uint32_t tic_ff = 0;
 
+#ifdef SOFT
+static uint8_t sr_data[2];
+#endif
+
 static int low_set_reg () {
+#ifdef HARD
     int rv = 0;
     if ((rv = sr_set_pin_bc1()) != 0) {
         return rv;
@@ -65,11 +66,15 @@ static int low_set_reg () {
     if ((rv = sr_reset_pin_bc1()) != 0) {
         return rv;
     }
+#elif defined(SOFT)
+
+#endif
 
     return 0;
 }
 
 static int low_set_data () {
+#ifdef HARD
     int rv = 0;
 
     if ((rv = sr_set_pin_bdir()) != 0) {
@@ -79,20 +84,38 @@ static int low_set_data () {
     if ((rv = sr_reset_pin_bdir()) != 0) {
         return rv;
     }
+#elif defined(SOFT)
+
+#endif
 
     return 0;
 }
 
 static int low_port_write (uint32_t port_num, uint8_t val) {
+#ifdef HARD
     return sr_port_write(port_num, val);
+#elif defined(SOFT)
+
+#endif
+
+    return 0;
 }
 
 static int low_write_byte (uint32_t byte_num, uint8_t val) {
+#ifdef HARD
     return sr_write_byte(byte_num, val);
+#elif defined(SOFT)
+
+    return 0;
+#endif
 }
 
 static int low_update () {
+#ifdef HARD
     return sr_update();
+#elif defined(SOFT)
+    return 0;
+#endif
 }
 
 void queue_clear () {
@@ -203,7 +226,6 @@ static void task_aym (void *p) {
             }
 
             low_update();
-
             low_set_reg();
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
@@ -211,7 +233,6 @@ static void task_aym (void *p) {
             }
 
             low_update();
-
             low_set_data();
         }
 
@@ -240,7 +261,6 @@ int init_aym_hardware () {
         aym_reg_data_queue[i] = xQueueCreateStatic(YM_REG_DATA_QUEUE_LEN, sizeof(aym_reg_data_t),
                                                    &aym_reg_data_queue_buf[i][0], &aym_reg_data_str[i]);
     }
-
 
     return 0;
 }

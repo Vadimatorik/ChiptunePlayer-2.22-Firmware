@@ -8,8 +8,11 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "freertos_headers.h"
+
 static int s_lcd = 0;
 static int s_keyboard = 0;
+static int s_ay[2] = {0};
 
 static const uint8_t CODE_PIN_CS = 0;
 static const uint8_t CODE_PIN_DC = 1;
@@ -105,4 +108,45 @@ uint8_t socket_get_button_state (uint8_t i) {
     uint8_t state = 0;
     while (read(s_keyboard, &state, sizeof(state)) != 1);
     return state;
+}
+
+typedef struct _socket_ay_msg {
+    uint32_t time;
+    uint8_t type;
+    uint8_t data;
+} __attribute__((packed)) socket_ay_msg_t;
+
+static void send_ay_msg (int ay_fd, socket_ay_msg_t *msg) {
+    if (write(s_lcd, msg, sizeof(socket_ay_msg_t)) != sizeof(socket_ay_msg_t)) {
+        exit(EIO);
+    }
+}
+
+static const uint8_t CODE_AY_REG= 0;
+static const uint8_t CODE_AY_DATA = 1;
+
+void socket_ay_reg_set (uint8_t ay_num, uint8_t reg) {
+    if (ay_num >= 2) {
+        exit(EINVAL);
+    }
+
+    socket_ay_msg_t msg = {0};
+    msg.time = xTaskGetTickCount();
+    msg.type = CODE_AY_REG;
+    msg.data = reg;
+
+    send_ay_msg(s_ay[ay_num], &msg);
+}
+
+void socket_ay_data_set (uint8_t ay_num, uint8_t data) {
+    if (ay_num >= 2) {
+        exit(EINVAL);
+    }
+
+    socket_ay_msg_t msg = {0};
+    msg.time = xTaskGetTickCount();
+    msg.type = CODE_AY_DATA;
+    msg.data = data;
+
+    send_ay_msg(s_ay[ay_num], &msg);
 }
