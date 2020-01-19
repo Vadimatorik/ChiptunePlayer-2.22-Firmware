@@ -51,6 +51,14 @@ int init_sockets () {
         return -1;
     }
 
+    if (init_socket(&s_ay[0], 52000, "ay_1") != 0) {
+        return -1;
+    }
+
+    if (init_socket(&s_ay[1], 52001, "ay_2") != 0) {
+        return -1;
+    }
+
     return 0;
 }
 

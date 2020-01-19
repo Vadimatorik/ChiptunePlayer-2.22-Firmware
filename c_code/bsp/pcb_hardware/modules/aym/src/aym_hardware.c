@@ -1,9 +1,17 @@
 #include "aym_hardware.h"
 #include "freertos_headers.h"
-#include "sr.h"
+
 #include "freertos_obj.h"
 
 #include <errno.h>
+
+#ifdef SOFT
+#include "socket_emul_layer.h"
+#endif
+
+#ifdef HARD
+#include "sr.h"
+#endif
 
 #define AY_NUM 2
 
@@ -67,7 +75,9 @@ static int low_set_reg () {
         return rv;
     }
 #elif defined(SOFT)
-
+    for (int i = 0; i < 2; i++) {
+        socket_ay_reg_set(i, sr_data[i]);
+    }
 #endif
 
     return 0;
@@ -85,7 +95,9 @@ static int low_set_data () {
         return rv;
     }
 #elif defined(SOFT)
-
+    for (int i = 0; i < 2; i++) {
+        socket_ay_data_set(i, sr_data[i]);
+    }
 #endif
 
     return 0;
@@ -95,7 +107,11 @@ static int low_port_write (uint32_t port_num, uint8_t val) {
 #ifdef HARD
     return sr_port_write(port_num, val);
 #elif defined(SOFT)
+    if (port_num >= 2) {
+        return -1;
+    }
 
+    sr_data[port_num] = val;
 #endif
 
     return 0;
@@ -105,6 +121,11 @@ static int low_write_byte (uint32_t byte_num, uint8_t val) {
 #ifdef HARD
     return sr_write_byte(byte_num, val);
 #elif defined(SOFT)
+    if (byte_num >= 2) {
+        return -1;
+    }
+
+    sr_data[byte_num] = val;
 
     return 0;
 #endif
@@ -244,7 +265,6 @@ static void task_aym (void *p) {
         tic_ff = 0;
     }
 }
-
 
 static void tim_irq_handler (TimerHandle_t tim) {
     xSemaphoreGive(tim_irq_request);
