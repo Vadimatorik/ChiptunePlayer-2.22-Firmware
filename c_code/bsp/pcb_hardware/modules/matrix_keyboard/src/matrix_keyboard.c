@@ -29,8 +29,6 @@ typedef struct matrix_keyboard_status {
 
 
 static StackType_t matrix_keyboard_thread_stack[MATRIX_KEYBOARD_THREAD_STACK_SIZE] = {0};
-
-
 static StaticTask_t matrix_keyboard_thread_struct = {0};
 
 #define B_NUM 7

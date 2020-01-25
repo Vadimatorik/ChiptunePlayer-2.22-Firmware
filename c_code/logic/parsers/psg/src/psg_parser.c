@@ -1,5 +1,7 @@
 #include "aym_hardware.h"
 
+#include "aym_parser.h"
+
 #include "freertos_headers.h"
 #include "ff.h"
 #include <string.h>
@@ -17,8 +19,6 @@
 #include <stdint.h>
 #include <errno.h>
 
-typedef int (*add_element) (aym_reg_data_t *msg);
-
 enum PSG_PARSE_STATE {
     PSG_PARSE_STATE_NO = 0,
     PSG_PARSE_STATE_GOT_SKIP_FLAG = 1,
@@ -29,7 +29,6 @@ enum PSG_PARSE_STATE {
 typedef struct _psg_parser_state {
     uint8_t chip_num;
     uint8_t flag_handler_got;
-    uint8_t reg_got;
     uint32_t file_len;
     uint8_t state; // PSG_PARSE_STATE
 } psg_parser_state_t;
@@ -98,8 +97,8 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
             if (f_block[pos] == PSG_FILE_MARKER_INTERRUPT) {
                 msg.reg = REG_PAUSE;
                 if (send_msg) {
-                    while (send_msg(&msg) != 0) {
-                        vTaskDelay(20);
+                    if ((rv = send_msg(&msg)) != 0) {
+                        return rv;
                     }
                 } else {
                     *ret_len_tick = (*ret_len_tick) + 1;
@@ -122,8 +121,8 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
         if (cfg->state == PSG_PARSE_STATE_GOT_SKIP_FLAG) {
             if (send_msg) {
                 for (uint8_t i = 0; i < f_block[pos]*4; i++) {
-                    while (add_aym_element(&msg) != 0) {
-                        vTaskDelay(20);
+                    if ((rv = send_msg(&msg)) != 0) {
+                        return rv;
                     }
                 }
             } else {
@@ -135,8 +134,8 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
             }
             if (send_msg) {
                 msg.data = f_block[pos];
-                while (add_aym_element(&msg) != 0) {
-                    vTaskDelay(20);
+                if ((rv = send_msg(&msg)) != 0) {
+                    return rv;
                 }
             }
         }
@@ -159,7 +158,7 @@ int aym_psg_get_len_tick (const char *file_path, uint32_t *ret_len_tick) {
     rv = f_open(f, file_path, FA_READ);
     if (rv != 0) {
         free(f);
-        return rv;
+        return rv * -1;
     }
 
     static const uint32_t PSG_READ_BUFFER = 128;
@@ -198,33 +197,58 @@ int aym_psg_get_len_tick (const char *file_path, uint32_t *ret_len_tick) {
     rv = f_close(f);
     free(f);
     free(f_buf);
-    return rv;
+    return rv * -1;
 }
 
-int aym_psg_get_len_sec (const char *file_path, uint32_t *ret_len_sec) {
-    uint32_t ret_len_tick = 0;
+int aym_psg_play (const char *file_path, add_element send_msg) {
+    int rv = 0;
 
-    int rv = aym_psg_get_len_tick(file_path, &ret_len_tick);
-
-    if (rv == 0) {
-        *ret_len_sec = ret_len_tick/50;
+    FIL *f = malloc(sizeof(FIL));
+    if (f == NULL) {
+        return ERR_OS_MALLOC_FAIL;
     }
 
-    return rv;
-}
+    rv = f_open(f, file_path, FA_READ);
+    if (rv != 0) {
+        free(f);
+        return rv * -1;
+    }
 
-int aym_psg_play (const char *file_path, uint8_t chip_number) {
+    static const uint32_t PSG_READ_BUFFER = 128;
+    uint8_t *f_buf = malloc(PSG_READ_BUFFER);
+    if (f_buf == NULL) {
+        f_close(f);
+        free(f);
+        return ERR_OS_MALLOC_FAIL;
+    }
 
-}
+    psg_parser_state_t parser_cfg = {0};
 
-int aym_psg_set_pause (uint8_t chip_number) {
+    UINT f_len = f_size(f);
+    parser_cfg.file_len = f_len;
 
-}
+    while (f_len) {
+        UINT real_read_num = 0;
+        rv = f_read(f, f_buf, PSG_READ_BUFFER, &real_read_num);
+        if (rv != 0) {
+            f_close(f);
+            free(f);
+            free(f_buf);
+            return rv * -1;
+        }
 
-int aym_psg_reset_pause (uint8_t chip_number) {
+        if ((rv = parse(&parser_cfg, f_buf, real_read_num, send_msg, NULL)) != 0) {
+            f_close(f);
+            free(f);
+            free(f_buf);
+            return rv;
+        }
 
-}
+        f_len -= real_read_num;
+    }
 
-int aym_psg_stop (uint8_t chip_number) {
-
+    rv = f_close(f);
+    free(f);
+    free(f_buf);
+    return rv * -1;
 }

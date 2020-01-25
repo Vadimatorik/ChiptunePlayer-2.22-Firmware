@@ -1,15 +1,9 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#define configUSE_HEAP_SCHEME                          4
-
 #define configUSE_PREEMPTION                           1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION        0
 #define configCPU_CLOCK_HZ                             168000000
-
-#define configTOTAL_HEAP_SIZE (122 * 1024)
-
-
 #define configTICK_RATE_HZ                             1000
 #define configMAX_PRIORITIES                           5
 #define configMINIMAL_STACK_SIZE                       300

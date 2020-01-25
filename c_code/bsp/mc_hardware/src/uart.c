@@ -14,14 +14,8 @@
 
 
 static StaticTask_t task_uart_buf = {0};
-
-
 static StackType_t task_uart_stack[UART_THREAD_STACK_SIZE] = {0};
-
-
 static SemaphoreHandle_t rx_msg_semaphore = NULL;
-
-
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
 typedef struct _tx_msg_cfg {
@@ -35,37 +29,20 @@ typedef struct _tx_msg_cfg {
 
 
 static QueueHandle_t tx_points_queue = NULL;
-
-
 static StaticQueue_t tx_points_queue_str = {0};
-
-
 static uint8_t tx_points_queue_buf[UART_TX_QUEUE_LEN*sizeof(tx_msg_cfg_t)] = {0};
 
-
 SemaphoreHandle_t rx_buf_mutex = NULL;
-
-
 StaticSemaphore_t rx_buf_mutex_buf = {0};
 
-
 static UART_HandleTypeDef u = {0};
-
-
 static DMA_HandleTypeDef u_dma = {0};
 
-
 static char u_rx_buffer[1024] = {0};
-
-
 volatile int u_rx_pointer = 0;
 
-
 QueueHandle_t tx_semaphore = NULL;
-
-
 StaticSemaphore_t tx_semaphore_str = {0};
-
 
 static void task_uart (void *p) {
     tx_msg_cfg_t msg = {0};

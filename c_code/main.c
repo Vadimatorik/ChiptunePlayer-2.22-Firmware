@@ -1,6 +1,7 @@
 #include "freertos_headers.h"
 #include "mc_hardware.h"
 #include "l.h"
+#include "aym_parser.h"
 
 #ifdef SOFT
 #include "socket_emul_layer.h"
@@ -20,6 +21,10 @@ int main () {
     }
 
     if ((rv = init_lua_main_thread()) != 0) {
+        return rv;
+    }
+
+    if ((rv = init_aym()) != 0) {
         return rv;
     }
 
