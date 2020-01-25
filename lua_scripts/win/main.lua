@@ -29,6 +29,13 @@ function w_main:keyboard_click (key)
         self.gui.obj.sb:down()
         self.gui.obj.fv:down()
         self:draw()
+    elseif key == cmd.keyboard.num.enter then
+        local cur_fil_name = self.gui.obj.fv:get_cur_file_name()
+        if cur_fil_name == nil then
+            return
+        end
+
+        aym.play(cur_fil_name)
     end
 end
 

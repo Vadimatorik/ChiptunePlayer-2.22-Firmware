@@ -236,6 +236,15 @@ function fileviewer:left_active_line ()
     self.state.gui_lines[self.cur_gui_pos].s:left()
 end
 
+function fileviewer:get_cur_file_name ()
+    if self.state.cur_item <= self.state.num_item_dir then
+        return nil
+    end
+
+    local item = self:_get_fat_item(self.state.cur_item)
+    return item.name
+end
+
 function fileviewer:down ()
     if self.state.cur_item >= self.state.num_item then
         return
