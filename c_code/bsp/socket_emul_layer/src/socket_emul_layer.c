@@ -10,6 +10,8 @@
 
 #include "freertos_headers.h"
 
+#include "socket_emul_layer_ports.h"
+
 static int s_lcd = 0;
 static int s_keyboard = 0;
 static int s_ay[2] = {0};
@@ -43,19 +45,19 @@ static int init_socket (int *retrun_fd, uint16_t port, const char *name_port) {
 }
 
 int init_sockets () {
-    if (init_socket(&s_lcd, 55000, "lcd") != 0) {
+    if (init_socket(&s_lcd, UDP_PORT_LCD, "lcd") != 0) {
         return -1;
     }
 
-    if (init_socket(&s_keyboard, 56000, "keyboard") != 0) {
+    if (init_socket(&s_keyboard, TCP_PORT_KEYBOARD, "keyboard") != 0) {
         return -1;
     }
 
-    if (init_socket(&s_ay[0], 52000, "ay_1") != 0) {
+    if (init_socket(&s_ay[0], TCP_PORT_AY_1, "ay_1") != 0) {
         return -1;
     }
 
-    if (init_socket(&s_ay[1], 52001, "ay_2") != 0) {
+    if (init_socket(&s_ay[1], TCP_PORT_AY_2, "ay_2") != 0) {
         return -1;
     }
 
@@ -129,7 +131,7 @@ typedef struct _socket_ay_msg {
 } __attribute__((packed)) socket_ay_msg_t;
 
 static void send_ay_msg (int ay_fd, socket_ay_msg_t *msg) {
-    if (write(s_lcd, msg, sizeof(socket_ay_msg_t)) != sizeof(socket_ay_msg_t)) {
+    if (write(ay_fd, msg, sizeof(socket_ay_msg_t)) != sizeof(socket_ay_msg_t)) {
         exit(EIO);
     }
 }

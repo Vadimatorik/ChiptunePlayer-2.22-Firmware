@@ -53,7 +53,7 @@ static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_r
 static uint32_t tic_ff = 0;
 
 #ifdef SOFT
-static uint8_t sr_data[2];
+static uint8_t sr_data[2] = {0};
 #endif
 
 static int low_set_reg () {
@@ -75,9 +75,8 @@ static int low_set_reg () {
         return rv;
     }
 #elif defined(SOFT)
-    for (int i = 0; i < 2; i++) {
-        socket_ay_reg_set(i, sr_data[i]);
-    }
+    socket_ay_reg_set(0, sr_data[1]);
+    socket_ay_reg_set(1, sr_data[0]);
 #endif
 
     return 0;
@@ -95,37 +94,36 @@ static int low_set_data () {
         return rv;
     }
 #elif defined(SOFT)
-    for (int i = 0; i < 2; i++) {
-        socket_ay_data_set(i, sr_data[i]);
-    }
+    socket_ay_data_set(0, sr_data[1]);
+    socket_ay_data_set(1, sr_data[0]);
 #endif
 
     return 0;
 }
 
-static int low_port_write (uint32_t port_num, uint8_t val) {
+static int low_port_write (uint32_t chip_num, uint8_t val) {
 #ifdef HARD
-    return sr_port_write(port_num, val);
+    return sr_port_write(aym_port_index_array[chip_num], val);
 #elif defined(SOFT)
-    if (port_num >= 2) {
+    if (chip_num >= 2) {
         return -1;
     }
 
-    sr_data[port_num] = val;
+    sr_data[chip_num] = val;
 #endif
 
     return 0;
 }
 
-static int low_write_byte (uint32_t byte_num, uint8_t val) {
+static int low_write_byte (uint32_t chip_num, uint8_t val) {
 #ifdef HARD
-    return sr_write_byte(byte_num, val);
+    return sr_write_byte(aym_port_index_array[chip_num], val);
 #elif defined(SOFT)
-    if (byte_num >= 2) {
+    if (chip_num >= 2) {
         return -1;
     }
 
-    sr_data[byte_num] = val;
+    sr_data[chip_num] = val;
 
     return 0;
 #endif
@@ -174,7 +172,7 @@ static int update_all_reg () {
 
     for (uint32_t reg_index = 0; reg_index < 16; reg_index++) {
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = low_port_write(aym_port_index_array[ay_index], reg_index)) != 0) {
+            if ((rv = low_port_write(ay_index, reg_index)) != 0) {
                 return rv;
             }
         }
@@ -184,7 +182,7 @@ static int update_all_reg () {
         }
 
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = low_port_write(aym_port_index_array[ay_index], aym_data[ay_index].reg[reg_index])) != 0) {
+            if ((rv = low_port_write(ay_index, aym_data[ay_index].reg[reg_index])) != 0) {
                 return rv;
             }
         }
@@ -243,14 +241,14 @@ static void task_aym (void *p) {
             }
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                low_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+                low_write_byte(chip_index, q_data_buf[chip_index].reg);
             }
 
             low_update();
             low_set_reg();
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                low_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+                low_write_byte(chip_index, q_data_buf[chip_index].data);
             }
 
             low_update();
