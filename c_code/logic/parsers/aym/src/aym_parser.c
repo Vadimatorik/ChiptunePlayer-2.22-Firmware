@@ -54,7 +54,7 @@ enum AYM_CMD {
 typedef struct _aym_cmd {
     uint8_t cmd;
     union {
-        const char* path_to_file;
+        char* path_to_file;
     } arg;
 } aym_cmd;
 
@@ -100,10 +100,12 @@ static int add_element_to_low_aym_queue (aym_reg_data_t *msg) {
     while (1) {
         if (xQueueReceive(aym_cmd_queue, &q_msg, 0) == pdTRUE) { // Приказ во время воспроизведения трека.
             if (q_msg.cmd == AYM_CMD_PAUSE) { // После паузы 2 пути. Выход или продолжить.
+                set_pause();
                 xQueueReceive(aym_cmd_queue, &q_msg, portMAX_DELAY);
 
                 switch (q_msg.cmd) {
-                    case AYM_CMD_PLAY:
+                    case AYM_CMD_PAUSE:
+                        reset_pause();
                         break;
 
                     case AYM_CMD_STOP:
@@ -141,7 +143,7 @@ static void aym_thread (__attribute__((unused)) void *obj) {
                 if (rv != 0) {
                     // TODO: потом пробросить отправку наверх сообщения об ошибке при работе.
                 }
-
+                free(q_msg.arg.path_to_file);
                 break;
 
             default:
