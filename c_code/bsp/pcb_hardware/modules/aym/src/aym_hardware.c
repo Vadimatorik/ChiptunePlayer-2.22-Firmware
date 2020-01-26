@@ -137,6 +137,54 @@ static int low_update () {
 #endif
 }
 
+int set_pause () {
+    int rv = 0;
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 7)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_reg()) != 0) {
+        return rv;
+    }
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 0xFF)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_data()) != 0) {
+        return rv;
+    }
+}
+
+int reset_pause () {
+    int rv = 0;
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 7)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_reg()) != 0) {
+        return rv;
+    }
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, aym_data[ay_index].reg[7])) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_data()) != 0) {
+        return rv;
+    }
+}
+
 void queue_clear () {
     for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
         xQueueReset(aym_reg_data_queue[chip_index]);
@@ -208,6 +256,8 @@ int flags_is_set (uint8_t *flags) {
     return 0;
 }
 
+extern void aym_tick_event ();
+
 static void task_aym (void *p) {
     p = p;
 
@@ -260,6 +310,7 @@ static void task_aym (void *p) {
             continue;
         }
 
+        aym_tick_event();
         tic_ff = 0;
     }
 }

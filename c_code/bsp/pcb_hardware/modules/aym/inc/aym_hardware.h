@@ -14,3 +14,5 @@ int init_aym_hardware ();
 int add_aym_element (aym_reg_data_t *item);
 int clear_aym_hardware ();
 void queue_clear ();
+int set_pause ();
+int reset_pause ();
