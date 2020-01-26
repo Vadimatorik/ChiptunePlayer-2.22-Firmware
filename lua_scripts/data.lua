@@ -15,5 +15,13 @@ cmd = {
             ret = 5,
             menu = 6
         }
+    },
+    aym = {
+        play = {
+            type = 4,
+            cmd = {
+                tick = 0
+            }
+        }
     }
 }
