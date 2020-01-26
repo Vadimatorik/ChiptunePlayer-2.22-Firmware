@@ -31,6 +31,7 @@ typedef struct _psg_parser_state {
     uint8_t flag_handler_got;
     uint32_t file_len;
     uint8_t state; // PSG_PARSE_STATE
+    uint8_t reg;
 } psg_parser_state_t;
 
 typedef struct __attribute__((__packed__)) _psg_handler {
@@ -67,6 +68,7 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
 
     aym_reg_data_t msg = {0};
     msg.chip_num = cfg->chip_num;
+    msg.reg =  cfg->reg;
 
     uint32_t pos = 0;
 
@@ -86,7 +88,6 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
             seek = sizeof(psg_handler_t);
         }
 
-        f_block_len -= seek;
         pos = seek;
 
         cfg->flag_handler_got = -1;
@@ -143,6 +144,8 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
         cfg->state = PSG_PARSE_STATE_NO;
         pos++;
     }
+
+    cfg->reg = msg.reg;
 
     return 0;
 }
