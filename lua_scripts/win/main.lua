@@ -8,7 +8,8 @@ w_main = {
     },
     path = "0:",
     fv_file_list_name = ".file_name_sort_list.txt",
-    fv_dir_list_name = ".dir_name_sort_list.txt"
+    fv_dir_list_name = ".dir_name_sort_list.txt",
+    state = "stop"
 }
 
 function w_main:draw ()
@@ -20,14 +21,56 @@ function w_main:draw ()
     collectgarbage("collect")
 end
 
+function w_main:keyboard_enter_click ()
+    if self.state == "stop" then
+        log("Change aym state: to play")
+        self.state = "play"
+
+        local cur_fil_name = self.gui.obj.fv:get_cur_file_name()
+        if cur_fil_name == nil then -- Тут переделать на получение типа файла для входа в директорию.
+            return
+        end
+
+        local f_len = self.gui.obj.fv:get_cur_file_len_sec()
+        self.gui.obj.pb:set(0, f_len)
+        self:draw()
+
+        aym.play(cur_fil_name)
+    elseif self.state == "play" then
+        self.state = "pause"
+        log("Change aym state: to pause")
+        self:draw()
+        aym.pause()
+    elseif self.state == "pause" then
+        self.state = "play"
+        log("Change aym state: to play")
+        self:draw()
+        aym.pause()
+    end
+end
+
 function w_main:keyboard_click (key)
     if key == cmd.keyboard.num.up then
+        log("Event: key up")
         self.gui.obj.sb:up()
         self.gui.obj.fv:up()
         self:draw()
     elseif key == cmd.keyboard.num.down then
+        log("Event: key down")
         self.gui.obj.sb:down()
         self.gui.obj.fv:down()
+        self:draw()
+    elseif key == cmd.keyboard.num.enter then
+        log("Event: key enter")
+        self:keyboard_enter_click()
+    end
+end
+
+function w_main:aym_play_event (event)
+    if event == cmd.aym.play.cmd.tick then
+        log("Event: aym tick")
+
+        self.gui.obj.pb:inc()
         self:draw()
     end
 end
@@ -86,6 +129,8 @@ function w_main:start ()
         local cmd_type, cmd_data = os.get_cmd()
         if cmd_type == cmd.keyboard.type.click then
             self:keyboard_click(cmd_data)
+        elseif cmd_type == cmd.aym.play.type then
+            self:aym_play_event(cmd_data)
         end
 
         log_used_ram()

@@ -17,25 +17,25 @@ const char FILE_MICROSD_PATH[] = "../ChiptunePlayer-2.22-Firmware/resurse/micros
 #endif
 
 #ifdef HARD
-__attribute__ ((section (".bss_ccm")))
+
 SD_HandleTypeDef sdio = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 DMA_HandleTypeDef sdio_tx = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 DMA_HandleTypeDef sdio_rx = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static SemaphoreHandle_t rx_msg_semaphore = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticSemaphore_t rx_msg_semaphore_str = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static SemaphoreHandle_t tx_msg_semaphore = NULL;
 
-__attribute__ ((section (".bss_ccm")))
+
 static StaticSemaphore_t tx_msg_semaphore_str = {0};
 #endif
 

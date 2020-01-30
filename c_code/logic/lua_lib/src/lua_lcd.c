@@ -21,7 +21,7 @@
 
 #include "lcd_driver.h"
 
-__attribute__ ((section (".bss_ccm")))
+
 static u8g2_t u8g2 = {0};
 
 #define LIB_POS_FIX 1

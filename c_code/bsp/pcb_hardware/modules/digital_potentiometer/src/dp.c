@@ -7,10 +7,10 @@
 #define AD5204_CHIP_COUNT 2
 #define AD5204_BUF_SIZE(COUNT) ((COUNT * 11) /8) + ((((COUNT * 11) % 8) != 0 )?1:0) + 1
 
-__attribute__ ((section (".bss_ccm")))
+
 static uint8_t tx_buf[AD5204_BUF_SIZE(AD5204_CHIP_COUNT)] = {0};
 
-__attribute__ ((section (".bss_ccm")))
+
 static uint8_t reg_data[AD5204_CHIP_COUNT][4] = {0};
 
 int dp_set_shdn () {

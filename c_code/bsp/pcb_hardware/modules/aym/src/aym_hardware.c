@@ -1,9 +1,17 @@
 #include "aym_hardware.h"
 #include "freertos_headers.h"
-#include "sr.h"
+
 #include "freertos_obj.h"
 
 #include <errno.h>
+
+#ifdef SOFT
+#include "socket_emul_layer.h"
+#endif
+
+#ifdef HARD
+#include "sr.h"
+#endif
 
 #define AY_NUM 2
 
@@ -16,11 +24,7 @@ typedef enum {
 } QUEUE_STATE;
 
 static const uint8_t aym_port_index_array[AY_NUM] = {AY_1_PORT_INDEX, AY_2_PORT_INDEX};
-
-__attribute__ ((section (".bss_ccm")))
 static StackType_t tb[HARD_THREAD_STACK_SIZE] = {0};
-
-__attribute__ ((section (".bss_ccm")))
 static StaticTask_t ts = {0};
 
 #define AYM_REG_R7_DEFAULT_VALUE 0b111111
@@ -29,16 +33,12 @@ typedef struct __attribute__((packed)) _chip_reg_data {
     uint8_t reg[16];
 } chip_reg_data;
 
-__attribute__ ((section (".bss_ccm")))
+
 chip_reg_data aym_data[AY_NUM] = {0};
 
-__attribute__ ((section (".bss_ccm")))
 static SemaphoreHandle_t tim_irq_request = NULL;
-
-__attribute__ ((section (".bss_ccm")))
 static StaticSemaphore_t tim_irq_request_buf = {0};
 
-__attribute__ ((section (".bss_ccm")))
 TimerHandle_t irq_timer = NULL;
 
 typedef struct _aym_out_data {
@@ -46,20 +46,18 @@ typedef struct _aym_out_data {
     uint8_t data;
 } aym_out_data;
 
-
-__attribute__ ((section (".bss_ccm")))
 static QueueHandle_t aym_reg_data_queue[AY_NUM] = {0};
-
-__attribute__ ((section (".bss_ccm")))
 static StaticQueue_t aym_reg_data_str[AY_NUM] = {0};
-
-__attribute__ ((section (".bss_ccm")))
 static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_reg_data_t)] = {0};
 
-__attribute__ ((section (".bss_ccm")))
 static uint32_t tic_ff = 0;
 
-static int set_reg () {
+#ifdef SOFT
+static uint8_t sr_data[2] = {0};
+#endif
+
+static int low_set_reg () {
+#ifdef HARD
     int rv = 0;
     if ((rv = sr_set_pin_bc1()) != 0) {
         return rv;
@@ -76,11 +74,16 @@ static int set_reg () {
     if ((rv = sr_reset_pin_bc1()) != 0) {
         return rv;
     }
+#elif defined(SOFT)
+    socket_ay_reg_set(0, sr_data[1]);
+    socket_ay_reg_set(1, sr_data[0]);
+#endif
 
     return 0;
 }
 
-static int set_data () {
+static int low_set_data () {
+#ifdef HARD
     int rv = 0;
 
     if ((rv = sr_set_pin_bdir()) != 0) {
@@ -90,8 +93,96 @@ static int set_data () {
     if ((rv = sr_reset_pin_bdir()) != 0) {
         return rv;
     }
+#elif defined(SOFT)
+    socket_ay_data_set(0, sr_data[1]);
+    socket_ay_data_set(1, sr_data[0]);
+#endif
 
     return 0;
+}
+
+static int low_port_write (uint32_t chip_num, uint8_t val) {
+#ifdef HARD
+    return sr_port_write(aym_port_index_array[chip_num], val);
+#elif defined(SOFT)
+    if (chip_num >= 2) {
+        return -1;
+    }
+
+    sr_data[chip_num] = val;
+#endif
+
+    return 0;
+}
+
+static int low_write_byte (uint32_t chip_num, uint8_t val) {
+#ifdef HARD
+    return sr_write_byte(aym_port_index_array[chip_num], val);
+#elif defined(SOFT)
+    if (chip_num >= 2) {
+        return -1;
+    }
+
+    sr_data[chip_num] = val;
+
+    return 0;
+#endif
+}
+
+static int low_update () {
+#ifdef HARD
+    return sr_update();
+#elif defined(SOFT)
+    return 0;
+#endif
+}
+
+int set_pause () {
+    int rv = 0;
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 7)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_reg()) != 0) {
+        return rv;
+    }
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 0xFF)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_data()) != 0) {
+        return rv;
+    }
+}
+
+int reset_pause () {
+    int rv = 0;
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, 7)) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_reg()) != 0) {
+        return rv;
+    }
+
+    for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
+        if ((rv = low_port_write(ay_index, aym_data[ay_index].reg[7])) != 0) {
+            return rv;
+        }
+    }
+
+    if ((rv = low_set_data()) != 0) {
+        return rv;
+    }
 }
 
 void queue_clear () {
@@ -129,22 +220,22 @@ static int update_all_reg () {
 
     for (uint32_t reg_index = 0; reg_index < 16; reg_index++) {
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = sr_port_write(aym_port_index_array[ay_index], reg_index)) != 0) {
+            if ((rv = low_port_write(ay_index, reg_index)) != 0) {
                 return rv;
             }
         }
 
-        if ((rv = set_reg()) != 0) {
+        if ((rv = low_set_reg()) != 0) {
             return rv;
         }
 
         for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
-            if ((rv = sr_port_write(aym_port_index_array[ay_index], aym_data[ay_index].reg[reg_index])) != 0) {
+            if ((rv = low_port_write(ay_index, aym_data[ay_index].reg[reg_index])) != 0) {
                 return rv;
             }
         }
 
-        if ((rv = set_data()) != 0) {
+        if ((rv = low_set_data()) != 0) {
             return rv;
         }
     }
@@ -164,6 +255,8 @@ int flags_is_set (uint8_t *flags) {
 
     return 0;
 }
+
+extern void aym_tick_event ();
 
 static void task_aym (void *p) {
     p = p;
@@ -198,20 +291,18 @@ static void task_aym (void *p) {
             }
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].reg);
+                low_write_byte(chip_index, q_data_buf[chip_index].reg);
             }
 
-            sr_update();
-
-            set_reg();
+            low_update();
+            low_set_reg();
 
             for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-                sr_write_byte(aym_port_index_array[chip_index], q_data_buf[chip_index].data);
+                low_write_byte(chip_index, q_data_buf[chip_index].data);
             }
 
-            sr_update();
-
-            set_data();
+            low_update();
+            low_set_data();
         }
 
         tic_ff++;
@@ -219,10 +310,10 @@ static void task_aym (void *p) {
             continue;
         }
 
+        aym_tick_event();
         tic_ff = 0;
     }
 }
-
 
 static void tim_irq_handler (TimerHandle_t tim) {
     xSemaphoreGive(tim_irq_request);
@@ -239,7 +330,6 @@ int init_aym_hardware () {
         aym_reg_data_queue[i] = xQueueCreateStatic(YM_REG_DATA_QUEUE_LEN, sizeof(aym_reg_data_t),
                                                    &aym_reg_data_queue_buf[i][0], &aym_reg_data_str[i]);
     }
-
 
     return 0;
 }

@@ -16,7 +16,8 @@ file(GLOB SOURCES
         "bsp/pcb_hardware/src/*.c"
 
         "logic/lua_lib/src/*.c"
-        "logic/aym_psg_parser/src/*.c"
+        "logic/parsers/psg/src/*.c"
+        "logic/parsers/aym/src/*.c"
 
         "lib/freertos/dummy/src/*.c"
         "lib/freertos/core/src/*.c"
@@ -45,7 +46,8 @@ include_directories(
         "bsp/pcb_hardware/modules/lcd/inc"
         "bsp/pcb_hardware/modules/matrix_keyboard/inc"
 
-        "logic/aym_psg_parser/inc"
+        "logic/parsers/psg/inc"
+        "logic/parsers/aym/inc"
 
         "lib/freertos/core/inc"
 
