@@ -67,6 +67,9 @@ $ mkdir build_lcde_r &&  cd build_lcde_r
 $ cmake ../lcde -DCMAKE_BUILD_TYPE=Release
 $ make -j
 $ cd ..
+$ git clone git@github.com:Vadimatorik/aye.git
+$ cd build_aye_r && cd build_aye_r
+$ cmake ../aye -DCMAKE_BUILD_TYPE=Release
 ```
 ### Создание образа карты памяти
 Так же потребуется образ microsd карты, на которой будут Lua-скрипты и файлы пользователя. Для его создания и подключения как съемного диска следует сделать следующие действия:
