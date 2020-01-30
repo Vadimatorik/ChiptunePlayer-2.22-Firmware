@@ -68,7 +68,7 @@ $ cmake ../lcde -DCMAKE_BUILD_TYPE=Release
 $ make -j
 $ cd ..
 $ git clone git@github.com:Vadimatorik/aye.git
-$ mkdir build_aye_r &&  cd build_lcde_r
+$ mkdir build_aye_r &&  cd build_aye_r
 $ cmake ../aye -DCMAKE_BUILD_TYPE=Release
 ```
 ### Создание образа карты памяти
