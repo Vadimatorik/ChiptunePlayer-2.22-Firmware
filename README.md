@@ -39,7 +39,7 @@ $ STM32_Programmer_CLI -c port="SWD" -e all -w aym.elf -hardRst
 
 ## Сборка проекта как Linux-приложение
 Для сборки требуется:
-* GCC 9.0.1 или новее
+* GCC 9.0.1 или новее (+ multilib)
 * cmake 3.16.2 или новее
 
 Сборку можно произвести следующим способом (действия выполнять из корневого каталога проекта):
@@ -65,6 +65,11 @@ $ cd ..
 $ git clone git@github.com:Vadimatorik/lcde.git
 $ mkdir build_lcde_r &&  cd build_lcde_r
 $ cmake ../lcde -DCMAKE_BUILD_TYPE=Release
+$ make -j
+$ cd ..
+$ git clone git@github.com:Vadimatorik/aye.git
+$ mkdir build_aye_r &&  cd build_aye_r
+$ cmake ../aye -DCMAKE_BUILD_TYPE=Release
 $ make -j
 $ cd ..
 ```
