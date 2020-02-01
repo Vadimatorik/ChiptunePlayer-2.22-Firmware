@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <sys/types.h>
+#include "stm32f4xx_hal_conf.h"
 
 /*
  * Следующие поля импортируются из linker скрипта.
@@ -91,6 +91,8 @@ void *__dso_handle;
 /// запуск main и последующая "уборка"
 /// (вызов деструкторов глобальных объектов).
 void __start () {
+    __HAL_RCC_CCMDATARAMEN_CLK_ENABLE(); // Включаем CCM RAM.
+
     /// Сбрасываем периферию в приемлемое состояние по умолчанию.
     SystemInit();
 

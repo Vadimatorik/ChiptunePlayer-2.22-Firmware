@@ -47,6 +47,4 @@ void SystemInit () {
 
 
     SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
-
-    __HAL_RCC_CCMDATARAMEN_CLK_ENABLE(); // Включаем CCM RAM.
 }

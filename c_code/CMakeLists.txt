@@ -5,6 +5,7 @@ include(CMakeToolchain.cmake)
 project(aym)
 
 add_definitions(-D${CMAKE_BUILD_TYPE})
+add_definitions(-DU8G2_USE_DYNAMIC_ALLOC)
 
 file(GLOB SOURCES
         "lib/fatfs/src/*.c"
@@ -22,8 +23,7 @@ file(GLOB SOURCES
         "lib/freertos/dummy/src/*.c"
         "lib/freertos/core/src/*.c"
 
-        "main.c"
-        )
+        "main.c")
 
 include_directories(
         "cfg"

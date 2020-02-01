@@ -429,8 +429,12 @@ static int lua_u8g2_set_font (lua_State *L) {
     return 0;
 }
 
+__attribute__ ((aligned (16), section (".bss_ram")))
+uint8_t lcd_buf[1024] = {0};
+
 static int lua_u8g2_driver_init (lua_State *L) {
     u8g2_Setup_st7565_ea_dogm128_f(&u8g2, U8G2_R0, u8x8_byte_send, u8x8_io);
+    u8g2_SetBufferPtr(&u8g2, lcd_buf);
     u8g2_InitDisplay(&u8g2);
     u8g2_ClearBuffer(&u8g2);
     u8g2_SendBuffer(&u8g2);
