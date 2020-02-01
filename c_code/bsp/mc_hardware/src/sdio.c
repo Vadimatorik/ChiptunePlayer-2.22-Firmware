@@ -160,9 +160,9 @@ static int sdio_preinit () {
         if (HAL_SD_ConfigWideBusOperation(&sdio, SDIO_BUS_WIDE_4B) != HAL_OK) {
             return -1;
         }
-    }
 
-    return -1;
+        return 0;
+    }
 #elif defined(SOFT)
     return 0;
 #endif
