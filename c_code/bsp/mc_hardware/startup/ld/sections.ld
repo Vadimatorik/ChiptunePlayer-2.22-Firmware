@@ -59,7 +59,7 @@ SECTIONS
         . = ALIGN(4); __data_start =  . ;
         . = ALIGN(4); *(.data .data.*)
         . = ALIGN(4); __data_end =  . ;
-    } >RAM AT> FLASH
+    } >CCM AT> FLASH
 
     .bss : ALIGN(4)
     {
@@ -67,7 +67,7 @@ SECTIONS
         *(.bss .bss.*)
         *(COMMON) . = ALIGN(4);
          __bss_end__ = .;    __bss_end = .;
-    } >RAM
+    } >CCM
 
     __data_in_rom_start = LOADADDR(.data);
 
@@ -77,12 +77,12 @@ SECTIONS
     .ARM.exidx : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >FLASH
     __exidx_end = .;
 
-    .bss_ccm : ALIGN(4)
+    .bss_ram : ALIGN(4)
     {
         . = ALIGN(4); __bss_ccm_start__ = .;    __bss_ccm_start = .;
         *(.bss_ccm .bss_ccm.*)
         . = ALIGN(4); __bss_ccm_end__ = .;    __bss_ccm_end = .;
-    } >CCM_RAM
+    } >RAM
 
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
