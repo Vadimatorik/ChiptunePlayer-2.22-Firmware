@@ -8,22 +8,11 @@
 
 #include "freertos_headers.h"
 
-
 SPI_HandleTypeDef s_board = {0};
-
-
 SPI_BOARD_DEVICE spi_device = SPI_BOARD_DEVICE_NO_SET;
-
-
 SemaphoreHandle_t spi_board_tx_msg_semaphore = NULL;
-
-
 static StaticSemaphore_t spi_board_tx_msg_semaphore_str = {0};
-
-
 SemaphoreHandle_t spi_board_mutex = NULL;
-
-
 StaticSemaphore_t spi_board_mutex_buf = {0};
 #endif
 

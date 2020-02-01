@@ -11,22 +11,11 @@
 #ifdef HARD
 #include "freertos_headers.h"
 
-
 SPI_HandleTypeDef s_lcd = {0};
-
-
 DMA_HandleTypeDef s_lcd_dma = {0};
-
-
 SemaphoreHandle_t spi_lcd_msg_semaphore = NULL;
-
-
 static StaticSemaphore_t spi_lcd_msg_semaphore_str = {0};
-
-
 SemaphoreHandle_t spi_lcd_mutex = NULL;
-
-
 StaticSemaphore_t spi_lcd_mutex_buf = {0};
 #endif
 
@@ -102,8 +91,6 @@ void SPI1_IRQHandler () {
     HAL_SPI_IRQHandler(&s_lcd);
 }
 #endif
-
-
 
 int spi_lcd_tx (void *d, uint32_t len) {
 #ifdef HARD
