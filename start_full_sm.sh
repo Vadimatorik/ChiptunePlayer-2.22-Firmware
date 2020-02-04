@@ -1,8 +1,14 @@
 #!/bin/bash
 ./../build_lcde_r/lcde &
+pid_lcde=$!
 ./../build_keyboarde_r/keyboarde & 
+pid_keyboarde=$!
 ./../build_aye_r/aye -p 52000 &
+pid_aye1=$!
 ./../build_aye_r/aye -p 52001 &
+pid_aye2=$!
+
+trap 'kill $pid_lcde && kill $pid_keyboarde && kill $pid_aye1 && kill $pid_aye2' SIGINT
 
 sudo mount -t auto resurse/microsd.img resurse/microsd
 sleep 2
