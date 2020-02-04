@@ -1,5 +1,5 @@
 #!/bin/bash
-./../build_lcde_r/lcde &
+./../build_lcde_r/lcde -p 55000 &
 pid_lcde=$!
 ./../build_keyboarde_r/keyboarde & 
 pid_keyboarde=$!
