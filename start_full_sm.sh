@@ -1,7 +1,7 @@
 #!/bin/bash
 ./../build_lcde_r/lcde -p 55000 &
 pid_lcde=$!
-./../build_keyboarde_r/keyboarde & 
+./../build_keyboarde_r/keyboarde -p 56000 & 
 pid_keyboarde=$!
 ./../build_aye_r/aye -p 52000 &
 pid_aye1=$!
