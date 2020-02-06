@@ -6,13 +6,14 @@ w_main = {
             h = 7
         }
     },
-    path = "0:",
+    cur_path = "0:/",
+    cur_file = "",
     fv_file_list_name = ".file_name_sort_list.txt",
     fv_dir_list_name = ".dir_name_sort_list.txt",
-    state = "stop"
+    play_state = "stop" -- Еще: play, pause
 }
 
-function w_main:draw ()
+function w_main:draw()
     lcd.clean()
     self.gui.obj.sb:draw()
     self.gui.obj.fv:draw()
@@ -21,35 +22,65 @@ function w_main:draw ()
     collectgarbage("collect")
 end
 
-function w_main:keyboard_enter_click ()
-    if self.state == "stop" then
-        log("Change aym state: to play")
-        self.state = "play"
+function w_main:play_current_track()
+    local f_len = self.gui.obj.fv:get_cur_file_len_sec()
+    self.gui.obj.pb:set(0, f_len)
+    aym.play(self.cur_file)
+    log("Play new track")
+    self.play_state = "play"
+    self:draw()
+end
 
-        local cur_fil_name = self.gui.obj.fv:get_cur_file_name()
-        if cur_fil_name == nil then -- Тут переделать на получение типа файла для входа в директорию.
-            return
+function w_main:keyboard_enter_click_file()
+    if self.play_state == "stop" then
+        log("Change aym state: to play")
+        self.cur_file = self.gui.obj.fv:get_cur_file_name()
+        self:play_current_track()
+    elseif self.play_state == "play" then
+        local fv_name = self.gui.obj.fv:get_cur_file_name()
+        log("Current play file: " .. self.cur_file)
+        log("Current menu file: " .. fv_name)
+
+        if self.cur_file == fv_name then
+            aym.pause()
+
+            log("Change aym state: to pause")
+            self.play_state = "pause"
+
+            self:draw()
+        else
+            aym.stop()
+            self.cur_file = fv_name
+            self:play_current_track()
         end
-
-        local f_len = self.gui.obj.fv:get_cur_file_len_sec()
-        self.gui.obj.pb:set(0, f_len)
-        self:draw()
-
-        aym.play(cur_fil_name)
-    elseif self.state == "play" then
-        self.state = "pause"
-        log("Change aym state: to pause")
-        self:draw()
-        aym.pause()
-    elseif self.state == "pause" then
-        self.state = "play"
-        log("Change aym state: to play")
-        self:draw()
-        aym.pause()
+    elseif self.play_state == "pause" then
+        local fv_name = self.gui.obj.fv:get_cur_file_name()
+        if self.cur_file == fv_name then
+            self.play_state = "play"
+            log("Change aym state: to play")
+            self:draw()
+            aym.pause()
+        else
+            aym.stop()
+            self.cur_file = fv_name
+            self:play_current_track()
+        end
     end
 end
 
-function w_main:keyboard_click (key)
+function w_main:keyboard_enter_click_dir()
+end
+
+function w_main:keyboard_enter_click()
+    local i_type = self.gui.obj.fv:get_cur_item_type()
+    if (i_type == "file") then
+        self:keyboard_enter_click_file()
+    else
+        self:keyboard_enter_click_dir()
+    end
+end
+
+function w_main:keyboard_click(key)
     if key == cmd.keyboard.num.up then
         log("Event: key up")
         self.gui.obj.sb:up()
@@ -66,21 +97,20 @@ function w_main:keyboard_click (key)
     end
 end
 
-function w_main:aym_play_event (event)
+function w_main:aym_play_event(event)
     if event == cmd.aym.play.cmd.tick then
         log("Event: aym tick")
-
         self.gui.obj.pb:inc()
         self:draw()
     end
 end
 
-function w_main:start ()
+function w_main:start()
     log("Start os.init()")
 
     if os.init() ~= true then
         log_err("Fail os.init()")
-        is.exit()
+        os.exit()
     end
 
     log("Start lcd driver init")
@@ -109,9 +139,9 @@ function w_main:start ()
     collectgarbage("collect")
     log_used_ram()
 
-    self.gui.obj.fv = fileviewer:new(self.gui.font.data, self.gui.font.h, 1, 11, 128, 44, self.path, self.fv_dir_list_name, self.fv_file_list_name)
+    self.gui.obj.fv = fileviewer:new(self.gui.font.data, self.gui.font.h, 1, 11, 128, 44, self.cur_path, self.fv_dir_list_name, self.fv_file_list_name)
     self.gui.obj.pb = play_bar:new(self.gui.font.data, self.gui.font.h, 1, 54, 128, 11)
-    self.gui.obj.sb = status_bar:new(self.gui.font.data, self.gui.font.h, 1, 1, 128, 11, "stop", 100, self.path, self.fv_dir_list_name, self.fv_file_list_name)
+    self.gui.obj.sb = status_bar:new(self.gui.font.data, self.gui.font.h, 1, 1, 128, 11, self.play_state, 100, self.cur_path, self.fv_dir_list_name, self.fv_file_list_name)
 
     rv = self.gui.obj.fv:init()
     if rv ~= 0 then

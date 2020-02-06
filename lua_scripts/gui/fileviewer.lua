@@ -254,6 +254,14 @@ function fileviewer:get_cur_file_len_sec ()
     return item.len
 end
 
+function fileviewer:get_cur_item_type ()
+    if self.state.cur_item <= self.state.num_item_dir then
+        return "dir"
+    else
+        return "file"
+    end
+end
+
 function fileviewer:down ()
     if self.state.cur_item >= self.state.num_item then
         return
