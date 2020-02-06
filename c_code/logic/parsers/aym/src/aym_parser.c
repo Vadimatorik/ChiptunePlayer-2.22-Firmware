@@ -5,6 +5,11 @@
 
 #include "psg_parser.h"
 
+#include "dp.h"
+#include "mc_hardware.h"
+#include "sr.h"
+#include "ltc6903.h"
+
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -118,6 +123,10 @@ static int add_element_to_low_aym_queue (aym_reg_data_t *msg) {
                         clear_aym_hardware();
                         return AYM_CMD_STOP;
                 }
+            } else if (q_msg.cmd == AYM_CMD_STOP) {
+                queue_clear();
+                clear_aym_hardware();
+                return AYM_CMD_STOP;
             }
         }
 
@@ -139,6 +148,27 @@ static void aym_thread (__attribute__((unused)) void *obj) {
 
         switch (q_msg.cmd) {
             case AYM_CMD_PLAY:
+                sr_set_pin_ay_1_res();
+                sr_reset_pin_pwr_ay_1_on();
+                set_pin_pwr_5_v();
+                sr_set_pin_pwr_ay_1_on();
+                sr_reset_pin_ay_1_res();
+                clear_aym_hardware();
+                dp_reset_shdn();
+
+                ltc6903_start();
+                ltc6903_set_requency(1.77e6, LTC6903_OUTPUT_MODE_CLK_ON_INV_OFF);
+
+                /*
+                dp_set_a1 (256/2);
+                dp_set_a2 (256/2);
+                dp_set_b1 (256/2);
+                dp_set_b2 (256/2);
+                dp_set_c1 (256/2);
+                dp_set_c2 (256/2);
+                dp_set_l (256/2);
+                dp_set_r (256/2);*/
+
                 rv = aym_psg_play(q_msg.arg.path_to_file, add_element_to_low_aym_queue);
                 if (rv != 0) {
                     // TODO: потом пробросить отправку наверх сообщения об ошибке при работе.
