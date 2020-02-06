@@ -50,7 +50,6 @@ matrix_keyboard_key_status b_status[B_NUM] = {0};
 #if defined(HARD)
 
 static uint8_t get_b_state (uint8_t id) {
-    /*
     set_pin_br_0();
     set_pin_br_1();
     set_pin_br_2();
@@ -77,9 +76,8 @@ static uint8_t get_b_state (uint8_t id) {
         case 6:
             reset_pin_br_0();
             return !read_pin_bc_0();
-    }*/
+    }
 
-    // TODO: Тут нужно переделать на Z состояние переход.
     // TODO: Дополнить получение нажатий от клавишь + и -.
 
     return 0;
