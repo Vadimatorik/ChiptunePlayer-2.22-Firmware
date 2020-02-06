@@ -105,32 +105,29 @@ static int add_element_to_low_aym_queue (aym_reg_data_t *msg) {
     while (1) {
         if (xQueueReceive(aym_cmd_queue, &q_msg, 0) == pdTRUE) { // Приказ во время воспроизведения трека.
             if (q_msg.cmd == AYM_CMD_PAUSE) { // После паузы 2 пути. Выход или продолжить.
-                set_pause();
+                aym_hard_set_pause();
                 xQueueReceive(aym_cmd_queue, &q_msg, portMAX_DELAY);
 
                 switch (q_msg.cmd) {
                     case AYM_CMD_PAUSE:
-                        reset_pause();
+                        aym_hard_reset_pause();
                         break;
 
                     case AYM_CMD_STOP:
-                        queue_clear();
-                        clear_aym_hardware();
+                        aym_hard_reset();
                         return AYM_CMD_STOP;
 
                     default:
-                        queue_clear();
-                        clear_aym_hardware();
+                        aym_hard_reset();
                         return AYM_CMD_STOP;
                 }
             } else if (q_msg.cmd == AYM_CMD_STOP) {
-                queue_clear();
-                clear_aym_hardware();
+                aym_hard_reset();
                 return AYM_CMD_STOP;
             }
         }
 
-        rv = add_aym_element(msg);
+        rv = aym_hard_add_aym_element(msg);
         if (rv == 0) {
             return 0;
         } else {
@@ -153,7 +150,7 @@ static void aym_thread (__attribute__((unused)) void *obj) {
                 set_pin_pwr_5_v();
                 sr_set_pin_pwr_ay_1_on();
                 sr_reset_pin_ay_1_res();
-                clear_aym_hardware();
+                aym_hard_reset();
                 dp_reset_shdn();
 
                 ltc6903_start();

@@ -18,3 +18,4 @@
 #define UART_TX_QUEUE_LEN                   10
 #define YM_REG_DATA_QUEUE_LEN               32
 #define AYM_CMD_QUEUE_LEN                   5
+#define AYM_HARD_CMD_QUEUE_LEN              5

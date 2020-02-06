@@ -50,11 +50,53 @@ static QueueHandle_t aym_reg_data_queue[AY_NUM] = {0};
 static StaticQueue_t aym_reg_data_str[AY_NUM] = {0};
 static uint8_t aym_reg_data_queue_buf[AY_NUM][YM_REG_DATA_QUEUE_LEN*sizeof(aym_reg_data_t)] = {0};
 
+enum AYM_HARD_CMD {
+    AYM_HARD_CMD_PAUSE = 0,
+    AYM_HARD_CMD_PLAY = 1,
+    AYM_HARD_CMD_RESET = 2
+};
+
+typedef struct _aym_cmd {
+    uint8_t cmd;
+} aym_hard_cmd;
+
+static QueueHandle_t aym_hard_cmd_queue = {0};
+static StaticQueue_t aym_hard_cmd_str = {0};
+static uint8_t aym_hard_cmd_queue_buf[AYM_HARD_CMD_QUEUE_LEN*sizeof(aym_hard_cmd)] = {0};
+
 static uint32_t tic_ff = 0;
 
 #ifdef SOFT
 static uint8_t sr_data[2] = {0};
 #endif
+
+static void queue_clear () {
+    for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
+        xQueueReset(aym_reg_data_queue[chip_index]);
+    }
+}
+
+int aym_hard_set_pause () {
+    aym_hard_cmd q_msg = {0};
+    q_msg.cmd = AYM_HARD_CMD_PAUSE;
+    xQueueSend(aym_hard_cmd_queue, &q_msg, portMAX_DELAY);
+    return 0;
+}
+
+int aym_hard_reset_pause () {
+    aym_hard_cmd q_msg = {0};
+    q_msg.cmd = AYM_HARD_CMD_PLAY;
+    xQueueSend(aym_hard_cmd_queue, &q_msg, portMAX_DELAY);
+    return 0;
+}
+
+int aym_hard_reset () {
+    aym_hard_cmd q_msg = {0};
+    q_msg.cmd = AYM_HARD_CMD_RESET;
+    queue_clear();
+    xQueueSend(aym_hard_cmd_queue, &q_msg, portMAX_DELAY);
+    return 0;
+}
 
 static int low_set_reg () {
 #ifdef HARD
@@ -137,7 +179,7 @@ static int low_update () {
 #endif
 }
 
-int set_pause () {
+static int low_set_pause () {
     int rv = 0;
 
     for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
@@ -161,7 +203,7 @@ int set_pause () {
     }
 }
 
-int reset_pause () {
+static int low_reset_pause () {
     int rv = 0;
 
     for (uint32_t ay_index = 0; ay_index < AY_NUM; ay_index++) {
@@ -182,12 +224,6 @@ int reset_pause () {
 
     if ((rv = low_set_data()) != 0) {
         return rv;
-    }
-}
-
-void queue_clear () {
-    for (int chip_index = 0; chip_index < AY_NUM; chip_index++) {
-        xQueueReset(aym_reg_data_queue[chip_index]);
     }
 }
 
@@ -241,12 +277,12 @@ static int update_all_reg () {
     }
 }
 
-int clear_aym_hardware () {
+static int clear_aym_hardware () {
     clean_buffer_ay_reg();
     return update_all_reg();
 }
 
-int flags_is_set (uint8_t *flags) {
+static int flags_is_set (uint8_t *flags) {
     for (int i = 0; i < AY_NUM; i++) {
         if (flags[i] == 0) {
             return -1;
@@ -262,10 +298,37 @@ static void task_aym (void *p) {
     p = p;
 
     aym_out_data q_data_buf[AY_NUM] = {0};
+    aym_hard_cmd q_msg = {0};
+
     xTimerStart(irq_timer, 0);
 
     while (1) {
         xSemaphoreTake (tim_irq_request, portMAX_DELAY);
+
+        if (xQueueReceive(aym_hard_cmd_queue, &q_msg, 0) == pdTRUE) {
+            switch (q_msg.cmd) {
+                case AYM_HARD_CMD_PAUSE:
+                    low_set_pause();
+                    while (1) {
+                        xQueueReceive(aym_hard_cmd_queue, &q_msg, portMAX_DELAY);
+                        if ((q_msg.cmd == AYM_HARD_CMD_PLAY) ||
+                            (q_msg.cmd == AYM_HARD_CMD_RESET)) {
+                            low_reset_pause();
+                            break;
+                        }
+                    }
+                    break;
+
+                case AYM_HARD_CMD_PLAY:
+                    low_reset_pause();
+                    break;
+
+                case AYM_HARD_CMD_RESET:
+                    //clear_aym_hardware();
+                    break;
+            }
+        }
+
         if (check_queue_empty() == QUEUE_STATE_EMPTY) {
             continue;
         }
@@ -321,7 +384,8 @@ static void tim_irq_handler (TimerHandle_t tim) {
 
 int init_aym_hardware () {
     tim_irq_request = xSemaphoreCreateBinaryStatic(&tim_irq_request_buf);
-
+    aym_hard_cmd_queue = xQueueCreateStatic(AYM_HARD_CMD_QUEUE_LEN, sizeof(aym_hard_cmd), aym_hard_cmd_queue_buf,
+                                            &aym_hard_cmd_str);
     irq_timer = xTimerCreate("aym_timer", 20, pdTRUE, NULL, tim_irq_handler);
 
     xTaskCreateStatic(task_aym, "aym_hardware", HARD_THREAD_STACK_SIZE, NULL, HARD_THREAD_PRIO,
@@ -334,7 +398,7 @@ int init_aym_hardware () {
     return 0;
 }
 
-int add_aym_element (aym_reg_data_t *item) {
+int aym_hard_add_aym_element (aym_reg_data_t *item) {
     aym_out_data buf;
     buf.reg = item->reg;
     buf.data = item->data;
