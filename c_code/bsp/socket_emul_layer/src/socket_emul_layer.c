@@ -120,8 +120,7 @@ uint8_t socket_get_button_state (uint8_t i) {
     return state;
 }
 
-
-static const uint8_t CODE_AY_REG= 0;
+static const uint8_t CODE_AY_REG = 0;
 static const uint8_t CODE_AY_DATA = 1;
 
 typedef struct _socket_ay_msg {

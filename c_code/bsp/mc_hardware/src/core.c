@@ -4,12 +4,12 @@
 
 #include "freertos_headers.h"
 
-__attribute__ ((aligned (16), section (".bss_ram")))
-uint8_t freertos_heap_block_0[1024*127] = {0};
+__attribute__ ((aligned (16), section (".sdram")))
+uint8_t freertos_heap[1024*1024*64] = {0};
 
 const HeapRegion_t heap_regions[] = {
-    {(uint8_t *)freertos_heap_block_0, sizeof(freertos_heap_block_0)},
-    {NULL,                             0}
+    {(uint8_t *)freertos_heap, sizeof(freertos_heap)},
+    {NULL, 0}
 };
 
 int init_core () {

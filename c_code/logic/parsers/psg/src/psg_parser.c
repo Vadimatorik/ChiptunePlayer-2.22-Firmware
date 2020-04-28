@@ -29,7 +29,6 @@ enum PSG_PARSE_STATE {
 typedef struct _psg_parser_state {
     uint8_t chip_num;
     uint8_t flag_handler_got;
-    uint32_t file_len;
     uint8_t state; // PSG_PARSE_STATE
     uint8_t reg;
 } psg_parser_state_t;
@@ -42,8 +41,8 @@ typedef struct __attribute__((__packed__)) _psg_handler {
     uint8_t padding[10];
 } psg_handler_t;
 
-static int check_handler (psg_parser_state_t *cfg, const uint8_t *f_block) {
-    if (cfg->file_len < sizeof(psg_handler_t)) {
+static int check_handler (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_len) {
+    if (f_len < sizeof(psg_handler_t)) {
         return ENOEXEC;
     }
 
@@ -60,7 +59,7 @@ static int check_handler (psg_parser_state_t *cfg, const uint8_t *f_block) {
     return 0;
 }
 
-static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_block_len, add_element send_msg,
+static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_len, add_element send_msg,
                   uint32_t *ret_len_tick) {
     if (cfg->state == PSG_PARSE_STATE_GOT_END_FLAG) {
         return 0;
@@ -75,7 +74,7 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
     int rv = 0;
 
     if (cfg->flag_handler_got == 0) {
-        if ((rv = check_handler(cfg, f_block)) != 0) {
+        if ((rv = check_handler(cfg, f_block, f_len)) != 0) {
             return rv;
         }
 
@@ -93,7 +92,7 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
         cfg->flag_handler_got = -1;
     }
 
-    while (pos < f_block_len) {
+    while (pos < f_len) {
         if (cfg->state == PSG_PARSE_STATE_NO) {
             if (f_block[pos] == PSG_FILE_MARKER_INTERRUPT) {
                 msg.reg = REG_PAUSE;
@@ -150,108 +149,75 @@ static int parse (psg_parser_state_t *cfg, const uint8_t *f_block, uint32_t f_bl
     return 0;
 }
 
-int aym_psg_get_len_tick (const char *file_path, uint32_t *ret_len_tick) {
+/*!
+ * \param mode[in] - 0 - get_len_tick
+ *                   1-0xFF - play
+ * \param send_msg[in] - только если mode == play.
+ */
+static int aym_psg_parse (const char *file_path, uint32_t *ret_len_tick, uint8_t mode, add_element send_msg) {
     int rv = 0;
 
-    FIL *f = malloc(sizeof(FIL));
-    if (f == NULL) {
-        return ERR_OS_MALLOC_FAIL;
-    }
+    uint8_t *f_buf = NULL;
+    FIL *f = NULL;
 
-    rv = f_open(f, file_path, FA_READ);
-    if (rv != 0) {
-        free(f);
-        return rv * -1;
-    }
+    do {
+        if ((f = malloc(sizeof(FIL))) ==  NULL) {
+            rv = ERR_OS_MALLOC_FAIL;
+            break;
+        }
 
-    static const uint32_t PSG_READ_BUFFER = 128;
-    uint8_t *f_buf = malloc(PSG_READ_BUFFER);
-    if (f_buf == NULL) {
-        f_close(f);
-        free(f);
-        return ERR_OS_MALLOC_FAIL;
-    }
+        if ((rv = f_open(f, file_path, FA_READ)) != 0) {
+            break;
+        }
 
-    psg_parser_state_t parser_cfg = {0};
+        FSIZE_t f_len = f_size(f);
 
-    UINT f_len = f_size(f);
-    parser_cfg.file_len = f_len;
+        if ((f_buf = malloc(f_len)) == NULL) {
+            rv = ERR_OS_MALLOC_FAIL;
+            break;
+        }
 
-    while (f_len) {
         UINT real_read_num = 0;
-        rv = f_read(f, f_buf, PSG_READ_BUFFER, &real_read_num);
-        if (rv != 0) {
-            f_close(f);
-            free(f);
-            free(f_buf);
-            return rv;
+        if ((rv != f_read(f, f_buf, f_len, &real_read_num)) || (real_read_num != f_len)) {
+            break;
         }
 
-        if (parse(&parser_cfg, f_buf, real_read_num, NULL, ret_len_tick) != 0) {
+        psg_parser_state_t parser_cfg = {0};
+
+        if (mode == 0) {
+            if (parse(&parser_cfg, f_buf, real_read_num, NULL, ret_len_tick) != 0) {
+                rv = FR_INVALID_OBJECT;
+                break;
+            }
+        } else {
+            if (parse(&parser_cfg, f_buf, real_read_num, send_msg, NULL)!= 0) {
+                rv = FR_INVALID_OBJECT;
+                break;
+            }
+        }
+    } while (0);
+
+    if (f != NULL) {
+        if (rv == 0) {
+            rv = f_close(f);
+        } else {
             f_close(f);
-            free(f);
-            free(f_buf);
-            return FR_INVALID_OBJECT;
         }
 
-        f_len -= real_read_num;
+        free(f);
     }
 
-    rv = f_close(f);
-    free(f);
-    free(f_buf);
+    if (f_buf != NULL) {
+        free(f_buf);
+    }
+
     return rv * -1;
 }
 
+int aym_psg_get_len_tick (const char *file_path, uint32_t *ret_len_tick) {
+    return aym_psg_parse(file_path, ret_len_tick, 0, NULL);
+}
+
 int aym_psg_play (const char *file_path, add_element send_msg) {
-    int rv = 0;
-
-    FIL *f = malloc(sizeof(FIL));
-    if (f == NULL) {
-        return ERR_OS_MALLOC_FAIL;
-    }
-
-    rv = f_open(f, file_path, FA_READ);
-    if (rv != 0) {
-        free(f);
-        return rv * -1;
-    }
-
-    static const uint32_t PSG_READ_BUFFER = 128;
-    uint8_t *f_buf = malloc(PSG_READ_BUFFER);
-    if (f_buf == NULL) {
-        f_close(f);
-        free(f);
-        return ERR_OS_MALLOC_FAIL;
-    }
-
-    psg_parser_state_t parser_cfg = {0};
-
-    UINT f_len = f_size(f);
-    parser_cfg.file_len = f_len;
-
-    while (f_len) {
-        UINT real_read_num = 0;
-        rv = f_read(f, f_buf, PSG_READ_BUFFER, &real_read_num);
-        if (rv != 0) {
-            f_close(f);
-            free(f);
-            free(f_buf);
-            return rv * -1;
-        }
-
-        if ((rv = parse(&parser_cfg, f_buf, real_read_num, send_msg, NULL)) != 0) {
-            f_close(f);
-            free(f);
-            free(f_buf);
-            return rv;
-        }
-
-        f_len -= real_read_num;
-    }
-
-    rv = f_close(f);
-    free(f);
-    free(f_buf);
-    return rv * -1;
+    return aym_psg_parse(file_path, NULL, 0xFF, send_msg);
 }
